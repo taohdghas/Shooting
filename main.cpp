@@ -7,6 +7,10 @@
 #include <cassert>
 #include <dxgidebug.h>
 #include <dxcapi.h>
+#include "externals/imgui/imgui.h"
+#include "externals/imgui/imgui_impl_dx12.h"
+#include "externals/imgui/imgui_impl_win32.h"
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -358,7 +362,16 @@ ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
 	assert(SUCCEEDED(hr));
 	return vertexResource;
 }
-
+ID3D12DescriptorHeap* CreateDescriptorHeap(
+	ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisivle) {
+	ID3D12DescriptorHeap* descriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+	descriptorHeapDesc.NumDescriptors = numDescriptors;
+	descriptorHeapDesc.Flags = shaderVisivle ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	assert(SUCCEEDED(hr));
+	return descriptorHeap;
+}
 
 IDxcBlob* CompileShader(
 	//CompilerするShaderファイルへのパス
@@ -430,6 +443,9 @@ IDxcBlob* CompileShader(
 }
 //ウィンドウプロシージャ
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+		return true;
+	}
 	//メッセージに応じてゲーム固有の処理を行う
 	switch (msg) {
 		//ウィンドウが破棄された
@@ -631,13 +647,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region DescriptorHeapの作成
 	//ディスクリプタヒープの生成
-	ID3D12DescriptorHeap* rtvDescriptorHeap = nullptr;
-	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
-	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; //レンダーターゲットビュー用
-	rtvDescriptorHeapDesc.NumDescriptors = 2; //ダブルバッファように2つ。多くても構わない
-	hr = device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
-	//ディスクリプタヒープが作れなかったので起動できない
-	assert(SUCCEEDED(hr));
+	ID3D12DescriptorHeap* rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	ID3D12DescriptorHeap* srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 #pragma endregion
 
 	//SwapChainからResourceを引っ張ってくる
@@ -838,6 +849,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
 
+	//ImGuiの初期化
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui::StyleColorsDark();
+	ImGui_ImplWin32_Init(hwnd);
+	ImGui_ImplDX12_Init(device, swapChainDesc.BufferCount, rtvDesc.Format,
+		srvDescriptorHeap, srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 	MSG msg{};
 	//ウィンドウのxボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
