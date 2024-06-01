@@ -510,9 +510,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 
-#endif // !_DEBUG;
-
-
+#endif 
 
 #pragma region Factoryの生成
 	//DXGIファクトリーの生成
@@ -594,7 +592,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		infoQueue->Release();
 
 	}
-#endif // _DEBUG
+#endif
 
 #pragma endregion
 
@@ -695,8 +693,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
-	//2-2-6
+	//RootParamater作成。
 	D3D12_ROOT_PARAMETER rootParamaters[2] = {};
 	rootParamaters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//
 	rootParamaters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//
@@ -707,7 +704,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptionRootSignature.pParameters = rootParamaters;//
 	descriptionRootSignature.NumParameters = _countof(rootParamaters);//
 #pragma endregion
-	//
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
@@ -715,13 +711,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
-	//
 	ID3D12RootSignature* rootSignature = nullptr;
 	hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
 		IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(hr));
 
-	//
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[1] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
@@ -731,24 +725,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	inputLayoutDescs.pInputElementDescs = inputElementDescs;
 	inputLayoutDescs.NumElements = _countof(inputElementDescs);
 
-
-
-
-
-	//
 	D3D12_BLEND_DESC blendDesc{};
-	//
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
 		D3D12_COLOR_WRITE_ENABLE_ALL;
 
-	//
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
-	//
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
-	//
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-
-	//
 	IDxcBlob* vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(vertexShaderBlob != nullptr);
 
@@ -762,21 +745,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),pixelShaderBlob->GetBufferSize() };//
 	graphicsPipelineStateDesc.BlendState = blendDesc;//
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;//
-	//
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	//
 	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	//
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	//
 	ID3D12PipelineState* graphicsPipelineState = nullptr;
 	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
-
-
-
 
 	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(Vector4) * 3);
 	//マテリアル用のリソースをつくる今回はcolor1つ分のサイズを用意する
@@ -788,36 +764,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//今回は赤を書き込む
 	*materialDate = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 
-	//
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	//
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	//
 	vertexBufferView.SizeInBytes = sizeof(Vector4) * 3;
-	//
 	vertexBufferView.StrideInBytes = sizeof(Vector4);
 
-
-	//2-2-8
 	ID3D12Resource* wvpResource = CreateBufferResource(device, sizeof(Matrix4x4));
-	//
 	Matrix4x4* wvpData = nullptr;
-	//
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	//
 	*wvpData = MakeIdentity4x4();
 
-
-	//
 	Vector4* vertexDate = nullptr;
-	//
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate));
-	//
 	vertexDate[0] = { -0.5f,-0.5f,0.0f,1.0f };
 	vertexDate[1] = { 0.0f,0.5f,0.0f,1.0f };
 	vertexDate[2] = { 0.5f,-0.5f,0.0f,1.0f };
 
-	//
 	D3D12_VIEWPORT viewport{};
 	viewport.Width = kClienWidth;
 	viewport.Height = kClientHeight;
@@ -826,28 +788,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 
-	//
 	D3D12_RECT scissorRect{};
-	//
 	scissorRect.left = 0;
 	scissorRect.right = kClienWidth;
 	scissorRect.top = 0;
 	scissorRect.bottom = kClientHeight;
 
-
 	Transform transform{ { 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f  } };
 	Transform cameraTransform{ { 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -5.0f } };
 
-
-
-	//Imguiの初期化
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX12_Init(device, swapChainDesc.BufferCount, rtvDesc.Format, srvDescriptorHeap,
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-
 
 
 	MSG msg{};
@@ -860,15 +815,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DispatchMessage(&msg);
 		}
 		else {
-			//ImGui始まるよ
 			ImGui_ImplDX12_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
-			//ゲームの処理
-			ImGui::ShowDemoWindow();////IMGUI
-			//三角形の回転
-			transform.rotate.y += 0.03f;//
-			//座標変換
+			ImGui::ShowDemoWindow();
+
+			transform.rotate.y += 0.03f;
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -907,15 +859,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			commandList->RSSetViewports(1, &viewport);//
 			commandList->RSSetScissorRects(1, &scissorRect);
-			//
 			commandList->SetGraphicsRootSignature(rootSignature);
 			commandList->SetPipelineState(graphicsPipelineState);//
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);//
-			//
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-			//
 			commandList->DrawInstanced(3, 1, 0, 0);
 
 			//画面に描く処理は終わり、画面に映すので状態を遷移
@@ -958,7 +907,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		}
 	}
-	//ImGuiの終了処理
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
