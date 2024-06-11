@@ -1136,6 +1136,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			commandList->DrawInstanced(6, 1, 0, 0);
 
+			//Spriteの描画。変更がひつようなものだけ変更する
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);//VBVを設定
+			//TransformationMatrixCBufferの場所を設定
+			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+			//描画
+			commandList->DrawInstanced(6, 1, 0, 0);
+
 			//画面に描く処理は終わり、画面に映すので状態を遷移
 			//今回はRenderTargetからPresentにする
 			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
