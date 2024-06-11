@@ -1219,6 +1219,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	textureResource->Release();
 	dsvDescriptorHeap->Release();
 	depthStenciResource->Release();
+	intermediateResource->Release();
 #ifdef _DEBUG
 	debugController->Release();
 #endif
