@@ -986,13 +986,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
-	//経度1つ分の角度φ
-	const float kLonEvery = DirectX::XM_2PI * 2.0f / float(kSubdivision);
-	//緯度1つ分の角度θ
-	const float kLatEvery = DirectX::XM_2PI / float(kSubdivision);
+	//経度分割1つ分の経度φd
+	const float kLonEvery = 2 * std::numbers::pi_v<float> / (float)kSubdivision;
+	//緯度分割１つ分の緯度Θd
+	const float kLatEvery = std::numbers::pi_v<float> / (float)kSubdivision;
 	//緯度の方向に分割
 	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
-		float lat = -DirectX::XM_PIDIV2 / 2.0f + kLatEvery * latIndex;//θ
+		float lat = -std::numbers::pi_v<float> / 2.0f + kLatEvery * latIndex;//θ
 		//経度の方向に分割しながら線を描く
 		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
 			uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
@@ -1001,39 +1001,41 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			vertexData[start].position.x = cos(lat) * cos(lon);
 			vertexData[start].position.y = sin(lat);
 			vertexData[start].position.z = cos(lat) * sin(lon);
-			vertexData[start].position.w = 1.0f;
+			vertexData[start].position.w = 2.0f;
 			vertexData[start].texcoord = { float(lonIndex) / float(kSubdivision),1.0f - float(latIndex) / kSubdivision };
+			//基準点b
 			vertexData[start + 1].position.x = cos(lat + kLatEvery) * cos(lon);
 			vertexData[start + 1].position.y = sin(lat + kLatEvery);
 			vertexData[start + 1].position.z = cos(lat + kLatEvery) * sin(lon);
-			vertexData[start + 1].position.w = 1.0f;
+			vertexData[start + 1].position.w = 2.0f;
 			vertexData[start + 1].texcoord = { float(lonIndex) / kSubdivision, 1.0f - float(latIndex + 1) / kSubdivision };
-
+			//基準点c
 			vertexData[start + 2].position.x = cos(lat) * cos(lon + kLonEvery);
 			vertexData[start + 2].position.y = sin(lat);
 			vertexData[start + 2].position.z = cos(lat) * sin(lon + kLonEvery);
-			vertexData[start + 2].position.w = 1.0f;
+			vertexData[start + 2].position.w = 2.0f;
 			vertexData[start + 2].texcoord = { float(lonIndex + 1) / kSubdivision, 1.0f - float(latIndex) / kSubdivision };
-
+			//基準点c
 			vertexData[start + 3].position.x = cos(lat) * cos(lon + kLonEvery);
 			vertexData[start + 3].position.y = sin(lat);
 			vertexData[start + 3].position.z = cos(lat) * sin(lon + kLonEvery);
-			vertexData[start + 3].position.w = 1.0f;
+			vertexData[start + 3].position.w = 2.0f;
 			vertexData[start + 3].texcoord = { float(lonIndex + 1) / kSubdivision, 1.0f - float(latIndex) / kSubdivision };
-
+			//基準点b
 			vertexData[start + 4].position.x = cos(lat + kLatEvery) * cos(lon);
 			vertexData[start + 4].position.y = sin(lat + kLatEvery);
 			vertexData[start + 4].position.z = cos(lat + kLatEvery) * sin(lon);
-			vertexData[start + 4].position.w = 1.0f;
+			vertexData[start + 4].position.w = 2.0f;
 			vertexData[start + 4].texcoord = { float(lonIndex) / kSubdivision, 1.0f - float(latIndex + 1) / kSubdivision };
-
+			//基準点d
 			vertexData[start + 5].position.x = cos(lat + kLatEvery) * cos(lon + kLonEvery);
 			vertexData[start + 5].position.y = sin(lat + kLatEvery);
 			vertexData[start + 5].position.z = cos(lat + kLatEvery) * sin(lon + kLonEvery);
-			vertexData[start + 5].position.w = 1.0f;
+			vertexData[start + 5].position.w = 2.0f;
 			vertexData[start + 5].texcoord = { float(lonIndex + 1) / kSubdivision, 1.0f - float(latIndex + 1) / kSubdivision };
 		}
 	}
+
 
 	// 頂点バッファビューを作成する
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
