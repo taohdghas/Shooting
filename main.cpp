@@ -1190,7 +1190,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DirectionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
 	//デフォルト値はとりあえず以下のようにしておく
 	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLightData->direction = Normalize({ 0.0f,-1.0f,0.0f });
+	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
 	directionalLightData->intensity = 1.0f; 
 
 	// Sprite用のTransformationMatrix用のリソースを作る
@@ -1301,11 +1301,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Begin("Color");
 			ImGui::ColorEdit4("*materialData", &materialData->color.x);
 			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
-			ImGui::ColorEdit4("*Light", &directionalLightData->color.x);
+			//ImGui::ColorEdit4("*Light", &directionalLightData->color.x);
 			ImGui::SliderFloat3("*LightDirection", &directionalLightData->direction.x, -2.0f, 2.0f);
 			ImGui::End();
 			ImGui::Render();
-
+			directionalLightData->direction = Normalize(directionalLightData->direction);
 			// ゲーム処理
 			transform.rotate.y += 0.02f;
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
@@ -1382,7 +1382,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//Spriteを常にuvCheckerに
 			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 			//Lighting
-			commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
+			//commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
 			// 描画
 			commandList->DrawInstanced(6, 1, 0, 0);
 
