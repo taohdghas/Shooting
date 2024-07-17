@@ -70,13 +70,13 @@ struct DirectionalLight{
 	  float intensity;//輝度
 };
 
-struct ModelData {
-	std::vector<VertexData>vertices;
-	//MaterialData material;
-};
-
 struct MaterialData {
 	std::string textureFilePath;
+};
+
+struct ModelData {
+	std::vector<VertexData>vertices;
+	MaterialData material;
 };
 
 //単位行列
@@ -544,6 +544,32 @@ ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t 
 	return resource;
 }
 
+MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
+{
+	//1.中で必要となる変数の宣言
+	MaterialData materialData;//構築するMaterialData
+	std::string line;//ファイルから読んだ1行を格納するもの
+	//2.ファイルを開く
+	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
+	assert(file.is_open());//とりあえず開けなかったら止める
+	//3.実際にファイルを読み、MaterialDataを構築していく
+	while (std::getline(file, line)) {
+		std::string identifier;
+		std::istringstream s(line);
+		s >> identifier;
+
+		//identifierに応じた処理
+		if (identifier == "map_Kd") {
+			std::string textureFilename;
+			s >> textureFilename;
+			//連結してファイルパスにする
+			materialData.textureFilePath = directoryPath + "/" + textureFilename;
+		}
+	}
+	//4.MaterialDataを返す
+	return materialData;
+}
+
 //Objファイルを読む関数
 ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 	//1.中で必要となる変数の宣言
@@ -573,6 +599,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 		else if (identifier == "vt") {
 			Vector2 texcoord;
 			s >> texcoord.x >> texcoord.y;
+			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 		}
 		else if (identifier == "vn") {
@@ -609,38 +636,17 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 			modelData.vertices.push_back(triangle[1]);
 			modelData.vertices.push_back(triangle[0]);
 		}
+		else if (identifier == "mtllib") {
+			//materialTemplateLibraryファイルの名前を取得する
+			std::string materialFilename;
+			s >> materialFilename;
+			//基本的にobjファイルと同一階層にmtlは存在させるので、ディレクトリ名とファイル名を渡す
+			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+		}
 	}
 	//4.ModelDataを返す
 	return modelData;
 }
-
-/*
-MaterialData LoadMaterialTemplateFile(const std::string& directoryPath,const std::string&filename)
-{
-//1.中で必要となる変数の宣言
-MaterialData materialData;//構築するMaterialData
-std::string line;//ファイルから読んだ1行を格納するもの
-//2.ファイルを開く
-std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
-assert(file.is_open());//とりあえず開けなかったら止める
-//3.実際にファイルを読み、MaterialDataを構築していく
-While(std::getline(file,line)){
- std::string identifier;
- std::istringstream s(line);
- s >> identifier;
-
- //identifierに応じた処理
- if(identifier == "map_kd"){
-   std::string textureFilename;
-   s >> textureFilename;
-   //連結してファイルパスにする
-   materialData.textureFilePath = directoryPath + "/" + textureFilename;
- }
-}
-//4.MaterialDataを返す
-  return materialData;
-}
-*/
 
 D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index) {
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
@@ -1345,7 +1351,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	transformationMatrixDataSprite->World = MakeIdentity4x4();
 
 	//2枚目のTextureを読んで転送する
-	DirectX::ScratchImage mipImages2 = LoadTexture("resources/monsterBall.png");
+	DirectX::ScratchImage mipImages2 = LoadTexture(modelData.material.textureFilePath);
 	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
 	ID3D12Resource* textureResource2 = CreateTextureResource(device, metadata2);
 	ID3D12Resource* intermediateResource2 = UploadTextureData(textureResource2, mipImages2, device, commandList);
