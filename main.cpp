@@ -1357,6 +1357,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//UVTransform行列を単位行列で初期化
 	materialDataSprite->uvTransform = MakeIdentity4x4();
 
+	/*
+	//Sphere用のマテリアル用のリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource>materialResource2 = CreateBufferResource(device, sizeof(Material));
+	//マテリアル用のデータを書き込む
+	Material* materialData2 = nullptr;
+	//書き込むためのアドレスと取得
+	materialResource2->Map(0, nullptr, reinterpret_cast<void**>(&materialData2));
+	//色の設定
+	materialData2->color = Vector4{ 1.0f,1.0f,1.0f,1.0f };
+	//Lightingを有効にする
+	materialData2->enableLighting = true;
+	//UVTransform行列を単位行列で初期化
+	materialData2->uvTransform = MakeIdentity4x4();
+
+	//Sphere用のWVP用のリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource>wvpResource2 = CreateBufferResource(device,
+		sizeof(TransformationMatrix));
+	TransformationMatrix* wvpData2 = nullptr;
+	//書き込むためのアドレスを取得
+	wvpResource2->Map(0, nullptr, reinterpret_cast<void**>(&wvpData2));
+	//単位行列
+	wvpData2->WVP = MakeIdentity4x4();
+	wvpData2->World = MakeIdentity4x4();
+	*/
+
 	//平行光源用のリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource>DirectionalLightResource = CreateBufferResource(device, sizeof(DirectionalLight));
 	//データを書き込む
@@ -1479,6 +1504,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 			ImGui::ColorEdit4("*Light", &directionalLightData->color.x);
 			ImGui::SliderFloat3("*LightDirection", &directionalLightData->direction.x, -2.0f, 2.0f);
+			ImGui::DragFloat("*Lightintensity", &directionalLightData->intensity, 0.01f);
+			ImGui::DragFloat3("TransformScale", &transform.scale.x, 0.01f);
+			ImGui::DragFloat3("TransformRotate", &transform.rotate.x, 0.01f);
+			ImGui::DragFloat3("TransformTranslate", &transform.translate.x, 0.01f);
+			ImGui::DragFloat3("TransformSpriteScale", &transformSprite.scale.x, 0.01f);
+			ImGui::DragFloat3("TransformSpriteRotate", &transformSprite.rotate.x, 0.01f);
+			ImGui::DragFloat3("TransformSpriteTranslate", &transformSprite.translate.x, 1.0f);
 			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
@@ -1573,7 +1605,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
 			// 描画
 			//commandList->DrawInstanced(6, 1, 0, 0);
-			//commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+			commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 			// 実際のcommandListのImGuiの描画コマンドを積む
 			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
