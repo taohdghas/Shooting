@@ -1049,6 +1049,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptitonRootSignature.pParameters = rootParameter;
 	descriptitonRootSignature.NumParameters = _countof(rootParameter);
 
+	/*
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
+	descriptorRangeForInstancing[0].BaseShaderRegister = 0;
+	descriptorRangeForInstancing[0].NumDescriptors = 1;
+	descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootParameter[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
+	rootParameter[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
+	*/
+
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_POINT_MIP_LINEAR;
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -1388,6 +1401,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 単位行列を書き込んでおく
 	transformationMatrixDataSprite->WVP = MakeIdentity4x4();
 	transformationMatrixDataSprite->World = MakeIdentity4x4();
+	/*
+	//Instancing用のTransformationMatrix用リソースを作る
+	const uint32_t kNumInstance = 10;//インスタンス数
+	//Instancing用のTransformationMatrixリソースを作る
+	Microsoft::WRL::ComPtr<ID3D12Resource>instancingResource =
+		CreateBufferResource(device, sizeof(TransformationMatrix) * kNumInstance);
+	//書き込むためのアドレスを取得
+	TransformationMatrix* instancingData = nullptr;
+	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
+	//単位行列を書き込んでおく
+	for (uint32_t index = 0; index < kNumInstance; ++index) {
+		instancingData[index].WVP = MakeIdentity4x4();
+		instancingData[index].World = MakeIdentity4x4();
+	}
+	*/
 
 	//2枚目のTextureを読んで転送する
 	DirectX::ScratchImage mipImages2 = LoadTexture(modelData.material.textureFilePath);
@@ -1450,6 +1478,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scissorRect.top = 0;
 	scissorRect.bottom = kClientHeight;
 
+	Transform transforms[10];
+	for (uint32_t index = 0; index < 10; ++index) {
+		transforms[index].scale = { 1.0f,1.0f,1.0f };
+		transforms[index].rotate = { 0.0f,0.0f,0.0f };
+		transforms[index].translate = { 0.0f,0.0f,0.0f };
+	}
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
@@ -1601,7 +1635,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			hr = commandList->Close();
 			assert(SUCCEEDED(hr));
 
-			// GPUにコマンドリストの実行を行わせる
+			// GPUにコマンドリストの実行を行わせるdes
 			ID3D12CommandList* commandLists[] = { commandList.Get()};
 			commandQueue->ExecuteCommandLists(1, commandLists);
 			// GPUとosに画面王交換を行うよう通知する
