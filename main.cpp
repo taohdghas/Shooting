@@ -1354,30 +1354,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//UVTransform行列を単位行列で初期化
 	materialDataSprite->uvTransform = MakeIdentity4x4();
 
-	/*
-	//Sphere用のマテリアル用のリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource>materialResource2 = CreateBufferResource(device, sizeof(Material));
-	//マテリアル用のデータを書き込む
-	Material* materialData2 = nullptr;
-	//書き込むためのアドレスと取得
-	materialResource2->Map(0, nullptr, reinterpret_cast<void**>(&materialData2));
-	//色の設定
-	materialData2->color = Vector4{ 1.0f,1.0f,1.0f,1.0f };
-	//Lightingを有効にする
-	materialData2->enableLighting = true;
-	//UVTransform行列を単位行列で初期化
-	materialData2->uvTransform = MakeIdentity4x4();
-
-	//Sphere用のWVP用のリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource>wvpResource2 = CreateBufferResource(device,
-		sizeof(TransformationMatrix));
-	TransformationMatrix* wvpData2 = nullptr;
-	//書き込むためのアドレスを取得
-	wvpResource2->Map(0, nullptr, reinterpret_cast<void**>(&wvpData2));
-	//単位行列
-	wvpData2->WVP = MakeIdentity4x4();
-	wvpData2->World = MakeIdentity4x4();
-	*/
 
 	//平行光源用のリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource>DirectionalLightResource = CreateBufferResource(device, sizeof(DirectionalLight));
@@ -1574,8 +1550,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// RotSignatureを設定。PSOに設定しているけどベット設定が必要
 			commandList->SetGraphicsRootSignature(rootSignature.Get());
 			commandList->SetPipelineState(graphicsPipelineState.Get());
-			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 			//スフィア
+			
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 			// 形状を設定
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			// マテリアルCBufferの場所を設定
