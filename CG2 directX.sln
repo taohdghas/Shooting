@@ -8,6 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{D5539A35-FBEA-4569-ABCE-48A851AF10ED}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		resources\shaders\Object3d.hlsli = resources\shaders\Object3d.hlsli
+		resources\shaders\Object3d.PS.hlsl = resources\shaders\Object3d.PS.hlsl
+		resources\shaders\Object3d.VS.hlsl = resources\shaders\Object3d.VS.hlsl
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTex", "externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj", "{371B9FA9-4C90-4AC6-A123-ACED756D6C77}"
