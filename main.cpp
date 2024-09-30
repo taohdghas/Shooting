@@ -1,3 +1,4 @@
+#define DIRECTINPUT_VERSION 0x0800
 #include <Windows.h>
 #include <cstdint>
 #include <string>
@@ -12,6 +13,8 @@
 #include <fstream>
 #include <sstream>
 #include <wrl.h>
+#include "Input.h"
+#include <dinput.h>
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -24,6 +27,8 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"dxguid.lib")
 
 struct Vector2 {
 	float x, y;
@@ -969,6 +974,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion
 
+#pragma region SwapChainからResourceを引っ張る
 	// SwapChainからRscourceを引っ張ってくる
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources[2] = { nullptr };
 	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0]));
@@ -976,6 +982,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(hr));
 	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
 	assert(SUCCEEDED(hr));
+#pragma endregion
+	
+	//ポインタ
+	Input* input = nullptr;
+	//入力の初期化
+	input = new Input();
+	input->Initialize(wc.hInstance,hwnd);
 
 	// RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
@@ -1458,6 +1471,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Log("Hello,DirectX!\n");
 
 	MSG msg{};
+#pragma region メインループ
 	// ウィンドウのxボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
 
@@ -1613,11 +1627,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		}
 	}
+#pragma endregion
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
 	CloseHandle(fenceEvent);
+
+	//入力解放
+	delete input;
 	/*
 	fence->Release();
 	rtvDescriptorHeap->Release();
