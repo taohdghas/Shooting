@@ -1,6 +1,5 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <Windows.h>
-#include <cstdint>
 #include <string>
 #include <format>
 #include <d3d12.h>
@@ -15,6 +14,7 @@
 #include <wrl.h>
 #include "Input.h"
 #include <dinput.h>
+#include "WindowsAPI.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -783,6 +783,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	CoInitializeEx(0, COINIT_MULTITHREADED);
 
 #pragma region windowの生成
+	//ポインタ
+	WindowsAPI* windowsAPI = nullptr;
+	//WindowsAPIの初期化
+	windowsAPI = new WindowsAPI();
+	windowsAPI->Initialize();
+	/*
 	WNDCLASS wc{};
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
@@ -822,7 +828,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ウィンドウを表示する
 	ShowWindow(hwnd, SW_SHOW);
-
+	*/
 #pragma endregion
 
 #ifdef _DEBUG
@@ -1643,6 +1649,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//入力解放
 	delete input;
+	//WindowsAPI関数
+	delete windowsAPI;
 	/*
 	fence->Release();
 	rtvDescriptorHeap->Release();
