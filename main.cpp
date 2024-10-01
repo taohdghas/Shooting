@@ -770,6 +770,23 @@ struct D3DResourceLeakChecker {
 	}
 };
 
+enum BlendMode {
+	//ブレンドなし
+	kBlendModeNone,
+	//通常
+	kBlendModeNormal,
+	//加算
+	kBlendModeAdd,
+	//減算
+	kBlendModeSubtract,
+	//乗算
+	kBlendModeMultily,
+	//スクリーン
+	kBlendModeScreen,
+	//利用してはいけない
+	kCountOfBlendMode,
+};
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -1097,6 +1114,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+
+
 	// すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
 		D3D12_COLOR_WRITE_ENABLE_ALL;
