@@ -995,7 +995,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Input* input = nullptr;
 	//入力の初期化
 	input = new Input();
-	input->Initialize(windowsAPI->GetHInstance(), windowsAPI->GetHwnd());
+	input->Initialize(windowsAPI);
 
 	// RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
@@ -1440,8 +1440,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ビューポート
 	D3D12_VIEWPORT viewport{};
 	// クライアント領域のサイズと一緒にして画面全体に表示
-	viewport.Width = kClientWidth;
-	viewport.Height = kClientHeight;
+	viewport.Width = windowsAPI->kClientWitdh;
+	viewport.Height = windowsAPI->kClientHeight;
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.MinDepth = 0.0f;
@@ -1451,9 +1451,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3D12_RECT scissorRect{};
 	// 基本的にビューポートと同じ矩形が構成されるようになる
 	scissorRect.left = 0;
-	scissorRect.right = kClientWidth;
+	scissorRect.right = windowsAPI->kClientWitdh;
 	scissorRect.top = 0;
-	scissorRect.bottom = kClientHeight;
+	scissorRect.bottom = windowsAPI->kClientHeight;
 
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
@@ -1516,7 +1516,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 viewMatrix = Inverse(cameraMatrix);
-			Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
+			Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(windowsAPI->kClientWitdh) / float(windowsAPI->kClientHeight), 0.1f, 100.0f);
 			Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 			wvpData->WVP = worldViewProjectionMatrix;
 			wvpData->World = worldMatrix;
@@ -1524,7 +1524,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// Sprite用のWorldViewProjecionMatrixを作る
 			Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 			Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
-			Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(kClientWidth), float(kClientHeight), 0.0f, 100.0f);
+			Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(windowsAPI->kClientWitdh), float(windowsAPI->kClientHeight), 0.0f, 100.0f);
 			Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
 			transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
 			transformationMatrixDataSprite->World = worldMatrix;
@@ -1650,8 +1650,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//入力解放
 	delete input;
-	//WindowsAPI関数
-	delete windowsAPI;
 	/*
 	fence->Release();
 	rtvDescriptorHeap->Release();
@@ -1692,7 +1690,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	debugController->Release();
 #endif
 	*/
-	CloseWindow(windowsAPI->GetHwnd());
 	/*
 	Microsoft::WRL::ComPtr<IDXGIDebug1> debug;
 	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
@@ -1702,7 +1699,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		debug->Release();
 	}
 	*/
-	CoUninitialize();
+	//WindowsAPIの終了処理
+	windowsAPI->Finalize();
+	//WindowsAPI関数
+	delete windowsAPI;
 	return 0;
 }
 

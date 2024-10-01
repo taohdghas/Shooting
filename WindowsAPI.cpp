@@ -1,5 +1,4 @@
 #include "WindowsAPI.h"
-#include <cstdint>
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui.h"
@@ -65,4 +64,9 @@ void WindowsAPI::Initialize() {
 
 void WindowsAPI::Update() {
 
+}
+
+void WindowsAPI::Finalize() {
+	CloseWindow(hwnd);
+	CoUninitialize();
 }

@@ -3,13 +3,14 @@
 #include <dinput.h>
 #include "Windows.h"
 #include <wrl.h>
+#include "WindowsAPI.h"
 class Input
 {
 public:
 	//namespace省略
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 	//初期化
-	void Initialize(HINSTANCE hInstance,HWND hwnd);
+	void Initialize(WindowsAPI*windowsAPI);
 	//更新
 	void Update();
 /// <summary>
@@ -33,5 +34,7 @@ private:
 	BYTE keyPre[256] = {};
 	//DirectInputのインスタンス
 	ComPtr<IDirectInput8>directInput;
+	//WindowsAPI
+	WindowsAPI* windowsAPI_ = nullptr;
 };
 
