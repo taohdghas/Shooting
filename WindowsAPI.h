@@ -10,7 +10,17 @@ public:
 	void Initialize();
 	//更新
 	void Update();
-private:
 
+	//getter
+	HWND GetHwnd()const { return hwnd;}
+	HINSTANCE GetHInstance()const { return wc.hInstance; }
+	//クライアント領域のサイズ
+	static const int32_t kClientWitdh = 1280;
+	static const int32_t kClientHeight = 720;
+private:
+	//ウインドウハンドル
+	HWND hwnd = nullptr;
+	//ウインドウクラスの設定
+	WNDCLASS wc{};
 };
 
