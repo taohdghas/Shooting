@@ -1,7 +1,7 @@
 #pragma once
 #define DIRECTINPUT_VERSION 0x0800
-#include <dinput.h>
 #include "Windows.h"
+#include <dinput.h>
 #include <wrl.h>
 #include "WindowsAPI.h"
 class Input
