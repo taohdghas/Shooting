@@ -12,6 +12,10 @@ class DirectXBase
 public:
 	//初期化
 	void Initialize(WindowsAPI* windowsAPI);
+	//描画前処理
+	void PreDraw();
+	//描画後処理
+	void PostDraw();
 	//デスクリプタヒープを生成
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisivle);
@@ -94,5 +98,9 @@ private:
 		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 	//スワップチェインリソース
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
+	//
+	HANDLE fenceEvent;
+	//フェンス値
+	UINT64 fenceValue = 0;
 };
 
