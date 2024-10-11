@@ -23,6 +23,7 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
 	//SRVの指定番号のGPUデスクリプタハンドル取得
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
+	//Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
 private:
 	//デバイスの初期化
 	void DeviceInitialize();
@@ -79,8 +80,8 @@ private:
 	//フェンス
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
 	//DXCユーティリティ
-	Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils;
-	//DXCコンパイラ
+	Microsoft::WRL::ComPtr<IDxcUtils>dxcUtils;
+	//DXCコンパイラ 
 	Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler;
 	//デフォルトインクルードハンドラ
 	Microsoft::WRL::ComPtr<IDxcIncludeHandler>includeHandler;
@@ -102,5 +103,14 @@ private:
 	HANDLE fenceEvent;
 	//フェンス値
 	UINT64 fenceValue = 0;
+	//スワップチェーンを生成
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	// RTVの設定
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+	//RTVハンドルの要素数を2個に変更する
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	// TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+	HRESULT hr;
 };
 
