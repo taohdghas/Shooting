@@ -7,6 +7,7 @@
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
 #include "externals/DirectXTex/d3dx12.h"
+#include <thread>
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -18,6 +19,8 @@ void DirectXBase::Initialize(WindowsAPI* windowsAPI) {
 	assert(windowsAPI);
 	//メンバ変数に記録
 	this->windowsAPI = windowsAPI;
+	//FPS固定初期化
+	InitializeFixFPS();
 	//デバイスの生成
 	DeviceInitialize();
 	//コマンド関連の初期化
@@ -292,6 +295,33 @@ void DirectXBase::ImguiInitialize() {
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 }
+//FPS初期化
+void DirectXBase::InitializeFixFPS() {
+	//現在時間を記録
+	reference_ = std::chrono::steady_clock::now();
+}
+//FPS更新
+void DirectXBase::UpdateFixFPS() {
+	//1/60秒ちょうどの時間
+	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
+	//1/60秒よりわずかに短い時間
+	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
+	//現在時間の取得
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	//前回記録からの経過時間を取得
+	std::chrono::microseconds elapsed =
+		std::chrono::duration_cast<std::chrono::microseconds>(now - reference_);
+	//1/60秒よりわずかに短い時間経っていない
+	if (elapsed < kMinCheckTime) {
+		//1/60秒経過するまで微小なスリープを繰り返す
+		while (std::chrono::steady_clock::now() - reference_ < kMinTime) {
+			//1マイクロ秒スリープ
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
+		}
+	}
+	//現在の時間を記録
+	reference_ = std::chrono::steady_clock::now();
+}
 //描画前処理
 void DirectXBase::PreDraw() {
 	// 書き込むバックバッファのインデックスの取得
@@ -358,7 +388,8 @@ void DirectXBase::PostDraw() {
 		// イベントを待つ
 		WaitForSingleObject(fenceEvent, INFINITE);
 	}
-
+	//FPS固定
+	UpdateFixFPS();
 	// 次のフレーム用のコマンドリストを準備
 	hr = commandAllocator->Reset();
 	assert(SUCCEEDED(hr));

@@ -7,6 +7,7 @@
 #include "WindowsAPI.h"
 #include <dxcapi.h>
 #include <string>
+#include <chrono>
 #include "externals/DirectXTex/DirectXTex.h"
 class DirectXBase
 {
@@ -70,6 +71,10 @@ private:
 	void DXCcompilerInitialize();
 	//Imguiの初期化
 	void ImguiInitialize();
+	//FPS固定初期化
+	void InitializeFixFPS();
+	//FPS固定更新
+	void UpdateFixFPS();
 	//DirectX12デバイス
 	Microsoft::WRL::ComPtr<ID3D12Device>device;
 	//DXGIファクトリ
@@ -129,5 +134,7 @@ private:
 	// TransitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};
 	HRESULT hr;
+	//記録時間(FPS固定用)
+	std::chrono::steady_clock::time_point reference_;
 };
 

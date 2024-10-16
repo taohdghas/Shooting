@@ -1,3 +1,4 @@
+#pragma comment (lib,"winmm.lib")
 #include "WindowsAPI.h"
 
 #include "externals/imgui/imgui.h"
@@ -24,7 +25,8 @@ LRESULT CALLBACK WindowsAPI::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 
 void WindowsAPI::Initialize() {
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
-
+	//システムタイマーの分解能を上げる
+	timeBeginPeriod(1);
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
 	// ウィンドウクラス名(なんでも良い)
