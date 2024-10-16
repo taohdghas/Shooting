@@ -24,6 +24,8 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteBase.cpp" />
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="WindowsAPI.cpp" />
   </ItemGroup>
@@ -41,6 +43,8 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteBase.h" />
     <ClInclude Include="StringUtility.h" />
     <ClInclude Include="WindowsAPI.h" />
   </ItemGroup>
