@@ -535,7 +535,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SpriteBase* spriteBase = nullptr;
 	//SpriteBaseの初期化
 	spriteBase = new SpriteBase;
-	spriteBase->Initialize();
+	spriteBase->Initialize(directxBase);
 	//Spriteポインタ
 	Sprite* sprite = nullptr;
 #pragma endregion
@@ -994,13 +994,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//描画前処理
 		directxBase->PreDraw();
 		
+		spriteBase->DrawBaseSet();
+
 		// RotSignatureを設定。PSOに設定しているけどベット設定が必要
-		directxBase->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
-	     directxBase->Getcommandlist()->SetPipelineState(graphicsPipelineState.Get());
+		//directxBase->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
+	     //directxBase->Getcommandlist()->SetPipelineState(graphicsPipelineState.Get());
 		directxBase->Getcommandlist()->IASetVertexBuffers(0, 1, &vertexBufferView);
 		
 		// 形状を設定
-		directxBase->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		//directxBase->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		// マテリアルCBufferの場所を設定
 		directxBase->Getcommandlist()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 		//WVP用のCBufferの場所を設定
