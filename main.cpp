@@ -14,6 +14,16 @@
 #include "D3DResourceLeakChecker.h"
 #include "SpriteBase.h"
 #include "Sprite.h"
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include "Matrix4x4.h"
+#include "Transform.h"
+#include "TransformationMatrix.h"
+#include "DirectionalLight.h"
+#include "MaterialData.h"
+#include "ModelData.h"
+#include "Math.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -21,67 +31,13 @@
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
 #include "Logger.h"
+using namespace Math;
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 #pragma comment(lib,"dinput8.lib")
-
-struct Vector2 {
-	float x, y;
-};
-struct Vector3 {
-	float x, y, z;
-};
-struct Vector4 {
-	float x;
-	float y;
-	float z;
-	float w;
-};
-struct Transform {
-	Vector3 scale;
-	Vector3 rotate;
-	Vector3 translate;
-};
-struct Matrix3x3 {
-	float m[3][3];
-};
-struct Matrix4x4 {
-	float m[4][4];
-};
-struct VertexData {
-	Vector4 position;
-	Vector2 texcoord;
-	Vector3 normal;
-};
-struct Material {
-	Vector4 color;
-	int32_t enableLighting;
-	float padding[3];
-	Matrix4x4 uvTransform;
-};
-
-struct TransformationMatrix {
-	Matrix4x4 WVP;
-	Matrix4x4 World;
-};
-
-struct DirectionalLight {
-	Vector4 color;//ライトの色
-	Vector3 direction;//ライトの向き
-	float intensity;//輝度
-};
-
-struct MaterialData {
-	std::string textureFilePath;
-};
-
-struct ModelData {
-	std::vector<VertexData>vertices;
-	MaterialData material;
-};
-
+/*
 //単位行列
 Matrix4x4 MakeIdentity4x4() {
 	Matrix4x4 result;
@@ -385,6 +341,7 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 	orthoMatrix.m[3][3] = 1;
 	return orthoMatrix;
 }
+*/
 /*
 
 class ResourceObject {
@@ -468,7 +425,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 			normals.push_back(normal);
 		}
 		else if (identifier == "f") {
-			VertexData triangle[3];
+			Sprite::VertexData triangle[3];
 			//面は三角形限定。その他は未対応
 			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
 				std::string vertexDefinition;
@@ -485,7 +442,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
-				VertexData vertex = { position,texcoord,normal };
+				Sprite::VertexData vertex = { position,texcoord,normal };
 				modelData.vertices.push_back(vertex);
 
 				triangle[faceVertex] = { position,texcoord,normal };
@@ -775,7 +732,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	*/
 	// Sprite用のリソースを作る
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite =directxBase->CreateBufferResource( sizeof(VertexData) * 4);
+	//Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite =directxBase->CreateBufferResource( sizeof(VertexData) * 4);
 
 	// 頂点バッファビューを作成する
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
@@ -812,7 +769,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexDataSprite[5].normal = { 0.0f,0.0f,-1.0f };
 
 	//index
-	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = directxBase->CreateBufferResource( sizeof(uint32_t) * 6);
+	//Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = directxBase->CreateBufferResource( sizeof(uint32_t) * 6);
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
 	//リソースの先頭のアドレスから使う
@@ -949,7 +906,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//Sprite初期化
 		sprite = new Sprite();
-		sprite->Initialize();
+		sprite->Initialize(spriteBase);
 
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
