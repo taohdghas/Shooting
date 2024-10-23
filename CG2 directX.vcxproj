@@ -51,7 +51,6 @@
     <ClInclude Include="SpriteBase.h" />
     <ClInclude Include="StringUtility.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="TransformationMatrix.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
