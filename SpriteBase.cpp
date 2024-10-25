@@ -63,7 +63,6 @@ void SpriteBase::RootSignatureGenerate() {
 		assert(false);
 	}
 	// バイナリを元に生成
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 	hr = directxBase_->Getdevice()->CreateRootSignature(0,
 		signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
 		IID_PPV_ARGS(&rootSignature));
@@ -71,7 +70,7 @@ void SpriteBase::RootSignatureGenerate() {
 }
 //グラフィックスパイプラインの生成
 void SpriteBase::graphicsPipelineGenerate() {
-
+	//ルートシグネチャの作成
 	RootSignatureGenerate();
 
 	// InputLayout
