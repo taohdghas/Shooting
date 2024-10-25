@@ -1027,15 +1027,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
+	descriptorRangeForInstancing[0].BaseShaderRegister = 0;
+	descriptorRangeForInstancing[0].NumDescriptors = 1;
+	descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
 	// RootParameter作成
 	D3D12_ROOT_PARAMETER rootParameter[4] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 0;
 
-	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	//rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	//rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	//rootParameter[1].Descriptor.ShaderRegister = 0;
+
+	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameter[1].Descriptor.ShaderRegister = 0;
+	rootParameter[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
+	rootParameter[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
 
 	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -1048,18 +1059,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	descriptitonRootSignature.pParameters = rootParameter;
 	descriptitonRootSignature.NumParameters = _countof(rootParameter);
-
-	
-	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
-	descriptorRangeForInstancing[0].BaseShaderRegister = 0;
-	descriptorRangeForInstancing[0].NumDescriptors = 1;
-	descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameter[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
-	rootParameter[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
 	
 
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
@@ -1129,11 +1128,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(L"Particle.VS.hlsl",
 		L"vs_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get());
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Object3D.ps.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Particle.PS.hlsl",
 		L"ps_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get());
 	assert(pixelShaderBlob != nullptr);
 
@@ -1491,20 +1490,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scissorRect.top = 0;
 	scissorRect.bottom = kClientHeight;
 
-	Transform transforms[10];
-	for (uint32_t index = 0; index < 10; ++index) {
-		transforms[index].scale = { 1.0f,1.0f,1.0f };
-		transforms[index].rotate = { 0.0f,0.0f,0.0f };
-		transforms[index].translate = { 0.0f,0.0f,0.0f };
-	}
-	/*
 	Transform transforms[kNumInstance];
 	for (uint32_t index = 0; index < kNumInstance; ++index) {
 		transforms[index].scale = { 1.0f,1.0f,1.0f };
 		transforms[index].rotate = { 0.0f,0.0f,0.0f };
 		transforms[index].translate = { index * 0.1f,index * 0.1f,index * 0.1f };
 	}
-	*/
+	
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
@@ -1621,31 +1613,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootSignature(rootSignature.Get());
 			commandList->SetPipelineState(graphicsPipelineState.Get());
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-			//スフィア
+		
 			// 形状を設定
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			// マテリアルCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 			//WVP用のCBufferの場所を設定
-			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+			//commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+			//instancing用のDataを読むためにStructuredBufferのSRVを設定する
+			commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
 			// SRVのDescriptorTableの先頭を設定
 			commandList->SetGraphicsRootDescriptorTable(2,useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 			//Lighting
 			commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
 			// 描画
-			commandList->DrawInstanced(UINT(modelData.vertices.size()), 10, 0, 0);
+			commandList->DrawInstanced(UINT(modelData.vertices.size()), kNumInstance, 0, 0);
 
 			// Spriteの描画
-			commandList->IASetIndexBuffer(&indexBufferViewSprite);
-			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
+			//commandList->IASetIndexBuffer(&indexBufferViewSprite);
+			//commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
 			//マテリアルBufferの場所を設定
-			commandList->SetGraphicsRootConstantBufferView(0, SpritematerialResource->GetGPUVirtualAddress());
+			//commandList->SetGraphicsRootConstantBufferView(0, SpritematerialResource->GetGPUVirtualAddress());
 			// TransformationMatrixCBufferの場所を設定
-			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+			//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 			//Spriteを常にuvCheckerに
-			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+			//commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 			//Lighting
-			commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
+			//commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
 			// 描画
 			//commandList->DrawInstanced(6, 1, 0, 0);
 			//commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
@@ -1697,46 +1691,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui::DestroyContext();
 
 	CloseHandle(fenceEvent);
-	/*
-	fence->Release();
-	rtvDescriptorHeap->Release();
-	srvDescriptorHeap->Release();
-	swapChainResources[0]->Release();
-	swapChainResources[1]->Release();
-	swapChain->Release();
-	commandList->Release();
-	commandAllocator->Release();
-	commandQueue->Release();
-	device->Release();
-	useAdapter->Release();
-	dxgiFactory->Release();
-	vertexResource->Release();
-	graphicsPipelineState->Release();
-	signatureBlob->Release();
-	if (errorBlob) {
-		errorBlob->Release();
-	}
-	rootSignature->Release();
-	pixelShaderBlob->Release();
-	vertexShaderBlob->Release();
-	materialResource->Release();
-	SpritematerialResource->Release();
-	wvpResource->Release();
-	textureResource->Release();
-	textureResource2->Release();
-	dsvDescriptorHeap->Release();
-	depthStencilResource->Release();
-	vertexResourceSprite->Release();
-	indexResourceSprite->Release();
-	transformationMatrixResourceSprite->Release();
-	intermediateResource->Release();
-	intermediateResource2->Release();
-	DirectionalLightResource->Release();
-	
-#ifdef _DEBUG
-	debugController->Release();
-#endif
-	*/
+
 	CloseWindow(hwnd);
 	/*
 	Microsoft::WRL::ComPtr<IDXGIDebug1> debug;
