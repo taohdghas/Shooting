@@ -1552,6 +1552,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 viewMatrix = Inverse(cameraMatrix);
 			Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
+			Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 			Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 			wvpData->WVP = worldViewProjectionMatrix;
 			wvpData->World = worldMatrix;
@@ -1573,7 +1574,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			for (uint32_t index = 0; index < kNumInstance; ++index) {
 				Matrix4x4 worldMatrix =
 					MakeAffineMatrix(transforms[index].scale, transforms[index].rotate, transforms[index].translate);
-				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, worldViewProjectionMatrix);
+				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 				instancingData[index].WVP = worldViewProjectionMatrix;
 				instancingData[index].World = worldMatrix;
 			}
