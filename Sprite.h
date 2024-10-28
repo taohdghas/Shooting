@@ -34,6 +34,25 @@ public:
 	void Update();
 	//描画
 	void Draw();
+	///getter///
+	//位置
+	const Vector2& GetPosition()const { return position; }
+	//回転
+	float GetRotation()const { return rotation; }
+	//色
+	const Vector4& GetColor()const { return materialData->color; }
+	//サイズ
+	const Vector2& GetSize()const { return size; }
+
+	///setter///
+	//位置
+	void SetPosition(const Vector2& position) { this->position = position; }
+	//回転
+	void SetRotation(float rotation) { this->rotation = rotation; }
+	//色
+	void SetColor(const Vector4& color) { materialData->color = color; }
+	//サイズ
+	void SetSize(const Vector2& size) { this->size = size; }
 private:
 	SpriteBase* spriteBase = nullptr;
 	//頂点データ作成
@@ -59,5 +78,11 @@ private:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
+	//Sprite個々の座標
+	Vector2 position = { 0.0f,0.0f };
+	//Sprite個々の回転角
+	float rotation = 0.0f;
+	//サイズ
+	Vector2 size = { 640.0f,360.0f };
 };
 

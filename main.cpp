@@ -480,11 +480,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//SpriteBaseの初期化
 	spriteBase = new SpriteBase;
 	spriteBase->Initialize(directxBase);
-	//Spriteポインタ
-	Sprite* sprite = nullptr;
 	//Sprite初期化
-	sprite = new Sprite();
-	sprite->Initialize(spriteBase);
+	std::vector<Sprite*>sprites;
+	for (uint32_t i = 0; i < 5; ++i) {
+		Sprite* sprite = new Sprite();
+		sprite->Initialize(spriteBase);
+		sprite->SetPosition({ 100.0f * i,0.0f });
+		sprite->SetSize({ 50.0f,50.0f });
+		sprites.push_back(sprite);
+	}
 #pragma endregion
 	/*
 	// RootSignature作成
@@ -899,6 +903,39 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//入力の更新
 		input->Update();
+
+		//Spriteの更新
+		for (size_t i = 0; i < sprites.size(); ++i) {
+			Sprite* sprite = sprites[i];
+
+			//回転テスト
+			float rotaion = sprite->GetRotation();
+			rotaion += 0.01f;
+			sprite->SetRotation(rotaion);
+
+			//Spriteの更新
+			sprite->Update();
+		}
+		/*
+		//回転テスト
+		float rotaion = sprite->GetRotation();
+		rotaion += 0.01f;
+		sprite->SetRotation(rotaion);
+
+		//色変化テスト
+		Vector4 color = sprite->GetColor();
+		color.x += 0.01f;
+		if (color.x > 1.0f) {
+			color.x -= 1.0f;
+		}
+		sprite->SetColor(color);
+		*/
+		/*
+		Vector2 size = sprite->GetSize();
+		size.x += 0.1f;
+		size.y += 0.1f;
+		sprite->SetSize(size);
+		*/
 		/*
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
@@ -941,18 +978,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		materialDataSprite->uvTransform = uvTransformMatrix;
 		*/
 
-		//sprite更新処理
-		sprite->Update();
-
 		//描画前処理
 		directxBase->PreDraw();
 
 		//共通描画設定
 		spriteBase->DrawBaseSet();
 
-		//sprite描画処理
-		sprite->Draw();
-
+		for (Sprite* sprite : sprites) {
+			//sprite描画処理
+			sprite->Draw();
+		}
 		/*
 		// RotSignatureを設定。PSOに設定しているけどベット設定が必要
 		directxBase->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
@@ -986,7 +1021,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 描画
 		//directxBase->Getcommandlist()->DrawInstanced(6, 1, 0, 0);
 		directxBase->Getcommandlist()->DrawIndexedInstanced(6, 1, 0, 0, 0);
-		
+
 		// 実際のcommandListのImGuiの描画コマンドを積む
 		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
 		*/
@@ -1006,7 +1041,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//入力解放
 	delete input;
 	//Sprite
-	delete sprite;
+	for (Sprite* sprite : sprites) {
+		delete sprite;
+	}
 	//SpriteBase
 	delete spriteBase;
 	/*
