@@ -57,6 +57,7 @@ void Sprite::Draw() {
 	spriteBase->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 	//DrawCall(描画)
 	spriteBase->GetDxBase()->Getcommandlist()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	//	spriteBase->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(2, spriteBase->GetDxBase()->GetSRVGPUDescriptorHandle(1));
 }
 //頂点データ作成
 void Sprite::VertexDataCreate() {
