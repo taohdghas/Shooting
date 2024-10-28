@@ -1540,6 +1540,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Transform uvTransformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//SRV切り替え
 	bool useMonsterBall = true;
+	//billboardMatrix切り替え
+	bool useBillboard = false;
 
 	// ImGuiの初期化
 	IMGUI_CHECKVERSION();
@@ -1612,6 +1614,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
 		
+			//反対側に回す回転行列
+			Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
+
+			Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, cameraMatrix);
+			billboardMatrix.m[3][0] = 0.0f;
+			billboardMatrix.m[3][1] = 0.0f;
+			billboardMatrix.m[3][2] = 0.0f;
+
 			//Δtを定義
 			const float kDeltaTime = 1.0f / 60.0f;
 			//描画すべきインスタンス数
