@@ -65,15 +65,15 @@ struct Material {
 	Matrix4x4 uvTransform;
 };
 
-struct TransformationMatrix{
-      Matrix4x4 WVP;
-	  Matrix4x4 World;
+struct TransformationMatrix {
+	Matrix4x4 WVP;
+	Matrix4x4 World;
 };
 
-struct DirectionalLight{
-      Vector4 color;//ライトの色
-	  Vector3 direction;//ライトの向き
-	  float intensity;//輝度
+struct DirectionalLight {
+	Vector4 color;//ライトの色
+	Vector3 direction;//ライトの向き
+	float intensity;//輝度
 };
 
 struct MaterialData {
@@ -268,7 +268,7 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
 	Matrix4x4 rotateMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix)); // 回転の順序を修正
 	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
-	Matrix4x4 affineMatrix = Multiply(Multiply(scaleMatrix, rotateMatrix) ,translateMatrix);
+	Matrix4x4 affineMatrix = Multiply(Multiply(scaleMatrix, rotateMatrix), translateMatrix);
 
 	return affineMatrix;
 }
@@ -546,7 +546,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(Microsoft::WRL::Com
 }
 [[nodiscard]]
 Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture,
-	const DirectX::ScratchImage& mipImages,Microsoft::WRL::ComPtr<ID3D12Device>device,Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>commandList)
+	const DirectX::ScratchImage& mipImages, Microsoft::WRL::ComPtr<ID3D12Device>device, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>commandList)
 {
 	std::vector<D3D12_SUBRESOURCE_DATA>subresources;
 	DirectX::PrepareUpload(device.Get(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(),
@@ -630,7 +630,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 	std::vector<Vector3>normals;//法線
 	std::vector<Vector2>texcoords;//テクスチャ座標
 	std::string line;//ファイルから読んだ1行を格納するもの
-	
+
 	//2.ファイルを開く
 	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
 	assert(file.is_open());//開けなかったら止める
@@ -675,12 +675,12 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 					elementIndices[element] = std::stoi(index);
 				}
 				//要素へのIndexから、実際の要素の値を取得して、頂点を構築
-				Vector4 position = positions[elementIndices[0] - 1]; 
+				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
 				VertexData vertex = { position,texcoord,normal };
 				modelData.vertices.push_back(vertex);
-		
+
 				triangle[faceVertex] = { position,texcoord,normal };
 			}
 			//頂点を逆順で登録することで、周り順を逆にする
@@ -1088,14 +1088,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[2].DescriptorTable.pDescriptorRanges = descriptorRange;
 	rootParameter[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-    
+
 	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
 	rootParameter[3].Descriptor.ShaderRegister = 1;//レジスタ番号1を使う
 
 	descriptitonRootSignature.pParameters = rootParameter;
 	descriptitonRootSignature.NumParameters = _countof(rootParameter);
-	
+
 
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_POINT_MIP_LINEAR;
@@ -1152,7 +1152,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	//normal
-    //blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	//blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
@@ -1252,7 +1252,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//頂点データをリソースにコピー
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
 	/*
 	//経度分割1つ分の経度φd
@@ -1414,8 +1414,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SpritematerialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprite));
 	//白
 	materialDataSprite->color = Vector4{ 1.0f,1.0f,1.0f,1.0f };
-    //SpriteはLightingしないのでfalseを設定する
-    materialDataSprite->enableLighting = false;
+	//SpriteはLightingしないのでfalseを設定する
+	materialDataSprite->enableLighting = false;
 	//UVTransform行列を単位行列で初期化
 	materialDataSprite->uvTransform = MakeIdentity4x4();
 
@@ -1428,7 +1428,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//デフォルト値はとりあえず以下のようにしておく
 	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData->intensity = 1.0f; 
+	directionalLightData->intensity = 1.0f;
 
 	// Sprite用のTransformationMatrix用のリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite = CreateBufferResource(device, sizeof(TransformationMatrix));
@@ -1438,7 +1438,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 単位行列を書き込んでおく
 	transformationMatrixDataSprite->WVP = MakeIdentity4x4();
 	transformationMatrixDataSprite->World = MakeIdentity4x4();
-	
+
 	//Instancing用のTransformationMatrix用リソースを作る
 	const uint32_t kNumMaxInstance = 10;//インスタンス数
 	//Instancing用のTransformationMatrixリソースを作る
@@ -1453,7 +1453,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		instancingData[index].World = MakeIdentity4x4();
 		instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-	
+
 
 	//2枚目のTextureを読んで転送する
 	DirectX::ScratchImage mipImages2 = LoadTexture(modelData.material.textureFilePath);
@@ -1533,15 +1533,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
 		particles[index] = MakeNewParticle(randomEngine);
 	}
-	
+
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+	//Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+	Transform cameraTransform{ {1.0f,1.0f,1.0f},
+		{std::numbers::pi_v<float> / 3.0f,std::numbers::pi_v<float>,0.0f},{0.0f,23.0f,10.0f} };
 	Transform uvTransformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//SRV切り替え
 	bool useMonsterBall = true;
 	//billboardMatrix切り替え
-	bool useBillboard = false;
+	bool useBillboard = true;
 
 	// ImGuiの初期化
 	IMGUI_CHECKVERSION();
@@ -1576,6 +1578,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Begin("Set");
 			ImGui::ColorEdit4("*materialData", &materialData->color.x);
 			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+			ImGui::Checkbox("useBillboard", &useBillboard);
 			ImGui::ColorEdit4("*Light", &directionalLightData->color.x);
 			ImGui::SliderFloat3("*LightDirection", &directionalLightData->direction.x, -2.0f, 2.0f);
 			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
@@ -1583,14 +1586,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 			ImGui::DragFloat3("CameraTranslation", &transform.rotate.x, 0.01f);
 			for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
-			ImGui::DragFloat3("Transforms", &particles[index].transform.rotate.x, 0.01f);
-		}
+				ImGui::DragFloat3("Transforms", &particles[index].transform.rotate.x, 0.01f);
+			}
 			ImGui::End();
 			ImGui::Render();
 
 			directionalLightData->direction = Normalize(directionalLightData->direction);
 			// ゲーム処理
-		
+
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -1613,15 +1616,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateZMatrix(uvTransformSprite.rotate.z));
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
-		
+
 			//反対側に回す回転行列
 			Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
-
-			Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, cameraMatrix);
-			billboardMatrix.m[3][0] = 0.0f;
-			billboardMatrix.m[3][1] = 0.0f;
-			billboardMatrix.m[3][2] = 0.0f;
-
+			Matrix4x4 billboardMatrix;
+			//チェック入れたらbillboard使う
+			if (useBillboard) {
+				billboardMatrix = Multiply(backToFrontMatrix, cameraMatrix);
+				billboardMatrix.m[3][0] = 0.0f;
+				billboardMatrix.m[3][1] = 0.0f;
+				billboardMatrix.m[3][2] = 0.0f;
+			}
+		    //入れない場合単位行列
+			else if (!useBillboard) {
+				billboardMatrix = MakeIdentity4x4();
+			}
+			
 			//Δtを定義
 			const float kDeltaTime = 1.0f / 60.0f;
 			//描画すべきインスタンス数
@@ -1633,8 +1643,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				if (particles[index].lifeTime <= particles[index].currentTime) {
 					continue;
 				}
-				Matrix4x4 worldMatrix =
-					MakeAffineMatrix(particles[index].transform.scale, particles[index].transform.rotate, particles[index].transform.translate);
+				Matrix4x4 scaleMatrix = MakeScaleMatrix(particles[index].transform.scale); 
+				Matrix4x4 translateMatrix = MakeTranslateMatrix(particles[index].transform.translate);
+				Matrix4x4 worldMatrix = Multiply(scaleMatrix, Multiply(billboardMatrix, translateMatrix));
 				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 				instancingData[index].WVP = worldViewProjectionMatrix;
 				instancingData[index].World = worldMatrix;
@@ -1642,14 +1653,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				particles[index].transform.translate.x += particles[index].velocity.x * kDeltaTime;
 				particles[index].transform.translate.y += particles[index].velocity.y * kDeltaTime;
 				particles[index].transform.translate.z += particles[index].velocity.z * kDeltaTime;
-				particles[index].currentTime += kDeltaTime;
+				//particles[index].currentTime += kDeltaTime;
 				instancingData[numInstance].WVP = worldViewProjectionMatrix;
 				instancingData[numInstance].World = worldMatrix;
 				instancingData[numInstance].color = particles[index].color;
 				instancingData[numInstance].color.w = alpha;
 				++numInstance;
 			}
-			
+
 			// 書き込むバックバッファのインデックスの取得
 			UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
@@ -1677,7 +1688,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// 指定した震度で画面全体をクリアする
 			commandList->ClearDepthStencilView(dsvHadle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 			// 描画用のDescriptorHeapの設定
-			ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get()};
+			ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
 			commandList->SetDescriptorHeaps(1, descriptorHeaps);
 			commandList->RSSetViewports(1, &viewport);
 			commandList->RSSetScissorRects(1, &scissorRect);
@@ -1685,7 +1696,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootSignature(rootSignature.Get());
 			commandList->SetPipelineState(graphicsPipelineState.Get());
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-		
+
 			// 形状を設定
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			// マテリアルCBufferの場所を設定
@@ -1695,7 +1706,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//instancing用のDataを読むためにStructuredBufferのSRVを設定する
 			commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
 			// SRVのDescriptorTableの先頭を設定
-			commandList->SetGraphicsRootDescriptorTable(2,useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
+			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 			//Lighting
 			commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
 			// 描画
@@ -1731,7 +1742,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			assert(SUCCEEDED(hr));
 
 			// GPUにコマンドリストの実行を行わせるdes
-			ID3D12CommandList* commandLists[] = { commandList.Get()};
+			ID3D12CommandList* commandLists[] = { commandList.Get() };
 			commandQueue->ExecuteCommandLists(1, commandLists);
 			// GPUとosに画面王交換を行うよう通知する
 			swapChain->Present(1, 0);
