@@ -14,6 +14,9 @@
 
 using namespace Microsoft::WRL;
 
+//最大SRV数
+const uint32_t DirectXBase::kMaxSRVCount = 512;
+
 void DirectXBase::Initialize(WindowsAPI* windowsAPI) {
 	//NULL検出
 	assert(windowsAPI);
@@ -200,7 +203,7 @@ void DirectXBase::DescriptorheapGenerate() {
 	// RTV用のディスクリプタヒープの生成
 	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 	// SRV用のディスクリプタヒープの作成
-	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,kMaxSRVCount, true);
 	// DSV用のディスクリプタヒープの作成
 	dsvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }

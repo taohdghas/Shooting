@@ -42,6 +42,8 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateTextureResource( const DirectX::TexMetadata& metadata);
 	//テクスチャファイル読み込み
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
+	//最大SRV数(最大テクスチャ数)
+	static const uint32_t kMaxSRVCount;
 	//デバイスの取得
 	Microsoft::WRL::ComPtr<ID3D12Device>Getdevice() { return device; }
 	//コマンドリストの取得
