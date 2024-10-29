@@ -1529,11 +1529,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scissorRect.top = 0;
 	scissorRect.bottom = kClientHeight;
 
-	Particle particles[kNumMaxInstance];
+	std::list<Particle>particles;
+	particles.push_back(MakeNewParticle(randomEngine));
+	particles.push_back(MakeNewParticle(randomEngine));
+	particles.push_back(MakeNewParticle(randomEngine));
+
+	/*
+	for (std::list<Particle>::iterator particleIterator = particles.begin();
+		particleIterator != particles.end(); ++particleIterator) {
+		
+	}
+	*/
+	/*
 	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
 		particles[index] = MakeNewParticle(randomEngine);
 	}
-
+	*/
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
@@ -1579,15 +1590,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::ColorEdit4("*materialData", &materialData->color.x);
 			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 			ImGui::Checkbox("useBillboard", &useBillboard);
+			for (std::list<Particle>::iterator particleIterator = particles.begin();
+				particleIterator != particles.end(); ++particleIterator) {
+				if (ImGui::Button("Add Particle")) {
+					particles.push_back(MakeNewParticle(randomEngine));
+					particles.push_back(MakeNewParticle(randomEngine));
+					particles.push_back(MakeNewParticle(randomEngine));
+				}
+			}
 			ImGui::ColorEdit4("*Light", &directionalLightData->color.x);
 			ImGui::SliderFloat3("*LightDirection", &directionalLightData->direction.x, -2.0f, 2.0f);
 			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 			ImGui::DragFloat3("CameraTranslation", &transform.rotate.x, 0.01f);
+			for (std::list<Particle>::iterator particleIterator = particles.begin();
+				particleIterator != particles.end(); ++particleIterator) {
+				ImGui::DragFloat3("Transforms", &(*particleIterator).transform.rotate.x, 0.01f);
+			}
+			/*
 			for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
 				ImGui::DragFloat3("Transforms", &particles[index].transform.rotate.x, 0.01f);
 			}
+			*/
 			ImGui::End();
 			ImGui::Render();
 
@@ -1636,6 +1661,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			const float kDeltaTime = 1.0f / 60.0f;
 			//描画すべきインスタンス数
 			uint32_t numInstance = 0;
+
+			for (std::list<Particle>::iterator particleIterator = particles.begin();
+				particleIterator != particles.end();) {
+
+				float alpha = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
+				if ((*particleIterator).lifeTime <= (*particleIterator).currentTime) {
+					//生存時間が過ぎてparticleはlistから消す
+					particleIterator = particles.erase(particleIterator);
+					continue;
+				}
+				Matrix4x4 scaleMatrix = MakeScaleMatrix((*particleIterator).transform.scale);
+				Matrix4x4 translateMatrix = MakeTranslateMatrix((*particleIterator).transform.translate);
+				Matrix4x4 worldMatrix = Multiply(scaleMatrix, Multiply(billboardMatrix, translateMatrix));
+				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+				++particleIterator;
+			}
 
 			for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
 				float alpha = 1.0f - (particles[index].currentTime / particles[index].lifeTime);
