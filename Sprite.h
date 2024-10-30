@@ -29,11 +29,14 @@ class Sprite
 {
 public:
 	//初期化
-	void Initialize(SpriteBase*spriteBase);
+	void Initialize(SpriteBase*spriteBase,std::string textureFilePath);
     //更新
 	void Update();
 	//描画
 	void Draw();
+	//テクスチャ変更
+	void TextureChange(std::string textureFilePath);
+
 	///getter///
 	//位置
 	const Vector2& GetPosition()const { return position; }
@@ -84,5 +87,7 @@ private:
 	float rotation = 0.0f;
 	//サイズ
 	Vector2 size = { 640.0f,360.0f };
+	//テクスチャ番号
+	uint32_t textureIndex = 0;
 };
 

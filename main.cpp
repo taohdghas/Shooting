@@ -230,17 +230,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//SpriteBaseの初期化
 	spriteBase = new SpriteBase;
 	spriteBase->Initialize(directxBase);
+
+	//テクスチャマネージャの初期化
+	TextureManager::GetInstance()->Initialize();
+
 	//Sprite初期化
 	std::vector<Sprite*>sprites;
 	for (uint32_t i = 0; i < 5; ++i) {
 		Sprite* sprite = new Sprite();
-		sprite->Initialize(spriteBase);
+		sprite->Initialize(spriteBase,"resources/uvChecker.png");
 		sprite->SetPosition({ 100.0f * i,0.0f });
 		sprite->SetSize({ 50.0f,50.0f });
 		sprites.push_back(sprite);
+		sprites[1]->TextureChange("resource/uvChecker.png");
+		sprites[2]->TextureChange("monsterBall.png");
+		sprites[3]->TextureChange("resource/uvChecker.png");
+		sprites[4]->TextureChange("monsterBall.png");
+		sprites[5]->TextureChange("resource/uvChecker.png");
 	}
-	//テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize();
+	
 #pragma endregion
 	/*
 	// RootSignature作成

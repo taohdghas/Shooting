@@ -16,6 +16,10 @@ public:
 	void Initialize();
 	//テクスチャファイルの読み込み
 	void LoadTexture(const std::string& filePath);
+	//SRVインデックスの開始番号
+	uint32_t GetTextureIndexByFilePath(const std::string& filePath);
+	//テクスチャ番号からGPUハンドルを取得
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU(uint32_t textureIndex);
 private:
 	//テクスチャ1枚分のデータ
 	struct TextureData {

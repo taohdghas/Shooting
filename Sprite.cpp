@@ -1,15 +1,18 @@
 #include "Sprite.h"
 #include "SpriteBase.h"
+#include  "TextureManager.h"
 #include "Math.h"
 #include "Transform.h"
 
 //初期化
-void Sprite::Initialize(SpriteBase* spriteBase) {
+void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath) {
 	this->spriteBase = spriteBase;
 	VertexDataCreate();
 	IndexCreate();
 	MaterialCreate();
 	TransformationCreate();
+	//単位行列を書き込む
+	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 }
 //更新
 void Sprite::Update() {
@@ -59,7 +62,7 @@ void Sprite::Draw() {
 	//座標変換行列CBufferの場所を設定
 	spriteBase->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定
-	spriteBase->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+	spriteBase->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(2,TextureManager::GetInstance()->GetSrvHandleGPU(textureIndex));
 	//DrawCall(描画)
 	spriteBase->GetDxBase()->Getcommandlist()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 	//spriteBase->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(2, spriteBase->GetDxBase()->GetSRVGPUDescriptorHandle(1));
@@ -115,4 +118,8 @@ void Sprite::TransformationCreate() {
 	// 単位行列を書き込んでおく
 	transformationMatrixData->WVP = Math::MakeIdentity4x4();
 	transformationMatrixData->World = Math::MakeIdentity4x4();
+}
+//テクスチャ変更
+void Sprite::TextureChange(std::string textureFilePath) {
+	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 }
