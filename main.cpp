@@ -106,10 +106,34 @@ struct Emitter {
 	float frequency;//発生頻度
 	float frequencyTime;//頻度用時刻
 };
+struct AABB {
+	Vector3 min;//最小点
+	Vector3 max;//最大点
+};
+struct AccelerationField {
+	Vector3 acceleration;//加速度
+	AABB area;//範囲
+};
+
+//ParticleがFieldの範囲内かどうか判定
+bool IsCollision(const AABB& aabb, const Vector3& point) {
+	if ((aabb.min.x <= point.x && aabb.max.x >= point.x) &&
+		(aabb.min.y <= point.y && aabb.max.y >= point.y) &&
+		(aabb.min.z <= point.z && aabb.max.z >= point.z)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
 //Add
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
+}
+//Subtract
+Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
+	return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 }
 
 //単位行列
@@ -416,7 +440,7 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 	return orthoMatrix;
 }
 //Particle生成関数
-Particle MakeNewParticle(std::mt19937& randomEngine,const Vector3&translate) {
+Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate) {
 	std::uniform_real_distribution<float>distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
 	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
@@ -424,7 +448,7 @@ Particle MakeNewParticle(std::mt19937& randomEngine,const Vector3&translate) {
 	Particle particle;
 	particle.transform.scale = { 1.0f,1.0f,1.0f };
 	particle.transform.rotate = { 0.0f,3.0f,0.0f };
-	particle.transform.translate = Add(translate , randomTranslate);
+	particle.transform.translate = Add(translate, randomTranslate);
 	particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 	particle.color = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0f };
 	particle.lifeTime = distTime(randomEngine);
@@ -464,7 +488,7 @@ std::string ConvertString(const std::wstring& str) {
 std::list<Particle>Emit(const Emitter& emitter, std::mt19937& randomEngine) {
 	std::list<Particle>particles;
 	for (uint32_t count = 0; count < emitter.count; ++count) {
-		particles.push_back(MakeNewParticle(randomEngine,emitter.transform.translate));
+		particles.push_back(MakeNewParticle(randomEngine, emitter.transform.translate));
 	}
 	return particles;
 }
@@ -1559,9 +1583,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	emitter.transform.rotate = { 0.0f,0.0f,0.0f };
 	emitter.transform.scale = { 1.0f,1.0f,1.0f };
 
+	//Field
+	AccelerationField accelerationField;
+	accelerationField.acceleration = { 15.0f,0.0f,0.0f };
+	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
+	accelerationField.area.max = { 1.0f,1.0f,1.0f };
+
 	//Particle
 	std::list<Particle>particles;
-	particles.push_back(MakeNewParticle(randomEngine,emitter.transform.translate));
+	particles.push_back(MakeNewParticle(randomEngine, emitter.transform.translate));
 
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
@@ -1573,6 +1603,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool useMonsterBall = true;
 	//billboardMatrix切り替え
 	bool useBillboard = true;
+	//加速度適用切り替え
+	bool useField = true;
 
 	// ImGuiの初期化
 	IMGUI_CHECKVERSION();
@@ -1608,6 +1640,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::ColorEdit4("*materialData", &materialData->color.x);
 			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 			ImGui::Checkbox("useBillboard", &useBillboard);
+			ImGui::Checkbox("useField", &useField);
 			/*
 			for (std::list<Particle>::iterator particleIterator = particles.begin();
 				particleIterator != particles.end(); ++particleIterator) {
@@ -1629,7 +1662,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			*/
 			ImGui::DragFloat3("EmitterTranslate", &emitter.transform.translate.x, 0.01f, -100.0f, 100.0f);
-		
+
 			ImGui::End();
 			ImGui::Render();
 
@@ -1704,6 +1737,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					instancingData[numInstance].WVP = worldViewProjectionMatrix;
 					instancingData[numInstance].World = worldMatrix;
 					instancingData[numInstance].color = (*particleIterator).color;
+					//Fieldの範囲内のParticleには加速度を適用する
+					if (useField) {
+						if (IsCollision(accelerationField.area, (*particleIterator).transform.translate)) {
+							(*particleIterator).velocity.x += accelerationField.acceleration.x * kDeltaTime;
+							(*particleIterator).velocity.y += accelerationField.acceleration.y * kDeltaTime;
+							(*particleIterator).velocity.z += accelerationField.acceleration.z * kDeltaTime;
+						}
+					}
+					//速度を適用
 					(*particleIterator).transform.translate.x += (*particleIterator).velocity.x * kDeltaTime;
 					(*particleIterator).transform.translate.y += (*particleIterator).velocity.y * kDeltaTime;
 					(*particleIterator).transform.translate.z += (*particleIterator).velocity.z * kDeltaTime;
