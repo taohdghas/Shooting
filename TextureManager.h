@@ -13,7 +13,7 @@ public:
 	//終了
 	void Finalize();
 	//初期化
-	void Initialize();
+	void Initialize(DirectXBase *directxBase);
 	//テクスチャファイルの読み込み
 	void LoadTexture(const std::string& filePath);
 	//SRVインデックスの開始番号

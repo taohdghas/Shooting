@@ -19,7 +19,8 @@ void TextureManager::Finalize() {
 	instance = nullptr;
 }
 //初期化
-void TextureManager::Initialize() {
+void TextureManager::Initialize(DirectXBase*directxBase) {
+	directxBase_ = directxBase;
 	//SRVの数と同数
 	textureDatas.reserve(DirectXBase::kMaxSRVCount);
 }

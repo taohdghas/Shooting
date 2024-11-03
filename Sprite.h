@@ -35,7 +35,7 @@ public:
 	//描画
 	void Draw();
 	//テクスチャ変更
-	void TextureChange(std::string textureFilePath);
+	void SetTexture(std::string textureFilePath);
 
 	///getter///
 	//位置

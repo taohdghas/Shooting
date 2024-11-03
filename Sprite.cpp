@@ -120,6 +120,6 @@ void Sprite::TransformationCreate() {
 	transformationMatrixData->World = Math::MakeIdentity4x4();
 }
 //テクスチャ変更
-void Sprite::TextureChange(std::string textureFilePath) {
+void Sprite::SetTexture(std::string textureFilePath) {
 	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 }

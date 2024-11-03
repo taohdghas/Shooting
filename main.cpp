@@ -37,48 +37,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 #pragma comment(lib,"dinput8.lib")
-/*
-Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
-	Matrix4x4 perspectiveMatrix;
-	perspectiveMatrix.m[0][0] = 1.0f / (aspectRatio * tan(fovY / 2.0f));
-	perspectiveMatrix.m[0][1] = 0;
-	perspectiveMatrix.m[0][2] = 0;
-	perspectiveMatrix.m[0][3] = 0;
-	perspectiveMatrix.m[1][0] = 0;
-	perspectiveMatrix.m[1][1] = 1.0f / tan(fovY / 2.0f);
-	perspectiveMatrix.m[1][2] = 0;
-	perspectiveMatrix.m[1][3] = 0;
-	perspectiveMatrix.m[2][0] = 0;
-	perspectiveMatrix.m[2][1] = 0;
-	perspectiveMatrix.m[2][2] = farClip / (farClip - nearClip);
-	perspectiveMatrix.m[2][3] = 1;
-	perspectiveMatrix.m[3][0] = 0;
-	perspectiveMatrix.m[3][1] = 0;
-	perspectiveMatrix.m[3][2] = (-nearClip * farClip) / (farClip - nearClip);
-	perspectiveMatrix.m[3][3] = 0;
-	return perspectiveMatrix;
-}
-Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
-	Matrix4x4 orthoMatrix;
-	orthoMatrix.m[0][0] = 2.0f / (right - left);
-	orthoMatrix.m[0][1] = 0;
-	orthoMatrix.m[0][2] = 0;
-	orthoMatrix.m[0][3] = 0;
-	orthoMatrix.m[1][0] = 0;
-	orthoMatrix.m[1][1] = 2.0f / (top - bottom);
-	orthoMatrix.m[1][2] = 0;
-	orthoMatrix.m[1][3] = 0;
-	orthoMatrix.m[2][0] = 0;
-	orthoMatrix.m[2][1] = 0;
-	orthoMatrix.m[2][2] = 1.0f / (farClip - nearClip);
-	orthoMatrix.m[2][3] = 0;
-	orthoMatrix.m[3][0] = (left + right) / (left - right);
-	orthoMatrix.m[3][1] = (top + bottom) / (bottom - top);
-	orthoMatrix.m[3][2] = nearClip / (nearClip - farClip);
-	orthoMatrix.m[3][3] = 1;
-	return orthoMatrix;
-}
-*/
+
 /*
 
 class ResourceObject {
@@ -232,7 +191,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	spriteBase->Initialize(directxBase);
 
 	//テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize();
+	TextureManager::GetInstance()->Initialize(directxBase);
+	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
 	//Sprite初期化
 	std::vector<Sprite*>sprites;
@@ -242,12 +203,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		sprite->SetPosition({ 100.0f * i,0.0f });
 		sprite->SetSize({ 50.0f,50.0f });
 		sprites.push_back(sprite);
-		sprites[1]->TextureChange("resource/uvChecker.png");
-		sprites[2]->TextureChange("monsterBall.png");
-		sprites[3]->TextureChange("resource/uvChecker.png");
-		sprites[4]->TextureChange("monsterBall.png");
-		sprites[5]->TextureChange("resource/uvChecker.png");
 	}
+	sprites[1]->SetTexture("resources/monsterBall.png");
 	
 #pragma endregion
 	/*
@@ -392,7 +349,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(hr));
 	*/
 	//モデル読み込み
-	ModelData modelData = LoadObjFile("resources", "plane.obj");
+	//ModelData modelData = LoadObjFile("resources", "plane.obj");
 	// 頂点リソースを作る
 	//Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource =directxBase->CreateBufferResource( sizeof(VertexData) * modelData.vertices.size());
 
@@ -601,6 +558,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	transformationMatrixDataSprite->WVP = MakeIdentity4x4();
 	transformationMatrixDataSprite->World = MakeIdentity4x4();
 	*/
+	/*
 	//2枚目のTextureを読んで転送する
 	DirectX::ScratchImage mipImages2 = DirectXBase::LoadTexture(modelData.material.textureFilePath);
 	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
@@ -615,12 +573,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = directxBase->GetSRVCPUDescriptorHandle(2);
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = directxBase->GetSRVGPUDescriptorHandle(2);
-
+	*/
 	//textureSrvHandleCPU2.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	//textureSrvHandleGPU2.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	directxBase->Getdevice()->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
-
+//	directxBase->Getdevice()->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
+	/*
 	// Textureを読んで転送する
 	DirectX::ScratchImage mipImages = DirectXBase::LoadTexture("resources/uvChecker.png");
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
@@ -633,16 +591,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-
+	*/
 	// SRV作成するDescriptorHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = directxBase->GetSRVCPUDescriptorHandle(1);
+	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = directxBase->GetSRVCPUDescriptorHandle(1);
 	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = directxBase->GetSRVGPUDescriptorHandle(1);
 
 	// 先頭はImGuiが使っているのでその次を使う
 	//textureSrvHandleCPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	//textureSrvHandleGPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	// SRVの作成
-	directxBase->Getdevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
+	//directxBase->Getdevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 
 	//Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
