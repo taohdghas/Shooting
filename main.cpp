@@ -24,6 +24,8 @@
 #include "ModelData.h"
 #include "Math.h"
 #include "TextureManager.h"
+#include "Object3dBase.h"
+#include "Object3d.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -249,6 +251,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	sprites[1]->SettextureSize({ 1200.0f,600.0f });
 	sprites[1]->SetTexture("resources/monsterBall.png");
 	
+	//3Dオブジェクト共通部
+	Object3dBase* object3dBase = nullptr;
+	//初期化
+	object3dBase = new Object3dBase();
+	object3dBase->Initialize();
+
+	//3Dオブジェクト
+	Object3d* object3d = new Object3d();
+	//初期化
+	object3d->Initialize();
+
 #pragma endregion
 	/*
 	// RootSignature作成
@@ -795,7 +808,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui::DestroyContext();
 
 	//CloseHandle(fenceEvent);
-
+	delete object3d;
+	delete object3dBase;
 	//テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
 	//DirectX解放
