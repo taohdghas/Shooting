@@ -238,19 +238,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//Sprite初期化
 	std::vector<Sprite*>sprites;
-	for (uint32_t i = 0; i < 5; ++i) {
+	for (uint32_t i = 0; i < 2; ++i) {
 		Sprite* sprite = new Sprite();
 		sprite->Initialize(spriteBase, "resources/uvChecker.png");
-		sprite->SetPosition({ 100.0f * i,0.0f });
-		sprite->SetSize({ 50.0f,50.0f });
+		sprite->SetPosition({ 100.0f * i,50.0f });
+		sprite->SetSize({ 100.0f,100.0f });
 		sprites.push_back(sprite);
 	}
 	sprites[0]->SetTexture("resources/uvChecker.png");
+	sprites[1]->SettextureSize({ 1200.0f,600.0f });
 	sprites[1]->SetTexture("resources/monsterBall.png");
-	sprites[2]->SetTexture("resources/uvChecker.png");
-	sprites[3]->SetTexture("resources/monsterBall.png");
-	sprites[4]->SetTexture("resources/uvChecker.png");
-
+	
 #pragma endregion
 	/*
 	// RootSignature作成
