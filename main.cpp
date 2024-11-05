@@ -98,7 +98,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource_;
 };
 */
-
+/*
 MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
 {
 	//1.中で必要となる変数の宣言
@@ -202,7 +202,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 	//4.ModelDataを返す
 	return modelData;
 }
-
+*/
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -260,7 +260,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//3Dオブジェクト
 	Object3d* object3d = new Object3d();
 	//初期化
-	object3d->Initialize();
+	object3d->Initialize(object3dBase);
 
 #pragma endregion
 	/*
@@ -405,7 +405,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(hr));
 	*/
 	//モデル読み込み
-	ModelData modelData = LoadObjFile("resources", "plane.obj");
+	//ModelData modelData = LoadObjFile("resources", "plane.obj");
 	// 頂点リソースを作る
 	//Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource =directxBase->CreateBufferResource( sizeof(VertexData) * modelData.vertices.size());
 
@@ -662,9 +662,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	directxBase->Getdevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 	*/
 	//Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
-	Transform uvTransformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	//Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	//Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+	//Transform uvTransformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//SRV切り替え
 	bool useMonsterBall = true;
 
@@ -693,6 +693,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//Spriteの更新
 			sprite->Update();
 		}
+
+		object3d->Update();
 		/*
 
 		//色変化テスト
@@ -764,6 +766,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//sprite描画処理
 			sprite->Draw();
 		}
+
+		object3d->Draw();
 		/*
 		// RotSignatureを設定。PSOに設定しているけどベット設定が必要
 		directxBase->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
