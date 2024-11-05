@@ -255,7 +255,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Object3dBase* object3dBase = nullptr;
 	//初期化
 	object3dBase = new Object3dBase();
-	object3dBase->Initialize();
+	object3dBase->Initialize(directxBase);
 
 	//3Dオブジェクト
 	Object3d* object3d = new Object3d();
@@ -753,6 +753,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//描画前処理
 		directxBase->PreDraw();
+
+		//3Dオブジェクト描画準備
+		object3dBase->DrawBaseSet();
 
 		//共通描画設定
 		spriteBase->DrawBaseSet();
