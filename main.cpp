@@ -26,6 +26,8 @@
 #include "TextureManager.h"
 #include "Object3dBase.h"
 #include "Object3d.h"
+#include "ModelBase.h"
+#include "Model.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -257,11 +259,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	object3dBase = new Object3dBase();
 	object3dBase->Initialize(directxBase);
 
-	//3Dオブジェクト
-	Object3d* object3d = new Object3d();
+	//3Dモデル共通部
+	ModelBase* modelBase = nullptr;
 	//初期化
-	object3d->Initialize(object3dBase);
+	modelBase = new ModelBase();
+	modelBase->Initialize(directxBase);
 
+	//3Dモデル
+	Model* model = nullptr;
+	//初期化
+	model = new Model();
+	model->Initialize(modelBase);
+
+	//3Dオブジェクト
+	std::vector<Object3d*>object3ds;
+	for (uint32_t i = 0; i < 2; ++i) {
+		Object3d* object3d = new Object3d();
+		object3d->Initialize(object3dBase);
+		object3d->SetModel(model);
+		object3ds.push_back(object3d);
+	}
+	object3ds[0]->SetTranslate({-2.0f,0.0f,0.0f});
+	object3ds[1]->SetTranslate({ 2.0f,0.0f,0.0f });
 #pragma endregion
 	/*
 	// RootSignature作成
@@ -694,7 +713,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			sprite->Update();
 		}
 
-		object3d->Update();
+		//3Dオブジェクトの更新
+		for (size_t i = 0; i < object3ds.size(); ++i) {
+			Object3d* object3d = object3ds[i];
+			object3d->Update();
+		}
 		/*
 
 		//色変化テスト
@@ -762,12 +785,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//共通描画設定
 		spriteBase->DrawBaseSet();
 
+		//スプライト描画
 		for (Sprite* sprite : sprites) {
 			//sprite描画処理
 			sprite->Draw();
 		}
 
-		object3d->Draw();
+		//3Dオブジェクト描画
+		for (Object3d* object3d : object3ds) {
+			object3d->Draw();
+		}
 		/*
 		// RotSignatureを設定。PSOに設定しているけどベット設定が必要
 		directxBase->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
@@ -815,7 +842,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui::DestroyContext();
 
 	//CloseHandle(fenceEvent);
-	delete object3d;
+	delete model;
+	delete modelBase;
+	for (Object3d* object3d : object3ds) {
+		delete object3d;
+	}
 	delete object3dBase;
 	//テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();

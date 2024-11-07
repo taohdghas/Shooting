@@ -9,6 +9,7 @@
 #include <vector>
 #include "externals/DirectXTex/d3dx12.h"
 
+class Model;
 class Object3dBase;
 //3Dオブジェクト
 class Object3d
@@ -53,20 +54,22 @@ public:
 	void Update();
 	//描画
 	void Draw();
+	///setter///
+	void SetModel(Model* model) { this->model_ = model; }
+	void SetScale(const Vector3& scale) { this->transform_.scale = scale; }
+	void SetRotate(const Vector3& rotate) { this->transform_.rotate = rotate; }
+	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
+	///getter///
+	const Vector3& GetScale()const { return transform_.scale; }
+	const Vector3& GetRotate()const { return transform_.rotate; }
+	const Vector3& GetTranslate()const { return transform_.translate; }
 private:
-	//頂点データ作成
-	void VertexDataCreate();
-	//マテリアル作成
-	void MaterialCreate();
 	//座標変換行列データ作成
 	void TransformationCreate();
 	//平行光源データ作成
 	void DirectionalLightCreate();
-	//.mtlファイルの読み取り
-	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-	//.objファイルの読み取り
-	static ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 private:
+	Model* model_ = nullptr;
 	Object3dBase* object3dBase_ = nullptr;
 	//objファイルのデータ
 	ModelData modelData_;
