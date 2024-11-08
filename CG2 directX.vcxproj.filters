@@ -13,6 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="io">
+      <UniqueIdentifier>{f049e120-43f5-48cc-b223-c4925663a1d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2d">
+      <UniqueIdentifier>{6469d1f5-b204-4fda-9663-0c0d6529ac1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3d">
+      <UniqueIdentifier>{065b56e6-3a6e-4f40-9d46-2bf3a431435e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{49ee71c0-2d09-485d-8236-98031c45ae82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{462a197f-6b63-497f-85ad-4194b4311867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="audio">
+      <UniqueIdentifier>{aad744fc-f821-442f-96cd-c335cf75efa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene">
+      <UniqueIdentifier>{aaa2918b-b6f8-4d61-b3ff-9980a23e6f89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="manager">
+      <UniqueIdentifier>{00a87104-df81-4ca0-8107-66c7c08313e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -39,12 +63,6 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="WindowsAPI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -60,29 +78,35 @@
     <ClCompile Include="D3DResourceLeakChecker.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteBase.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Input.cpp">
+      <Filter>io</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Math.cpp">
+      <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Object3dBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Object3d.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelBase.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>manager</Filter>
     </ClCompile>
     <ClCompile Include="ModelManager.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3d.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3dBase.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelBase.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>2d</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteBase.cpp">
+      <Filter>2d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,12 +134,6 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Math.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="WindowsAPI.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -131,27 +149,6 @@
     <ClInclude Include="D3DResourceLeakChecker.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector4.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Matrix4x4.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectionalLight.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -161,23 +158,50 @@
     <ClInclude Include="ModelData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Input.h">
+      <Filter>io</Filter>
     </ClInclude>
-    <ClInclude Include="Object3dBase.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Vector4.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix4x4.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>math</Filter>
     </ClInclude>
     <ClInclude Include="Object3d.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>3d</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>3d</Filter>
     </ClInclude>
     <ClInclude Include="ModelBase.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3dBase.h">
+      <Filter>3d</Filter>
     </ClInclude>
     <ClInclude Include="ModelManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>2d</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteBase.h">
+      <Filter>2d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
