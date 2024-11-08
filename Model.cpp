@@ -6,9 +6,9 @@
 #include <sstream>
 
 //初期化
-void Model::Initialize(ModelBase* modelBase) {
+void Model::Initialize(ModelBase* modelBase, const std::string& directorypath, const std::string& filename) {
 	modelBase_ = modelBase;
-	modelData_ = LoadObjFile("resources", "plane.obj");
+	modelData_ = LoadObjFile(directorypath,filename);
 	VertexDataCreate();
 	MaterialCreate();
 	//.objの参照しているテクスチャファイル読み込み

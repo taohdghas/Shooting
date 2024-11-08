@@ -28,6 +28,7 @@
 #include "Object3d.h"
 #include "ModelBase.h"
 #include "Model.h"
+#include "ModelManager.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -258,28 +259,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//初期化
 	object3dBase = new Object3dBase();
 	object3dBase->Initialize(directxBase);
-
+	/*
 	//3Dモデル共通部
 	ModelBase* modelBase = nullptr;
 	//初期化
 	modelBase = new ModelBase();
 	modelBase->Initialize(directxBase);
-
-	//3Dモデル
-	Model* model = nullptr;
-	//初期化
-	model = new Model();
-	model->Initialize(modelBase);
+	*/
+	//モデルマネージャ-
+	ModelManager::GetInstance()->Initialize(directxBase);
+	ModelManager::GetInstance()->LoadModel("plane.obj");
+	ModelManager::GetInstance()->LoadModel("axis.obj");
 
 	//3Dオブジェクト
 	std::vector<Object3d*>object3ds;
 	for (uint32_t i = 0; i < 2; ++i) {
 		Object3d* object3d = new Object3d();
 		object3d->Initialize(object3dBase);
-		object3d->SetModel(model);
 		object3ds.push_back(object3d);
 	}
+	object3ds[0]->SetModel("plane.obj");
 	object3ds[0]->SetTranslate({-2.0f,0.0f,0.0f});
+	object3ds[1]->SetModel("axis.obj");
 	object3ds[1]->SetTranslate({ 2.0f,0.0f,0.0f });
 #pragma endregion
 	/*
@@ -842,11 +843,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui::DestroyContext();
 
 	//CloseHandle(fenceEvent);
-	delete model;
-	delete modelBase;
+	//delete model;
+	//delete modelBase;
 	for (Object3d* object3d : object3ds) {
 		delete object3d;
 	}
+	//3Dモデルマネージャの終了
+	ModelManager::GetInstance()->Finalize();
 	delete object3dBase;
 	//テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();

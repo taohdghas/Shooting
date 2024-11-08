@@ -26,6 +26,7 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelBase.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="Object3d.cpp" />
     <ClCompile Include="Object3dBase.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelBase.h" />
     <ClInclude Include="ModelData.h" />
+    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="Object3d.h" />
     <ClInclude Include="Object3dBase.h" />
     <ClInclude Include="Sprite.h" />

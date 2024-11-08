@@ -41,7 +41,7 @@ private:
 	};
 public:
 	//初期化
-	void Initialize(ModelBase* modelBase);
+	void Initialize(ModelBase* modelBase,const std::string&directorypath,const std::string&filename);
 	//描画
 	void Draw();
 private:

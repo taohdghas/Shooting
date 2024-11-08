@@ -1,9 +1,10 @@
 #include "Object3d.h"
 #include "Object3dBase.h"
-#include <fstream>
 #include "Math.h"
 #include "TextureManager.h"
 #include "Model.h"
+#include "ModelManager.h"
+#include <fstream>
 
 //初期化
 void Object3d::Initialize(Object3dBase* object3dBase) {
@@ -38,6 +39,11 @@ void Object3d::Draw() {
 	if (model_) {
 		model_->Draw();
 	}
+}
+//setter
+void Object3d::SetModel(const std::string& filePath) {
+	//モデルを検索してセットする
+	model_ = ModelManager::GetInstance()->FindModel(filePath);
 }
 //座標変換行列データ作成
 void Object3d::TransformationCreate() {
