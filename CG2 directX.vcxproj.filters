@@ -78,34 +78,34 @@
     <ClCompile Include="D3DResourceLeakChecker.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
+    <ClCompile Include="engine\io\Input.cpp">
       <Filter>io</Filter>
     </ClCompile>
-    <ClCompile Include="Math.cpp">
+    <ClCompile Include="engine\math\Math.cpp">
       <Filter>math</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
+    <ClCompile Include="engine\manager\TextureManager.cpp">
       <Filter>manager</Filter>
     </ClCompile>
-    <ClCompile Include="ModelManager.cpp">
+    <ClCompile Include="engine\manager\ModelManager.cpp">
       <Filter>manager</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="engine\3d\Model.cpp">
       <Filter>3d</Filter>
     </ClCompile>
-    <ClCompile Include="Object3d.cpp">
+    <ClCompile Include="engine\3d\Object3d.cpp">
       <Filter>3d</Filter>
     </ClCompile>
-    <ClCompile Include="Object3dBase.cpp">
+    <ClCompile Include="engine\3d\Object3dBase.cpp">
       <Filter>3d</Filter>
     </ClCompile>
     <ClCompile Include="ModelBase.cpp">
       <Filter>3d</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
+    <ClCompile Include="engine\2d\Sprite.cpp">
       <Filter>2d</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteBase.cpp">
+    <ClCompile Include="engine\2d\SpriteBase.cpp">
       <Filter>2d</Filter>
     </ClCompile>
   </ItemGroup>
@@ -158,49 +158,49 @@
     <ClInclude Include="ModelData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
+    <ClInclude Include="engine\io\Input.h">
       <Filter>io</Filter>
     </ClInclude>
-    <ClInclude Include="Vector4.h">
+    <ClInclude Include="engine\math\Vector4.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="Vector3.h">
+    <ClInclude Include="engine\math\Vector3.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.h">
+    <ClInclude Include="engine\math\Vector2.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h">
+    <ClInclude Include="engine\math\Transform.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix4x4.h">
+    <ClInclude Include="engine\math\Matrix4x4.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="Math.h">
+    <ClInclude Include="engine\math\Math.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="Object3d.h">
+    <ClInclude Include="engine\3d\Object3d.h">
       <Filter>3d</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
+    <ClInclude Include="engine\3d\Model.h">
       <Filter>3d</Filter>
     </ClInclude>
-    <ClInclude Include="ModelBase.h">
+    <ClInclude Include="engine\3d\ModelBase.h">
       <Filter>3d</Filter>
     </ClInclude>
-    <ClInclude Include="Object3dBase.h">
+    <ClInclude Include="engine\3d\Object3dBase.h">
       <Filter>3d</Filter>
     </ClInclude>
-    <ClInclude Include="ModelManager.h">
+    <ClInclude Include="engine\manager\ModelManager.h">
       <Filter>manager</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
+    <ClInclude Include="engine\manager\TextureManager.h">
       <Filter>manager</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
+    <ClInclude Include="engine\2d\Sprite.h">
       <Filter>2d</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteBase.h">
+    <ClInclude Include="engine\2d\SpriteBase.h">
       <Filter>2d</Filter>
     </ClInclude>
   </ItemGroup>
