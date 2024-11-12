@@ -114,6 +114,9 @@ struct AccelerationField {
 	Vector3 acceleration;//加速度
 	AABB area;//範囲
 };
+struct CameraForGPU {
+	Vector3 worldPosition;
+};
 
 //ParticleがFieldの範囲内かどうか判定
 bool IsCollision(const AABB& aabb, const Vector3& point) {
