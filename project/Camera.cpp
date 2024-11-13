@@ -7,7 +7,7 @@ Camera::Camera()
 	, FovY(0.45f)
 	, aspectRatio((WindowsAPI::kClientWitdh) / float(WindowsAPI::kClientHeight))
 	, nearClip(0.1f)
-	,farClip(100.0f)
+	, farClip(100.0f)
 	, worldMatrix(Math::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate))
 	, viewMatrix(Math::Inverse(worldMatrix))
 	, projectionMatrix(Math::MakePerspectiveFovMatrix(FovY, aspectRatio, nearClip, farClip))
@@ -17,11 +17,11 @@ Camera::Camera()
 //更新
 void Camera::Update() {
 	//ワールド行列
-	worldMatrix;
+	worldMatrix = Math::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	//ビュー行列
-	viewMatrix;
+	viewMatrix = Math::Inverse(worldMatrix);
 	//プロジェクション行列
-	projectionMatrix;
+	projectionMatrix = Math::MakePerspectiveFovMatrix(FovY, aspectRatio, nearClip, farClip);
 	//合成行列
-	viewProjectionMatrix;
+	viewProjectionMatrix = Math::Multiply(viewMatrix, projectionMatrix);
 }

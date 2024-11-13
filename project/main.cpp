@@ -283,9 +283,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Camera* camera = new Camera();
 	camera->SetRotate({ 0.3f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,4.0f,-10.0f });
-	object3dBase->SetDefaultCamera(camera);
+	object3ds[0]->SetCamera(camera);
+	object3ds[1]->SetCamera(camera);
+	
 	Vector3 cameraRote = camera->GetRotate();
 	Vector3 cameraPos = camera->GetTranslate();
+	object3dBase->SetDefaultCamera(camera);
 #pragma endregion
 	/*
 	// RootSignature作成
@@ -685,9 +688,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// SRVの作成
 	directxBase->Getdevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 	*/
-	//Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	//Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 	//Transform uvTransformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//SRV切り替え
 	bool useMonsterBall = true;
@@ -750,6 +751,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Begin("Setting");
 		ImGui::DragFloat3("CameraRotation", &cameraRote.x, 0.01f);
 		ImGui::DragFloat3("CameraPosition", &cameraPos.x, 0.01f);
+		camera->SetRotate(cameraRote);
+		camera->SetTranslate(cameraPos);
 
 		ImGui::End();
 		ImGui::Render();
@@ -849,8 +852,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui::DestroyContext();
 
 	//CloseHandle(fenceEvent);
-	//delete model;
-	//delete modelBase;
+	delete camera;
+
 	for (Object3d* object3d : object3ds) {
 		delete object3d;
 	}
