@@ -9,22 +9,25 @@
 //初期化
 void Object3d::Initialize(Object3dBase* object3dBase) {
 	this->object3dBase_ = object3dBase;
+	this->camera = object3dBase_->GetDefaultCamera();
 	TransformationCreate();
 	DirectionalLightCreate();
 	//Transform変数を作る
 	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	cameraTransform_ = { {1.0f,1.0f,1.0f},{0.3f,0.0f,0.0f},{0.0f,4.0f,-10.0f} };
 }
 //更新
 void Object3d::Update() {
 	//TransformからWorldMatrixを作る
 	Matrix4x4 worldMatrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
-	//ViewMatrixを作って単位行列を代入
-	Matrix4x4 cameraMatrix = Math::MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
-	Matrix4x4 viewMatrix = Math::Inverse(cameraMatrix);
-	//ProjectionMatrixを作って平行投影行列を書き込む
-	Matrix4x4 projectionMatrix = Math::MakePerspectiveFovMatrix(0.45f, float(WindowsAPI::kClientWitdh) / float(WindowsAPI::kClientHeight), 0.1f, 100.0f);
-	Matrix4x4 worldViewProjectionMatrix= Math::Multiply(worldMatrix, Math::Multiply(viewMatrix, projectionMatrix));
+	Matrix4x4 worldViewProjectionMatrix;
+	if (camera) {
+		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
+		worldViewProjectionMatrix = Math::Multiply(worldMatrix, viewProjectionMatrix);
+	}
+	else {
+		worldViewProjectionMatrix = worldMatrix;
+	}
+
 	transformationMatrixData->WVP = worldViewProjectionMatrix;
 	transformationMatrixData->World = worldMatrix;
 }

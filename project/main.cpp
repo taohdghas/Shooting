@@ -29,6 +29,7 @@
 #include "ModelBase.h"
 #include "Model.h"
 #include "ModelManager.h"
+#include "Camera.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -253,19 +254,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	sprites[0]->SetTexture("resources/uvChecker.png");
 	sprites[1]->SettextureSize({ 1200.0f,600.0f });
 	sprites[1]->SetTexture("resources/monsterBall.png");
-	
+
 	//3Dオブジェクト共通部
 	Object3dBase* object3dBase = nullptr;
 	//初期化
 	object3dBase = new Object3dBase();
 	object3dBase->Initialize(directxBase);
-	/*
-	//3Dモデル共通部
-	ModelBase* modelBase = nullptr;
-	//初期化
-	modelBase = new ModelBase();
-	modelBase->Initialize(directxBase);
-	*/
 	//モデルマネージャ-
 	ModelManager::GetInstance()->Initialize(directxBase);
 	ModelManager::GetInstance()->LoadModel("plane.obj");
@@ -282,6 +276,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	object3ds[0]->SetTranslate({-2.0f,0.0f,0.0f});
 	object3ds[1]->SetModel("axis.obj");
 	object3ds[1]->SetTranslate({ 2.0f,0.0f,0.0f });
+
+	Vector3 objectrotate = object3ds[0]->GetRotate();
+
+	//カメラ
+	Camera* camera = new Camera();
+	camera->SetRotate({ 0.3f,0.0f,0.0f });
+	camera->SetTranslate({ 0.0f,4.0f,-10.0f });
+	object3ds[0]->SetCamera(camera);
+	object3ds[1]->SetCamera(camera);
+	
+	Vector3 cameraRote = camera->GetRotate();
+	Vector3 cameraPos = camera->GetTranslate();
+	object3dBase->SetDefaultCamera(camera);
 #pragma endregion
 	/*
 	// RootSignature作成
@@ -681,9 +688,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// SRVの作成
 	directxBase->Getdevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 	*/
-	//Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	//Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 	//Transform uvTransformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//SRV切り替え
 	bool useMonsterBall = true;
@@ -700,6 +705,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//入力の更新
 		input->Update();
+
+		//カメラの更新
+		camera->Update();
 
 		//Spriteの更新
 		for (size_t i = 0; i < sprites.size(); ++i) {
@@ -735,11 +743,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		size.y += 0.1f;
 		sprite->SetSize(size);
 		*/
-		/*
+		
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
+		ImGui::Begin("Setting");
+		ImGui::DragFloat3("CameraRotation", &cameraRote.x, 0.01f);
+		ImGui::DragFloat3("CameraPosition", &cameraPos.x, 0.01f);
+		camera->SetRotate(cameraRote);
+		camera->SetTranslate(cameraPos);
+
+		ImGui::End();
+		ImGui::Render();
+		/*
 		ImGui::Begin("Set");
 		ImGui::ColorEdit4("*materialData", &materialData->color.x);
 		ImGui::Checkbox("useMonsterBall", &useMonsterBall);
@@ -751,17 +768,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("CameraTranslation", &transform.rotate.x, 0.01f);
 		ImGui::End();
 		ImGui::Render();
-
+		/*
 		directionalLightData->direction = Normalize(directionalLightData->direction);
 		// ゲーム処理
-		Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-		Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
-		Matrix4x4 viewMatrix = Inverse(cameraMatrix);
-		Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(windowsAPI->kClientWitdh) / float(windowsAPI->kClientHeight), 0.1f, 100.0f);
-		Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
-		wvpData->WVP = worldViewProjectionMatrix;
-		wvpData->World = worldMatrix;
-
 		Sprite用のWorldViewProjecionMatrixを作る
 			Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 			Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
@@ -829,10 +838,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 描画
 		//directxBase->Getcommandlist()->DrawInstanced(6, 1, 0, 0);
 		directxBase->Getcommandlist()->DrawIndexedInstanced(6, 1, 0, 0, 0);
-
-		// 実際のcommandListのImGuiの描画コマンドを積む
-		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
 		*/
+		// 実際のcommandListのImGuiの描画コマンドを積む
+		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
+		
 		//描画後処理
 		directxBase->PostDraw();
 	}
@@ -843,8 +852,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui::DestroyContext();
 
 	//CloseHandle(fenceEvent);
-	//delete model;
-	//delete modelBase;
+	delete camera;
+
 	for (Object3d* object3d : object3ds) {
 		delete object3d;
 	}
@@ -863,15 +872,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	//SpriteBase
 	delete spriteBase;
-	/*
-	Microsoft::WRL::ComPtr<IDXGIDebug1> debug;
-	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
-		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
-		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-		debug->Release();
-	}
-	*/
 	//WindowsAPIの終了処理
 	windowsAPI->Finalize();
 	//WindowsAPI関数

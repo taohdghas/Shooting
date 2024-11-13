@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include "externals/DirectXTex/d3dx12.h"
+#include "camera.h"
 
 class Model;
 class Object3dBase;
@@ -59,6 +60,7 @@ public:
 	void SetScale(const Vector3& scale) { this->transform_.scale = scale; }
 	void SetRotate(const Vector3& rotate) { this->transform_.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
+	void SetCamera(Camera* camera) { this->camera = camera; }
 	///getter///
 	const Vector3& GetScale()const { return transform_.scale; }
 	const Vector3& GetRotate()const { return transform_.rotate; }
@@ -71,6 +73,7 @@ private:
 private:
 	Model* model_ = nullptr;
 	Object3dBase* object3dBase_ = nullptr;
+	Camera* camera = nullptr;
 	//objファイルのデータ
 	ModelData modelData_;
 	
