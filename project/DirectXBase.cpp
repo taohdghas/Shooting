@@ -14,9 +14,6 @@
 
 using namespace Microsoft::WRL;
 
-//最大SRV数
-const uint32_t DirectXBase::kMaxSRVCount = 512;
-
 void DirectXBase::Initialize(WindowsAPI* windowsAPI) {
 	//NULL検出
 	assert(windowsAPI);
@@ -47,7 +44,7 @@ void DirectXBase::Initialize(WindowsAPI* windowsAPI) {
 	//DXCコンパイラの生成
 	DXCcompilerInitialize();
 	//Imguiの初期化
-	ImguiInitialize();
+	//ImguiInitialize();
 }
 //デバイスの初期化
 void DirectXBase::DeviceInitialize() {
@@ -197,13 +194,13 @@ void DirectXBase::DepthbufferGenerate() {
 //デスクリプタヒープの生成
 void DirectXBase::DescriptorheapGenerate() {
 	//DescriptorSizeを取得しておく
-	descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	// RTV用のディスクリプタヒープの生成
 	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 	// SRV用のディスクリプタヒープの作成
-	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,kMaxSRVCount, true);
+	//srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,kMaxSRVCount, true);
 	// DSV用のディスクリプタヒープの作成
 	dsvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }
@@ -285,8 +282,10 @@ void DirectXBase::DXCcompilerInitialize() {
 	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
 	assert(SUCCEEDED(hr));
 }
+
 //Imguiの初期化
 void DirectXBase::ImguiInitialize() {
+	/*
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
@@ -297,6 +296,7 @@ void DirectXBase::ImguiInitialize() {
 		srvDescriptorHeap.Get(),
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+	*/
 }
 //FPS初期化
 void DirectXBase::InitializeFixFPS() {
@@ -350,8 +350,8 @@ void DirectXBase::PreDraw() {
 	// 指定した震度で画面全体をクリアする
 	commandList->ClearDepthStencilView(dsvHadle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	// 描画用のDescriptorHeapの設定
-	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
-	commandList->SetDescriptorHeaps(1, descriptorHeaps);
+	//ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
+	//commandList->SetDescriptorHeaps(1, descriptorHeaps);
 	commandList->RSSetViewports(1, &viewport);
 	commandList->RSSetScissorRects(1, &scissorRect);
 }
@@ -430,14 +430,7 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>DirectXBase::CreateDescriptorHeap(D3
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
 }
-//SRVの指定番号のCPUデスクリプタハンドル取得
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXBase::GetSRVCPUDescriptorHandle(uint32_t index) {
-	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
-}
-//SRVの指定番号のGPUデスクリプタハンドル取得
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetSRVGPUDescriptorHandle(uint32_t index) {
-	return GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
-}
+/*
 //CPUデスクリプタハンドル取得関数
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXBase::GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
 	& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
@@ -452,7 +445,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetGPUDescriptorHandle(const Microsoft:
 	handleGPU.ptr += (descriptorSize * index);
 	return handleGPU;
 }
-
+*/
 Microsoft::WRL::ComPtr<ID3D12Resource> DirectXBase::CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height) {
 	//生成するResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
