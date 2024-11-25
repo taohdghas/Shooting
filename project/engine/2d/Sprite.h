@@ -1,4 +1,5 @@
 #pragma once
+#include "SrvManager.h"
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
@@ -35,7 +36,7 @@ public:
 	//描画
 	void Draw();
 	//テクスチャ変更
-	void SetTexture(std::string textureFilePath);
+	//void SetTexture(std::string textureFilePath);
 
 	///getter///
 	//位置
@@ -78,6 +79,7 @@ public:
 	void SetisFlipY(bool isFlipY) { this->isFlipY_ = isFlipY; }
 private:
 	SpriteBase* spriteBase = nullptr;
+	SrvManager* srvManager = nullptr;
 	//頂点データ作成
 	void VertexDataCreate();
 	//index作成
@@ -121,5 +123,7 @@ private:
 	bool isFlipX_ = false;
 	//上下フリップ
 	bool isFlipY_ = false;
+	//ファイルパス
+	std::string filePath;
 };
 

@@ -23,16 +23,14 @@ public:
 	//デスクリプタヒープを生成
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisivle);
-	//SRVの指定番号のCPUデスクリプタハンドル取得
-	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
-	//SRVの指定番号のGPUデスクリプタハンドル取得
-	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
+	/*
 	//CPUデスクリプタハンドル取得関数
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
 		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 	//GPUデスクリプタハンドル取得関数
 	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
 		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	*/
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
     //シェーダーのコンパイル
 	Microsoft::WRL::ComPtr<IDxcBlob>CompileShader(const std::wstring& filePath, const wchar_t* profile);
@@ -43,7 +41,7 @@ public:
 	//テクスチャファイル読み込み
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
 	//最大SRV数(最大テクスチャ数)
-	static const uint32_t kMaxSRVCount;
+	//static const uint32_t kMaxSRVCount;
 	//デバイスの取得
 	Microsoft::WRL::ComPtr<ID3D12Device>Getdevice() { return device; }
 	//コマンドリストの取得
@@ -92,7 +90,7 @@ private:
 	//Resource
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 	//DescriptorSizeSRVを取得
-	uint32_t descriptorSizeSRV;
+	//uint32_t descriptorSizeSRV;
 	//DescriptorSizeRTVを取得
 	uint32_t descriptorSizeRTV;
 	//DescriptorSizeDSVを取得
@@ -100,7 +98,7 @@ private:
 	//RTV用のDescriptorSize
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 	//SRV用のDescriptorSize
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
+	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	//DSV用のDescriptorSize
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 	///深度ステンシルリソース

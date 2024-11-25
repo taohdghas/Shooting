@@ -30,6 +30,7 @@
 #include "Model.h"
 #include "ModelManager.h"
 #include "Camera.h"
+#include "SrvManager.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -237,8 +238,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	spriteBase = new SpriteBase;
 	spriteBase->Initialize(directxBase);
 
+	//SRVマネージャ
+	SrvManager* srvManager = nullptr;
+	srvManager = new SrvManager();
+	srvManager->Initialize(directxBase);
+
 	//テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(directxBase);
+	TextureManager::GetInstance()->Initialize(directxBase,srvManager);
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
@@ -248,12 +254,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Sprite* sprite = new Sprite();
 		sprite->Initialize(spriteBase, "resources/uvChecker.png");
 		sprite->SetPosition({ 100.0f * i,50.0f });
-		sprite->SetSize({ 100.0f,100.0f });
 		sprites.push_back(sprite);
 	}
-	sprites[0]->SetTexture("resources/uvChecker.png");
-	sprites[1]->SettextureSize({ 1200.0f,600.0f });
-	sprites[1]->SetTexture("resources/monsterBall.png");
+	sprites[0]->Initialize(spriteBase, "resources/uvChecker.png");
+	sprites[1]->SettextureSize({ 10.0f,10.0f });
+	sprites[1]->Initialize(spriteBase,"resources/monsterBall.png");
+
 
 	//3Dオブジェクト共通部
 	Object3dBase* object3dBase = nullptr;
@@ -289,6 +295,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRote = camera->GetRotate();
 	Vector3 cameraPos = camera->GetTranslate();
 	object3dBase->SetDefaultCamera(camera);
+
+
 #pragma endregion
 	/*
 	// RootSignature作成
@@ -744,6 +752,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		sprite->SetSize(size);
 		*/
 		
+		/*
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
@@ -756,6 +765,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::End();
 		ImGui::Render();
+		*/
 		/*
 		ImGui::Begin("Set");
 		ImGui::ColorEdit4("*materialData", &materialData->color.x);
@@ -770,14 +780,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Render();
 		/*
 		directionalLightData->direction = Normalize(directionalLightData->direction);
-		// ゲーム処理
-		Sprite用のWorldViewProjecionMatrixを作る
-			Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
-			Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
-			Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(kClientWidth), float(kClientHeight), 0.0f, 100.0f);
-			Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
-			transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
-			transformationMatrixDataSprite->World = worldMatrix;
 
 		//UVTransform用の行列
 		Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
@@ -789,13 +791,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//描画前処理
 		directxBase->PreDraw();
 
+		srvManager->PreDraw();
+
 		//3Dオブジェクト描画準備
 		object3dBase->DrawBaseSet();
 
 		//共通描画設定
 		spriteBase->DrawBaseSet();
 
-		//スプライト描画
+		//スプライト描画 \fd
 		for (Sprite* sprite : sprites) {
 			//sprite描画処理
 			sprite->Draw();
@@ -837,20 +841,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		directxBase->Getcommandlist()->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
 		// 描画
 		//directxBase->Getcommandlist()->DrawInstanced(6, 1, 0, 0);
-		directxBase->Getcommandlist()->DrawIndexedInstanced(6, 1, 0, 0, 0);
-		*/
+		directxBase->Getcommandlist()->DrawIndexedInstanced(6, 1, 0
+			*/
 		// 実際のcommandListのImGuiの描画コマンドを積む
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
+		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
 		
 		//描画後処理
 		directxBase->PostDraw();
 	}
 #pragma endregion
-
+	/*
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-
+	*/
 	//CloseHandle(fenceEvent);
 	delete camera;
 
@@ -862,6 +866,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete object3dBase;
 	//テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
+	delete srvManager;
 	//DirectX解放
 	delete directxBase;
 	//入力解放
