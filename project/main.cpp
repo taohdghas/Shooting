@@ -239,12 +239,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//スプライト描画 \fd
 		for (Sprite* sprite : sprites) {
 			//sprite描画処理
-			sprite->Draw();
+			//sprite->Draw();
 		}
 
 		//3Dオブジェクト描画
 		for (Object3d* object3d : object3ds) {
-			object3d->Draw();
+			//object3d->Draw();
 		}
 		
 		// 実際のcommandListのImGuiの描画コマンドを積む
