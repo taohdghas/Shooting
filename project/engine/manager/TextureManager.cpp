@@ -77,6 +77,21 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	srvManager_->CreateSRVforTexture2D(textureData.srvIndex, textureData.resource.Get(),
 		textureData.metadata.format, UINT(textureData.metadata.mipLevels));
 }
+//SRVインデックスの開始番号
+uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath) {
+	//読み込み済みテクスチャデータを検索
+	auto it = std::find_if(textureDatas.begin(), textureDatas.end(),
+		[&](TextureData& textureData) {
+			return textureData.filePath == filePath;
+		});
+	if (it != textureDatas.end()) {
+		//読み込み済みなら要素番号を返す
+		uint32_t textureIndex = static_cast<uint32_t>(std::distance(textureDatas.begin(), it));
+		return textureIndex;
+	}
+	assert(0);
+	return 0;
+}
 
 //メタデータを取得
 const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string&filePath) {
