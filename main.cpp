@@ -1758,31 +1758,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 				++particleIterator;
 			}
-			/*
-			for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
-				float alpha = 1.0f - (particles[index].currentTime / particles[index].lifeTime);
-				//生存時間を過ぎていたら更新しない
-				if (particles[index].lifeTime <= particles[index].currentTime) {
-					continue;
-				}
-				Matrix4x4 scaleMatrix = MakeScaleMatrix(particles[index].transform.scale);
-				Matrix4x4 translateMatrix = MakeTranslateMatrix(particles[index].transform.translate);
-				Matrix4x4 worldMatrix = Multiply(scaleMatrix, Multiply(billboardMatrix, translateMatrix));
-				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
-				instancingData[index].WVP = worldViewProjectionMatrix;
-				instancingData[index].World = worldMatrix;
-				instancingData[index].color = particles[index].color;
-				particles[index].transform.translate.x += particles[index].velocity.x * kDeltaTime;
-				particles[index].transform.translate.y += particles[index].velocity.y * kDeltaTime;
-				particles[index].transform.translate.z += particles[index].velocity.z * kDeltaTime;
-				//particles[index].currentTime += kDeltaTime;
-				instancingData[numInstance].WVP = worldViewProjectionMatrix;
-				instancingData[numInstance].World = worldMatrix;
-				instancingData[numInstance].color = particles[index].color;
-				instancingData[numInstance].color.w = alpha;
-				++numInstance;
-			}
-			*/
+			
 			// 書き込むバックバッファのインデックスの取得
 			UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
@@ -1898,15 +1874,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	CloseHandle(fenceEvent);
 
 	CloseWindow(hwnd);
-	/*
-	Microsoft::WRL::ComPtr<IDXGIDebug1> debug;
-	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
-		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
-		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-		debug->Release();
-	}
-	*/
+
 	CoUninitialize();
 	return 0;
 }
