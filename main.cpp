@@ -835,7 +835,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ウインドウの生成
 	HWND hwnd = CreateWindow(
 		wc.lpszClassName,
-		L"CG2",
+		L"LE2B_14_サノ_ハヤテ",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -1605,16 +1605,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
 		
-			//Δtを定義
+			// Δtを定義
 			const float kDeltaTime = 1.0f / 60.0f;
+			static float elapsedTime = 0.0f; // 経過時間を追跡
+			elapsedTime += kDeltaTime;
 
+			// 更新処理
 			for (uint32_t index = 0; index < kNumInstance; ++index) {
+				// パーティクルの色を変化させる
+				particles[index].color.x = (sin(elapsedTime + index) * 0.5f) + 0.5f; // 赤
+				particles[index].color.y = (sin(elapsedTime * 1.5f + index) * 0.5f) + 0.5f; // 緑
+				particles[index].color.z = (sin(elapsedTime * 2.0f + index) * 0.5f) + 0.5f; // 青
+
+				// 行列の更新
 				Matrix4x4 worldMatrix =
 					MakeAffineMatrix(particles[index].transform.scale, particles[index].transform.rotate, particles[index].transform.translate);
 				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 				instancingData[index].WVP = worldViewProjectionMatrix;
 				instancingData[index].World = worldMatrix;
 				instancingData[index].color = particles[index].color;
+
+				// パーティクルの位置を更新
 				particles[index].transform.translate.x += particles[index].velocity.x * kDeltaTime;
 				particles[index].transform.translate.y += particles[index].velocity.y * kDeltaTime;
 				particles[index].transform.translate.z += particles[index].velocity.z * kDeltaTime;
