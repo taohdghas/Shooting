@@ -35,16 +35,102 @@ void ParticleManager::Initialize(DirectXBase*directxBase,SrvManager*srvManager) 
 }
 
 void ParticleManager::Update() {
-	Matrix4x4 cameraMatrix = camera_->GetViewMatrix();
-	Matrix4x4 viewMatrix = camera_->GetProjectionMatrix();
+	Matrix4x4 cameraMatrix = camera_->GetWorldMatrix();
 	Matrix4x4 backToFrontMatrix = Math::MakeRotateYMatrix(std::numbers::pi_v<float>);
-	Matrix4x4 billbosrdMatrix = Math::Multiply(backToFrontMatrix, cameraMatrix);
-	billbosrdMatrix.m[3][0] = 0.0f;
-
+	Matrix4x4 billboardMatrix = Math::Multiply(backToFrontMatrix, cameraMatrix);
+	//ビュー行列
+	Matrix4x4 viewMatrix = camera_->GetViewMatrix();
+	//プロジェクション行列
+	Matrix4x4 projectionMatrix = camera_->GetProjectionMatrix();
+	//ビュープロジェクション行列
+	Matrix4x4 viewprojectionMatrix = camera_->GetViewProjectionMatrix();
+	//trueなら使う
+	if (useBillboard) {
+		billboardMatrix.m[3][0] = 0.0f;
+		billboardMatrix.m[3][1] = 0.0f;
+		billboardMatrix.m[3][2] = 0.0f;
+	}
+	//falseなら単位行列
+	else if (!useBillboard) {
+		billboardMatrix = Math::MakeIdentity4x4();
+	}
+	for (auto& ParticleGroups : particleGroups) {
+		for (std::list<Particle>::iterator particleIterator = ParticleGroups.second.particles.begin();
+			particleIterator != ParticleGroups.second.particles.end();) {
+			//寿命に達したらグループから外す
+			if ((*particleIterator).lifeTime <= (*particleIterator).currentTime) {
+				particleIterator = ParticleGroups.second.particles.erase(particleIterator);
+				continue;
+			}
+			float alpha = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
+			if (ParticleGroups.second.kNumInstance < kNumMaxInstance) {
+				//行列計算
+				Matrix4x4 scaleMatrix = Math::MakeScaleMatrix((*particleIterator).transform.scale);
+				Matrix4x4 translateMatrix = Math::MakeTranslateMatrix((*particleIterator).transform.translate);
+				Matrix4x4 worldMatrix = Math::Multiply(scaleMatrix, Math::Multiply(billboardMatrix, translateMatrix));
+				Matrix4x4 worldViewProjectionMatrix = Math::Multiply(worldMatrix, viewprojectionMatrix);
+				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].WVP = worldViewProjectionMatrix;
+				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].World = worldMatrix;
+				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].color;
+				//速度を適用
+				(*particleIterator).transform.translate.x += (*particleIterator).velocity.x * kDeltaTime;
+				(*particleIterator).transform.translate.y += (*particleIterator).velocity.y * kDeltaTime;
+				(*particleIterator).transform.translate.z += (*particleIterator).velocity.z * kDeltaTime;
+				//インスタンシング用データ書き込み
+				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].WVP = worldViewProjectionMatrix;
+				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].World = worldMatrix;
+				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].color.w = alpha;
+				++ ParticleGroups.second.kNumInstance;
+			}
+			++particleIterator;
+		}
+	}
 }
+/*
+// ルートシグネチャを設定
+	commandList->SetGraphicsRootSignature(rootSignature_.Get());
 
+	// パイプラインステートを設定
+	commandList->SetPipelineState(graphicsPipelineState.Get());
+
+	// プリミティブトポロジ（描画形状）を設定
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// VBV (Vertex Buffer View)を設定
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	// SrvManagerのインスタンスを取得
+	SrvManager* srvManager = SrvManager::GetInstance();
+
+	// 全てのパーティクルグループについて処理を行う
+	for (auto& group : particleGroups) {
+		if (group.second.instanceCount == 0) continue; // インスタンスが無い場合はスキップ
+
+		//マテリアルCBufferの場所を設定
+		commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+
+		// テクスチャのSRVのDescriptorTableを設定
+		commandList->SetGraphicsRootDescriptorTable(2, srvManager->GetGPUDescriptorHandle(group.second.srvIndex));
+
+		// インスタンシングデータのSRVのDescriptorTableを設定
+		commandList->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(group.second.instancingSrvIndex));
+
+		// Draw Call (インスタンシング描画)
+		commandList->DrawInstanced(6, group.second.instanceCount, 0, 0);
+
+		// インスタンスカウントをリセット
+		group.second.instanceCount = 0;
+	}
+}
+*/
 void ParticleManager::Draw() {
+	//ルートシグネチャ
+	directxBase_->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
+	//PSO設定
 
+	//描画形状設定
+
+	//VBV設定
 }
 
 //パーティクルグループの生成

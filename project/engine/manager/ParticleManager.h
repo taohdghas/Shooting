@@ -91,6 +91,10 @@ private:
 	std::unordered_map<std::string, ParticleGroup>particleGroups;
 
 	const uint32_t kNumMaxInstance = 100;
+	//Δtを定義
+	const float kDeltaTime = 1.0f / 60.0f;
+	//billboardMatrix切り替え
+	bool useBillboard = true;
 };
 
 
