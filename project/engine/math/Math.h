@@ -4,6 +4,8 @@
 #include <corecrt_math.h>
 
 namespace Math {
+
+	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	//単位行列
 	Matrix4x4 MakeIdentity4x4();
 

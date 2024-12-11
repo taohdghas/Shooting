@@ -34,6 +34,7 @@
     <ClCompile Include="engine\2d\SpriteBase.cpp" />
     <ClCompile Include="engine\manager\SrvManager.cpp" />
     <ClCompile Include="engine\manager\ParticleManager.cpp" />
+    <ClCompile Include="engine\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="engine\manager\TextureManager.cpp" />
     <ClCompile Include="WindowsAPI.cpp" />
@@ -66,6 +67,7 @@
     <ClInclude Include="engine\2d\SpriteBase.h" />
     <ClInclude Include="engine\manager\SrvManager.h" />
     <ClInclude Include="engine\manager\ParticleManager.h" />
+    <ClInclude Include="engine\Particle\ParticleEmitter.h" />
     <ClInclude Include="StringUtility.h" />
     <ClInclude Include="engine\manager\TextureManager.h" />
     <ClInclude Include="engine\math\Transform.h" />
@@ -136,7 +138,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,7 +163,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

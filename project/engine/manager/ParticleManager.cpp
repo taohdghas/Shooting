@@ -3,6 +3,15 @@
 #include <assert.h>
 #include <numbers>
 
+ParticleManager* ParticleManager::instance = nullptr;
+//シングルトンインスタンスの取得
+ParticleManager* ParticleManager::GetInstance() {
+	if (instance == nullptr) {
+		instance = new ParticleManager;
+	}
+	return instance;
+}
+
 void ParticleManager::Initialize(DirectXBase*directxBase,SrvManager*srvManager) {
 	this->directxBase_ = directxBase;
 	this->srvManager_ = srvManager;
@@ -31,7 +40,10 @@ void ParticleManager::Initialize(DirectXBase*directxBase,SrvManager*srvManager) 
 	*/
 	//頂点データ
 	VertexDataCreate();
-
+	//Field
+	accelerationfield_.acceleration = { 15.0f,0.0f,0.0f };
+	accelerationfield_.area.min = { -1.0f,-1.0f,-1.0f };
+	accelerationfield_.area.max = { 1.0f,1.0f,1.0f };
 }
 
 void ParticleManager::Update() {
@@ -72,6 +84,8 @@ void ParticleManager::Update() {
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].WVP = worldViewProjectionMatrix;
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].World = worldMatrix;
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].color;
+				//Fieldの範囲内のParticleには加速度を適用する
+				
 				//速度を適用
 				(*particleIterator).transform.translate.x += (*particleIterator).velocity.x * kDeltaTime;
 				(*particleIterator).transform.translate.y += (*particleIterator).velocity.y * kDeltaTime;
@@ -86,51 +100,27 @@ void ParticleManager::Update() {
 		}
 	}
 }
-/*
-// ルートシグネチャを設定
-	commandList->SetGraphicsRootSignature(rootSignature_.Get());
 
-	// パイプラインステートを設定
-	commandList->SetPipelineState(graphicsPipelineState.Get());
-
-	// プリミティブトポロジ（描画形状）を設定
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	// VBV (Vertex Buffer View)を設定
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-
-	// SrvManagerのインスタンスを取得
-	SrvManager* srvManager = SrvManager::GetInstance();
-
-	// 全てのパーティクルグループについて処理を行う
-	for (auto& group : particleGroups) {
-		if (group.second.instanceCount == 0) continue; // インスタンスが無い場合はスキップ
-
-		//マテリアルCBufferの場所を設定
-		commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-
-		// テクスチャのSRVのDescriptorTableを設定
-		commandList->SetGraphicsRootDescriptorTable(2, srvManager->GetGPUDescriptorHandle(group.second.srvIndex));
-
-		// インスタンシングデータのSRVのDescriptorTableを設定
-		commandList->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(group.second.instancingSrvIndex));
-
-		// Draw Call (インスタンシング描画)
-		commandList->DrawInstanced(6, group.second.instanceCount, 0, 0);
-
-		// インスタンスカウントをリセット
-		group.second.instanceCount = 0;
-	}
-}
-*/
 void ParticleManager::Draw() {
 	//ルートシグネチャ
 	directxBase_->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
 	//PSO設定
-
+	directxBase_->Getcommandlist()->SetPipelineState(graphicsPipelineState.Get());
 	//描画形状設定
-
+	directxBase_->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//VBV設定
+	directxBase_->Getcommandlist()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	//パーティクルについて処理
+	for (auto& ParticleGroups : particleGroups) {
+		//マテリアルCBufferの場所を設定
+		directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		//テクスチャのSRVのDescriptorTableを設定
+		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(ParticleGroups.second.SRVIndex));
+		//インスタンシングデータのSRVのDescriptorTableを設定
+		directxBase_->Getcommandlist()->SetComputeRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(ParticleGroups.second.SRVIndex));
+		//描画
+		directxBase_->Getcommandlist()->DrawInstanced(UINT(modelData.vertices.size()), ParticleGroups.second.kNumInstance,0,0);
+	}
 }
 
 //パーティクルグループの生成
@@ -159,6 +149,49 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 	srvManager_->CreateSRVforStructuredBuffer(newParticle.SRVIndex, newParticle.
 		instancingResource.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
 }
+
+//パーティクル生成関数
+Particle ParticleManager::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate) {
+	std::uniform_real_distribution<float>distribution(-1.0f, 1.0f);
+	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
+	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
+	Vector3 randomTranslate{ distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+	Particle particle;
+	particle.transform.scale = { 1.0f,1.0f,1.0f };
+	particle.transform.rotate = { 0.0f,0.0f,0.0f };
+	particle.transform.translate = Math::Add(translate, randomTranslate);
+	particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+	particle.color = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0f };
+	particle.lifeTime = distTime(randomEngine);
+	particle.currentTime = 0;
+	return particle;
+}
+
+//パーティクルの発生
+void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count) {
+	//登録済みかチェック
+	assert(particleGroups.find(name) == particleGroups.end());
+	//指定されたグループを取得
+	ParticleGroup& targetGroup = particleGroups[name];
+	//新たなパーティクル作成し、指定されたグループに登録
+	for (uint32_t i = 0; i < count; ++i) {
+		Particle newParticle = MakeNewParticle(randomEngine, position);
+		targetGroup.particles.push_back(newParticle);
+	}
+}
+
+//ParticleがFieldの範囲内か判定
+bool ParticleManager::IsCollision(const AABB& aabb, const Vector3& point) {
+	if ((aabb_.min.x <= point.x && aabb_.max.x >= point.x) &&
+		(aabb_.min.y <= point.y && aabb.max.y >= point.y) &&
+		(aabb.min.z <= point.z && aabb.max.z >= point.z)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 //ルートシグネチャの作成
 void ParticleManager::GenerateRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};
@@ -302,7 +335,6 @@ void ParticleManager::GenerategraphicsPipeline() {
 }
 //頂点データ作成
 void ParticleManager::VertexDataCreate() {
-	ModelData modelData;
 	modelData.vertices.push_back({ .position = {1.0f,1.0f,0.0f,1.0f},.texcoord = {0.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//左上
 	modelData.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f},.texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//右上
 	modelData.vertices.push_back({ .position = {1.0f,-1.0f,0.0f,1.0f},.texcoord = {0.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });//左下

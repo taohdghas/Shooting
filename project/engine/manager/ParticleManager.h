@@ -24,7 +24,13 @@ struct MaterialData
 	std::string textureFilePath;
 	uint32_t textureIndex = 0;
 };
-
+//マテリアルデータ
+struct Material {
+	Vector4 color;
+	int32_t enableLighting;
+	float padding[3];
+	Matrix4x4 uvTransform;
+};
 struct ModelData
 {
 	std::vector<VertexData>vertices;
@@ -43,6 +49,14 @@ struct ParticleForGPU {
 	Matrix4x4 World;
 	Vector4 color;
 };
+struct AABB {
+	Vector3 min;//最小点
+	Vector3 max;//最大点
+};
+struct AccelerationField {
+	Vector3 acceleration;//加速度
+	AABB area;//範囲
+};
 class ParticleManager
 {
 private:
@@ -55,6 +69,9 @@ private:
 		ParticleForGPU* instancingData;//インスタンシングデータを書き込むためのポインタ
 	};
 public:
+	//シングルトンインスタンスの取得
+	static ParticleManager* GetInstance();
+
 	void Initialize(DirectXBase*directxBase,SrvManager*srvManager);
 
 	void Update();
@@ -62,6 +79,12 @@ public:
 	void Draw();
 	//パーティクルグループの生成
 	void CreateparticleGroup(const std::string name, const std::string textureFilePath);
+	//パーティクル生成関数
+	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate);
+	//パーティクルの発生
+	void Emit(const std::string name, const Vector3& position, uint32_t count);
+	//ParticleがFieldの範囲内か判定
+	bool IsCollision(const AABB& aabb, const Vector3& point);
 private:
 	//ルートシグネチャの作成
 	void GenerateRootSignature();
@@ -70,9 +93,14 @@ private:
 	//頂点データ作成
 	void VertexDataCreate();
 private:
+
+	static ParticleManager* instance;
 	DirectXBase* directxBase_;
 	SrvManager* srvManager_;
 	Camera* camera_;
+	ModelData modelData;
+	AABB aabb_;
+	AccelerationField accelerationfield_;
 	HRESULT hr;
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
@@ -80,10 +108,12 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState;
 	//バッファリソース内のデータを指すポインタ
 	VertexData* vertexData = nullptr;
+	Material* materialData = nullptr;
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
     //バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 	//乱数生成器の初期化
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
