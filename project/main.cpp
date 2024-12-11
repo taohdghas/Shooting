@@ -31,6 +31,7 @@
 #include "ModelManager.h"
 #include "Camera.h"
 #include "SrvManager.h"
+#include "Player.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -132,7 +133,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRote = camera->GetRotate();
 	Vector3 cameraPos = camera->GetTranslate();
 	object3dBase->SetDefaultCamera(camera);
-
 
 #pragma endregion
 	
