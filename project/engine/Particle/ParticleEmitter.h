@@ -12,12 +12,13 @@ public:
 		float frequencyTime;//頻度用時刻
 	};
 public:
-	void Initialize();
+	void Initialize(std::string name);
 	void Update();
 	//パーティクルの発生
 	void Emit();
 private:
 	Emitter emitter_;
+	std::string name_;
 	const float kDeltaTime = 1.0f / 60.0f;
 };
 

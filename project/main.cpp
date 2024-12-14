@@ -31,6 +31,8 @@
 #include "ModelManager.h"
 #include "Camera.h"
 #include "SrvManager.h"
+#include "ParticleManager.h"
+#include "ParticleEmitter.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -133,7 +135,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraPos = camera->GetTranslate();
 	object3dBase->SetDefaultCamera(camera);
 
-
+	//パーティクルマネージャ
+	ParticleManager::GetInstance()->Initialize(directxBase, srvManager,camera);
+	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle.png");
+	//パーティクルエミッター
+	ParticleEmitter* particleEmitter = new ParticleEmitter();
+	particleEmitter->Initialize("particle");
+	particleEmitter->Emit();
 #pragma endregion
 
 
@@ -191,6 +199,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		sprite->SetSize(size);
 		*/
 		
+		//パーティクル更新
+		particleEmitter->Update();
+		ParticleManager::GetInstance()->Update();
+		ParticleManager::GetInstance()->Draw();
+
 		/*
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();

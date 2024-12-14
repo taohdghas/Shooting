@@ -12,32 +12,15 @@ ParticleManager* ParticleManager::GetInstance() {
 	return instance;
 }
 
-void ParticleManager::Initialize(DirectXBase*directxBase,SrvManager*srvManager) {
+void ParticleManager::Initialize(DirectXBase*directxBase,SrvManager*srvManager, Camera* camera) {
 	this->directxBase_ = directxBase;
 	this->srvManager_ = srvManager;
+	this->camera_ = camera;
 	randomEngine.seed(seedGenerator());
 	//ルートシグネチャ
 	GenerateRootSignature();
 	//グラフィックスパイプライン
 	GenerategraphicsPipeline();
-	/*
-	//左下
-	vertexData[0].position = { 0.0f,1.0f,0.0f,1.0f };
-	vertexData[0].texcoord = { 0.0f,1.0f };
-	vertexData[0].normal = { 0.0f,0.0f,-1.0f };
-	//左上
-	vertexData[1].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexData[1].texcoord = { 0.0f,0.0f };
-	vertexData[1].normal = { 0.0f,0.0f,-1.0f };
-	//右下
-	vertexData[2].position = { 1.0f,1.0f,0.0f,1.0f };
-	vertexData[2].texcoord = { 1.0f,1.0f };
-	vertexData[2].normal = { 0.0f,0.0f,-1.0f };
-	//右上
-	vertexData[3].position = { 1.0f,0.0f,0.0f,1.0f };
-	vertexData[3].texcoord = { 1.0f,0.0f };
-	vertexData[3].normal = { 0.0f,0.0f,-1.0f };
-	*/
 	//頂点データ
 	VertexDataCreate();
 	//Field
@@ -137,12 +120,11 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 	//インスタンシング用のリソース生成
 	newParticle.instancingResource = directxBase_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 	//アドレス取得
-	ParticleForGPU* instancingData = nullptr;
 	newParticle.instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&newParticle.instancingData));
 	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
-		instancingData[index].WVP = Math::MakeIdentity4x4();
-		instancingData[index].World = Math::MakeIdentity4x4();
-		instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		newParticle.instancingData[index].WVP = Math::MakeIdentity4x4();
+		newParticle.instancingData[index].World = Math::MakeIdentity4x4();
+		newParticle.instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	//SRV生成
 	newParticle.SRVIndex = srvManager_->Allccate();
@@ -151,7 +133,7 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 }
 
 //パーティクル生成関数
-Particle ParticleManager::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate) {
+ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate) {
 	std::uniform_real_distribution<float>distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
 	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);

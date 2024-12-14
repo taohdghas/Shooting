@@ -80,16 +80,12 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 //SRVインデックスの開始番号
 uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath) {
 	//読み込み済みテクスチャデータを検索
-	auto it = std::find_if(textureDatas.begin(), textureDatas.end(),
-		[&](TextureData& textureData) {
-			return textureData.filePath == filePath;
-		});
+	auto it = textureDatas.find(filePath);
+
 	if (it != textureDatas.end()) {
-		//読み込み済みなら要素番号を返す
-		uint32_t textureIndex = static_cast<uint32_t>(std::distance(textureDatas.begin(), it));
-		return textureIndex;
+		return it->second.srvIndex;
 	}
-	assert(0);
+
 	return 0;
 }
 
