@@ -92,6 +92,8 @@ private:
 	void GenerategraphicsPipeline();
 	//頂点データ作成
 	void VertexDataCreate();
+	//マテリアルデータ作成
+	void MaterialCreate();
 private:
 
 	static ParticleManager* instance;

@@ -18,11 +18,13 @@ void ParticleManager::Initialize(DirectXBase*directxBase,SrvManager*srvManager, 
 	this->camera_ = camera;
 	randomEngine.seed(seedGenerator());
 	//ルートシグネチャ
-	GenerateRootSignature();
+	//GenerateRootSignature();
 	//グラフィックスパイプライン
 	GenerategraphicsPipeline();
 	//頂点データ
 	VertexDataCreate();
+	//マテリアルデータ
+	MaterialCreate();
 	//Field
 	accelerationfield_.acceleration = { 15.0f,0.0f,0.0f };
 	accelerationfield_.area.min = { -1.0f,-1.0f,-1.0f };
@@ -98,9 +100,9 @@ void ParticleManager::Draw() {
 		//マテリアルCBufferの場所を設定
 		directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 		//テクスチャのSRVのDescriptorTableを設定
-		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(ParticleGroups.second.SRVIndex));
+		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(ParticleGroups.second.materialData.textureIndex));
 		//インスタンシングデータのSRVのDescriptorTableを設定
-		directxBase_->Getcommandlist()->SetComputeRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(ParticleGroups.second.SRVIndex));
+		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(ParticleGroups.second.SRVIndex));
 		//描画
 		directxBase_->Getcommandlist()->DrawInstanced(UINT(modelData.vertices.size()), ParticleGroups.second.kNumInstance,0,0);
 	}
@@ -109,8 +111,9 @@ void ParticleManager::Draw() {
 //パーティクルグループの生成
 void ParticleManager::CreateparticleGroup(const std::string name, const std::string textureFilePath) {
 	//登録済みの名前かチェック
-	assert(particleGroups.find(name) == particleGroups.end());
+	assert(particleGroups.find(name) != particleGroups.end());
 	ParticleGroup newParticle;
+	particleGroups[name] = newParticle;
 	//テクスチャファイルパスを設定
 	newParticle.materialData.textureFilePath = textureFilePath;
 	//テクスチャを読み込む
@@ -152,7 +155,7 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 //パーティクルの発生
 void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count) {
 	//登録済みかチェック
-	assert(particleGroups.find(name) == particleGroups.end());
+	assert(particleGroups.find(name) != particleGroups.end());
 	//指定されたグループを取得
 	ParticleGroup& targetGroup = particleGroups[name];
 	//新たなパーティクル作成し、指定されたグループに登録
@@ -336,4 +339,17 @@ void ParticleManager::VertexDataCreate() {
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//頂点データをリソースにコピー
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+}
+//マテリアルデータ作成
+void ParticleManager::MaterialCreate() {
+	//リソースを作る
+	materialResource = directxBase_->CreateBufferResource(sizeof(Material));
+	// 書き込むためのアドレスと取得
+	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	//マテリアルデータの初期値を書き込む
+	materialData->color = Vector4{ 1.0f,1.0f,1.0f,1.0f };
+	//Lighting
+	materialData->enableLighting = false;
+	//UVTransform行列を単位行列で初期化
+	materialData->uvTransform = Math::MakeIdentity4x4();
 }
