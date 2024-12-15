@@ -114,7 +114,7 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 	//登録済みの名前かチェック
 	assert(particleGroups.find(name) == particleGroups.end());
 	ParticleGroup newParticle;
-	particleGroups[name] = newParticle;
+	//particleGroups[name] = newParticle;
 	//テクスチャファイルパスを設定
 	newParticle.materialData.textureFilePath = textureFilePath;
 	//テクスチャを読み込む
@@ -134,6 +134,8 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 	newParticle.SRVIndex = srvManager_->Allccate();
 	srvManager_->CreateSRVforStructuredBuffer(newParticle.SRVIndex, newParticle.
 		instancingResource.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
+	
+	particleGroups[name] = newParticle;
 }
 
 //パーティクル生成関数
@@ -188,15 +190,22 @@ void ParticleManager::GenerateRootSignature() {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
+	descriptorRangeForInstancing[0].BaseShaderRegister = 0;
+	descriptorRangeForInstancing[0].NumDescriptors = 1;
+	descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
 	// RootParameter作成
 	D3D12_ROOT_PARAMETER rootParameter[4] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 0;
 
-	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameter[1].Descriptor.ShaderRegister = 0;
+	rootParameter[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
+	rootParameter[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
 
 	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -272,11 +281,11 @@ void ParticleManager::GenerategraphicsPipeline() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directxBase_->CompileShader(L"resources/shaders/Object3D.VS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directxBase_->CompileShader(L"resources/shaders/Particle.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directxBase_->CompileShader(L"resources/shaders/Object3D.ps.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directxBase_->CompileShader(L"resources/shaders/Particle.PS.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
