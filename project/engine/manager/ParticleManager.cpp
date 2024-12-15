@@ -87,6 +87,7 @@ void ParticleManager::Update() {
 }
 
 void ParticleManager::Draw() {
+	
 	//ルートシグネチャ
 	directxBase_->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
 	//PSO設定
@@ -111,7 +112,7 @@ void ParticleManager::Draw() {
 //パーティクルグループの生成
 void ParticleManager::CreateparticleGroup(const std::string name, const std::string textureFilePath) {
 	//登録済みの名前かチェック
-	assert(particleGroups.find(name) != particleGroups.end());
+	assert(particleGroups.find(name) == particleGroups.end());
 	ParticleGroup newParticle;
 	particleGroups[name] = newParticle;
 	//テクスチャファイルパスを設定
@@ -156,12 +157,10 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count) {
 	//登録済みかチェック
 	assert(particleGroups.find(name) != particleGroups.end());
-	//指定されたグループを取得
-	ParticleGroup& targetGroup = particleGroups[name];
+	
 	//新たなパーティクル作成し、指定されたグループに登録
 	for (uint32_t i = 0; i < count; ++i) {
-		Particle newParticle = MakeNewParticle(randomEngine, position);
-		targetGroup.particles.push_back(newParticle);
+		particleGroups[name].particles.push_back(MakeNewParticle(randomEngine, position));
 	}
 }
 

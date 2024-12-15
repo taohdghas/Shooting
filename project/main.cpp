@@ -202,7 +202,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//パーティクル更新
 		particleEmitter->Update();
 		ParticleManager::GetInstance()->Update();
-		ParticleManager::GetInstance()->Draw();
 
 		/*
 		ImGui_ImplDX12_NewFrame();
@@ -261,6 +260,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		for (Object3d* object3d : object3ds) {
 			object3d->Draw();
 		}
+		//パーティクル描画
+		ParticleManager::GetInstance()->Draw();
 		// 実際のcommandListのImGuiの描画コマンドを積む
 		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
 		
