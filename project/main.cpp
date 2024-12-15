@@ -275,6 +275,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui::DestroyContext();
 	*/
 	//CloseHandle(fenceEvent);
+	delete particleEmitter;
 	delete camera;
 
 	for (Object3d* object3d : object3ds) {
