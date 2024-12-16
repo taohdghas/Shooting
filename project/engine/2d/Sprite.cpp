@@ -13,7 +13,7 @@ void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath) {
 	TransformationCreate();
 	AdjustTextureSize();
 
-	//textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
+	TextureManager::GetInstance()->LoadTexture(textureFilePath);
 	filePath = textureFilePath;
 }
 //更新
@@ -33,7 +33,7 @@ void Sprite::Update() {
 		top = -top;
 		bottom = -bottom;
 	}
-
+	
 	const DirectX::TexMetadata& metadata =
 		TextureManager::GetInstance()->GetMetaData(filePath);
 	float tex_left = textureLeftTop.x / metadata.width;
