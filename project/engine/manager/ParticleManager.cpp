@@ -31,6 +31,12 @@ void ParticleManager::Initialize(DirectXBase*directxBase,SrvManager*srvManager, 
 	accelerationfield_.area.max = { 1.0f,1.0f,1.0f };
 }
 
+//終了
+void ParticleManager::Finalize() {
+	delete instance;
+	instance = nullptr;
+}
+
 void ParticleManager::Update() {
 	Matrix4x4 cameraMatrix = camera_->GetWorldMatrix();
 	Matrix4x4 backToFrontMatrix = Math::MakeRotateYMatrix(std::numbers::pi_v<float>);
@@ -52,6 +58,7 @@ void ParticleManager::Update() {
 		billboardMatrix = Math::MakeIdentity4x4();
 	}
 	for (auto& ParticleGroups : particleGroups) {
+		ParticleGroups.second.kNumInstance = 0;
 		for (std::list<Particle>::iterator particleIterator = ParticleGroups.second.particles.begin();
 			particleIterator != ParticleGroups.second.particles.end();) {
 			//寿命に達したらグループから外す
@@ -320,7 +327,7 @@ void ParticleManager::GenerategraphicsPipeline() {
 	// Depthの昨日を有効化にする
 	depthStencilDesc.DepthEnable = true;
 	// 書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	// 比較関数はLessEqual.つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
@@ -341,7 +348,7 @@ void ParticleManager::VertexDataCreate() {
 	modelData.vertices.push_back({ .position = {1.0f,-1.0f,0.0f,1.0f},.texcoord = {0.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });//左下
 	modelData.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f},.texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//右上
 	modelData.vertices.push_back({ .position = {-1.0f,-1.0f,0.0f,1.0f},.texcoord = {1.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });//右下
-	modelData.material.textureFilePath = "./resources/uvChecker.png";
+	modelData.material.textureFilePath = "./resources/circle.png";
 	//リソースを作る
 	vertexResource = directxBase_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 	// リソースの先頭のアドレスから使う

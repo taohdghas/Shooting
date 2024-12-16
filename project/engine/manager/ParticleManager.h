@@ -73,6 +73,8 @@ public:
 	static ParticleManager* GetInstance();
 
 	void Initialize(DirectXBase* directxBase, SrvManager* srvManager, Camera* camera);
+	//終了
+	void Finalize();
 
 	void Update();
 

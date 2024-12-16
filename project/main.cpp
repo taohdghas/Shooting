@@ -276,6 +276,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	*/
 	//CloseHandle(fenceEvent);
 	delete particleEmitter;
+
+	ParticleManager::GetInstance()->Finalize();
+
 	delete camera;
 
 	for (Object3d* object3d : object3ds) {
