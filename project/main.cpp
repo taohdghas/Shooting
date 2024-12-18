@@ -33,6 +33,7 @@
 #include "SrvManager.h"
 #include "ParticleManager.h"
 #include "ParticleEmitter.h"
+#include "ImGuiManager.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -142,6 +143,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ParticleEmitter* particleEmitter = new ParticleEmitter();
 	particleEmitter->Initialize("particle");
 	particleEmitter->Emit();
+
+	//ImGuiマネージャ
+	ImGuiManager* imguimanager = new ImGuiManager();
+	imguimanager->Initialize(windowsAPI);
 #pragma endregion
 
 
@@ -275,12 +280,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui::DestroyContext();
 	*/
 	//CloseHandle(fenceEvent);
+	//ImGui
+	delete imguimanager;
+	//パーティクルエミッター
 	delete particleEmitter;
-
+	//パーティクルマネージャーの終了
 	ParticleManager::GetInstance()->Finalize();
-
+	//カメラ
 	delete camera;
-
+	//オブジェクト
 	for (Object3d* object3d : object3ds) {
 		delete object3d;
 	}
