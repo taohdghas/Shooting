@@ -4,11 +4,26 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
-void Input::Initialize(WindowsAPI*windowsAPI) {
-	//借りてきたWinAppのインスタンスを記録
-	this->windowsAPI_ = windowsAPI;
+Input* Input::instance = nullptr;
+//インスタンスの取得
+Input* Input::GetInstance() {
+	if (instance == nullptr) {
+		instance = new Input;
+	}
+	return instance;
+}
 
+void Input::Finalize() {
+	if (instance != nullptr) {
+		delete instance;
+		instance = nullptr;
+	}
+}
+
+void Input::Initialize(WindowsAPI*windowsAPI) {
 	HRESULT result;
+	//借りてきたWinAppのインスタンスを記録
+	windowsAPI_ = windowsAPI;
 
 	//DirectInputのインスタンス生成
 	result = DirectInput8Create(windowsAPI->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8,
@@ -42,7 +57,8 @@ bool Input::PushKey(BYTE keyNumber) {
 }
 
 bool Input::TriggerKey(BYTE keyNumber) {
-	if (keyPre[keyNumber] == 0 && key[keyNumber] != 0) {
+
+	if (keyPre[keyNumber]) {
 		return true;
 	}
 	return false;

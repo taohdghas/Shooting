@@ -2,9 +2,22 @@
 #include "Math.h"
 
 namespace Math {
+	Vector3 operator-=(Vector3& v1, const Vector3& v2) {
+		v1.x -= v2.x;
+		v1.y -= v2.x;
+		v1.z -= v2.x;
+		return v1;
+	}
+	Vector3 operator-(const Vector3& v1, const Vector3& v2) {
+		return Subtract(v1, v2);
+	}
 	//Add
 	Vector3 Math::Add(const Vector3& v1, const Vector3& v2) {
 		return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
+	}
+	//減算
+	Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
+		return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 	}
 	//単位行列
 	Matrix4x4 Math::MakeIdentity4x4() {
@@ -41,6 +54,9 @@ namespace Math {
 		result.y = v.y / length;
 		result.z = v.z / length;
 		return result;
+	}
+	Vector3 Math::Scale(const Vector3& vec, float scalar) {
+		return { vec.x * scalar, vec.y * scalar, vec.z * scalar };
 	}
 	//平行移動行列
 	Matrix4x4 Math::MakeTranslateMatrix(const Vector3& translate) {

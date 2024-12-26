@@ -1,9 +1,17 @@
 #include "PlayerBullet.h"
 
 //初期化
-void PlayerBullet::Initialize() {
+void PlayerBullet::Initialize(Object3dBase* object3dbase) {
+	object3dbase_ = object3dbase;
+
+	//オブジェクト初期化
+	object_ = std::make_unique<Object3d>();
+	object_->Initialize(object3dbase_);
+	object_->SetModel("axis.obj");
+	object_->SetScale({ 0.1f,0.1f,0.1f });
+
 	//デスタイマー
-	int32_t deathTimer = kLifeTime;
+	deathTimer = kLifeTime;
 }
 //更新
 void PlayerBullet::Update() {
@@ -13,8 +21,14 @@ void PlayerBullet::Update() {
 	if (--deathTimer < 0) {
 		isDead_ = true;
 	}
+	object_->SetTranslate(transform_.translate);
+	object_->Update();
 }
 //描画
 void PlayerBullet::Draw() {
-	
+	object_->Draw();
+}
+//衝突時コールバック関数
+void PlayerBullet::OnCollision() {
+	isDead_ = true;
 }

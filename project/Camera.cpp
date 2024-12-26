@@ -12,10 +12,12 @@ Camera::Camera()
 	, viewMatrix(Math::Inverse(worldMatrix))
 	, projectionMatrix(Math::MakePerspectiveFovMatrix(FovY, aspectRatio, nearClip, farClip))
 	, viewProjectionMatrix(Math::Multiply(viewMatrix, projectionMatrix))
+	,moveSpeed(0.1f)
 {}
 
 //更新
 void Camera::Update() {
+	transform.translate.z += moveSpeed;
 	//ワールド行列
 	worldMatrix = Math::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	//ビュー行列

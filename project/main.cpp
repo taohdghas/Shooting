@@ -31,7 +31,13 @@
 #include "ModelManager.h"
 #include "Camera.h"
 #include "SrvManager.h"
+#include "Math.h"
+
+#include "InputHandle.h"
+#include "command.h"
 #include "Player.h"
+#include "Enemy.h"
+
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -45,7 +51,36 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 #pragma comment(lib,"dinput8.lib")
+//衝突判定と応答
+void CheckAllCollisions(Player*player,Enemy*enemy) {
+	//判定対象AとBの座標
+	Vector3 posA, posB;
 
+	//player弾リストの取得
+	const std::list<PlayerBullet*>& playerBullets = player->GetBullets();
+
+#pragma region プレイヤー弾と敵の当たり判定
+
+#pragma endregion
+
+#pragma region プレイヤーと敵の当たり判定
+	//playerの座標
+	posA = player->GetPosition();
+	//enemyの座標
+	posB = enemy->GetPosition();
+	//衝突判定
+	float length = Math::Length(posB - posA);
+	float playerradius = player->GetRadius();
+	float enemyradius = enemy->GetRadius();
+	float radius = playerradius + enemyradius;
+	if (length <= radius) {
+		player->OnCollision();
+		enemy->OnCollision();
+	}
+	
+#pragma endregion
+
+}
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -65,11 +100,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//DirectXの初期化
 	directxBase = new DirectXBase();
 	directxBase->Initialize(windowsAPI);
-	//Inputポインタ
-	Input* input = nullptr;
-	//入力の初期化
-	input = new Input();
-	input->Initialize(windowsAPI);
+	//inputの初期化
+	Input::GetInstance()->Initialize(windowsAPI);
 	//SpriteBaseポインタ
 	SpriteBase* spriteBase = nullptr;
 	//SpriteBaseの初期化
@@ -82,10 +114,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	srvManager->Initialize(directxBase);
 
 	//テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(directxBase,srvManager);
+	TextureManager::GetInstance()->Initialize(directxBase, srvManager);
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
-	
+
 	//Sprite初期化
 	std::vector<Sprite*>sprites;
 	for (uint32_t i = 0; i < 2; ++i) {
@@ -96,7 +128,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	sprites[0]->Initialize(spriteBase, "resources/uvChecker.png");
 	sprites[1]->SettextureSize({ 10.0f,10.0f });
-	sprites[1]->Initialize(spriteBase,"resources/monsterBall.png");
+	sprites[1]->Initialize(spriteBase, "resources/monsterBall.png");
 
 
 	//3Dオブジェクト共通部
@@ -109,35 +141,41 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
 
-	//3Dオブジェクト
-	std::vector<Object3d*>object3ds;
-	for (uint32_t i = 0; i < 2; ++i) {
-		Object3d* object3d = new Object3d();
-		object3d->Initialize(object3dBase);
-		object3ds.push_back(object3d);
-	}
-	object3ds[0]->SetModel("plane.obj");
-	object3ds[0]->SetTranslate({-2.0f,0.0f,0.0f});
-	object3ds[1]->SetModel("axis.obj");
-	object3ds[1]->SetTranslate({ 2.0f,0.0f,0.0f });
-
-	Vector3 objectrotate = object3ds[0]->GetRotate();
-
-	//カメラ
+    //カメラ
 	Camera* camera = new Camera();
 	camera->SetRotate({ 0.3f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,4.0f,-10.0f });
-	object3ds[0]->SetCamera(camera);
-	object3ds[1]->SetCamera(camera);
-	
+
+	//object3ds[0]->SetCamera(camera);
+	//object3ds[1]->SetCamera(camera);
+
 	Vector3 cameraRote = camera->GetRotate();
 	Vector3 cameraPos = camera->GetTranslate();
 	object3dBase->SetDefaultCamera(camera);
 
+	//プレイヤー
+	std::unique_ptr<Player>player_;
+	player_ = std::make_unique<Player>();
+	player_->Initialize(object3dBase);
+
+	//敵
+	std::unique_ptr<Enemy>enemy_;
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(object3dBase,player_.get());
+
+	//コマンド
+	Icommand* icommand_ = nullptr;
+
+	//inputhandle
+	InputHandle* inputHandle_ = nullptr;
+	inputHandle_ = new InputHandle();
+	inputHandle_->AssignMoveUpCommandPressKeyW();
+	inputHandle_->AssignMoveUpCommandPressKeyS();
+	inputHandle_->AssignMoveUpCommandPressKeyA();
+	inputHandle_->AssignMoveUpCommandPressKeyD();
+	inputHandle_->AssignAttackCommandPressKesSpace();
+	//inputHandle_->AssignMoveDiagonalCommands();
 #pragma endregion
-	
-	//SRV切り替え
-	bool useMonsterBall = true;
 
 #pragma region メインループ
 	// ウィンドウのxボタンが押されるまでループ
@@ -150,10 +188,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		//入力の更新
-		input->Update();
+		Input::GetInstance()->Update();
 
 		//カメラの更新
 		camera->Update();
+		camera->SetMoveSpeed(0.01f);
 
 		//Spriteの更新
 		for (size_t i = 0; i < sprites.size(); ++i) {
@@ -169,10 +208,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		//3Dオブジェクトの更新
+		/*
 		for (size_t i = 0; i < object3ds.size(); ++i) {
 			Object3d* object3d = object3ds[i];
 			object3d->Update();
 		}
+		*/
+
+		std::vector<Icommand*> commands = inputHandle_->HandleInput();
+		for (Icommand* command : commands) {
+			if (command) {
+				command->Exec(*player_);
+			}
+		}
+
+		//プレイヤーの更新
+		player_->Update();
+
+		//敵の更新
+		enemy_->Update();
+
+		//衝突判定
+		CheckAllCollisions(player_.get(), enemy_.get());
 		/*
 
 		//色変化テスト
@@ -189,42 +246,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		size.y += 0.1f;
 		sprite->SetSize(size);
 		*/
-		
-		/*
-		ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
 
-		ImGui::Begin("Setting");
-		ImGui::DragFloat3("CameraRotation", &cameraRote.x, 0.01f);
-		ImGui::DragFloat3("CameraPosition", &cameraPos.x, 0.01f);
-		camera->SetRotate(cameraRote);
-		camera->SetTranslate(cameraPos);
-
-		ImGui::End();
-		ImGui::Render();
-
-		ImGui::Begin("Set");
-		ImGui::ColorEdit4("*materialData", &materialData->color.x);
-		ImGui::Checkbox("useMonsterBall", &useMonsterBall);
-		ImGui::ColorEdit4("*Light", &directionalLightData->color.x);
-		ImGui::SliderFloat3("*LightDirection", &directionalLightData->direction.x, -2.0f, 2.0f);
-		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
-		ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-		ImGui::DragFloat3("CameraTranslation", &transform.rotate.x, 0.01f);
-		ImGui::End();
-		ImGui::Render();
-		/*
-		directionalLightData->direction = Normalize(directionalLightData->direction);
-
-		//UVTransform用の行列
-		Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
-		uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateZMatrix(uvTransformSprite.rotate.z));
-		uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
-		materialDataSprite->uvTransform = uvTransformMatrix;
-		*/
-		
 		//描画前処理
 		directxBase->PreDraw();
 
@@ -236,20 +258,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//共通描画設定
 		spriteBase->DrawBaseSet();
 
-		//スプライト描画 \fd
-		for (Sprite* sprite : sprites) {
-			//sprite描画処理
-			//sprite->Draw();
-		}
+		//プレイヤーの描画
+		player_->Draw();
 
-		//3Dオブジェクト描画
-		for (Object3d* object3d : object3ds) {
-			//object3d->Draw();
-		}
-		
+		//敵の描画
+		enemy_->Draw();
+
 		// 実際のcommandListのImGuiの描画コマンドを積む
 		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
-		
+
 		//描画後処理
 		directxBase->PostDraw();
 	}
@@ -261,10 +278,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	*/
 	//CloseHandle(fenceEvent);
 	delete camera;
-
+	/*
 	for (Object3d* object3d : object3ds) {
 		delete object3d;
 	}
+	*/
 	//3Dモデルマネージャの終了
 	ModelManager::GetInstance()->Finalize();
 	delete object3dBase;
@@ -274,7 +292,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//DirectX解放
 	delete directxBase;
 	//入力解放
-	delete input;
+	Input::GetInstance()->Finalize();
 	//Sprite
 	for (Sprite* sprite : sprites) {
 		delete sprite;
@@ -286,4 +304,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//WindowsAPI関数
 	delete windowsAPI;
 	return 0;
+
 }
+

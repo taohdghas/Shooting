@@ -20,6 +20,7 @@ public:
 	void SetAspectRatio(const float& aspectratio) { aspectRatio = aspectratio; }
 	void SetNearClip(const float& nearclip){ nearClip = nearclip; }
 	void SetFarClip(const float& farclip) { farClip = farclip; }
+	void SetMoveSpeed(float speed) { moveSpeed = speed; }
 	///getter///
 	const Matrix4x4& GetWorldMatrix()const { return worldMatrix; }
 	const Matrix4x4& GetViewMatrix()const { return viewMatrix; }
@@ -41,5 +42,7 @@ private:
 	float nearClip;
 	//ファークリップ距離
 	float farClip;
+	//移動速度
+	float moveSpeed;
 };
 
