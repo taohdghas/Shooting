@@ -42,7 +42,7 @@ std::vector<Icommand*> InputHandle::HandleInput() {
     if (Input::GetInstance()->PushKey(DIK_D)) {
         commands.push_back(pressKeyD_);
     }
-    if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+    if (Input::GetInstance()->PushKey(DIK_SPACE)) {
         commands.push_back(pressKeySpace_);
     }
 

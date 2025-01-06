@@ -29,6 +29,12 @@ public:
     /// <param name = "keyNumber">キー番号(DIK_0等)</param>
     /// <returns>トリガーか</returns>
 	bool TriggerKey(BYTE keyNumber);
+	/// <summary>
+   /// キーのリリースをチェック
+   /// </summary>
+   /// <param name = "keyNumber">キー番号(DIK_0等)</param>
+   /// <returns>リリースされたか</returns>
+	bool ReleaseKey(BYTE keyNumber);
 private:
 	static Input* instance;
 	//キーボードのデバイス

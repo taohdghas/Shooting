@@ -2,7 +2,7 @@
 #include "Math.h"
 
 namespace Math {
-	Vector3 operator-=(Vector3& v1, const Vector3& v2) {
+	Vector3 operator-=(Vector3& v1,Vector3& v2) {
 		v1.x -= v2.x;
 		v1.y -= v2.x;
 		v1.z -= v2.x;
@@ -11,13 +11,28 @@ namespace Math {
 	Vector3 operator-(const Vector3& v1, const Vector3& v2) {
 		return Subtract(v1, v2);
 	}
+	Vector3 operator*(const Vector3& v, float scalar) {
+		return { v.x * scalar, v.y * scalar, v.z * scalar };
+	}
+	Vector3 operator*(float scalar, const Vector3& v) {
+		return{ scalar * v.x,scalar * v.y,scalar * v.z };
+	}
 	//Add
 	Vector3 Math::Add(const Vector3& v1, const Vector3& v2) {
 		return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 	}
 	//減算
-	Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
+	Vector3 Math::Subtract(const Vector3& v1, const Vector3& v2) {
 		return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
+	}
+	Vector3 Math::Multiply(const Vector3& v1, Vector3& v2) {
+		return { v1.x * v2.x,v1.y * v2.y,v1.z * v2.z };
+	}
+	Vector3 Math::Multiply(float scalar, const Vector3& v) {
+		return { scalar * v.x, scalar * v.y, scalar * v.z };
+	}
+	Vector3 Math::Multiply(const Vector3& v, float scalar) {
+		return { v.x * scalar,v.y * scalar,v.z * scalar };
 	}
 	//単位行列
 	Matrix4x4 Math::MakeIdentity4x4() {

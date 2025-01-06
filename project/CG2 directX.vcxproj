@@ -15,6 +15,7 @@
     <ClCompile Include="command.cpp" />
     <ClCompile Include="D3DResourceLeakChecker.cpp" />
     <ClCompile Include="DirectXBase.cpp" />
+    <ClCompile Include="engine\Game\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="engine\Game\Enemy\Enemy.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="StageScene.cpp" />
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="engine\manager\TextureManager.cpp" />
+    <ClCompile Include="Title.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="WindowsAPI.cpp" />
   </ItemGroup>
@@ -53,6 +55,7 @@
     <ClInclude Include="D3DResourceLeakChecker.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="DirectXBase.h" />
+    <ClInclude Include="engine\Game\Enemy\EnemyBullet.h" />
     <ClInclude Include="engine\Game\Enemy\Enemy.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
@@ -89,6 +92,7 @@
     <ClInclude Include="engine\math\Vector2.h" />
     <ClInclude Include="engine\math\Vector3.h" />
     <ClInclude Include="engine\math\Vector4.h" />
+    <ClInclude Include="Title.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="WindowsAPI.h" />
   </ItemGroup>

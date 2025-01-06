@@ -4,7 +4,7 @@
 #include "Object3d.h"
 #include "ModelManager.h"
 #include "Transform.h"
-class Skydome
+class Title
 {
 public:
 	//初期化

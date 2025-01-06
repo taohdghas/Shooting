@@ -37,6 +37,9 @@
 #include "command.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Skydome.h"
+#include "GameManager.h"
+#include "Title.h"
 
 
 #include "externals/imgui/imgui.h"
@@ -51,6 +54,15 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 #pragma comment(lib,"dinput8.lib")
+
+enum class Scene {
+	Title,
+	Game,
+};
+
+//タイトルシーンから開始
+Scene currentScene = Scene::Title;
+
 //衝突判定と応答
 void CheckAllCollisions(Player*player,Enemy*enemy) {
 	//判定対象AとBの座標
@@ -58,10 +70,46 @@ void CheckAllCollisions(Player*player,Enemy*enemy) {
 
 	//player弾リストの取得
 	const std::list<PlayerBullet*>& playerBullets = player->GetBullets();
+	//enemy弾リストの取得
+	const std::list<EnemyBullet*>& enemyBullets = enemy->GetBullets();
 
 #pragma region プレイヤー弾と敵の当たり判定
+	if (!enemy->IsDead()) {
+		for (const auto& bullet : playerBullets) {
+			if (bullet->IsDead()) continue;
 
+			// 衝突判定
+			float length = Math::Length(enemy->GetPosition() - bullet->GetPosition());
+			float combinedRadius = enemy->GetRadius() + bullet->GetRadius();
+			if (length <= combinedRadius) {
+				
+				enemy->TakeDamage(bullet->GetAttack());
+				bullet->OnCollision();
+			}
+		}
+	}
 #pragma endregion
+
+#pragma region プレイヤーと敵の弾の当たり判定
+	// プレイヤーの位置を取得
+	posA = player->GetPosition();
+
+	for (const auto& bullet : enemyBullets) {
+		if (bullet->IsDead()) continue;
+
+		// 敵弾の位置を取得
+		posB = bullet->GetPosition();
+
+		// 衝突判定
+		float length = Math::Length(posB - posA);
+		float combinedRadius = player->GetRadius() + bullet->GetRadius();
+		if (length <= combinedRadius) {
+			// 衝突時の処理
+			player->TakeDamage(bullet->GetAttack());
+			bullet->OnCollision();
+		}
+	}
+#pragma region
 
 #pragma region プレイヤーと敵の当たり判定
 	//playerの座標
@@ -81,6 +129,36 @@ void CheckAllCollisions(Player*player,Enemy*enemy) {
 #pragma endregion
 
 }
+
+void UpdateTitleScene() {
+	if (Input::GetInstance()->ReleaseKey(DIK_SPACE)) {
+		currentScene = Scene::Game; // スペースキーでゲームシーンに移行
+	}
+}
+
+void UpdateGameScene(Player* player, Enemy* enemy) {
+	player->Update();
+	enemy->Update();
+	CheckAllCollisions(player, enemy);
+
+	
+	// プレイヤーまたはボスのHPが0になったらタイトルシーンに戻る
+	if (player->GetHP() <= 0 || enemy->GetHP() <= 0) {
+		currentScene = Scene::Title;
+	}
+	
+}
+
+void DrawTitleScene() {
+
+}
+
+void DrawGameScene(Player* player, Enemy* enemy, Skydome* skydome) {
+	skydome->Draw();
+	player->Draw();
+	enemy->Draw();
+}
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -140,7 +218,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ModelManager::GetInstance()->Initialize(directxBase);
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
-
+	ModelManager::GetInstance()->LoadModel("skydome.obj");
+	ModelManager::GetInstance()->LoadModel("mm_frame.obj");
+	ModelManager::GetInstance()->LoadModel("bullet.obj");
+	ModelManager::GetInstance()->LoadModel("enemy.obj");
+	ModelManager::GetInstance()->LoadModel("text.obj");
     //カメラ
 	Camera* camera = new Camera();
 	camera->SetRotate({ 0.3f,0.0f,0.0f });
@@ -156,12 +238,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//プレイヤー
 	std::unique_ptr<Player>player_;
 	player_ = std::make_unique<Player>();
-	player_->Initialize(object3dBase);
+	player_->Initialize(object3dBase,camera);
 
 	//敵
 	std::unique_ptr<Enemy>enemy_;
 	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize(object3dBase,player_.get());
+	enemy_->Initialize(object3dBase);
+	enemy_->SetPlayer(player_.get());
+
+	//天球
+	std::unique_ptr<Skydome>skydome_;
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize(object3dBase);
+
+	std::unique_ptr<Title>title_;
+	title_ = std::make_unique<Title>();
+	title_->Initialize(object3dBase);
 
 	//コマンド
 	Icommand* icommand_ = nullptr;
@@ -175,6 +267,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	inputHandle_->AssignMoveUpCommandPressKeyD();
 	inputHandle_->AssignAttackCommandPressKesSpace();
 	//inputHandle_->AssignMoveDiagonalCommands();
+
 #pragma endregion
 
 #pragma region メインループ
@@ -189,31 +282,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//入力の更新
 		Input::GetInstance()->Update();
-
-		//カメラの更新
 		camera->Update();
-		camera->SetMoveSpeed(0.01f);
-
-		//Spriteの更新
-		for (size_t i = 0; i < sprites.size(); ++i) {
-			Sprite* sprite = sprites[i];
-
-			//回転テスト
-			//float rotaion = sprite->GetRotation();
-			//rotaion += 0.01f;
-			//sprite->SetRotation(rotaion);
-
-			//Spriteの更新
-			sprite->Update();
-		}
-
-		//3Dオブジェクトの更新
-		/*
-		for (size_t i = 0; i < object3ds.size(); ++i) {
-			Object3d* object3d = object3ds[i];
-			object3d->Update();
-		}
-		*/
+		
 
 		std::vector<Icommand*> commands = inputHandle_->HandleInput();
 		for (Icommand* command : commands) {
@@ -222,11 +292,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 		}
 
-		//プレイヤーの更新
-		player_->Update();
-
-		//敵の更新
-		enemy_->Update();
+		switch (currentScene) {
+		case Scene::Title:
+			UpdateTitleScene();
+			title_->Update();
+			player_->Initialize(object3dBase, camera);
+			enemy_->Initialize(object3dBase);
+			break;
+		case Scene::Game:
+			UpdateGameScene(player_.get(), enemy_.get());
+			break;
+		}
+		//天球の更新
+		skydome_->Update();
 
 		//衝突判定
 		CheckAllCollisions(player_.get(), enemy_.get());
@@ -258,11 +336,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//共通描画設定
 		spriteBase->DrawBaseSet();
 
-		//プレイヤーの描画
-		player_->Draw();
-
-		//敵の描画
-		enemy_->Draw();
+		switch (currentScene) {
+		case Scene::Title:
+			DrawTitleScene();
+			skydome_->Draw();
+			title_->Draw();
+			break;
+		case Scene::Game:
+			DrawGameScene(player_.get(), enemy_.get(), skydome_.get());
+			break;
+		}
 
 		// 実際のcommandListのImGuiの描画コマンドを積む
 		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
@@ -278,11 +361,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	*/
 	//CloseHandle(fenceEvent);
 	delete camera;
-	/*
-	for (Object3d* object3d : object3ds) {
-		delete object3d;
-	}
-	*/
 	//3Dモデルマネージャの終了
 	ModelManager::GetInstance()->Finalize();
 	delete object3dBase;

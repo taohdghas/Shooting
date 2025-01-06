@@ -1,23 +1,20 @@
-#include "PlayerBullet.h"
+#include "EnemyBullet.h"
 
 //初期化
-void PlayerBullet::Initialize(Object3dBase* object3dbase) {
+void EnemyBullet::Initialize(Object3dBase* object3dbase) {
 	object3dbase_ = object3dbase;
 
 	//オブジェクト初期化
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dbase_);
 	object_->SetModel("bullet.obj");
-	object_->SetScale({ 0.1f,0.1f,0.1f });
-
-	//デスタイマー
+	object_->SetScale({ 0.3f,0.3f,0.3f });
+	transform_.translate = { 0.0f, 0.0f, 0.0f };
 	deathTimer = kLifeTime;
 }
 //更新
-void PlayerBullet::Update() {
-	if (isDead_) {
-		return;
-	}
+void EnemyBullet::Update() {
+
 	//移動
 	transform_.translate = Math::Add(transform_.translate, velocity_);
 	//時間経過で消える
@@ -28,13 +25,10 @@ void PlayerBullet::Update() {
 	object_->Update();
 }
 //描画
-void PlayerBullet::Draw() {
-	if (isDead_) {
-		return;
-	}
+void EnemyBullet::Draw() {
 	object_->Draw();
 }
 //衝突時コールバック関数
-void PlayerBullet::OnCollision() {
+void EnemyBullet::OnCollision() {
 	isDead_ = true;
 }

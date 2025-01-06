@@ -10,17 +10,23 @@ Player::~Player() {
 }
 
 //初期化
-void Player::Initialize(Object3dBase* object3dbase) {
+void Player::Initialize(Object3dBase* object3dbase, Camera* camera) {
 	object3dBase_ = object3dbase;
+	camera_ = camera;
+	isDead_ = false;
+	hp_ = 100;
 	//オブジェクト初期化
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
-	object_->SetModel("plane.obj");
-	object_->SetScale({ 0.5f,0.5f,0.5f });
+	object_->SetModel("mm_frame.obj");
+	object_->SetScale({ 0.8f,0.8f,0.8f });
 	transform_.translate = { 0.0f,0.0f,0.0f };
 }
 //更新
 void Player::Update() {
+	if (isDead_) {
+		return;
+	}
 	//デスフラグが立った弾を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {
 		if (bullet->IsDead()) {
@@ -29,6 +35,8 @@ void Player::Update() {
 		}
 		return false;
 		});
+
+	transform_.translate.z = camera_->GetTranslate().z + 10.0f;
 
 	//位置をobjectに反映
 	object_->SetTranslate(transform_.translate);
@@ -43,6 +51,9 @@ void Player::Update() {
 }
 //描画
 void Player::Draw() {
+	if (isDead_) {
+		return;
+	}
 	//プレイヤーの描画
 	object_->Draw();
 	
@@ -71,7 +82,15 @@ void Player::Attack() {
 }
 //衝突時コールバック関数
 void Player::OnCollision() {
-
+	isDead_ = true;
+}
+//ダメージ
+void Player::TakeDamage(int damage) {
+	hp_ -= damage;
+	if (hp_ <= 0) {
+		hp_ = 0;
+		OnCollision();
+	}
 }
 //移動
 void Player::MoveUp() {

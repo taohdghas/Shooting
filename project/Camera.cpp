@@ -17,7 +17,7 @@ Camera::Camera()
 
 //更新
 void Camera::Update() {
-	transform.translate.z += moveSpeed;
+	//transform.translate.z += moveSpeed;
 	//ワールド行列
 	worldMatrix = Math::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	//ビュー行列

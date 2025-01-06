@@ -4,10 +4,15 @@
 #include <corecrt_math.h>
 
 namespace Math {
-	Vector3 operator-=(Vector3& v1, const Vector3& v2);
+	Vector3 operator-=(Vector3& v1, Vector3& v2);
 	Vector3 operator-(const Vector3& v1, const Vector3& v2);
+	Vector3 operator*(const Vector3& v, float scalar);
+	Vector3 operator*(float scalar, const Vector3& v);
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	Vector3 Subtract(const Vector3& v1, const Vector3& v2);
+	Vector3 Multiply(const Vector3& v1, Vector3& v2);
+	Vector3 Multiply(float scalar, const Vector3& v);
+	Vector3 Multiply(const Vector3& v, float scalar);
 	//単位行列
 	Matrix4x4 MakeIdentity4x4();
 

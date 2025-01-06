@@ -5,10 +5,10 @@
 #include "Transform.h"
 #include "Vector3.h"
 #include "Math.h"
-class PlayerBullet
+class EnemyBullet
 {
 public:
-	void Initialize(Object3dBase*object3dbase);
+	void Initialize(Object3dBase* object3dbase);
 
 	void Update();
 
@@ -16,7 +16,7 @@ public:
 	//衝突時コールバック関数
 	void OnCollision();
 
-    //デスフラグが立ったか
+	//デスフラグが立ったか
 	bool IsDead()const { return isDead_; }
 public:
 	///Getter///
@@ -35,7 +35,7 @@ private:
 	//寿命
 	static const uint32_t kLifeTime = 60 * 5;
 	//デスタイマー
-	int deathTimer;
+	int deathTimer =  kLifeTime;
 	//デスフラグ
 	bool isDead_ = false;
 	float radius_ = 1.0f;

@@ -8,6 +8,6 @@ public:
 	void Update()override;
 	void Draw()override;
 private:
-
+	
 };
 

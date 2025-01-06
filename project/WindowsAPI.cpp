@@ -48,7 +48,7 @@ void WindowsAPI::Initialize() {
 	// ウインドウの生成
 	 hwnd = CreateWindow(
 		wc.lpszClassName,
-		L"CG2",
+		L"LE2B_14_サノ_ハヤテ_スペーススリンガー",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
