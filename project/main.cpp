@@ -146,7 +146,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//ImGuiマネージャ
 	ImGuiManager* imguimanager = new ImGuiManager();
-	imguimanager->Initialize(windowsAPI);
+	imguimanager->Initialize(windowsAPI,directxBase,srvManager);
 #pragma endregion
 
 
@@ -162,6 +162,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//ゲームループを抜ける
 			break;
 		}
+		
+		//ImGui開始
+		imguimanager->Begin();
 
 		//入力の更新
 		input->Update();
@@ -208,6 +211,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		particleEmitter->Update();
 		ParticleManager::GetInstance()->Update();
 
+		//ImGui終了
+		imguimanager->End();
 		/*
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
@@ -272,6 +277,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		//描画後処理
 		directxBase->PostDraw();
+
+		//ImGui描画
+		imguimanager->Draw();
 	}
 #pragma endregion
 	/*
@@ -281,7 +289,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	*/
 	//CloseHandle(fenceEvent);
 	//ImGui
-	delete imguimanager;
+	imguimanager->Finalize();
+	//delete imguimanager;
 	//パーティクルエミッター
 	delete particleEmitter;
 	//パーティクルマネージャーの終了

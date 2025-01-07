@@ -22,6 +22,8 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
 	//GPUハンドル計算
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
+	//デスクリプタハンドル取得
+	ID3D12DescriptorHeap* GetDescriptorHeap() { return descriptorHeap.Get(); }
 public:
 	//最大SRV数(最大テクスチャ数)
 	static const uint32_t kMaxCount;
