@@ -33,16 +33,13 @@
 #include "SrvManager.h"
 #include "ParticleManager.h"
 #include "ParticleEmitter.h"
+#include "ImGuiManager.h"
 
-#include "externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
 #include "Logger.h"
 using namespace Math;
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
+//
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 #pragma comment(lib,"dinput8.lib")
@@ -92,12 +89,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	for (uint32_t i = 0; i < 2; ++i) {
 		Sprite* sprite = new Sprite();
 		sprite->Initialize(spriteBase, "resources/uvChecker.png");
-		sprite->SetPosition({ 100.0f * i,50.0f });
+		sprite->SetPosition({ 100.0f,100.0f });
 		sprites.push_back(sprite);
 	}
 	sprites[0]->Initialize(spriteBase, "resources/uvChecker.png");
-	sprites[1]->SettextureSize({ 10.0f,10.0f });
-	sprites[1]->Initialize(spriteBase,"resources/monsterBall.png");
+	//sprites[1]->SettextureSize({ 10.0f,10.0f });
+	//sprites[1]->Initialize(spriteBase,"resources/monsterBall.png");
 
 
 	//3Dオブジェクト共通部
@@ -118,7 +115,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		object3ds.push_back(object3d);
 	}
 	object3ds[0]->SetModel("plane.obj");
-	object3ds[0]->SetTranslate({-2.0f,0.0f,0.0f});
+	object3ds[0]->SetTranslate({0.0f,0.0f,0.0f});
 	object3ds[1]->SetModel("axis.obj");
 	object3ds[1]->SetTranslate({ 2.0f,0.0f,0.0f });
 
@@ -142,6 +139,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ParticleEmitter* particleEmitter = new ParticleEmitter();
 	particleEmitter->Initialize("particle");
 	particleEmitter->Emit();
+
+	//ImGuiマネージャ
+	ImGuiManager* imguimanager = new ImGuiManager();
+	imguimanager->Initialize(windowsAPI,directxBase,srvManager);
 #pragma endregion
 
 
@@ -157,6 +158,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//ゲームループを抜ける
 			break;
 		}
+		
+		//ImGui開始
+		imguimanager->Begin();
 
 		//入力の更新
 		input->Update();
@@ -168,13 +172,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		for (size_t i = 0; i < sprites.size(); ++i) {
 			Sprite* sprite = sprites[i];
 
-			//回転テスト
-			//float rotaion = sprite->GetRotation();
-			//rotaion += 0.01f;
-			//sprite->SetRotation(rotaion);
-
+			Vector2 position = sprite->GetPosition();
 			//Spriteの更新
 			sprite->Update();
+#ifdef USE_IMGUI
+			ImGui::SetNextWindowSize(ImVec2(500, 100), ImGuiCond_Once);
+			ImGui::Begin("sprite");
+			ImGui::DragFloat2("position", &position.x, 1.0f);
+			ImGui::End();
+#endif
+			sprite->SetPosition(position);
 		}
 
 		//3Dオブジェクトの更新
@@ -182,62 +189,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Object3d* object3d = object3ds[i];
 			object3d->Update();
 		}
-		/*
-
-		//色変化テスト
-		Vector4 color = sprite->GetColor();
-		color.x += 0.01f;
-		if (color.x > 1.0f) {
-			color.x -= 1.0f;
-		}
-		sprite->SetColor(color);
-		*/
-		/*
-		Vector2 size = sprite->GetSize();
-		size.x += 0.1f;
-		size.y += 0.1f;
-		sprite->SetSize(size);
-		*/
 		
 		//パーティクル更新
-		particleEmitter->Update();
-		ParticleManager::GetInstance()->Update();
+	//	particleEmitter->Update();
+		//ParticleManager::GetInstance()->Update();
 
-		/*
-		ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-
-		ImGui::Begin("Setting");
-		ImGui::DragFloat3("CameraRotation", &cameraRote.x, 0.01f);
-		ImGui::DragFloat3("CameraPosition", &cameraPos.x, 0.01f);
-		camera->SetRotate(cameraRote);
-		camera->SetTranslate(cameraPos);
-
-		ImGui::End();
-		ImGui::Render();
-		*/
-		/*
-		ImGui::Begin("Set");
-		ImGui::ColorEdit4("*materialData", &materialData->color.x);
-		ImGui::Checkbox("useMonsterBall", &useMonsterBall);
-		ImGui::ColorEdit4("*Light", &directionalLightData->color.x);
-		ImGui::SliderFloat3("*LightDirection", &directionalLightData->direction.x, -2.0f, 2.0f);
-		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
-		ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-		ImGui::DragFloat3("CameraTranslation", &transform.rotate.x, 0.01f);
-		ImGui::End();
-		ImGui::Render();
-		/*
-		directionalLightData->direction = Normalize(directionalLightData->direction);
-
-		//UVTransform用の行列
-		Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
-		uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateZMatrix(uvTransformSprite.rotate.z));
-		uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
-		materialDataSprite->uvTransform = uvTransformMatrix;
-		*/
+		//ImGui終了
+		imguimanager->End();
 
 		//描画前処理
 		directxBase->PreDraw();
@@ -250,37 +208,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//共通描画設定
 		spriteBase->DrawBaseSet();
 
-		//スプライト描画 \fd
+		//スプライト描画 
 		for (Sprite* sprite : sprites) {
 			//sprite描画処理
 			sprite->Draw();
 		}
 
+		/*
 		//3Dオブジェクト描画
 		for (Object3d* object3d : object3ds) {
 			object3d->Draw();
 		}
+		*/
 		//パーティクル描画
-		ParticleManager::GetInstance()->Draw();
+		//ParticleManager::GetInstance()->Draw();
+		
 		// 実際のcommandListのImGuiの描画コマンドを積む
 		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
 		
+		//ImGui描画
+		imguimanager->Draw();
+
 		//描画後処理
 		directxBase->PostDraw();
 	}
 #pragma endregion
-	/*
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-	*/
+	
 	//CloseHandle(fenceEvent);
+	//ImGui
+	imguimanager->Finalize();
+	//delete imguimanager;
+	//パーティクルエミッター
 	delete particleEmitter;
-
+	//パーティクルマネージャーの終了
 	ParticleManager::GetInstance()->Finalize();
-
+	//カメラ
 	delete camera;
-
+	//オブジェクト
 	for (Object3d* object3d : object3ds) {
 		delete object3d;
 	}
