@@ -61,7 +61,7 @@ enum class Scene {
 };
 
 //タイトルシーンから開始
-Scene currentScene = Scene::Title;
+Scene currentScene = Scene::Game;
 
 //衝突判定と応答
 void CheckAllCollisions(Player*player,Enemy*enemy) {
@@ -144,7 +144,7 @@ void UpdateGameScene(Player* player, Enemy* enemy) {
 	
 	// プレイヤーまたはボスのHPが0になったらタイトルシーンに戻る
 	if (player->GetHP() <= 0 || enemy->GetHP() <= 0) {
-		currentScene = Scene::Title;
+		//currentScene = Scene::Title;
 	}
 	
 }
