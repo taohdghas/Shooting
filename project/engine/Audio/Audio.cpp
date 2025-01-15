@@ -14,16 +14,23 @@ Audio* Audio::GetInstance() {
 
 //終了
 void Audio::Finalize() {
-	delete instance_;
-	instance_ = nullptr;
+	
+
+	for (auto& soundData : loadedSounds_) {
+		SoundUnload(&soundData);
+	}
+
+	//マスターボイス解放
+	if (masterVoice_ != nullptr) {
+		masterVoice_->DestroyVoice();
+		masterVoice_ = nullptr;
+	}
 
 	//XAudio解放
 	xAudio2_.Reset();
-	//音声データ開放
-	for (auto& soundData : soundDatas_)
-	{
-		SoundUnload(&soundData);
-	}
+
+	delete instance_;
+	instance_ = nullptr;
 }
 
 //初期化
@@ -60,12 +67,13 @@ SoundData Audio::SoundLoadWave(const char*filename)
 	FormatChunk format = {};
 	//チャンクヘッダーの確認
 	file.read((char*)&format, sizeof(ChunkHeader));
-	if (strncmp(format.chunk.id, "fmt", 4) != 0) {
+	if (strncmp(format.chunk.id, "fmt ", 4) != 0) {
 		assert(0);
 	}
 	//チャンク本体の読み込み
 	assert(format.chunk.size <= sizeof(format.fmt));
 	file.read((char*)&format.fmt, format.chunk.size);
+
 	//Dataチャンクの読み込み
 	ChunkHeader data;
 	file.read((char*)&data, sizeof(data));
@@ -79,6 +87,7 @@ SoundData Audio::SoundLoadWave(const char*filename)
 	if (strncmp(data.id, "data", 4) != 0) {
 		assert(0);
 	}
+
 	//Dataチャンクのデータ部(波型データ)の読み込み
 	char* pBuffer = new char[data.size];
 	file.read(pBuffer, data.size);

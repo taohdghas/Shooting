@@ -4,7 +4,7 @@
 #include <fstream>
 #include <cstdint>
 #include <cassert>
-#include <array>
+#include <vector>
 
 #pragma comment(lib,"xaudio2.lib")
 
@@ -25,7 +25,7 @@ struct RiffHeader
 //FMTチャンク
 struct FormatChunk
 {
-	ChunkHeader chunk;//"fmt"
+	ChunkHeader chunk;//"fmt "
 	WAVEFORMATEX fmt;//波型フォーマット
 };
 
@@ -43,7 +43,6 @@ struct SoundData
 class Audio
 {
 public:
-	static const int kMaxSound = 100;
 
 	//シングルトンインスタンス
 	static Audio* GetInstance();
@@ -61,7 +60,7 @@ private:
 	static Audio* instance_;
 	HRESULT result;
 	Microsoft::WRL::ComPtr<IXAudio2>xAudio2_;
-	IXAudio2MasteringVoice* masterVoice_;
-	std::array<SoundData, kMaxSound>soundDatas_;
+	IXAudio2MasteringVoice* masterVoice_ = nullptr;
+	std::vector<SoundData> loadedSounds_;
 };
 

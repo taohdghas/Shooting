@@ -203,7 +203,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ParticleManager::GetInstance()->Update();
 
 		//サウンド再生
-		audio_->SoundPlayWave(soundData1);
+		if (input->TriggerKey(DIK_SPACE)) {
+			audio_->SoundPlayWave(soundData1);
+		}
 
 		//ImGui終了
 		imguimanager->End();
@@ -233,10 +235,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		*/
 		//パーティクル描画
 		//ParticleManager::GetInstance()->Draw();
-		
-		// 実際のcommandListのImGuiの描画コマンドを積む
-		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
-		
+	
 		//ImGui描画
 		imguimanager->Draw();
 
@@ -248,6 +247,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//CloseHandle(fenceEvent);
 	//Audio
 	audio_->Finalize();
+	audio_->SoundUnload(&soundData1);
 	//ImGui
 	imguimanager->Finalize();
 	//delete imguimanager;
