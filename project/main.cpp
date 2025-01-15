@@ -34,6 +34,7 @@
 #include "ParticleManager.h"
 #include "ParticleEmitter.h"
 #include "ImGuiManager.h"
+#include "Audio.h"
 
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
@@ -143,6 +144,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//ImGuiマネージャ
 	ImGuiManager* imguimanager = new ImGuiManager();
 	imguimanager->Initialize(windowsAPI,directxBase,srvManager);
+
+	//サウンド
+	Audio* audio_;
+	audio_ = Audio::GetInstance();
+	audio_->Initialize();
+	SoundData soundData1 =  audio_->SoundLoadWave("resources/Alarm01.wav");
+
 #pragma endregion
 
 
@@ -177,8 +185,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			sprite->Update();
 #ifdef USE_IMGUI
 			ImGui::SetNextWindowSize(ImVec2(500, 100), ImGuiCond_Once);
-			ImGui::Begin("sprite");
-			ImGui::DragFloat2("position", &position.x, 1.0f);
+			ImGui::Begin(std::format("sprite##{}", i).c_str()); // 一意のIDを付与
+			ImGui::DragFloat2(std::format("position##{}", i).c_str(), &position.x, 1.0f);
 			ImGui::End();
 #endif
 			sprite->SetPosition(position);
@@ -193,6 +201,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//パーティクル更新
 	//	particleEmitter->Update();
 		//ParticleManager::GetInstance()->Update();
+
+		//サウンド再生
+		if (input->TriggerKey(DIK_SPACE)) {
+			audio_->SoundPlayWave(soundData1);
+		}
 
 		//ImGui終了
 		imguimanager->End();
@@ -222,10 +235,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		*/
 		//パーティクル描画
 		//ParticleManager::GetInstance()->Draw();
-		
-		// 実際のcommandListのImGuiの描画コマンドを積む
-		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directxBase->Getcommandlist().Get());
-		
+	
 		//ImGui描画
 		imguimanager->Draw();
 
@@ -235,6 +245,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 	
 	//CloseHandle(fenceEvent);
+	//Audio
+	audio_->Finalize();
+	audio_->SoundUnload(&soundData1);
 	//ImGui
 	imguimanager->Finalize();
 	//delete imguimanager;
