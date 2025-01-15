@@ -228,9 +228,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	camera->SetRotate({ 0.3f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,4.0f,-10.0f });
 
-	//object3ds[0]->SetCamera(camera);
-	//object3ds[1]->SetCamera(camera);
-
 	Vector3 cameraRote = camera->GetRotate();
 	Vector3 cameraPos = camera->GetTranslate();
 	object3dBase->SetDefaultCamera(camera);
@@ -266,7 +263,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	inputHandle_->AssignMoveUpCommandPressKeyA();
 	inputHandle_->AssignMoveUpCommandPressKeyD();
 	inputHandle_->AssignAttackCommandPressKesSpace();
-	//inputHandle_->AssignMoveDiagonalCommands();
 
 #pragma endregion
 
