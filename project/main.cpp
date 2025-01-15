@@ -203,7 +203,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ParticleManager::GetInstance()->Update();
 
 		//サウンド再生
-		audio_->SoundPlayWave()
+		audio_->SoundPlayWave(soundData1);
 
 		//ImGui終了
 		imguimanager->End();

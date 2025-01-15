@@ -1,5 +1,7 @@
 #include "Audio.h"
 
+Audio* Audio::instance_ = nullptr;
+
 //シングルトンインスタンス
 Audio* Audio::GetInstance() {
 	if (instance_ == nullptr)
@@ -104,10 +106,10 @@ void Audio::SoundUnload(SoundData* soundData) {
 }
 
 //音声再生
-void Audio::SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData) {
+void Audio::SoundPlayWave( const SoundData& soundData) {
 	//波刑フォーマットをもとにSourceVoiceの生成
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
-	result = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+	result = xAudio2_->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
 	assert(SUCCEEDED(result));
 
 	//再生する波形データの設定

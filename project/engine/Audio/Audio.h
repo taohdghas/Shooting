@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cstdint>
 #include <cassert>
+#include <array>
 
 #pragma comment(lib,"xaudio2.lib")
 
@@ -55,7 +56,7 @@ public:
 	//音声データ解放
 	void SoundUnload(SoundData* soundData);
 	//音声再生
-	void SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData);
+	void SoundPlayWave(const SoundData& soundData);
 private:
 	static Audio* instance_;
 	HRESULT result;
