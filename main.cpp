@@ -1270,10 +1270,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
 
-	//const uint32_t kSubdivision = 16;//indexの場合4
+	const uint32_t kSubdivision = 16;//indexの場合4
 
 	//モデル読み込み
-	//ModelData modelData = LoadObjFile("resources","plane.obj");
+	ModelData modelData = LoadObjFile("resources","plane.obj");
+	/*
 	ModelData modelData;
 	modelData.vertices.push_back({ .position = {1.0f,1.0f,0.0f,1.0f},.texcoord = {0.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//左上
 	modelData.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f},.texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//右上
@@ -1282,16 +1283,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	modelData.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f},.texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//右上
 	modelData.vertices.push_back({ .position = {-1.0f,-1.0f,0.0f,1.0f},.texcoord = {1.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });//右下
 	modelData.material.textureFilePath = "./resources/uvChecker.png";
-
+	*/
 	// 頂点リソースを作る
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(device, sizeof(VertexData) * kSubdivision * kSubdivision * 6);
 
 	// 頂点バッファビューを作成する
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	// リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズは頂点のサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * kSubdivision * kSubdivision * 6);
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -1302,7 +1303,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//頂点データをリソースにコピー
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
-	/*
+	
 	//経度分割1つ分の経度φd
 	const float kLonEvery = 2 * std::numbers::pi_v<float> / (float)kSubdivision;
 	//緯度分割１つ分の緯度Θd
@@ -1375,7 +1376,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		}
 	}
-	*/
+	
 	// Sprite用のリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(device, sizeof(VertexData) * 4);
 
@@ -1524,7 +1525,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
 
 	// Textureを読んで転送する
-	DirectX::ScratchImage mipImages = LoadTexture("resources/circle.png");
+	DirectX::ScratchImage mipImages = LoadTexture("resources/monsterBall.png");
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(device, metadata);
 	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = UploadTextureData(textureResource, mipImages, device, commandList);
@@ -1829,15 +1830,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// マテリアルCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 			//WVP用のCBufferの場所を設定
-			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+			//commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 			//instancing用のDataを読むためにStructuredBufferのSRVを設定する
-		//	commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
+			commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
 			// SRVのDescriptorTableの先頭を設定
 			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 			//Lighting
 			commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
 			// 描画
-			commandList->DrawInstanced(UINT(modelData.vertices.size()), numInstance, 0, 0);
+			commandList->DrawInstanced(kSubdivision* kSubdivision * 6, 10, 0, 0);
 
 			// Spriteの描画
 			//commandList->IASetIndexBuffer(&indexBufferViewSprite);
