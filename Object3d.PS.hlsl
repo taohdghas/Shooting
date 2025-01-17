@@ -58,8 +58,16 @@ PixelShaderOutput main(VertexShaderOutput input)
     {
         float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
         float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+        //拡散反射
+        float32_t3 diffuse = gMaterial.color.rgb * textureColor.rgb *
+        gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+        //鏡面反射
+        float32_t3 specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity *
+        specularPow * float32_t3(1.0f, 1.0f, 1.0f);
        // output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
-        output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+       // output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+        //拡散反射 + 鏡面反射
+        output.color.rgb = diffuse + specular;
         output.color.a = gMaterial.color.a * textureColor.a;
     }
     else//Lightingしない場合。前回と同じ演算
