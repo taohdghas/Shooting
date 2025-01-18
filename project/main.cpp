@@ -35,6 +35,7 @@
 #include "ParticleEmitter.h"
 #include "ImGuiManager.h"
 #include "Audio.h"
+#include "MyGame.h"
 
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
@@ -48,11 +49,16 @@ using namespace Math;
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
+	MyGame game;
+
+	game.Initialize();
+
+	/*
 	D3DResourceLeakChecker leakCheck;
 
-	CoInitializeEx(0, COINIT_MULTITHREADED);
+	//CoInitializeEx(0, COINIT_MULTITHREADED);
 
-	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	//HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 #pragma region 基盤システム初期化
 	//WindowsAPIポインタ
 	WindowsAPI* windowsAPI = nullptr;
@@ -150,12 +156,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	audio_ = Audio::GetInstance();
 	audio_->Initialize();
 	SoundData soundData1 =  audio_->SoundLoadWave("resources/Alarm01.wav");
-
+	*/
 #pragma endregion
-
-
-	//SRV切り替え
-	bool useMonsterBall = true;
 
 #pragma region メインループ
 	// ウィンドウのxボタンが押されるまでループ

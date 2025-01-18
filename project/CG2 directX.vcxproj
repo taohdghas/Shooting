@@ -37,6 +37,7 @@
     <ClCompile Include="engine\manager\SrvManager.cpp" />
     <ClCompile Include="engine\manager\ParticleManager.cpp" />
     <ClCompile Include="engine\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="engine\manager\TextureManager.cpp" />
     <ClCompile Include="WindowsAPI.cpp" />
@@ -72,6 +73,7 @@
     <ClInclude Include="engine\manager\SrvManager.h" />
     <ClInclude Include="engine\manager\ParticleManager.h" />
     <ClInclude Include="engine\Particle\ParticleEmitter.h" />
+    <ClInclude Include="MyGame.h" />
     <ClInclude Include="StringUtility.h" />
     <ClInclude Include="engine\manager\TextureManager.h" />
     <ClInclude Include="engine\math\Transform.h" />
