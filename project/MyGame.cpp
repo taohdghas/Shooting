@@ -2,7 +2,6 @@
 
 //初期化
 void MyGame::Initialize() {
-	D3DResourceLeakChecker leakCheck;
 
 	//WindowsAPIの初期化
 	windowsAPI = new WindowsAPI();
@@ -85,19 +84,133 @@ void MyGame::Initialize() {
 	//サウンド
 	audio_ = Audio::GetInstance();
 	audio_->Initialize();
+	soundData1 = audio_->SoundLoadWave("resources/Alarm01.wav");
 }
 
 //終了
 void MyGame::Finalize() {
-
+	//CloseHandle(fenceEvent);
+	//Audio
+	audio_->Finalize();
+	audio_->SoundUnload(&soundData1);
+	//ImGui
+	imguimanager->Finalize();
+	//delete imguimanager;
+	//パーティクルエミッター
+	delete particleEmitter;
+	//パーティクルマネージャーの終了
+	ParticleManager::GetInstance()->Finalize();
+	//カメラ
+	delete camera;
+	//オブジェクト
+	for (Object3d* object3d : object3ds) {
+		delete object3d;
+	}
+	//3Dモデルマネージャの終了
+	ModelManager::GetInstance()->Finalize();
+	delete object3dBase;
+	//テクスチャマネージャの終了
+	TextureManager::GetInstance()->Finalize();
+	delete srvManager;
+	//DirectX解放
+	delete directxBase;
+	//入力解放
+	delete input;
+	//Sprite
+	for (Sprite* sprite : sprites) {
+		delete sprite;
+	}
+	//SpriteBase
+	delete spriteBase;
+	//WindowsAPIの終了処理
+	windowsAPI->Finalize();
+	//WindowsAPI関数
+	delete windowsAPI;
 }
 
 //毎フレーム更新
 void MyGame::Update() {
+	// Windowにメッセージが来てたら最優先で処理させる
+	if (windowsAPI->ProcessMessage()) {
+		//ゲームループを抜ける
+		endRequst_ = true;
+	}
 
+	//ImGui開始
+	imguimanager->Begin();
+
+	//入力の更新
+	input->Update();
+
+	//カメラの更新
+	camera->Update();
+
+	//Spriteの更新
+	for (size_t i = 0; i < sprites.size(); ++i) {
+		Sprite* sprite = sprites[i];
+
+		Vector2 position = sprite->GetPosition();
+		//Spriteの更新
+		sprite->Update();
+#ifdef USE_IMGUI
+		ImGui::SetNextWindowSize(ImVec2(500, 100), ImGuiCond_Once);
+		ImGui::Begin(std::format("sprite##{}", i).c_str()); // 一意のIDを付与
+		ImGui::DragFloat2(std::format("position##{}", i).c_str(), &position.x, 1.0f);
+		ImGui::End();
+#endif
+		sprite->SetPosition(position);
+	}
+
+	//3Dオブジェクトの更新
+	for (size_t i = 0; i < object3ds.size(); ++i) {
+		Object3d* object3d = object3ds[i];
+		object3d->Update();
+	}
+
+	//パーティクル更新
+//	particleEmitter->Update();
+	//ParticleManager::GetInstance()->Update();
+
+	//サウンド再生
+	if (input->TriggerKey(DIK_SPACE)) {
+		audio_->SoundPlayWave(soundData1);
+	}
+
+	//ImGui終了
+	imguimanager->End();
 }
 
 //描画
 void MyGame::Draw() {
+	//描画前処理
+	directxBase->PreDraw();
 
+	srvManager->PreDraw();
+
+	//3Dオブジェクト描画準備
+	object3dBase->DrawBaseSet();
+
+	//共通描画設定
+	spriteBase->DrawBaseSet();
+
+	//スプライト描画 
+	for (Sprite* sprite : sprites) {
+		//sprite描画処理
+		sprite->Draw();
+	}
+
+	/*
+	//3Dオブジェクト描画
+	for (Object3d* object3d : object3ds) {
+		object3d->Draw();
+	}
+	*/
+	//パーティクル描画
+	//ParticleManager::GetInstance()->Draw();
+
+	//ImGui描画
+	imguimanager->Draw();
+
+	//描画後処理
+	directxBase->PostDraw();
 }

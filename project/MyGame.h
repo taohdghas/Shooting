@@ -56,6 +56,9 @@ public:
 	void Update();
 	//描画
 	void Draw();
+public:
+	//終了フラグのチェック
+	bool IsEndRequst() { return endRequst_; }
 private:
 	//WindowsAPIポインタ
 	WindowsAPI* windowsAPI = nullptr;
@@ -81,6 +84,10 @@ private:
 	ImGuiManager* imguimanager = new ImGuiManager();
 	//サウンド
 	Audio* audio_;
-	SoundData soundData1 = audio_->SoundLoadWave("resources/Alarm01.wav");
+	SoundData soundData1;
+
+	D3DResourceLeakChecker leakCheck;
+	//ゲーム終了フラグ
+	bool endRequst_ = false;
 };
 

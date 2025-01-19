@@ -1,50 +1,4 @@
-#define DIRECTINPUT_VERSION 0x0800
-#include <string>
-#include <format>
-#include <dxgidebug.h>
-#include <dxcapi.h>
-#include <vector>
-#include <numbers>
-#include <fstream>
-#include <sstream>
-#include "Input.h"
-#include <dinput.h>
-#include "WindowsAPI.h"
-#include "DirectXBase.h"
-#include "D3DResourceLeakChecker.h"
-#include "SpriteBase.h"
-#include "Sprite.h"
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
-#include "Matrix4x4.h"
-#include "Transform.h"
-#include "DirectionalLight.h"
-#include "MaterialData.h"
-#include "ModelData.h"
-#include "Math.h"
-#include "TextureManager.h"
-#include "Object3dBase.h"
-#include "Object3d.h"
-#include "ModelBase.h"
-#include "Model.h"
-#include "ModelManager.h"
-#include "Camera.h"
-#include "SrvManager.h"
-#include "ParticleManager.h"
-#include "ParticleEmitter.h"
-#include "ImGuiManager.h"
-#include "Audio.h"
 #include "MyGame.h"
-
-#include "externals/DirectXTex/DirectXTex.h"
-#include "externals/DirectXTex/d3dx12.h"
-#include "Logger.h"
-using namespace Math;
-//
-#pragma comment(lib,"dxguid.lib")
-#pragma comment(lib,"dxcompiler.lib")
-#pragma comment(lib,"dinput8.lib")
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -54,8 +8,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	game.Initialize();
 
 	/*
-	D3DResourceLeakChecker leakCheck;
-
 	//CoInitializeEx(0, COINIT_MULTITHREADED);
 
 	//HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
@@ -162,7 +114,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region メインループ
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
+		//毎フレーム更新
+		game.Update();
 
+		//ループを抜ける
+		if (game.IsEndRequst()) {
+			break;
+		}
+
+		//描画
+		game.Draw();
+
+		/*
 		// Windowにメッセージが来てたら最優先で処理させる
 		if (windowsAPI->ProcessMessage()) {
 			//ゲームループを抜ける
@@ -211,7 +174,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//ImGui終了
 		imguimanager->End();
+		*/
 
+		/*
 		//描画前処理
 		directxBase->PreDraw();
 
@@ -229,12 +194,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			sprite->Draw();
 		}
 
-		/*
+		
 		//3Dオブジェクト描画
 		for (Object3d* object3d : object3ds) {
 			object3d->Draw();
 		}
-		*/
+		
 		//パーティクル描画
 		//ParticleManager::GetInstance()->Draw();
 	
@@ -243,9 +208,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//描画後処理
 		directxBase->PostDraw();
+		*/
 	}
 #pragma endregion
-	
+	//終了
+	game.Finalize();
+
+	/*
 	//CloseHandle(fenceEvent);
 	//Audio
 	audio_->Finalize();
@@ -283,5 +252,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	windowsAPI->Finalize();
 	//WindowsAPI関数
 	delete windowsAPI;
+	*/
 	return 0;
 }
