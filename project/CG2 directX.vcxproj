@@ -24,6 +24,7 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="engine\io\Input.cpp" />
     <ClCompile Include="engine\manager\ImGuiManager.cpp" />
+    <ClCompile Include="Framework.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\math\Math.cpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="engine\io\Input.h" />
     <ClInclude Include="engine\manager\ImGuiManager.h" />
+    <ClInclude Include="Framework.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MaterialData.h" />
     <ClInclude Include="engine\math\Math.h" />
