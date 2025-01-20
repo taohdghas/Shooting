@@ -67,6 +67,9 @@ struct DirectionalLight{
 	  Vector3 direction;//ライトの向き
 	  float intensity;//輝度
 };
+struct CameraForGPU {
+	Vector3 worldPosition;
+};
 
 //単位行列
 Matrix4x4 MakeIdentity4x4() {
