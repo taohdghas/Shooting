@@ -1214,7 +1214,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialDataSprite->uvTransform = MakeIdentity4x4();
 
 	//平行光源用のリソースを作る
-	ID3D12Resource* DirectionalLightResource = CreateBufferResource(device, sizeof(DirectionalLight));
+	ID3D12Resource* DirectionalLightResource = CreateBufferResource(device, sizeof(DirectionalLight));;
 	//データを書き込む
 	DirectionalLight* directionalLightData = nullptr;
 	//書き込むためのアドレスと取得
@@ -1222,7 +1222,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//デフォルト値はとりあえず以下のようにしておく
 	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData->intensity = 1.0f; 
+	directionalLightData->intensity = 1.0f;
 
 	// Sprite用のTransformationMatrix用のリソースを作る
 	ID3D12Resource* transformationMatrixResourceSprite = CreateBufferResource(device, sizeof(TransformationMatrix));
@@ -1364,6 +1364,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
 		
+		
+
 			// 書き込むバックバッファのインデックスの取得
 			UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
