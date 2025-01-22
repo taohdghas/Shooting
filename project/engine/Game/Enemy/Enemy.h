@@ -51,6 +51,7 @@ public:
 
 	///Setter///
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetPosition(const Vector3& position) { transform_.translate; }
 private:
 	Object3dBase* object3dBase_;
 	Camera* camera_;

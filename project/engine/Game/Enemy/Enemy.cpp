@@ -83,7 +83,6 @@ void Enemy::Laser() {
 }
 //追尾弾フェーズ
 void Enemy::Homing() {
-
 }
 //HP減少関数
 void Enemy::TakeDamage(int damage) {
