@@ -1378,14 +1378,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	
 	// Sprite用のリソースを作る
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(device, sizeof(VertexData) * 4);
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(device, sizeof(VertexData) * 6);
 
 	// 頂点バッファビューを作成する
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
 	// リソースの先頭のアドレスから使う
 	vertexBufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
 	// 使用するリソースのサイズは頂点6つ分
-	vertexBufferViewSprite.SizeInBytes = sizeof(VertexData) * 4;
+	vertexBufferViewSprite.SizeInBytes = sizeof(VertexData) * 6;
 	// 1頂点当たりのサイズ
 	vertexBufferViewSprite.StrideInBytes = sizeof(VertexData);
 
@@ -1487,6 +1487,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 単位行列を書き込んでおく
 	transformationMatrixDataSprite->WVP = MakeIdentity4x4();
 	transformationMatrixDataSprite->World = MakeIdentity4x4();
+
+	Microsoft::WRL::ComPtr<ID3D12Resource>cameraResource = CreateBufferResource(device, sizeof(CameraForGPU));
+	CameraForGPU* cameraData = nullptr;
+	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData));
+	cameraData->worldPosition;
 
 	//Instancing用のTransformationMatrix用リソースを作る
 	const uint32_t kNumMaxInstance = 100;//インスタンス数
@@ -1711,6 +1716,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				billboardMatrix = MakeIdentity4x4();
 			}
 
+			cameraData->worldPosition = cameraTransform.translate;
+
 			/*
 			//Δtを定義
 			const float kDeltaTime = 1.0f / 60.0f;
@@ -1825,6 +1832,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetPipelineState(graphicsPipelineState.Get());
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 			
+			//球の描画
 			// 形状を設定
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			// マテリアルCBufferの場所を設定
@@ -1837,6 +1845,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 			//Lighting
 			commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
+
+			commandList->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
+
 			// 描画
 			commandList->DrawInstanced(kSubdivision* kSubdivision * 6, 10, 0, 0);
 
