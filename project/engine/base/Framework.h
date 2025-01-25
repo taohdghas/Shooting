@@ -9,9 +9,9 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
-#include "Audio.h"
 #include "Camera.h"
 #include "ParticleManager.h"
+#include "ParticleEmitter.h"
 
 class Framework
 {
@@ -39,18 +39,14 @@ protected:
 	DirectXBase* directxBase = nullptr;
 	//Inputポインタ
 	Input* input = nullptr;
-	//SpriteBaseポインタ
-	SpriteBase* spriteBase = nullptr;
 	//SRVマネージャ
 	SrvManager* srvManager = nullptr;
-	//3Dオブジェクト共通部
-	Object3dBase* object3dBase = nullptr;
 	//ImGuiマネージャ
 	ImGuiManager* imguimanager = new ImGuiManager();
-	//サウンド
-	Audio* audio_;
 	//カメラ
 	Camera* camera = new Camera();
+	//パーティクルエミッター
+	ParticleEmitter* particleEmitter = new ParticleEmitter();
 	//ゲーム終了フラグ
 	bool endRequst_ = false;
 };

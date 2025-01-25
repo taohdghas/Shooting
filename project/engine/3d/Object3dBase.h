@@ -6,8 +6,12 @@
 class Object3dBase
 {
 public:
+	//シングルトンインスタンス
+	static Object3dBase* GetInstance();
 	//初期化
 	void Initialize(DirectXBase*directxBase);
+    //終了
+	void Finalize();
 	//ルートシグネチャの作成
 	void GenerateRootSignature();
 	//グラフィックスパイプラインの生成
@@ -20,6 +24,9 @@ public:
 	DirectXBase* GetDxBase()const { return directxBase_; }
 	Camera* GetDefaultCamera()const { return defaultCamera; }
 private:
+	static Object3dBase* instance;
+	Object3dBase* object3dbase_ = nullptr;
+
 	HRESULT hr;
 	//DirectXBaseのポインタ
 	DirectXBase* directxBase_;

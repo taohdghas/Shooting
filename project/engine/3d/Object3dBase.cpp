@@ -1,12 +1,29 @@
 #include "Object3dBase.h"
 #include "Logger.h"
 
+Object3dBase* Object3dBase::instance = nullptr;
+
+//シングルトンインスタンス
+Object3dBase* Object3dBase::GetInstance() {
+	if (instance == nullptr) {
+		instance = new Object3dBase;
+	}
+	return instance;
+}
+
 //初期化
 void Object3dBase::Initialize(DirectXBase*directxBase) {
 	directxBase_ = directxBase;
 	//グラフィックスパイプラインの生成
 	GenerategraphicsPipeline();
 }
+
+//終了
+void Object3dBase::Finalize() {
+	delete instance;
+	instance = nullptr;
+}
+
 //ルートシグネチャの作成
 void Object3dBase::GenerateRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};

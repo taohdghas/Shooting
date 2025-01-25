@@ -9,10 +9,6 @@
 #include <fstream>
 #include <sstream>
 #include <dinput.h>
-#include "Sprite.h"
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
 #include "Matrix4x4.h"
 #include "Transform.h"
 #include "DirectionalLight.h"
@@ -22,8 +18,8 @@
 #include "Object3d.h"
 #include "ModelBase.h"
 #include "Model.h"
-#include "ParticleEmitter.h"
 #include "Framework.h"
+#include "GameScene.h"
 
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
@@ -46,11 +42,7 @@ public:
 	//描画
 	void Draw()override;
 private:
-	//Sprite初期化
-	std::vector<Sprite*>sprites;
-	//3Dオブジェクト
-	std::vector<Object3d*>object3ds;
-	//パーティクルエミッター
-	ParticleEmitter* particleEmitter = new ParticleEmitter();
+    //シーン
+	GameScene* gamescene_ = nullptr;
 };
 
