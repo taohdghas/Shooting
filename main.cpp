@@ -64,6 +64,7 @@ struct Material {
 	float padding[3];
 	Matrix4x4 uvTransform;
 	float shininess;
+	int useBlinnPhong;
 };
 
 struct TransformationMatrix {
@@ -1627,6 +1628,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool useBillboard = true;
 	//加速度適用切り替え
 	bool useField = true;
+	materialData->useBlinnPhong = true;
 
 	// ImGuiの初期化
 	IMGUI_CHECKVERSION();
@@ -1686,6 +1688,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			*/
 			ImGui::DragFloat3("EmitterTranslate", &emitter.transform.translate.x, 0.01f, -100.0f, 100.0f);
+			ImGui::Checkbox("Use Blinn-Phong", reinterpret_cast<bool*>(&materialData->useBlinnPhong));
 
 			ImGui::End();
 			ImGui::Render();
