@@ -1677,6 +1677,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 			ImGui::DragFloat3("CameraTranslation", &transform.rotate.x, 0.01f);
+			ImGui::DragFloat3("SphereTranslation", &transform.translate.x, 0.01f);
+			ImGui::DragFloat3("SphereTransscale", &transform.scale.x, 0.01f);
 			/*
 			for (std::list<Particle>::iterator particleIterator = particles.begin();
 				particleIterator != particles.end(); ++particleIterator) {
