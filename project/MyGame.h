@@ -20,6 +20,7 @@
 #include "Model.h"
 #include "Framework.h"
 #include "GameScene.h"
+#include "TitleScene.h"
 
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
@@ -42,7 +43,9 @@ public:
 	//描画
 	void Draw()override;
 private:
-    //シーン
+	//タイトルシーン
+	TitleScene* titlescene_ = nullptr;
+    //ゲームシーン
 	GameScene* gamescene_ = nullptr;
 };
 

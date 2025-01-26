@@ -9,17 +9,17 @@
 #include "ModelManager.h"
 #include "BaseScene.h"
 
-class GameScene : public BaseScene
+class TitleScene : public BaseScene
 {
 public:
 	//初期化
-	void Initialize()override;
+	void Initialize() override;
 	//終了
-	void Finalize()override;
+	void Finalize() override;
 	//更新
-	void Update()override;
+	void Update() override;
 	//描画
-	void Draw()override;
+	void Draw() override;
 private:
 	//Sprite初期化
 	std::vector<Sprite*>sprites;
