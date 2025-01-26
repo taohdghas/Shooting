@@ -70,6 +70,7 @@ struct Material {
 struct TransformationMatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
+	Matrix4x4 WorldInverseTranspose;
 };
 
 struct DirectionalLight {
@@ -1463,6 +1464,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 単位行列を書き込んでおく
 	wvpData->WVP = MakeIdentity4x4();
 	wvpData->World = MakeIdentity4x4();
+	wvpData->WorldInverseTranspose = MakeIdentity4x4();
 
 	//Sprite用のマテリアルリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> SpritematerialResource = CreateBufferResource(device, sizeof(Material));
@@ -1678,7 +1680,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-			ImGui::DragFloat3("CameraTranslation", &transform.rotate.x, 0.01f);
+			ImGui::DragFloat3("SphereTranslation", &transform.rotate.x, 0.01f);
 			ImGui::DragFloat3("SphereTranslation", &transform.translate.x, 0.01f);
 			ImGui::DragFloat3("SphereTransscale", &transform.scale.x, 0.01f);
 			/*
