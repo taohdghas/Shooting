@@ -1,4 +1,5 @@
 #include "MyGame.h"
+#include "SceneFactory.h"
 
 //初期化
 void MyGame::Initialize() {
@@ -6,11 +7,11 @@ void MyGame::Initialize() {
 	//基底クラスの初期化
 	Framework::Initialize();
 
-	//最初のシーンの生成
-	BaseScene* scene = new TitleScene();
-	//シーンマネージャに最初のシーンをセット
-	SceneManager::GetInstance()->SetNextScene(scene);
-
+	//シーンファクトリーを生成してマネージャにセット
+	sceneFactory_ = new SceneFactory();
+	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
+    //シーンマネージャに最初のシーンをセット
+	SceneManager::GetInstance()->ChangeScene("TITLE");
 }
 
 //終了

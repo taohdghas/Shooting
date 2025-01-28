@@ -1,6 +1,5 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
-#include "GameScene.h"
 
 //初期化
 void TitleScene::Initialize() {
@@ -63,10 +62,7 @@ void TitleScene::Update() {
 
 	//エンターキーを押したらゲームシーンへ
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
-		//ゲームシーンを生成
-		BaseScene* scene = new GameScene();
-		//シーン切り替えを依頼
-		SceneManager::GetInstance()->SetNextScene(scene);
+		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 }
 

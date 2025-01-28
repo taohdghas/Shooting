@@ -50,6 +50,8 @@ void Framework::Initialize() {
 
 //終了
 void Framework::Finalize() {
+	//シーンファクトリー解放
+	delete sceneFactory_;
 	//シーンマネージャ
 	sceneManager_->Finalize();
 	//パーティクルエミッター

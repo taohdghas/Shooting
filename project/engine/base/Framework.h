@@ -13,6 +13,7 @@
 #include "ParticleManager.h"
 #include "ParticleEmitter.h"
 #include "SceneManager.h"
+#include "AbstractSceneFactory.h"
 
 class Framework
 {
@@ -48,6 +49,8 @@ protected:
 	ParticleEmitter* particleEmitter = new ParticleEmitter();
 	//シーンマネージャ
 	SceneManager* sceneManager_ = nullptr;
+	//シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//ゲーム終了フラグ
 	bool endRequst_ = false;
 };
