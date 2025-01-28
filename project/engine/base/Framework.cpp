@@ -11,8 +11,7 @@ void Framework::Initialize() {
 	directxBase->Initialize(windowsAPI);
 
 	//入力の初期化
-	input = new Input();
-	input->Initialize(windowsAPI);
+	Input::GetInstance()->Initialize(windowsAPI);
 
 	//SpriteBaseの初期化
 	SpriteBase::GetInstance()->Initialize(directxBase);
@@ -44,10 +43,15 @@ void Framework::Initialize() {
 	//パーティクルエミッター
 	particleEmitter->Initialize("particle");
 	particleEmitter->Emit();
+
+	//シーンマネージャの生成
+	sceneManager_ = SceneManager::GetInstance();
 }
 
 //終了
 void Framework::Finalize() {
+	//シーンマネージャ
+	sceneManager_->Finalize();
 	//パーティクルエミッター
 	delete particleEmitter;
 	//パーティクルマネージャーの終了
@@ -67,7 +71,7 @@ void Framework::Finalize() {
 	//SpriteBase
 	SpriteBase::GetInstance()->Finalize();
 	//入力解放
-	delete input;
+	Input::GetInstance()->Finalize();
 	//DirectX解放
 	delete directxBase;
 	//WindowsAPIの終了処理
@@ -84,11 +88,13 @@ void Framework::Update() {
 	}
 
 	//入力の更新
-	input->Update();
+	Input::GetInstance()->Update();
 
 	//カメラの更新
 	camera->Update();
 
+	//シーンマネージャの更新
+	sceneManager_->Update();
 }
 
 //実行

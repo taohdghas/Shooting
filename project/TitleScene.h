@@ -7,6 +7,7 @@
 #include "Audio.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
+#include "Input.h"
 #include "BaseScene.h"
 
 class TitleScene : public BaseScene

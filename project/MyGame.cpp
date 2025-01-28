@@ -6,32 +6,15 @@ void MyGame::Initialize() {
 	//基底クラスの初期化
 	Framework::Initialize();
 
-	//タイトルシーンの生成と初期化
-	titlescene_ = new TitleScene();
-	titlescene_->Initialize();
+	//最初のシーンの生成
+	BaseScene* scene = new TitleScene();
+	//シーンマネージャに最初のシーンをセット
+	SceneManager::GetInstance()->SetNextScene(scene);
 
-	/*
-	//ゲームシーンの生成
-	gamescene_ = new GameScene();
-	//ゲームシーンの初期化
-	gamescene_->Initialize();
-	*/
 }
 
 //終了
 void MyGame::Finalize() {
-	//タイトルシーンの終了
-	titlescene_->Finalize();
-
-	//タイトルシーンの解放
-	delete titlescene_;
-
-	//ゲームシーンの終了
-	//gamescene_->Finalize();
-
-	//シーンの解放
-	//delete gamescene_;
-
 	//基底クラスの終了
 	Framework::Finalize();
 }
@@ -41,12 +24,6 @@ void MyGame::Update() {
 	
 	//基底クラスの更新
 	Framework::Update();
-
-	//タイトルシーンの更新
-	titlescene_->Update();
-
-	//ゲームシーンの更新
-	//gamescene_->Update();
 
 	//ImGui開始
 	imguimanager->Begin();
@@ -62,11 +39,8 @@ void MyGame::Draw() {
 
 	srvManager->PreDraw();
 
-	//タイトルシーン描画
-	titlescene_->Draw();
-
-	//ゲームシーン描画
-	//gamescene_->Draw();
+	//シーンマネージャ描画
+	SceneManager::GetInstance()->Draw();
 
 	//ImGui描画
 	imguimanager->Draw();

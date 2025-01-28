@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "ParticleManager.h"
 #include "ParticleEmitter.h"
+#include "SceneManager.h"
 
 class Framework
 {
@@ -37,8 +38,6 @@ protected:
 	WindowsAPI* windowsAPI = nullptr;
 	//DirectXBaseポインタ
 	DirectXBase* directxBase = nullptr;
-	//Inputポインタ
-	Input* input = nullptr;
 	//SRVマネージャ
 	SrvManager* srvManager = nullptr;
 	//ImGuiマネージャ
@@ -47,6 +46,8 @@ protected:
 	Camera* camera = new Camera();
 	//パーティクルエミッター
 	ParticleEmitter* particleEmitter = new ParticleEmitter();
+	//シーンマネージャ
+	SceneManager* sceneManager_ = nullptr;
 	//ゲーム終了フラグ
 	bool endRequst_ = false;
 };
