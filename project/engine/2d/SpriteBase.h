@@ -4,13 +4,20 @@
 class SpriteBase
 {
 public:
+	//シングルトンインスタンス
+	static SpriteBase* GetInstance();
 	//初期化
 	void Initialize(DirectXBase*directxBase);
+	//終了
+	void Finalize();
 	//共通描画設定
 	void DrawBaseSet();
 
 	DirectXBase* GetDxBase()const { return directxBase_; }
 private:
+	static SpriteBase* instance;
+	SpriteBase* spritebase_ = nullptr;
+
 	HRESULT hr;
 
 	//DirectXBaseのポインタ

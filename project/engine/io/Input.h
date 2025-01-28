@@ -9,8 +9,12 @@ class Input
 public:
 	//namespace省略
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+	//シングルトンインスタンス
+	static Input* GetInstance();
 	//初期化
 	void Initialize(WindowsAPI*windowsAPI);
+	//終了
+	void Finalize();
 	//更新
 	void Update();
 /// <summary>
@@ -26,6 +30,9 @@ public:
 /// <returns>トリガーか</returns>
 	bool TriggerKey(BYTE keyNumber);
 private:
+	static Input* instance;
+	Input* input_ = nullptr;
+
 	//キーボードのデバイス
 	ComPtr<IDirectInputDevice8>keyboard;
 	//全キーの状態

@@ -9,9 +9,11 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
-#include "Audio.h"
 #include "Camera.h"
 #include "ParticleManager.h"
+#include "ParticleEmitter.h"
+#include "SceneManager.h"
+#include "AbstractSceneFactory.h"
 
 class Framework
 {
@@ -37,20 +39,18 @@ protected:
 	WindowsAPI* windowsAPI = nullptr;
 	//DirectXBaseポインタ
 	DirectXBase* directxBase = nullptr;
-	//Inputポインタ
-	Input* input = nullptr;
-	//SpriteBaseポインタ
-	SpriteBase* spriteBase = nullptr;
 	//SRVマネージャ
 	SrvManager* srvManager = nullptr;
-	//3Dオブジェクト共通部
-	Object3dBase* object3dBase = nullptr;
 	//ImGuiマネージャ
 	ImGuiManager* imguimanager = new ImGuiManager();
-	//サウンド
-	Audio* audio_;
 	//カメラ
 	Camera* camera = new Camera();
+	//パーティクルエミッター
+	ParticleEmitter* particleEmitter = new ParticleEmitter();
+	//シーンマネージャ
+	SceneManager* sceneManager_ = nullptr;
+	//シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//ゲーム終了フラグ
 	bool endRequst_ = false;
 };

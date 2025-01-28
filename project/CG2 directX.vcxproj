@@ -11,10 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseScene.cpp" />
     <ClCompile Include="engine\Audio\Audio.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="D3DResourceLeakChecker.cpp" />
-    <ClCompile Include="DirectXBase.cpp" />
+    <ClCompile Include="engine\base\DirectXBase.cpp" />
+    <ClCompile Include="SceneFactory.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -24,7 +28,8 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="engine\io\Input.cpp" />
     <ClCompile Include="engine\manager\ImGuiManager.cpp" />
-    <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="engine\base\Framework.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\math\Math.cpp" />
@@ -41,14 +46,19 @@
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="engine\manager\TextureManager.cpp" />
-    <ClCompile Include="WindowsAPI.cpp" />
+    <ClCompile Include="engine\base\WindowsAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AbstractSceneFactory.h" />
+    <ClInclude Include="BaseScene.h" />
     <ClInclude Include="engine\Audio\Audio.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="D3DResourceLeakChecker.h" />
     <ClInclude Include="DirectionalLight.h" />
-    <ClInclude Include="DirectXBase.h" />
+    <ClInclude Include="engine\base\DirectXBase.h" />
+    <ClInclude Include="SceneFactory.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="TitleScene.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -59,7 +69,8 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="engine\io\Input.h" />
     <ClInclude Include="engine\manager\ImGuiManager.h" />
-    <ClInclude Include="Framework.h" />
+    <ClInclude Include="engine\base\Framework.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MaterialData.h" />
     <ClInclude Include="engine\math\Math.h" />
@@ -82,7 +93,7 @@
     <ClInclude Include="engine\math\Vector2.h" />
     <ClInclude Include="engine\math\Vector3.h" />
     <ClInclude Include="engine\math\Vector4.h" />
-    <ClInclude Include="WindowsAPI.h" />
+    <ClInclude Include="engine\base\WindowsAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -168,7 +179,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -193,7 +204,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

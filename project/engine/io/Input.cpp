@@ -4,6 +4,16 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
+Input* Input::instance = nullptr;
+
+//シングルトンインスタンス
+Input* Input::GetInstance() {
+	if (instance == nullptr) {
+		instance = new Input;
+	}
+	return instance;
+}
+
 void Input::Initialize(WindowsAPI*windowsAPI) {
 	//借りてきたWinAppのインスタンスを記録
 	this->windowsAPI_ = windowsAPI;
@@ -23,6 +33,12 @@ void Input::Initialize(WindowsAPI*windowsAPI) {
 	//排他制御レベルのセット
 	result = keyboard->SetCooperativeLevel(windowsAPI->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));
+}
+
+//終了
+void Input::Finalize() {
+	delete instance;
+	instance = nullptr;
 }
 
 void Input::Update() {

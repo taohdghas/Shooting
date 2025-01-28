@@ -11,12 +11,10 @@ void Framework::Initialize() {
 	directxBase->Initialize(windowsAPI);
 
 	//入力の初期化
-	input = new Input();
-	input->Initialize(windowsAPI);
+	Input::GetInstance()->Initialize(windowsAPI);
 
 	//SpriteBaseの初期化
-	spriteBase = new SpriteBase;
-	spriteBase->Initialize(directxBase);
+	SpriteBase::GetInstance()->Initialize(directxBase);
 
 	//srvManagerの初期化
 	srvManager = new SrvManager();
@@ -24,24 +22,15 @@ void Framework::Initialize() {
 
 	//テクスチャマネージャの初期化
 	TextureManager::GetInstance()->Initialize(directxBase, srvManager);
-	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
 	//初期化
-	object3dBase = new Object3dBase();
-	object3dBase->Initialize(directxBase);
+	Object3dBase::GetInstance()->Initialize(directxBase);
 
 	//モデルマネージャ-
 	ModelManager::GetInstance()->Initialize(directxBase);
-	ModelManager::GetInstance()->LoadModel("plane.obj");
-	ModelManager::GetInstance()->LoadModel("axis.obj");
 
 	//ImGuiマネージャ
 	imguimanager->Initialize(windowsAPI, directxBase, srvManager);
-
-	//サウンド
-	audio_ = Audio::GetInstance();
-	audio_->Initialize();
 
 	//カメラ
 	camera->SetRotate({ 0.3f,0.0f,0.0f });
@@ -50,20 +39,31 @@ void Framework::Initialize() {
 	//パーティクルマネージャ
 	ParticleManager::GetInstance()->Initialize(directxBase, srvManager, camera);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle.png");
+
+	//パーティクルエミッター
+	particleEmitter->Initialize("particle");
+	particleEmitter->Emit();
+
+	//シーンマネージャの生成
+	sceneManager_ = SceneManager::GetInstance();
 }
 
 //終了
 void Framework::Finalize() {
+	//シーンファクトリー解放
+	delete sceneFactory_;
+	//シーンマネージャ
+	sceneManager_->Finalize();
+	//パーティクルエミッター
+	delete particleEmitter;
 	//パーティクルマネージャーの終了
 	ParticleManager::GetInstance()->Finalize();
 	//カメラ
 	delete camera;
-	//Audio
-	audio_->Finalize();
 	//ImGui
 	imguimanager->Finalize();
 	//object3dbase
-	delete object3dBase;
+	Object3dBase::GetInstance()->Finalize();
 	//3Dモデルマネージャの終了
 	ModelManager::GetInstance()->Finalize();
 	//テクスチャマネージャの終了
@@ -71,9 +71,9 @@ void Framework::Finalize() {
 	//srvマネージャ終了
 	delete srvManager;
 	//SpriteBase
-	delete spriteBase;
+	SpriteBase::GetInstance()->Finalize();
 	//入力解放
-	delete input;
+	Input::GetInstance()->Finalize();
 	//DirectX解放
 	delete directxBase;
 	//WindowsAPIの終了処理
@@ -90,11 +90,13 @@ void Framework::Update() {
 	}
 
 	//入力の更新
-	input->Update();
+	Input::GetInstance()->Update();
 
 	//カメラの更新
 	camera->Update();
 
+	//シーンマネージャの更新
+	sceneManager_->Update();
 }
 
 //実行

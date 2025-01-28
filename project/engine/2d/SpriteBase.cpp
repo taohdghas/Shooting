@@ -1,12 +1,29 @@
 #include "SpriteBase.h"
 #include "Logger.h"
 
+SpriteBase* SpriteBase::instance = nullptr;
+
+//シングルトンインスタンス
+SpriteBase* SpriteBase::GetInstance() {
+	if (instance == nullptr) {
+		instance = new SpriteBase;
+	}
+	return instance;
+}
+
 //初期化
 void SpriteBase::Initialize(DirectXBase*directxBase) {
 	directxBase_ = directxBase;
 	//グラフィックスパイプラインの生成
 	graphicsPipelineGenerate();
 }
+
+//終了
+void SpriteBase::Finalize() {
+	delete instance;
+	instance = nullptr;
+}
+
 //ルートシグネチャの作成
 void SpriteBase::RootSignatureGenerate() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};
