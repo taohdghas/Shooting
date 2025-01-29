@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include "Sprite.h"
 #include "SpriteBase.h"
 #include "Object3d.h"
@@ -23,8 +24,8 @@ public:
 	void Draw() override;
 private:
 	//Sprite初期化
-	std::vector<Sprite*>sprites;
+	std::vector<std::unique_ptr<Sprite>>sprites;
 	//3Dオブジェクト
-	std::vector<Object3d*>object3ds;
+	std::vector<std::unique_ptr<Object3d>>object3ds;
 };
 

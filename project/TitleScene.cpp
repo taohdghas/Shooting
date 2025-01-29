@@ -5,7 +5,7 @@
 void TitleScene::Initialize() {
 	//Sprite初期化
 	for (uint32_t i = 0; i < 1; ++i) {
-		Sprite* sprite = new Sprite();
+		auto sprite = std::make_unique<Sprite>();
 		sprite->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
 		sprite->SetPosition({ 100.0f,100.0f });
 		sprites.push_back(sprite);
@@ -14,7 +14,7 @@ void TitleScene::Initialize() {
 
 	//3Dオブジェクト
 	for (uint32_t i = 0; i < 2; ++i) {
-		Object3d* object3d = new Object3d();
+		auto object3d = std::make_unique<Object3d>();
 		object3d->Initialize(Object3dBase::GetInstance());
 		object3ds.push_back(object3d);
 	}
@@ -41,20 +41,12 @@ void TitleScene::Initialize() {
 void TitleScene::Finalize() {
 	//Audio
 	Audio::GetInstance()->Finalize();
-	//オブジェクト
-	for (Object3d* object3d : object3ds) {
-		delete object3d;
-	}
-	//Sprite
-	for (Sprite* sprite : sprites) {
-		delete sprite;
-	}
 }
 
 //更新
 void TitleScene::Update() {
 	for (size_t i = 0; i < sprites.size(); ++i) {
-		Sprite* sprite = sprites[i];
+		auto& sprite = sprites[i];
 
 		//Spriteの更新
 		sprite->Update();
@@ -74,7 +66,7 @@ void TitleScene::Draw() {
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
-	for (Sprite* sprite : sprites) {
+	for (auto& sprite : sprites) {
 		//sprite描画処理
 		sprite->Draw();
 	}
