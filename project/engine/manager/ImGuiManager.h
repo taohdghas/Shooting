@@ -12,6 +12,8 @@
 class ImGuiManager
 {
 public:
+	//シングルトンインスタンス
+	static ImGuiManager* GetInstance();
 	//終了
 	void Finalize();
 	//初期化
@@ -23,6 +25,8 @@ public:
 	//画面への描画
 	void Draw();
 private:
+	static ImGuiManager* instance;
+	ImGuiManager* imguiManager_;
 	WindowsAPI* windowsAPI_;
 	DirectXBase* directxbase_;
 	SrvManager* srvmanager_;

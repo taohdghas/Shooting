@@ -11,7 +11,6 @@
 #include "ImGuiManager.h"
 #include "Camera.h"
 #include "ParticleManager.h"
-#include "ParticleEmitter.h"
 #include "SceneManager.h"
 #include "AbstractSceneFactory.h"
 
@@ -36,21 +35,17 @@ public:
 protected:
 	D3DResourceLeakChecker leakCheck;
 	//WindowsAPIポインタ
-	WindowsAPI* windowsAPI = nullptr;
+	std::unique_ptr<WindowsAPI>windowsAPI_;
 	//DirectXBaseポインタ
-	DirectXBase* directxBase = nullptr;
-	//SRVマネージャ
-	SrvManager* srvManager = nullptr;
+	std::unique_ptr<DirectXBase>directxBase_;
 	//ImGuiマネージャ
-	ImGuiManager* imguimanager = new ImGuiManager();
+	std::unique_ptr<ImGuiManager>imguimanager_;
 	//カメラ
-	Camera* camera = new Camera();
-	//パーティクルエミッター
-	ParticleEmitter* particleEmitter = new ParticleEmitter();
+	std::unique_ptr<Camera>camera_;
 	//シーンマネージャ
-	SceneManager* sceneManager_ = nullptr;
+	SceneManager*sceneManager;
 	//シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
+	std::unique_ptr<AbstractSceneFactory>sceneFactory;
 	//ゲーム終了フラグ
 	bool endRequst_ = false;
 };

@@ -8,8 +8,8 @@ void MyGame::Initialize() {
 	Framework::Initialize();
 
 	//シーンファクトリーを生成してマネージャにセット
-	sceneFactory_ = new SceneFactory();
-	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
+	sceneFactory = std::make_unique<SceneFactory>();
+	SceneManager::GetInstance()->SetSceneFactory(sceneFactory.get());
     //シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
 }
@@ -27,25 +27,25 @@ void MyGame::Update() {
 	Framework::Update();
 
 	//ImGui開始
-	imguimanager->Begin();
+	imguimanager_->Begin();
 
 	//ImGui終了
-	imguimanager->End();
+	imguimanager_->End();
 }
 
 //描画
 void MyGame::Draw() {
 	//描画前処理
-	directxBase->PreDraw();
+	directxBase_->PreDraw();
 
-	srvManager->PreDraw();
+	SrvManager::GetInstance()->PreDraw();
 
 	//シーンマネージャ描画
 	SceneManager::GetInstance()->Draw();
 
 	//ImGui描画
-	imguimanager->Draw();
+	imguimanager_->Draw();
 
 	//描画後処理
-	directxBase->PostDraw();
+	directxBase_->PostDraw();
 }

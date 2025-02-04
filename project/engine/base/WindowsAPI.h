@@ -7,6 +7,8 @@ public:
 	//静的メンバ関数
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 public:
+	//シングルトンインスタンス
+	static WindowsAPI* GetInstance();
 	//初期化
 	void Initialize();
 	//更新
@@ -22,6 +24,8 @@ public:
 	static const int32_t kClientWitdh = 1280;
 	static const int32_t kClientHeight = 720;
 private:
+	static WindowsAPI* instance;
+	WindowsAPI* windowsAPI_ = nullptr;
 	//ウインドウハンドル
 	HWND hwnd = nullptr;
 	//ウインドウクラスの設定

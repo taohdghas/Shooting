@@ -4,6 +4,8 @@
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+WindowsAPI* WindowsAPI::instance = nullptr;
+
 //ウインドウプロシーシャ
 LRESULT CALLBACK WindowsAPI::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
@@ -19,6 +21,14 @@ LRESULT CALLBACK WindowsAPI::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 	}
 	//標準のメッセージ処理を行う
 	return DefWindowProc(hwnd, msg, wparam, lparam);
+}
+
+//シングルトンインスタンス
+WindowsAPI* WindowsAPI::GetInstance() {
+	if (instance == nullptr) {
+		instance = new WindowsAPI;
+	}
+	return instance;
 }
 
 void WindowsAPI::Initialize() {
@@ -68,6 +78,8 @@ void WindowsAPI::Update() {
 void WindowsAPI::Finalize() {
 	CloseWindow(hwnd);
 	CoUninitialize();
+	delete instance;
+	instance = nullptr;
 }
 bool WindowsAPI::ProcessMessage() {
 	MSG msg{};

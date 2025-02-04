@@ -1,5 +1,14 @@
 #include "ImGuiManager.h"
 
+ImGuiManager* ImGuiManager::instance = nullptr;
+
+//シングルトンインスタンス
+ImGuiManager* ImGuiManager::GetInstance() {
+	if (instance == nullptr) {
+		instance = new ImGuiManager;
+	}
+	return instance;
+}
 
 //終了
 void ImGuiManager::Finalize() {
@@ -8,6 +17,8 @@ void ImGuiManager::Finalize() {
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 #endif
+	delete instance;
+	instance = nullptr;
 }
 
 //初期化

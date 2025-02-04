@@ -8,7 +8,7 @@ void TitleScene::Initialize() {
 		auto sprite = std::make_unique<Sprite>();
 		sprite->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
 		sprite->SetPosition({ 100.0f,100.0f });
-		sprites.push_back(sprite);
+		sprites.push_back(std::move(sprite));
 	}
 	sprites[0]->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
 
@@ -16,7 +16,7 @@ void TitleScene::Initialize() {
 	for (uint32_t i = 0; i < 2; ++i) {
 		auto object3d = std::make_unique<Object3d>();
 		object3d->Initialize(Object3dBase::GetInstance());
-		object3ds.push_back(object3d);
+		object3ds.push_back(std::move(object3d));
 	}
 	object3ds[0]->SetModel("plane.obj");
 	object3ds[0]->SetTranslate({ 0.0f,0.0f,0.0f });
