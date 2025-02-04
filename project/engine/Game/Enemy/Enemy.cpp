@@ -5,6 +5,13 @@
 // 追尾をやめる距離
 const float Enemy::kApproachDistance = 3.0f;
 
+constexpr float PI = 3.14159265358979323846f;
+
+float ToRadians(float degrees) {
+	return degrees * (PI / 180.0f);
+}
+
+
 Enemy::Enemy(){}
 
 Enemy::~Enemy() {
@@ -21,7 +28,8 @@ void Enemy::Initialize(Object3dBase* object3dbase) {
 	object_->Initialize(object3dBase_);
 	object_->SetModel("enemy.obj");
 	object_->SetScale({ 0.5f,0.5f,0.5f });
-	transform_.translate = { 0.0f,0.0f,30.0f };
+	transform_.translate = { 0.0f,0.0f,20.0f };
+	initialPositionX_ = transform_.translate.x;
 }
 //更新
 void Enemy::Update() {
@@ -39,13 +47,36 @@ void Enemy::Update() {
 		}
 	}
 	//移動
-	transform_.translate = Math::Add(transform_.translate, velocity_);
+	 // 左右移動
+	transform_.translate.x += moveDirection_ * moveSpeed_;
+
+	// 移動範囲を超えたら方向を反転
+	if (transform_.translate.x <= initialPositionX_ - moveRange_ ||
+		transform_.translate.x >= initialPositionX_ + moveRange_) {
+		moveDirection_ *= -1;
+	}
 
 	//位置をobjectに反映
 	object_->SetTranslate(transform_.translate);
 
 	object_->Update();
-	Laser();
+
+	fireTimer_++;
+	if (currentPhase_ == Phase::Laser) {
+		if (fireTimer_ >= kFireInterval) {
+			fireTimer_ = 0;
+			currentPhase_ = Phase::RotateShot;
+		}
+		Laser();
+	}
+	else if (currentPhase_ == Phase::RotateShot) {
+		if (fireTimer_ >= kRotateFireInterval * 72) {  
+			fireTimer_ = 0;
+			rotateAngle_ = 0;
+			currentPhase_ = Phase::Laser;
+		}
+		RotateShot();
+	}
 }
 //描画
 void Enemy::Draw() {
@@ -81,8 +112,22 @@ void Enemy::Laser() {
 
 	bullets_.emplace_back(std::move(bullet));
 }
-//追尾弾フェーズ
-void Enemy::Homing() {
+void Enemy::RotateShot() {
+
+	if (fireTimer_ % kRotateFireInterval != 0) return;
+
+	float radians = ToRadians(float(rotateAngle_));
+	Vector3 direction = { cosf(radians), 0, sinf(radians) };
+	direction = Math::Normalize(direction);
+
+	auto bullet = std::make_unique<EnemyBullet>();
+	bullet->Initialize(object3dBase_);
+	bullet->SetPosition(transform_.translate);
+	bullet->SetVelocity(Math::Multiply(direction, 0.3f));
+
+	bullets_.emplace_back(std::move(bullet));
+
+	rotateAngle_ += 15;  // 5°ずつ回転
 }
 //HP減少関数
 void Enemy::TakeDamage(int damage) {

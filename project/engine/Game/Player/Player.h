@@ -68,4 +68,6 @@ private:
 	float radius_ = 1.0f;
 	//HP
 	uint32_t hp_ = 100;
+	int attackCooldown_ = 0; 
+	static const int attackInterval_ = 10;
 };

@@ -19,13 +19,16 @@ void Player::Initialize(Object3dBase* object3dbase, Camera* camera) {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
 	object_->SetModel("mm_frame.obj");
-	object_->SetScale({ 0.8f,0.8f,0.8f });
+	object_->SetScale({ 0.6f,0.6f,0.6f });
 	transform_.translate = { 0.0f,0.0f,0.0f };
 }
 //更新
 void Player::Update() {
 	if (isDead_) {
 		return;
+	}
+	if (attackCooldown_ > 0) {
+		attackCooldown_--;
 	}
 	//デスフラグが立った弾を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {
@@ -61,12 +64,12 @@ void Player::Draw() {
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Draw();
 	}
-	
-	//レティクル描画
-
 }
 //攻撃
 void Player::Attack() {
+	if (attackCooldown_ > 0) {
+		return; 
+	}
 	// 弾の速度
 	const float kBulletSpeed = 1.0f;
 	Vector3 velocity(0, 0, kBulletSpeed);
@@ -79,6 +82,7 @@ void Player::Attack() {
 
 	// 弾を登録
 	bullets_.push_back(newBullet);
+	attackCooldown_ = attackInterval_;
 }
 //衝突時コールバック関数
 void Player::OnCollision() {

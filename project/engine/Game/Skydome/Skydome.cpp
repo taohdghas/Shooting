@@ -9,7 +9,7 @@ void Skydome::Initialize(Object3dBase* object3dbase) {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
 	object_->SetModel("skydome.obj");
-	transform_.translate = { 150.0f,0.0f,0.0f };
+	transform_.translate = { 100.0f,0.0f,0.0f };
 	transform_.scale = { 6.0f,6.0f,6.0f };
 }
 //更新

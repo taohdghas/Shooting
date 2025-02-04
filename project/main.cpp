@@ -61,7 +61,7 @@ enum class Scene {
 };
 
 //タイトルシーンから開始
-Scene currentScene = Scene::Game;
+Scene currentScene = Scene::Title;
 
 //衝突判定と応答
 void CheckAllCollisions(Player*player,Enemy*enemy) {
@@ -304,23 +304,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//衝突判定
 		CheckAllCollisions(player_.get(), enemy_.get());
-		/*
-
-		//色変化テスト
-		Vector4 color = sprite->GetColor();
-		color.x += 0.01f;
-		if (color.x > 1.0f) {
-			color.x -= 1.0f;
-		}
-		sprite->SetColor(color);
-		*/
-		/*
-		Vector2 size = sprite->GetSize();
-		size.x += 0.1f;
-		size.y += 0.1f;
-		sprite->SetSize(size);
-		*/
-
+		
 		//描画前処理
 		directxBase->PreDraw();
 
@@ -336,7 +320,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case Scene::Title:
 			DrawTitleScene();
 			skydome_->Draw();
-			title_->Draw();
+		 //   title_->Draw();
 			break;
 		case Scene::Game:
 			DrawGameScene(player_.get(), enemy_.get(), skydome_.get());

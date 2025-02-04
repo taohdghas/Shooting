@@ -8,8 +8,7 @@
 //行動フェーズ
 enum class Phase {
 	Laser,
-	Homing,
-
+	RotateShot,
 };
 class Player;
 class Enemy
@@ -25,8 +24,8 @@ public:
 	void Draw();
 	//レーザーフェーズ
 	void Laser();
-	//追尾弾フェーズ
-	void Homing();
+    //回転弾
+	void RotateShot();
 	//衝突時コールバック関数
 	void OnCollision();
 	//HP減少関数
@@ -35,6 +34,7 @@ public:
 	bool IsDead()const { return isDead_; }
 	//発射間隔
 	static const int  kFireInterval = 30;
+	static const int kRotateFireInterval = 5;
 public:
 	///Getter///
 	const Vector3& GetPosition()const { return transform_.translate; }
@@ -53,6 +53,8 @@ public:
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetPosition(const Vector3& position) { transform_.translate; }
 private:
+	Phase currentPhase_ = Phase::Laser;
+
 	Object3dBase* object3dBase_;
 	Camera* camera_;
 	Transform transform_;
@@ -71,8 +73,13 @@ private:
 	//敵の半径
 	float radius_ = 1.0f;
 	//HP
-	uint32_t hp_ = 100;
+	uint32_t hp_ = 300;
 	//発射タイマー
-	int fireTimer = 0;
+	int fireTimer_ = 0;
+	int rotateAngle_ = 0;
+	float initialPositionX_;
+	int moveDirection_ = -1;
+	static constexpr float moveSpeed_ = 0.25f; 
+	static constexpr float moveRange_ = 10.0f;
 };
 
