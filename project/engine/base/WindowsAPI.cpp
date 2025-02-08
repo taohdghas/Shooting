@@ -78,8 +78,7 @@ void WindowsAPI::Update() {
 void WindowsAPI::Finalize() {
 	CloseWindow(hwnd);
 	CoUninitialize();
-	delete instance;
-	instance = nullptr;
+
 }
 bool WindowsAPI::ProcessMessage() {
 	MSG msg{};
