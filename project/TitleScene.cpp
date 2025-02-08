@@ -3,6 +3,7 @@
 
 //初期化
 void TitleScene::Initialize() {
+	
 	//Sprite初期化
 	for (uint32_t i = 0; i < 1; ++i) {
 		auto sprite = std::make_unique<Sprite>();
@@ -11,7 +12,7 @@ void TitleScene::Initialize() {
 		sprites.push_back(std::move(sprite));
 	}
 	sprites[0]->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
-
+	
 	//3Dオブジェクト
 	for (uint32_t i = 0; i < 2; ++i) {
 		auto object3d = std::make_unique<Object3d>();
@@ -35,6 +36,7 @@ void TitleScene::Initialize() {
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+	
 }
 
 //終了

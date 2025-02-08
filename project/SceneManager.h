@@ -25,9 +25,9 @@ private:
 	static SceneManager* instance;
 	SceneManager* sceneManager_ = nullptr;
 	//現在のシーン
-	BaseScene*scene_;
+	std::unique_ptr<BaseScene>scene_;
 	//次のシーン
-	BaseScene*nextScene_;
+	std::unique_ptr<BaseScene>nextScene_;
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 };
