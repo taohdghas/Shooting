@@ -15,7 +15,6 @@ SceneManager* SceneManager::GetInstance() {
 void SceneManager::Finalize() {
 	//最後のシーンの終了と解放
 	scene_->Finalize();
-	delete scene_;
 	delete instance;
 	instance = nullptr;
 }
@@ -27,10 +26,9 @@ void SceneManager::Update() {
 		//前のシーンの終了
 		if (scene_) {
 			scene_->Finalize();
-			delete scene_;
 		}
 		//シーン切り替え
-		scene_ = nextScene_;
+		scene_ = std::move(nextScene_);
 		nextScene_ = nullptr;
 		//シーンマネージャをセット
 		scene_->SetSceneManager(this);

@@ -5,8 +5,12 @@
 class SrvManager
 {
 public:
+	//シングルトンインスタンス
+	static SrvManager* GetInstance();
 	//初期化
 	void Initialize(DirectXBase* directxBase);
+	///終了
+	void Finalize();
 	//SRV生成(テクスチャ用)
 	void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels);
 	//SRV生成(Structured Buffer用)
@@ -28,6 +32,9 @@ public:
 	//最大SRV数(最大テクスチャ数)
 	static const uint32_t kMaxCount;
 private:
+	static SrvManager* instance;
+	SrvManager* srvManager_ = nullptr;
+
 	DirectXBase* directxBase = nullptr;
 	//SRV用DescriptorSizeを取得
 	uint32_t descriptorSize;

@@ -3,65 +3,55 @@
 //初期化
 void Framework::Initialize() {
 	//WindowsAPIの初期化
-	windowsAPI = new WindowsAPI();
-	windowsAPI->Initialize();
+	windowsAPI_ = std::make_unique<WindowsAPI>();
+	windowsAPI_->Initialize();
 
 	//DirectXの初期化
-	directxBase = new DirectXBase();
-	directxBase->Initialize(windowsAPI);
+	directxBase_ = std::make_unique<DirectXBase>();
+	directxBase_->Initialize(windowsAPI_.get());
 
 	//入力の初期化
-	Input::GetInstance()->Initialize(windowsAPI);
+	Input::GetInstance()->Initialize(windowsAPI_.get());
 
 	//SpriteBaseの初期化
-	SpriteBase::GetInstance()->Initialize(directxBase);
+	SpriteBase::GetInstance()->Initialize(directxBase_.get());
 
 	//srvManagerの初期化
-	srvManager = new SrvManager();
-	srvManager->Initialize(directxBase);
+	SrvManager::GetInstance()->Initialize(directxBase_.get());
 
 	//テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(directxBase, srvManager);
+	TextureManager::GetInstance()->Initialize(directxBase_.get(), SrvManager::GetInstance());
 
 	//初期化
-	Object3dBase::GetInstance()->Initialize(directxBase);
+	Object3dBase::GetInstance()->Initialize(directxBase_.get());
 
 	//モデルマネージャ-
-	ModelManager::GetInstance()->Initialize(directxBase);
+	ModelManager::GetInstance()->Initialize(directxBase_.get());
 
 	//ImGuiマネージャ
-	imguimanager->Initialize(windowsAPI, directxBase, srvManager);
+	imguimanager_ = std::make_unique<ImGuiManager>();
+	imguimanager_->Initialize(windowsAPI_.get(), directxBase_.get(), SrvManager::GetInstance());
 
 	//カメラ
-	camera->SetRotate({ 0.3f,0.0f,0.0f });
-	camera->SetTranslate({ 0.0f,4.0f,-10.0f });
+	camera_ = std::make_unique<Camera>();
+	camera_->SetRotate({ 0.3f,0.0f,0.0f });
+	camera_->SetTranslate({ 0.0f,4.0f,-10.0f });
 
 	//パーティクルマネージャ
-	ParticleManager::GetInstance()->Initialize(directxBase, srvManager, camera);
-	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle.png");
-
-	//パーティクルエミッター
-	particleEmitter->Initialize("particle");
-	particleEmitter->Emit();
+	ParticleManager::GetInstance()->Initialize(directxBase_.get(), SrvManager::GetInstance(), camera_.get());
 
 	//シーンマネージャの生成
-	sceneManager_ = SceneManager::GetInstance();
+	sceneManager = SceneManager::GetInstance();
 }
 
 //終了
 void Framework::Finalize() {
-	//シーンファクトリー解放
-	delete sceneFactory_;
 	//シーンマネージャ
-	sceneManager_->Finalize();
-	//パーティクルエミッター
-	delete particleEmitter;
+	sceneManager->Finalize();
 	//パーティクルマネージャーの終了
 	ParticleManager::GetInstance()->Finalize();
-	//カメラ
-	delete camera;
 	//ImGui
-	imguimanager->Finalize();
+	imguimanager_->Finalize();
 	//object3dbase
 	Object3dBase::GetInstance()->Finalize();
 	//3Dモデルマネージャの終了
@@ -69,22 +59,20 @@ void Framework::Finalize() {
 	//テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
 	//srvマネージャ終了
-	delete srvManager;
+	SrvManager::GetInstance()->Finalize();
 	//SpriteBase
 	SpriteBase::GetInstance()->Finalize();
 	//入力解放
 	Input::GetInstance()->Finalize();
-	//DirectX解放
-	delete directxBase;
-	//WindowsAPIの終了処理
-	windowsAPI->Finalize();
+	//windowsAPI
+	windowsAPI_->Finalize();
 }
 
 //毎フレーム更新
 void Framework::Update() {
 
 	// Windowにメッセージが来てたら最優先で処理させる
-	if (windowsAPI->ProcessMessage()) {
+	if (windowsAPI_->ProcessMessage()) {
 		//ゲームループを抜ける
 		endRequst_ = true;
 	}
@@ -93,10 +81,10 @@ void Framework::Update() {
 	Input::GetInstance()->Update();
 
 	//カメラの更新
-	camera->Update();
+	camera_->Update();
 
 	//シーンマネージャの更新
-	sceneManager_->Update();
+	sceneManager->Update();
 }
 
 //実行

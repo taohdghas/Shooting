@@ -2,6 +2,16 @@
 
 const uint32_t SrvManager::kMaxCount = 512;
 
+SrvManager* SrvManager::instance = nullptr;
+
+//シングルトンインスタンス
+SrvManager* SrvManager::GetInstance() {
+	if (instance == nullptr) {
+		instance = new SrvManager;
+	}
+	return instance;
+}
+
 //初期化
 void SrvManager::Initialize(DirectXBase* directxBase) {
 	this->directxBase = directxBase;
@@ -11,6 +21,13 @@ void SrvManager::Initialize(DirectXBase* directxBase) {
 	descriptorSize = directxBase->Getdevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 }
+
+//終了
+void SrvManager::Finalize() {
+	delete instance;
+	instance = nullptr;
+}
+
 //SRV生成(テクスチャ用)
 void SrvManager::CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};

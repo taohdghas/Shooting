@@ -11,6 +11,16 @@
 
 using namespace Microsoft::WRL;
 
+DirectXBase* DirectXBase::instance = nullptr;
+
+//シングルトンインスタンス
+DirectXBase* DirectXBase::GetInstance() {
+	if (instance == nullptr) {
+		instance = new DirectXBase;
+	}
+	return instance;
+}
+
 void DirectXBase::Initialize(WindowsAPI* windowsAPI) {
 	//NULL検出
 	assert(windowsAPI);
@@ -40,9 +50,13 @@ void DirectXBase::Initialize(WindowsAPI* windowsAPI) {
 	ScissorrectInitialize();
 	//DXCコンパイラの生成
 	DXCcompilerInitialize();
-	//Imguiの初期化
-	//ImguiInitialize();
 }
+
+//終了
+void DirectXBase::Finalize() {
+	CloseHandle(fenceEvent);
+}
+
 //デバイスの初期化
 void DirectXBase::DeviceInitialize() {
 

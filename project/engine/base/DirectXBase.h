@@ -12,8 +12,12 @@
 class DirectXBase
 {
 public:
+	//シングルトンインスタンス
+	static DirectXBase* GetInstance();
 	//初期化
 	void Initialize(WindowsAPI* windowsAPI);
+	//終了
+	void Finalize();
 	//描画前処理
 	void PreDraw();
 	//描画後処理
@@ -100,8 +104,6 @@ private:
 	uint32_t descriptorSizeDSV;
 	//RTV用のDescriptorSize
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
-	//SRV用のDescriptorSize
-	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	//DSV用のDescriptorSize
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 	///深度ステンシルリソース
@@ -139,5 +141,8 @@ private:
 	HRESULT hr;
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
+    
+	static DirectXBase* instance;
+	DirectXBase* directxBase_ = nullptr;
 };
 

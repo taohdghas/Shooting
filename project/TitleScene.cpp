@@ -3,20 +3,21 @@
 
 //初期化
 void TitleScene::Initialize() {
+	
 	//Sprite初期化
 	for (uint32_t i = 0; i < 1; ++i) {
-		Sprite* sprite = new Sprite();
+		auto sprite = std::make_unique<Sprite>();
 		sprite->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
 		sprite->SetPosition({ 100.0f,100.0f });
-		sprites.push_back(sprite);
+		sprites.push_back(std::move(sprite));
 	}
 	sprites[0]->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
-
+	
 	//3Dオブジェクト
 	for (uint32_t i = 0; i < 2; ++i) {
-		Object3d* object3d = new Object3d();
+		auto object3d = std::make_unique<Object3d>();
 		object3d->Initialize(Object3dBase::GetInstance());
-		object3ds.push_back(object3d);
+		object3ds.push_back(std::move(object3d));
 	}
 	object3ds[0]->SetModel("plane.obj");
 	object3ds[0]->SetTranslate({ 0.0f,0.0f,0.0f });
@@ -35,26 +36,19 @@ void TitleScene::Initialize() {
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+	
 }
 
 //終了
 void TitleScene::Finalize() {
 	//Audio
 	Audio::GetInstance()->Finalize();
-	//オブジェクト
-	for (Object3d* object3d : object3ds) {
-		delete object3d;
-	}
-	//Sprite
-	for (Sprite* sprite : sprites) {
-		delete sprite;
-	}
 }
 
 //更新
 void TitleScene::Update() {
 	for (size_t i = 0; i < sprites.size(); ++i) {
-		Sprite* sprite = sprites[i];
+		auto& sprite = sprites[i];
 
 		//Spriteの更新
 		sprite->Update();
@@ -74,7 +68,7 @@ void TitleScene::Draw() {
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
-	for (Sprite* sprite : sprites) {
+	for (auto& sprite : sprites) {
 		//sprite描画処理
 		sprite->Draw();
 	}
