@@ -17,6 +17,12 @@ struct DirectionalLight
     float3 direction;//ライトの向き
     float intensity;//輝度
 };
+struct PointLight
+{
+    float4 color;//ライトの色
+    float3 position;//ライトの位置
+    float intensity;//輝度
+};
 struct Camera
 {
     float3 worldPosition;
@@ -24,6 +30,7 @@ struct Camera
 
 ConstantBuffer<Material> gMaterial : register(b0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
+ConstantBuffer<PointLight> gPointLight : register(b3);
 ConstantBuffer<Camera> gCamera : register(b2);
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
@@ -44,7 +51,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     if (textureColor.a == 0.0)
     {
         discard;
-    }
+    }//
     //output.colorのα値が0のときにPixelを棄却
     if (output.color.a == 0.0)
     {
@@ -59,6 +66,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         float3 reflectLight = reflect(gDirectionalLight.direction, normalize(input.normal));
         float RdotE = dot(reflectLight, toEye);
         float3 halfVector = normalize(-gDirectionalLight.direction + toEye);
+        float3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
         float NDotH = dot(normalize(input.normal), halfVector);
         float specularPow = pow(saturate(NDotH), gMaterial.shininess); //反射強度
         //拡散反射

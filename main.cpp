@@ -120,6 +120,12 @@ struct CameraForGPU {
 	Vector3 worldPosition;
 };
 
+struct PointLight {
+	Vector4 color;//ライトの色
+	Vector3 position;//ライトの位置
+	float intensity;//輝度
+};
+
 //ParticleがFieldの範囲内かどうか判定
 bool IsCollision(const AABB& aabb, const Vector3& point) {
 	if ((aabb.min.x <= point.x && aabb.max.x >= point.x) &&
@@ -1130,9 +1136,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootParameter[1].Descriptor.ShaderRegister = 0;
 
 	//rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-//	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-//	rootParameter[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
-//	rootParameter[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
+	//rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	//rootParameter[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
+	//rootParameter[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
 
 	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -1310,7 +1316,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//頂点データをリソースにコピー
 	//std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
-	
 	//経度分割1つ分の経度φd
 	const float kLonEvery = 2 * std::numbers::pi_v<float> / (float)kSubdivision;
 	//緯度分割１つ分の緯度Θd
@@ -1421,7 +1426,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
 	vertexDataSprite[5].normal = { 0.0f,0.0f,-1.0f };
 	*/
-
 	//index
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = CreateBufferResource(device, sizeof(uint32_t) * 6);
 
@@ -1517,7 +1521,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		instancingData[index].World = MakeIdentity4x4();
 		instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-
 
 	//2枚目のTextureを読んで転送する
 	DirectX::ScratchImage mipImages2 = LoadTexture(modelData.material.textureFilePath);
@@ -1856,7 +1859,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//WVP用のCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 			//instancing用のDataを読むためにStructuredBufferのSRVを設定する
-		//	commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
+			//commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
 			// SRVのDescriptorTableの先頭を設定
 			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 			//Lighting
@@ -1920,8 +1923,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			assert(SUCCEEDED(hr));
 			hr = commandList->Reset(commandAllocator.Get(), nullptr);
 			assert(SUCCEEDED(hr));
-
-
 		}
 	}
 	ImGui_ImplDX12_Shutdown();
