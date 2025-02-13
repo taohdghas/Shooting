@@ -444,6 +444,18 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 	orthoMatrix.m[3][3] = 1;
 	return orthoMatrix;
 }
+
+//転置行列
+Matrix4x4 Transpose(const Matrix4x4& m) {
+	Matrix4x4 result;
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			result.m[i][j] = m.m[j][i];
+		}
+	}
+	return result;
+}
+
 //Particle生成関数
 Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate) {
 	std::uniform_real_distribution<float>distribution(-1.0f, 1.0f);
@@ -1701,8 +1713,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
 			Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 			Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+			
 			wvpData->WVP = worldViewProjectionMatrix;
 			wvpData->World = worldMatrix;
+			wvpData->WorldInverseTranspose = Transpose(Inverse(worldMatrix));
 
 			// Sprite用のWorldViewProjecionMatrixを作る
 			Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
