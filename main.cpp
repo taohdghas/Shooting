@@ -119,6 +119,11 @@ struct AccelerationField {
 struct CameraForGPU {
 	Vector3 worldPosition;
 };
+struct PointLight {
+	Vector4 color;//ライトの色
+	Vector3 position;//ライトの位置
+	float intensity;//輝度
+};
 
 struct PointLight {
 	Vector4 color;//ライトの色
@@ -1138,7 +1143,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 	*/
 	// RootParameter作成
-	D3D12_ROOT_PARAMETER rootParameter[5] = {};
+	D3D12_ROOT_PARAMETER rootParameter[6] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 0;
@@ -1164,6 +1169,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVを使う
 	rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
 	rootParameter[4].Descriptor.ShaderRegister = 2;//レジスタ番号1を使う
+
+	rootParameter[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVを使う
+	rootParameter[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
+	rootParameter[5].Descriptor.ShaderRegister = 3;//レジスタ番号1を使う
 
 	descriptitonRootSignature.pParameters = rootParameter;
 	descriptitonRootSignature.NumParameters = _countof(rootParameter);
@@ -1297,7 +1306,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	const uint32_t kSubdivision = 16;//indexの場合4
 
 	//モデル読み込み
-	ModelData modelData = LoadObjFile("resources","plane.obj");
+	ModelData modelData = LoadObjFile("resources","terrain.obj");
 	/*
 	ModelData modelData;
 	modelData.vertices.push_back({ .position = {1.0f,1.0f,0.0f,1.0f},.texcoord = {0.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//左上
@@ -1324,8 +1333,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	VertexData* vertexData = nullptr;
 	// 書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	//頂点データをリソースにコピー
-	//std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+
+	//terrain
+	//頂点リソース
+	Microsoft::WRL::ComPtr<ID3D12Resource>vertexResourceT = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
+	//頂点バッファビューを作成する
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewT{};
+	// リソースの先頭のアドレスから使う
+	vertexBufferViewT.BufferLocation = vertexResourceT->GetGPUVirtualAddress();
+	// 使用するリソースのサイズは頂点のサイズ
+	vertexBufferViewT.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	//1頂点あたりのサイズ
+	vertexBufferViewT.StrideInBytes = sizeof(VertexData);
+
+	//頂点リソースにデータを書き込む
+	VertexData* vertexDataT = nullptr;
+	vertexResourceT->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataT));
+	std::memcpy(vertexDataT, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
 
 	//経度分割1つ分の経度φd
 	const float kLonEvery = 2 * std::numbers::pi_v<float> / (float)kSubdivision;
@@ -1503,6 +1527,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
 	directionalLightData->intensity = 1.0f;
+
+	//pointlight用のリソースを作る
+	Microsoft::WRL::ComPtr<ID3D12Resource>PointLightResource = CreateBufferResource(device, sizeof(PointLight));
+	//データを書き込む
+	PointLight* pointLightData = nullptr;
+	//書き込むためのアドレスと取得
+	PointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
+	pointLightData->color = { 1.0f,1.0f,1.0f };
+	pointLightData->intensity = 1.0f;
+	pointLightData->position = { 0.0f,2.0f,0.0f };
 
 	// Sprite用のTransformationMatrix用のリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite = CreateBufferResource(device, sizeof(TransformationMatrix));
@@ -1707,7 +1741,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Render();
 
 			directionalLightData->direction = Normalize(directionalLightData->direction);
-			// ゲーム処理
 
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
@@ -1798,7 +1831,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					instancingData[numInstance].World = worldMatrix;
 					instancingData[numInstance].color.w = alpha;
 					++numInstance;
-
 				}
 				++particleIterator;
 			}
@@ -1872,16 +1904,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//WVP用のCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 			//instancing用のDataを読むためにStructuredBufferのSRVを設定する
-			//commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
+		//commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
 			// SRVのDescriptorTableの先頭を設定
 			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 			//Lighting
 			commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
 
 			commandList->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
+			//pontlight
+			commandList->SetGraphicsRootConstantBufferView(5, PointLightResource->GetGPUVirtualAddress());
 
 			// 描画
 			commandList->DrawInstanced(kSubdivision * kSubdivision * 6, 1, 0, 0);
+			//terrairm
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
+			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+			commandList->SetGraphicsRootConstantBufferView(1, SpritematerialResource->GetGPUVirtualAddress());
+			commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+			commandList->DrawIndexedInstanced();
+			
 
 			// Spriteの描画
 			//commandList->IASetIndexBuffer(&indexBufferViewSprite);
