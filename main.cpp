@@ -125,12 +125,6 @@ struct PointLight {
 	float intensity;//輝度
 };
 
-struct PointLight {
-	Vector4 color;//ライトの色
-	Vector3 position;//ライトの位置
-	float intensity;//輝度
-};
-
 //ParticleがFieldの範囲内かどうか判定
 bool IsCollision(const AABB& aabb, const Vector3& point) {
 	if ((aabb.min.x <= point.x && aabb.max.x >= point.x) &&
@@ -1307,6 +1301,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//モデル読み込み
 	ModelData modelData = LoadObjFile("resources","terrain.obj");
+
+	//頂点リソースを作る
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceT = CreateBufferResource(device, sizeof(VertexData)*modelData.vertices.size());
+	//頂点バッファビューを作成する
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewT{};
+	vertexBufferViewT.BufferLocation = vertexResourceT->GetGPUVirtualAddress();
+	vertexBufferViewT.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferViewT.StrideInBytes = sizeof(VertexData);
+	//頂点リソースにデータを書き込む
+	VertexData* vertexDataT = nullptr;
+	//書き込むためのアドレスを取得
+	vertexResourceT->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataT));
+	std::memcpy(vertexDataT, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
+
 	/*
 	ModelData modelData;
 	modelData.vertices.push_back({ .position = {1.0f,1.0f,0.0f,1.0f},.texcoord = {0.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//左上
@@ -1333,23 +1341,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	VertexData* vertexData = nullptr;
 	// 書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
-	//terrain
-	//頂点リソース
-	Microsoft::WRL::ComPtr<ID3D12Resource>vertexResourceT = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
-	//頂点バッファビューを作成する
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewT{};
-	// リソースの先頭のアドレスから使う
-	vertexBufferViewT.BufferLocation = vertexResourceT->GetGPUVirtualAddress();
-	// 使用するリソースのサイズは頂点のサイズ
-	vertexBufferViewT.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	//1頂点あたりのサイズ
-	vertexBufferViewT.StrideInBytes = sizeof(VertexData);
-
-	//頂点リソースにデータを書き込む
-	VertexData* vertexDataT = nullptr;
-	vertexResourceT->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataT));
-	std::memcpy(vertexDataT, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
 
 	//経度分割1つ分の経度φd
 	const float kLonEvery = 2 * std::numbers::pi_v<float> / (float)kSubdivision;
@@ -1546,6 +1537,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 単位行列を書き込んでおく
 	transformationMatrixDataSprite->WVP = MakeIdentity4x4();
 	transformationMatrixDataSprite->World = MakeIdentity4x4();
+	transformationMatrixDataSprite->WorldInverseTranspose = MakeIdentity4x4();
 
 	Microsoft::WRL::ComPtr<ID3D12Resource>cameraResource = CreateBufferResource(device, sizeof(CameraForGPU));
 	CameraForGPU* cameraData = nullptr;
@@ -1726,9 +1718,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-			ImGui::DragFloat3("CameraTranslation", &transform.rotate.x, 0.01f);
+			ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.01f);
+			ImGui::DragFloat3("CameraRotate", &cameraTransform.rotate.x, 0.01f);
+			ImGui::DragFloat3("SphereRotate", &transform.rotate.x, 0.01f);
 			ImGui::DragFloat3("SphereTranslation", &transform.translate.x, 0.01f);
 			ImGui::DragFloat3("SphereTransscale", &transform.scale.x, 0.01f);
+			ImGui::DragFloat3("TerrainTranslation", &transformSprite.translate.x, 0.01f);
 			/*
 			for (std::list<Particle>::iterator particleIterator = particles.begin();
 				particleIterator != particles.end(); ++particleIterator) {
@@ -1742,10 +1737,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			directionalLightData->direction = Normalize(directionalLightData->direction);
 
-			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 viewMatrix = Inverse(cameraMatrix);
 			Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
+
+			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 			Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 			
@@ -1755,17 +1751,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			// Sprite用のWorldViewProjecionMatrixを作る
 			Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
-			Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
-			Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(kClientWidth), float(kClientHeight), 0.0f, 100.0f);
-			Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
+			Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrix, projectionMatrix));
 			transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
-			transformationMatrixDataSprite->World = worldMatrix;
+			transformationMatrixDataSprite->World = worldMatrixSprite;
+			transformationMatrixDataSprite->WorldInverseTranspose = Transpose(Inverse(worldMatrixSprite));
 
 			//UVTransform用の行列
 			Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateZMatrix(uvTransformSprite.rotate.z));
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
+
 			/*
 			//反対側に回す回転行列
 			Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
@@ -1834,8 +1830,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 				++particleIterator;
 			}
-			*/
-			/*
+
 			for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
 				float alpha = 1.0f - (particles[index].currentTime / particles[index].lifeTime);
 				//生存時間を過ぎていたら更新しない
@@ -1860,6 +1855,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				++numInstance;
 			}
 			*/
+
 			// 書き込むバックバッファのインデックスの取得
 			UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
@@ -1896,7 +1892,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetPipelineState(graphicsPipelineState.Get());
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 			
-			//球の描画
+			///球の描画///
+
 			// 形状を設定
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			// マテリアルCBufferの場所を設定
@@ -1904,25 +1901,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//WVP用のCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 			//instancing用のDataを読むためにStructuredBufferのSRVを設定する
-		//commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
+		    //commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
 			// SRVのDescriptorTableの先頭を設定
-			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
+			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 			//Lighting
 			commandList->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
-
+			//camera
 			commandList->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
 			//pontlight
 			commandList->SetGraphicsRootConstantBufferView(5, PointLightResource->GetGPUVirtualAddress());
-
 			// 描画
 			commandList->DrawInstanced(kSubdivision * kSubdivision * 6, 1, 0, 0);
-			//terrairm
-			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
-			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
-			commandList->SetGraphicsRootConstantBufferView(1, SpritematerialResource->GetGPUVirtualAddress());
-			commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
-			commandList->DrawIndexedInstanced();
 			
+			//terrairm(台地)
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewT);
+			commandList->SetGraphicsRootConstantBufferView(0, SpritematerialResource->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
+			commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
 			// Spriteの描画
 			//commandList->IASetIndexBuffer(&indexBufferViewSprite);
