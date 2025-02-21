@@ -3,7 +3,7 @@
 
 //初期化
 void TitleScene::Initialize() {
-	
+
 	//Sprite初期化
 	for (uint32_t i = 0; i < 1; ++i) {
 		auto sprite = std::make_unique<Sprite>();
@@ -12,7 +12,7 @@ void TitleScene::Initialize() {
 		sprites.push_back(std::move(sprite));
 	}
 	sprites[0]->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
-	
+
 	//3Dオブジェクト
 	for (uint32_t i = 0; i < 2; ++i) {
 		auto object3d = std::make_unique<Object3d>();
@@ -36,11 +36,27 @@ void TitleScene::Initialize() {
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
-	
+
+	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle.png");
+	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/uvChecker.png");
+	//パーティクルエミッター
+	for (uint32_t i = 0; i < 2; ++i) {
+		auto particle = std::make_unique<ParticleEmitter>();
+		if (i == 0) {
+			particle->Initialize("particle");
+		} else
+		{
+
+			particle->Initialize("particle2");
+		}
+		particle->Emit();
+		particleEmitter.push_back(std::move(particle));
+	}
 }
 
 //終了
 void TitleScene::Finalize() {
+	ParticleManager::GetInstance()->Finalize();
 	//Audio
 	Audio::GetInstance()->Finalize();
 }
@@ -52,6 +68,13 @@ void TitleScene::Update() {
 
 		//Spriteの更新
 		sprite->Update();
+	}
+
+	//パーティクル更新
+	ParticleManager::GetInstance()->Update();
+	for (size_t i = 0; i < particleEmitter.size(); ++i) {
+		auto& particle = particleEmitter[i];
+		particle->Update();
 	}
 
 	//エンターキーを押したらゲームシーンへ
@@ -72,4 +95,6 @@ void TitleScene::Draw() {
 		//sprite描画処理
 		sprite->Draw();
 	}
+
+	ParticleManager::GetInstance()->Draw();
 }

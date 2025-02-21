@@ -10,6 +10,7 @@
 #include "ModelManager.h"
 #include "Input.h"
 #include "BaseScene.h"
+#include "ParticleEmitter.h"
 
 class TitleScene : public BaseScene
 {
@@ -27,5 +28,7 @@ private:
 	std::vector<std::unique_ptr<Sprite>>sprites;
 	//3Dオブジェクト
 	std::vector<std::unique_ptr<Object3d>>object3ds;
+	//パーティクルエミッター
+	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
 };
 
