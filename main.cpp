@@ -1484,6 +1484,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//shininess
 	materialData->shininess = 40.0f;
 
+	//2つ目
+	Microsoft::WRL::ComPtr<ID3D12Resource>materialResource2 = CreateBufferResource(device, sizeof(Material));
+	//マテリアル用にデータを書き込む
+	Material* materialData2 = nullptr;
+	//書き込むためのアドレスと取得
+	materialResource2->Map(0, nullptr, reinterpret_cast<void**>(&materialData2));
+	//色の設定
+	materialData2->color = Vector4{ 1.0f,1.0f,1.0f,1.0f };
+	//Lightingを有効にする
+	materialData2->enableLighting = true;
+	//UVTransform行列を単位行列で初期化
+	materialData2->uvTransform = MakeIdentity4x4();
+	//shininess
+	materialData2->shininess = 40.0f;
+
 	// WVP用のリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = CreateBufferResource(device, sizeof(TransformationMatrix));
 	// データを書き込む
@@ -1494,6 +1509,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	wvpData->WVP = MakeIdentity4x4();
 	wvpData->World = MakeIdentity4x4();
 	wvpData->WorldInverseTranspose = MakeIdentity4x4();
+
+	//2つ目
+	Microsoft::WRL::ComPtr<ID3D12Resource>transformatoinMatrixresource2 = CreateBufferResource(device, sizeof(TransformationMatrix));
+	//データを書き込む
+	TransformationMatrix* transformationData = nullptr;
+	//書き込むためのアドレスを取得
+	transformatoinMatrixresource2->Map(0, nullptr, reinterpret_cast<void**>(&transformationData));
+	//単位行列を書き込む
+	transformationData->WVP = MakeIdentity4x4();
+	transformationData->World = MakeIdentity4x4();
+	transformationData->WorldInverseTranspose = MakeIdentity4x4();
 
 	//Sprite用のマテリアルリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> SpritematerialResource = CreateBufferResource(device, sizeof(Material));
@@ -1602,6 +1628,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// SRVの作成
 	device->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 
+	//3枚目のTextureを読んで転送する
+	DirectX::ScratchImage mipImages3 = LoadTexture("resources/grass.png");
+	const DirectX::TexMetadata& metadata3 = mipImages3.GetMetadata();
+	Microsoft::WRL::ComPtr<ID3D12Resource>textureResource3 = CreateTextureResource(device, metadata3);
+	Microsoft::WRL::ComPtr<ID3D12Resource>intermediateResource3 = UploadTextureData(textureResource3, mipImages3, device, commandList);
+
+	//metaDataを基にSRVの作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc3{};
+	srvDesc3.Format = metadata3.format;
+	srvDesc3.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc3.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc3.Texture2D.MipLevels = UINT(metadata3.mipLevels);
+
+	//SRV作成するDescriptorHeapの場所を決める
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU3 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 3);
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU3 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 3);
+
+	//SRVの作成
+	device->CreateShaderResourceView(textureResource3.Get(), &srvDesc3, textureSrvHandleCPU3);
+	/*
 	//instancingsrvdesc
 	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
 	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -1614,7 +1660,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 3);
 	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 3);
 	device->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
-
+	*/
 	// ビューポート
 	D3D12_VIEWPORT viewport{};
 	// クライアント領域のサイズと一緒にして画面全体に表示
@@ -1653,6 +1699,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	particles.push_back(MakeNewParticle(randomEngine, emitter.transform.translate));
 
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	Transform transform2{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 	/*
@@ -1723,7 +1770,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("SphereRotate", &transform.rotate.x, 0.01f);
 			ImGui::DragFloat3("SphereTranslation", &transform.translate.x, 0.01f);
 			ImGui::DragFloat3("SphereTransscale", &transform.scale.x, 0.01f);
-			ImGui::DragFloat3("TerrainTranslation", &transformSprite.translate.x, 0.01f);
+			ImGui::DragFloat3("TerrainTranslation", &transform2.translate.x, 0.01f);
 			/*
 			for (std::list<Particle>::iterator particleIterator = particles.begin();
 				particleIterator != particles.end(); ++particleIterator) {
@@ -1749,6 +1796,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			wvpData->World = worldMatrix;
 			wvpData->WorldInverseTranspose = Transpose(Inverse(worldMatrix));
 
+			//二つ目
+			Matrix4x4 worldMatrix2 = MakeAffineMatrix(transform2.scale, transform2.rotate, transform2.translate);
+			Matrix4x4 worldViewProjectionMatrix2 = Multiply(worldMatrix2, Multiply(viewMatrix, projectionMatrix));
+
+			transformationData->WVP = worldViewProjectionMatrix2;
+			transformationData->World = worldMatrix2;
+			//transformationData->WorldInverseTranspose = Transpose(Inverse(worldMatrix2));
+
 			// Sprite用のWorldViewProjecionMatrixを作る
 			Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 			Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrix, projectionMatrix));
@@ -1762,6 +1817,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
 
+			cameraData->worldPosition = cameraTransform.translate;
 			/*
 			//反対側に回す回転行列
 			Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
@@ -1915,9 +1971,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			
 			//terrairm(台地)
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewT);
-			commandList->SetGraphicsRootConstantBufferView(0, SpritematerialResource->GetGPUVirtualAddress());
-			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
+			commandList->SetGraphicsRootConstantBufferView(0, materialResource2->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView(1, transformatoinMatrixresource2->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU3);
 			commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
 			// Spriteの描画
