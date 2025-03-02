@@ -26,6 +26,8 @@ struct PointLight
     float4 color;//ライトの色
     float3 position; //ライトの位置
     float intensity;//輝度
+    float radius;//ライトの届く最大距離
+    float decay;//減衰率
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -82,14 +84,15 @@ PixelShaderOutput main(VertexShaderOutput input)
         float3 pointreflectLight = reflect(pointLightDirection, normalize(input.normal));
         float pointRdotE = dot(pointreflectLight, toEye);
         float pointspecularPow = pow(saturate(pointRdotE), gMaterial.shininess);
-        //拡散反射
+        float distance = length(gPointLight.position - input.worldPosition);//pointlightへの距離
+        float factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay);//指数によるコントロール
+        
         float3 diffusePointLight = gMaterial.color.rgb * textureColor.rgb *
-        gPointLight.color.rgb * cos * gPointLight.intensity;
-        //鏡面反射
+        gPointLight.color.rgb * cos * gPointLight.intensity * factor;
+       
         float3 specularPointLight = gPointLight.color.rgb * gPointLight.intensity *
-        pointspecularPow * float3(1.0f, 1.0f, 1.0f);
+        pointspecularPow * factor * float3(1.0f, 1.0f, 1.0f);
         //拡散反射 + 鏡面反射
-       // output.color.rgb = diffuse + specular;
         output.color.rgb = diffuse + specular +
         diffusePointLight * specularPointLight;
         output.color.a = gMaterial.color.a * textureColor.a;

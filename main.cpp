@@ -123,6 +123,9 @@ struct PointLight {
 	Vector4 color;//ライトの色
 	Vector3 position;//ライトの位置
 	float intensity;//輝度
+	float radius;//ライトの届く最大距離
+	float decay;//減衰率
+	float padding[2];
 };
 
 //ParticleがFieldの範囲内かどうか判定
@@ -1552,8 +1555,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//書き込むためのアドレスと取得
 	PointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
 	pointLightData->color = { 1.0f,1.0f,1.0f };
-	pointLightData->intensity = 1.0f;
+	pointLightData->intensity = 200.0f;
 	pointLightData->position = { 0.0f,2.0f,0.0f };
+	pointLightData->radius = 3.0f;
+	pointLightData->decay = 1.0f;
 
 	// Sprite用のTransformationMatrix用のリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite = CreateBufferResource(device, sizeof(TransformationMatrix));
@@ -1708,8 +1713,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	*/
 	Transform uvTransformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
-	cameraData->worldPosition = cameraTransform.translate;
-
 	//SRV切り替え
 	bool useMonsterBall = true;
 	//billboardMatrix切り替え
@@ -1762,9 +1765,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			*/
 			ImGui::ColorEdit4("*Light", &directionalLightData->color.x);
 			ImGui::SliderFloat3("*LightDirection", &directionalLightData->direction.x, -2.0f, 2.0f);
-			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
-			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+			ImGui::DragFloat("LightIntensity", &directionalLightData->intensity, 0.01f);
+			ImGui::SliderFloat3("PointLightDirection", &pointLightData->position.x,-2.0f,2.0f);
+			ImGui::DragFloat("PointLightIntensity", &pointLightData->intensity, 0.01f);
+			ImGui::DragFloat("PointLightRadius", &pointLightData->radius, 0.01f);
+			ImGui::DragFloat("PointLightDecay", &pointLightData->decay, 0.01f);
+			//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+			//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+			//ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 			ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.01f);
 			ImGui::DragFloat3("CameraRotate", &cameraTransform.rotate.x, 0.01f);
 			ImGui::DragFloat3("SphereRotate", &transform.rotate.x, 0.01f);
@@ -1781,8 +1789,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			ImGui::End();
 			ImGui::Render();
-
-			directionalLightData->direction = Normalize(directionalLightData->direction);
 
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -1818,6 +1824,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			materialDataSprite->uvTransform = uvTransformMatrix;
 
 			cameraData->worldPosition = cameraTransform.translate;
+			directionalLightData->direction = Normalize(directionalLightData->direction);
 			/*
 			//反対側に回す回転行列
 			Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
