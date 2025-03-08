@@ -127,6 +127,18 @@ struct PointLight {
 	float decay;//減衰率
 	float padding[2];
 };
+struct SpotLight {
+	Vector4 color;//ライトの色
+	Vector3 position;//ライトの位置
+	float intensity;//輝度
+	Vector3 direction;//スポットライト
+	float distance;//ライトの届く最大距離
+	float decay;//減衰率
+	float cosAngle;//スポットライトの余弦
+	float cosFalloffStart;
+	float padding[2];
+
+};
 
 //ParticleがFieldの範囲内かどうか判定
 bool IsCollision(const AABB& aabb, const Vector3& point) {
@@ -1140,7 +1152,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 	*/
 	// RootParameter作成
-	D3D12_ROOT_PARAMETER rootParameter[6] = {};
+	D3D12_ROOT_PARAMETER rootParameter[7] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 0;
@@ -1165,11 +1177,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVを使う
 	rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
-	rootParameter[4].Descriptor.ShaderRegister = 2;//レジスタ番号1を使う
+	rootParameter[4].Descriptor.ShaderRegister = 2;//レジスタ番号2を使う
 
 	rootParameter[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVを使う
 	rootParameter[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
-	rootParameter[5].Descriptor.ShaderRegister = 3;//レジスタ番号1を使う
+	rootParameter[5].Descriptor.ShaderRegister = 3;//レジスタ番号3を使う
+
+	rootParameter[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVを使う
+	rootParameter[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
+	rootParameter[6].Descriptor.ShaderRegister = 4;//レジスタ番号4を使う
 
 	descriptitonRootSignature.pParameters = rootParameter;
 	descriptitonRootSignature.NumParameters = _countof(rootParameter);
@@ -1554,11 +1570,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	PointLight* pointLightData = nullptr;
 	//書き込むためのアドレスと取得
 	PointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
+
 	pointLightData->color = { 1.0f,1.0f,1.0f };
-	pointLightData->intensity = 200.0f;
+	pointLightData->intensity = 1.0f;
 	pointLightData->position = { 0.0f,2.0f,0.0f };
 	pointLightData->radius = 3.0f;
 	pointLightData->decay = 1.0f;
+
+	//spotLight用のリソースを作る
+	Microsoft::WRL::ComPtr<ID3D12Resource>SpotLightResource = CreateBufferResource(device, sizeof(SpotLight));
+	//データを書き込む
+	SpotLight* spotLightData = nullptr;
+	//書き込むためのアドレスと取得
+	SpotLightResource->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData));
+
+	spotLightData->color = { 1.0f,1.0f,1.0f };
+	spotLightData->position = { 2.0f,1.25f,0.0f };
+	spotLightData->distance = 7.0f;
+	spotLightData->direction = Normalize({ -1.0f,-1.0f,0.0f });
+	spotLightData->intensity = 4.0f;
+	spotLightData->decay = 2.0f;
+	spotLightData->cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
+	spotLightData->cosFalloffStart = 1.0f;
 
 	// Sprite用のTransformationMatrix用のリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite = CreateBufferResource(device, sizeof(TransformationMatrix));
@@ -1704,7 +1737,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	particles.push_back(MakeNewParticle(randomEngine, emitter.transform.translate));
 
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	Transform transform2{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	Transform transform2{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,-1.0f,0.0f} };
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 	/*
@@ -1766,10 +1799,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::ColorEdit4("*Light", &directionalLightData->color.x);
 			ImGui::SliderFloat3("*LightDirection", &directionalLightData->direction.x, -2.0f, 2.0f);
 			ImGui::DragFloat("LightIntensity", &directionalLightData->intensity, 0.01f);
-			ImGui::SliderFloat3("PointLightDirection", &pointLightData->position.x,-2.0f,2.0f);
+			ImGui::DragFloat3("PointLightPosition", &pointLightData->position.x,0.01f);
 			ImGui::DragFloat("PointLightIntensity", &pointLightData->intensity, 0.01f);
 			ImGui::DragFloat("PointLightRadius", &pointLightData->radius, 0.01f);
 			ImGui::DragFloat("PointLightDecay", &pointLightData->decay, 0.01f);
+			ImGui::DragFloat3("SpotLightPositon", &spotLightData->position.x, 0.01f);
+			ImGui::DragFloat("SpotLightIntensity", &spotLightData->intensity, 0.01f);
+			ImGui::DragFloat("SpotLightcosFalloffStart", &spotLightData->cosFalloffStart, 0.01f);
 			//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 			//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			//ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
@@ -1785,7 +1821,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				ImGui::DragFloat3("Transforms", &(*particleIterator).transform.rotate.x, 0.01f);
 			}
 			*/
-			ImGui::DragFloat3("EmitterTranslate", &emitter.transform.translate.x, 0.01f, -100.0f, 100.0f);
+		//	ImGui::DragFloat3("EmitterTranslate", &emitter.transform.translate.x, 0.01f, -100.0f, 100.0f);
 
 			ImGui::End();
 			ImGui::Render();
@@ -1973,6 +2009,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
 			//pontlight
 			commandList->SetGraphicsRootConstantBufferView(5, PointLightResource->GetGPUVirtualAddress());
+			//spotLight
+			commandList->SetGraphicsRootConstantBufferView(6, SpotLightResource->GetGPUVirtualAddress());
 			// 描画
 			commandList->DrawInstanced(kSubdivision * kSubdivision * 6, 1, 0, 0);
 			
