@@ -58,6 +58,7 @@
     <ClInclude Include="engine\base\DirectXBase.h" />
     <ClInclude Include="SceneFactory.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Struct.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />

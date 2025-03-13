@@ -12,8 +12,10 @@ void Object3d::Initialize(Object3dBase* object3dBase) {
 	this->camera = object3dBase_->GetDefaultCamera();
 	TransformationCreate();
 	DirectionalLightCreate();
+	CameraDataCreate();
 	//Transform変数を作る
 	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	cameraTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 }
 //更新
 void Object3d::Update() {
@@ -30,6 +32,8 @@ void Object3d::Update() {
 
 	transformationMatrixData->WVP = worldViewProjectionMatrix;
 	transformationMatrixData->World = worldMatrix;
+
+	cameraData->worldPosition = cameraTransform_.translate;
 }
 //描画
 void Object3d::Draw() {
@@ -38,6 +42,9 @@ void Object3d::Draw() {
 	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	//Lighting
 	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
+	//camera
+	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
+
 	//3Dモデルが割り当てられていたら描画する
 	if (model_) {
 		model_->Draw();
@@ -67,4 +74,10 @@ void Object3d::DirectionalLightCreate() {
 	directionalLight->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight->direction = { 0.0f,-1.0f,0.0f };
 	directionalLight->intensity = 1.0f;
+}
+//カメラデータ作成
+void Object3d::CameraDataCreate() {
+	cameraResource = object3dBase_->GetDxBase()->CreateBufferResource(sizeof(CameraForGPU));
+	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData));
+	cameraData->worldPosition;
 }

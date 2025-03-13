@@ -13,11 +13,11 @@
 #include "Transform.h"
 #include "DirectionalLight.h"
 #include "MaterialData.h"
-#include "ModelData.h"
 #include "Math.h"
 #include "Object3d.h"
 #include "ModelBase.h"
 #include "Model.h"
+#include "Struct.h"
 #include "Framework.h"
 
 #include "externals/DirectXTex/DirectXTex.h"
