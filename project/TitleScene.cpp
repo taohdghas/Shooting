@@ -69,14 +69,7 @@ void TitleScene::Update() {
 	object3d->Update();
 
 	camera->DebugUpdate();
-	/*
-	//パーティクル更新
-	ParticleManager::GetInstance()->Update();
-	for (size_t i = 0; i < particleEmitter.size(); ++i) {
-		auto& particle = particleEmitter[i];
-		particle->Update();
-	}
-	*/
+
 	//エンターキーを押したらゲームシーンへ
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
 		SceneManager::GetInstance()->ChangeScene("GAME");
