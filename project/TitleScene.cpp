@@ -86,5 +86,4 @@ void TitleScene::Draw() {
 
 	object3d->Draw();
 
-	//ParticleManager::GetInstance()->Draw();
 }
