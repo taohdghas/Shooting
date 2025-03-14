@@ -34,6 +34,7 @@ void Object3d::Update() {
 	transformationMatrixData->World = worldMatrix;
 
 	cameraData->worldPosition = cameraTransform_.translate;
+	
 }
 //描画
 void Object3d::Draw() {

@@ -2,6 +2,18 @@
 
 //初期化
 void GameScene::Initialize() {
+
+	//サウンド
+	Audio::GetInstance()->Initialize();
+
+	//テクスチャ読み込み
+	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+
+	//モデル読み込み
+	ModelManager::GetInstance()->LoadModel("plane.obj");
+	ModelManager::GetInstance()->LoadModel("axis.obj");
+
 	//Sprite初期化
 	for (uint32_t i = 0; i < 2; ++i) {
 		auto sprite = std::make_unique<Sprite>();
@@ -23,17 +35,6 @@ void GameScene::Initialize() {
 	object3ds[1]->SetTranslate({ 2.0f,0.0f,0.0f });
 
 	Vector3 objectrotate = object3ds[0]->GetRotate();
-
-	//サウンド
-	Audio::GetInstance()->Initialize();
-
-	//テクスチャ読み込み
-	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
-
-	//モデル読み込み
-	ModelManager::GetInstance()->LoadModel("plane.obj");
-	ModelManager::GetInstance()->LoadModel("axis.obj");
 }
 
 //終了

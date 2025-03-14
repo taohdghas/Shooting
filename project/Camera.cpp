@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Math.h"
+#include "ImGuiManager.h"
 
 //デフォルトコンストラクタ
 Camera::Camera()
@@ -24,4 +25,13 @@ void Camera::Update() {
 	projectionMatrix = Math::MakePerspectiveFovMatrix(FovY, aspectRatio, nearClip, farClip);
 	//合成行列
 	viewProjectionMatrix = Math::Multiply(viewMatrix, projectionMatrix);
+}
+
+//デバック
+void Camera::DebugUpdate() {
+#ifdef USE_IMGUI
+	ImGui::Begin("Settings");
+	ImGui::DragFloat3("CameraTranslate", &transform.translate.x, 0.01f, -10.0f, 10.0f);
+	ImGui::End();
+#endif
 }
