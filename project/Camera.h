@@ -12,8 +12,6 @@ public:
 	Camera();
 	//更新
 	void Update();
-	//デバック
-	void DebugUpdate();
 
 	///setter///
 	void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }

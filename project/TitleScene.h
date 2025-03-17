@@ -12,6 +12,7 @@
 #include "BaseScene.h"
 #include "ParticleEmitter.h"
 #include "Camera.h"
+#include "DirectionalLight.h"
 
 class TitleScene : public BaseScene
 {
@@ -34,5 +35,7 @@ private:
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
 	//カメラ
 	std::unique_ptr<Camera>camera;
+	//ライト
+	std::unique_ptr<DirectionalLight>directionallight;
 };
 

@@ -23,10 +23,7 @@ struct Material {
 struct TransformationMatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
-};
-//カメラ
-struct CameraForGPU {
-	Vector3 worldPosition;
+	Matrix4x4 WorldInverseTranspose;
 };
 //マテリアルデータ
 struct MaterialData
@@ -39,4 +36,35 @@ struct ModelData
 {
 	std::vector<VertexData>vertices;
 	MaterialData material;
+};
+//ライト
+struct DirectionalLight {
+	Vector4 color;//ライトの色
+	Vector3 direction;//ライトの向き
+	float intensity;//輝度
+};
+//カメラ
+struct CameraForGPU {
+	Vector3 worldPosition;
+};
+//ポイントライト
+struct PointLight {
+	Vector4 color;//ライトの色
+	Vector4 position;//ライトの位置
+	float intensity;//輝度
+	float radius;//ライトの届く最大距離
+	float decay;//減衰率
+	float padding[2];
+};
+//スポットライト
+struct SpotLight {
+	Vector4 color;//ライトの色
+	Vector3 position;//ライトの位置
+	float intensity;//輝度
+	Vector3 direction;//スポットライト
+	float distance;//ライトの届く最大距離
+	float decay;//減衰率
+	float cosAngle;//スポットライトの余弦
+	float cosFalloffStart;
+	float padding[2];
 };

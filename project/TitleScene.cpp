@@ -53,6 +53,10 @@ void TitleScene::Initialize() {
 	camera->SetRotate({ 0.0f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
 	object3d->SetCamera(camera.get());
+
+	//ライト
+	directionallight = std::make_unique<DirectionalLight>();
+
 }
 
 //終了
@@ -68,12 +72,30 @@ void TitleScene::Update() {
 
 	object3d->Update();
 
-	camera->DebugUpdate();
-
 	//エンターキーを押したらゲームシーンへ
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
 		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
+
+#ifdef USE_IMGUI
+	ImGui::Begin("SetUp");
+	if (ImGui::TreeNode("Camera")) {
+		Vector3 cameraPos = camera->GetTranslate();
+		Vector3 cameraRot = camera->GetRotate();
+		ImGui::DragFloat3("CameraTranslate", &cameraPos.x, 0.1f);
+		ImGui::DragFloat3("CameraRotate", &cameraRot.x, 0.1f);
+		camera->SetTranslate({ cameraPos.x,cameraPos.y,cameraPos.z });
+		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("Light")) {
+		ImGui::ColorEdit4("Light", &directionallight->color.x);
+		ImGui::SliderFloat3("Light", &directionallight->direction.x, -2.0f, 2.0f);
+		ImGui::DragFloat("LightIntensity", &directionallight->intensity, 0.01f);
+		ImGui::TreePop();
+	}
+	ImGui::End();
+#endif
 }
 
 //描画

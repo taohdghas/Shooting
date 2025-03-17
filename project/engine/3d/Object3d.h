@@ -40,6 +40,10 @@ private:
 	void DirectionalLightCreate();
 	//カメラデータ作成
 	void CameraDataCreate();
+	//ポイントライトデータ作成
+	void PointLightCreate();
+	//スポットライトデータ作成
+	void SpotLightCreate();
 private:
 	Model* model_ = nullptr;
 	Object3dBase* object3dBase_ = nullptr;
@@ -56,12 +60,16 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource;
 	Microsoft::WRL::ComPtr<ID3D12Resource>DirectionalLightResource;
 	Microsoft::WRL::ComPtr<ID3D12Resource>cameraResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource>PointLightResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource>SpotLightResource;
 	//バッファリソース内のデータを指すポインタ
 	VertexData* vertexData = nullptr;
 	Material* materialData = nullptr;
 	TransformationMatrix* transformationMatrixData = nullptr;
 	DirectionalLight* directionalLight = nullptr;
 	CameraForGPU* cameraData = nullptr;
+	PointLight* pointLight = nullptr;
+	SpotLight* spotLight = nullptr;
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 };

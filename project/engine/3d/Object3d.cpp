@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "ModelManager.h"
 #include <fstream>
+#include <numbers>
 
 //初期化
 void Object3d::Initialize(Object3dBase* object3dBase) {
@@ -71,7 +72,7 @@ void Object3d::DirectionalLightCreate() {
 	DirectionalLightResource = object3dBase_->GetDxBase()->CreateBufferResource(sizeof(DirectionalLight));
 	//書き込むためのアドレスと取得
 	DirectionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLight));
-	//デフォルト値はとりあえず以下のようにしておく
+	//デフォルト値
 	directionalLight->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight->direction = { 0.0f,-1.0f,0.0f };
 	directionalLight->intensity = 1.0f;
@@ -81,4 +82,31 @@ void Object3d::CameraDataCreate() {
 	cameraResource = object3dBase_->GetDxBase()->CreateBufferResource(sizeof(CameraForGPU));
 	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData));
 	cameraData->worldPosition;
+}
+//ポイントライトデータ作成
+void Object3d::PointLightCreate() {
+	PointLightResource = object3dBase_->GetDxBase()->CreateBufferResource(sizeof(PointLight));
+	//書き込むためのアドレスと取得
+	PointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLight));
+	//デフォルト値
+	pointLight->color = { 1.0f,1.0f,1.0f };
+	pointLight->intensity = 1.0f;
+	pointLight->position = { 0.0f,2.0f,0.0f };
+	pointLight->radius = 3.0f;
+	pointLight->decay = 1.0f;
+}
+//スポットライトデータ作成
+void Object3d::SpotLightCreate() {
+	SpotLightResource = object3dBase_->GetDxBase()->CreateBufferResource(sizeof(SpotLight));
+	//書き込むためのアドレスと取得
+	SpotLightResource->Map(0, nullptr, reinterpret_cast<void**>(&spotLight));
+	//デフォルト値
+	spotLight->color = { 1.0f,1.0f,1.0f };
+	spotLight->position = { 2.0f,1.25f,0.0f };
+	spotLight->distance = 7.0f;
+	spotLight->direction = Math::Normalize({ -1.0f,-1.0f,0.0f });
+	spotLight->intensity = 4.0f;
+	spotLight->decay = 2.0f;
+	spotLight->cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
+	spotLight->cosFalloffStart = 1.0f;
 }
