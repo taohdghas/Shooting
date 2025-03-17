@@ -23,11 +23,11 @@ void MyGame::Finalize() {
 //毎フレーム更新
 void MyGame::Update() {
 	
-	//基底クラスの更新
-	Framework::Update();
-
 	//ImGui開始
 	imguimanager_->Begin();
+
+	//基底クラスの更新
+	Framework::Update();
 
 	//ImGui終了
 	imguimanager_->End();
