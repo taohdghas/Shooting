@@ -29,7 +29,7 @@ void TitleScene::Initialize() {
 	object3d = std::make_unique<Object3d>();
 	object3d->Initialize(Object3dBase::GetInstance());
 	object3d->SetTranslate({ 0.0f,0.0f,0.0f });
-	object3d->SetModel("plane.obj");
+	object3d->SetModel("axis.obj");
 
 
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle.png");
