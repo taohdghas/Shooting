@@ -88,12 +88,13 @@ void TitleScene::Update() {
 		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNode("Light")) {
-		ImGui::ColorEdit4("Light", &directionallight->color.x);
-		ImGui::SliderFloat3("Light", &directionallight->direction.x, -2.0f, 2.0f);
-		ImGui::DragFloat("LightIntensity", &directionallight->intensity, 0.01f);
+	if (ImGui::TreeNode("Object")) {
+		Vector3 objectPos = object3d->GetTranslate();
+		ImGui::DragFloat3("ObjectTranslate", &objectPos.x, 0.1f);
+		object3d->SetTranslate({ objectPos.x,objectPos.y,objectPos.z });
 		ImGui::TreePop();
 	}
+	object3d->DebugUpdate();
 	ImGui::End();
 #endif
 }

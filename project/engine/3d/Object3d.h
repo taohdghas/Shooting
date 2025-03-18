@@ -23,6 +23,9 @@ public:
 	void Update();
 	//描画
 	void Draw();
+	//デバック
+	void DebugUpdate();
+
 	///setter///
 	void SetModel(const std::string& filePath);
 	void SetScale(const Vector3& scale) { this->transform_.scale = scale; }

@@ -4,6 +4,7 @@
 #include "TextureManager.h"
 #include "Model.h"
 #include "ModelManager.h"
+#include "ImGuiManager.h"
 #include <fstream>
 #include <numbers>
 
@@ -52,6 +53,18 @@ void Object3d::Draw() {
 		model_->Draw();
 	}
 }
+//デバック
+void Object3d::DebugUpdate() {
+#ifdef USE_IMGUI
+	if (ImGui::TreeNode("Light")) {
+		ImGui::ColorEdit4("Light", &directionalLight->color.x);
+		ImGui::SliderFloat3("Light", &directionalLight->direction.x, -2.0f, 2.0f);
+		directionalLight->direction = Math::Normalize(directionalLight->direction);
+		ImGui::DragFloat("LightIntensity", &directionalLight->intensity, 0.01f);
+		ImGui::TreePop();
+	}
+#endif 
+}
 //setter
 void Object3d::SetModel(const std::string& filePath) {
 	//モデルを検索してセットする
@@ -66,6 +79,7 @@ void Object3d::TransformationCreate() {
 	// 単位行列を書き込んでおく
 	transformationMatrixData->WVP = Math::MakeIdentity4x4();
 	transformationMatrixData->World = Math::MakeIdentity4x4();
+	//transformationMatrixData->WorldInverseTranspose = Math::MakeIdentity4x4();
 }
 //平行光源データ作成
 void Object3d::DirectionalLightCreate() {

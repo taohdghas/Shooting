@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "Struct.h"
 #include <string>
 #include <vector>
 #include "externals/DirectXTex/d3dx12.h"
@@ -13,32 +14,7 @@
 class Model
 {
 private:
-	//頂点データ
-	struct VertexData
-	{
-		Vector4 position;
-		Vector2 texcoord;
-		Vector3 normal;
-	};
-	//マテリアルデータ
-	struct Material
-	{
-		Vector4 color;
-		int32_t enableLighting;
-		float padding[3];
-		Matrix4x4 uvTransform;
-	};
-	struct MaterialData
-	{
-		std::string textureFilePath;
-		uint32_t textureIndex = 0;
-	};
 
-	struct ModelData
-	{
-		std::vector<VertexData>vertices;
-		MaterialData material;
-	};
 public:
 	//初期化
 	void Initialize(ModelBase* modelBase,const std::string&directorypath,const std::string&filename);
