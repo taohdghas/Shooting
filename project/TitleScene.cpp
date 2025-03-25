@@ -89,9 +89,15 @@ void TitleScene::Update() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Object")) {
-		Vector3 objectPos = object3d->GetTranslate();
-		ImGui::DragFloat3("ObjectTranslate", &objectPos.x, 0.1f);
-		object3d->SetTranslate({ objectPos.x,objectPos.y,objectPos.z });
+		Vector3 objectScale = object3d->GetScale();
+		Vector3 objectRotate = object3d->GetRotate();
+		Vector3 objectTranslate = object3d->GetTranslate();
+		ImGui::DragFloat3("ObjectScale", &objectScale.x, 0.1f);
+		ImGui::DragFloat3("ObjectRotate", &objectRotate.x, 0.1f);
+		ImGui::DragFloat3("ObjectTranslate", &objectTranslate.x, 0.1f);
+		object3d->SetScale({ objectScale.x,objectScale.y,objectScale.z });
+		object3d->SetRotate({ objectRotate.x,objectRotate.y,objectRotate.z });
+		object3d->SetTranslate({ objectTranslate.x,objectTranslate.y,objectTranslate.z });
 		ImGui::TreePop();
 	}
 	object3d->DebugUpdate();

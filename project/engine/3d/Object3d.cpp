@@ -15,6 +15,8 @@ void Object3d::Initialize(Object3dBase* object3dBase) {
 	TransformationCreate();
 	DirectionalLightCreate();
 	CameraDataCreate();
+	PointLightCreate();
+	SpotLightCreate();
 	//Transform変数を作る
 	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	cameraTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
@@ -34,6 +36,7 @@ void Object3d::Update() {
 
 	transformationMatrixData->WVP = worldViewProjectionMatrix;
 	transformationMatrixData->World = worldMatrix;
+	transformationMatrixData->WorldInverseTranspose = Math::Transpose(Math::Inverse(worldMatrix));
 
 	cameraData->worldPosition = cameraTransform_.translate;
 	
@@ -47,6 +50,10 @@ void Object3d::Draw() {
 	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(3, DirectionalLightResource->GetGPUVirtualAddress());
 	//camera
 	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
+	//PointLight
+	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(5, PointLightResource->GetGPUVirtualAddress());
+	//SpotLight
+	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(6, SpotLightResource->GetGPUVirtualAddress());
 
 	//3Dモデルが割り当てられていたら描画する
 	if (model_) {
@@ -61,6 +68,13 @@ void Object3d::DebugUpdate() {
 		ImGui::SliderFloat3("Light", &directionalLight->direction.x, -2.0f, 2.0f);
 		directionalLight->direction = Math::Normalize(directionalLight->direction);
 		ImGui::DragFloat("LightIntensity", &directionalLight->intensity, 0.01f);
+		ImGui::DragFloat3("PointLightPosition", &pointLight->position.x, 0.01f);
+		ImGui::DragFloat("PointLightIntensity", &pointLight->intensity, 0.01f);
+		ImGui::DragFloat("PointLightRadius", &pointLight->radius, 0.01f);
+		ImGui::DragFloat("PointLightDecay", &pointLight->decay, 0.01f);
+		ImGui::DragFloat3("SpotLightPosition", &spotLight->position.x, 0.01f);
+		ImGui::DragFloat("SpotLightIntensity", &spotLight->intensity, 0.01f);
+		ImGui::DragFloat("SpotLightcosFalloffStart", &spotLight->cosFalloffStart, 0.01f);
 		ImGui::TreePop();
 	}
 #endif 
@@ -79,7 +93,7 @@ void Object3d::TransformationCreate() {
 	// 単位行列を書き込んでおく
 	transformationMatrixData->WVP = Math::MakeIdentity4x4();
 	transformationMatrixData->World = Math::MakeIdentity4x4();
-	//transformationMatrixData->WorldInverseTranspose = Math::MakeIdentity4x4();
+	transformationMatrixData->WorldInverseTranspose = Math::MakeIdentity4x4();
 }
 //平行光源データ作成
 void Object3d::DirectionalLightCreate() {
@@ -103,11 +117,11 @@ void Object3d::PointLightCreate() {
 	//書き込むためのアドレスと取得
 	PointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLight));
 	//デフォルト値
-	pointLight->color = { 1.0f,1.0f,1.0f };
+	pointLight->color = { 1.0f,1.0f,1.0f};
 	pointLight->intensity = 1.0f;
 	pointLight->position = { 0.0f,2.0f,0.0f };
-	pointLight->radius = 3.0f;
-	pointLight->decay = 1.0f;
+	pointLight->radius = 10.0f;
+	pointLight->decay = 2.0f;
 }
 //スポットライトデータ作成
 void Object3d::SpotLightCreate() {

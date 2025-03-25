@@ -315,3 +315,13 @@ namespace Math {
 		return orthoMatrix;
 	}
 }
+//転置行列
+Matrix4x4 Math::Transpose(const Matrix4x4& m) {
+	Matrix4x4 result;
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			result.m[i][j] = m.m[j][i];
+		}
+	}
+	return result;
+}
