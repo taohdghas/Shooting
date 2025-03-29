@@ -23,6 +23,8 @@ void Object3d::Initialize(Object3dBase* object3dBase) {
 }
 //更新
 void Object3d::Update() {
+	modelData_ = model_->GetModelData();
+
 	//TransformからWorldMatrixを作る
 	Matrix4x4 worldMatrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	Matrix4x4 worldViewProjectionMatrix;
@@ -34,8 +36,8 @@ void Object3d::Update() {
 		worldViewProjectionMatrix = worldMatrix;
 	}
 
-	transformationMatrixData->WVP = worldViewProjectionMatrix;
-	transformationMatrixData->World = worldMatrix;
+	transformationMatrixData->WVP =Math::Multiply(modelData_.rootNode.localMatrix, worldViewProjectionMatrix);
+	transformationMatrixData->World = Math::Multiply(modelData_.rootNode.localMatrix,worldMatrix);
 	transformationMatrixData->WorldInverseTranspose = Math::Transpose(Math::Inverse(worldMatrix));
 
 	cameraData->worldPosition = cameraTransform_.translate;

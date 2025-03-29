@@ -13,7 +13,7 @@ void TitleScene::Initialize() {
 	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
 	//モデル読み込み
-	ModelManager::GetInstance()->LoadModel("plane.obj");
+	ModelManager::GetInstance()->LoadModel("plane.gltf");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
 
 	//Sprite初期化
@@ -29,7 +29,7 @@ void TitleScene::Initialize() {
 	object3d = std::make_unique<Object3d>();
 	object3d->Initialize(Object3dBase::GetInstance());
 	object3d->SetTranslate({ 0.0f,0.0f,0.0f });
-	object3d->SetModel("axis.obj");
+	object3d->SetModel("plane.gltf");
 
 
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle.png");

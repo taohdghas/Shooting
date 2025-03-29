@@ -9,6 +9,9 @@
 #include <vector>
 #include "externals/DirectXTex/d3dx12.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 //3Dモデル
 class Model
@@ -26,9 +29,13 @@ private:
 	//マテリアル作成
 	void MaterialCreate();
 	//.mtlファイルの読み取り
-	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+	 MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 	//.objファイルの読み取り
-	static ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+	 ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
+	//assimpの構造体変換
+	Node ReadNode(aiNode* node);
+public:
+	const ModelData& GetModelData()const { return modelData_; }
 private:
 	//ModelBaseのポインタ
 	ModelBase* modelBase_;

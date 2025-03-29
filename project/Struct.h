@@ -32,11 +32,18 @@ struct MaterialData
 	std::string textureFilePath;
 	uint32_t textureIndex = 0;
 };
+//Node
+struct Node {
+	Matrix4x4 localMatrix;
+	std::string name;
+	std::vector<Node>children;
+};
 //モデルデータ
 struct ModelData
 {
 	std::vector<VertexData>vertices;
 	MaterialData material;
+	Node rootNode;
 };
 //ライト
 struct DirectionalLight {

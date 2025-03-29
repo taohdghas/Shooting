@@ -5,14 +5,10 @@
 #include <fstream>
 #include <sstream>
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 //初期化
 void Model::Initialize(ModelBase* modelBase, const std::string& directorypath, const std::string& filename) {
 	modelBase_ = modelBase;
-	modelData_ = LoadObjFile(directorypath,filename);
+	modelData_ = LoadModelFile(directorypath, filename);
 	VertexDataCreate();
 	MaterialCreate();
 	//.objの参照しているテクスチャファイル読み込み
@@ -29,7 +25,7 @@ void Model::Draw() {
 	modelBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定
 	modelBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(modelData_.material.textureFilePath));
-	
+
 	//DrawCall(描画)
 	modelBase_->GetDxBase()->Getcommandlist()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
 }
@@ -63,7 +59,7 @@ void Model::MaterialCreate() {
 	//UVTransform行列を単位行列で初期化
 	materialData->uvTransform = Math::MakeIdentity4x4();
 	materialData->shininess = 40.0f;
-	
+
 }
 //.mtlファイルの読み取り
 MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
@@ -91,13 +87,15 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 	return materialData;
 }
 //.objファイルの読み取り
-ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+ModelData Model::LoadModelFile(const std::string& directoryPath, const std::string& filename) {
 
 	ModelData modelData;//構築するModelData
 	//assimpのSceneを構築
 	Assimp::Importer importer;
 	std::string filePath = directoryPath + "/" + filename;
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	//Scene全体の階層構造構築
+	modelData.rootNode = ReadNode(scene->mRootNode);
 	assert(scene->HasMeshes());//メッシュがない場合対応しない
 
 	//Meshの解析
@@ -136,6 +134,26 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
 			modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
 		}
 	}
-	
+
 	return modelData;
+}
+
+//assimpの構造体変換
+Node Model::ReadNode(aiNode* node) {
+	Node result;
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation;//nodeのlocalMatrixを取得
+	aiLocalMatrix.Transpose();//列ベクトル形式を行ベクトル形式に転置
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j)
+		{
+			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
+		}
+	}
+	result.name = node->mName.C_Str();//Node名を格納
+	result.children.resize(node->mNumChildren);//子供の数だけ確保
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
+		//再帰的に読んで階層構造を作っていく
+		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
+	}
+	return result;
 }
