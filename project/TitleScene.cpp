@@ -16,6 +16,8 @@ void TitleScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("plane.gltf");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
 
+	ModelData model = Model::LoadModelFile("./resources/AnimatedCube", "AnimatedCube.gltf");
+	Animation animation = Model::LoadAnimationFile("./resources/AnimatedCube", "AnimatedCube.gltf");
 	//Sprite初期化
 	for (uint32_t i = 0; i < 1; ++i) {
 		auto sprite = std::make_unique<Sprite>();
@@ -29,7 +31,7 @@ void TitleScene::Initialize() {
 	object3d = std::make_unique<Object3d>();
 	object3d->Initialize(Object3dBase::GetInstance());
 	object3d->SetTranslate({ 0.0f,0.0f,0.0f });
-	object3d->SetModel("plane.gltf");
+	object3d->SetModel("axis.obj");
 
 
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle.png");
@@ -53,10 +55,6 @@ void TitleScene::Initialize() {
 	camera->SetRotate({ 0.0f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
 	object3d->SetCamera(camera.get());
-
-	//ライト
-	directionallight = std::make_unique<DirectionalLight>();
-
 }
 
 //終了

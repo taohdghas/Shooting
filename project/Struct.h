@@ -5,6 +5,7 @@
 #include "Matrix4x4.h"
 #include <string>
 #include <vector>
+#include <map>
 
 //頂点データ
 struct VertexData {
@@ -75,4 +76,37 @@ struct SpotLight {
 	float cosAngle;//スポットライトの余弦
 	float cosFalloffStart;
 	float padding[2];
+};
+//Quaternion
+struct Quaternion {
+	float x;
+	float y;
+	float z;
+	float w;
+};
+
+//Keyframe
+template <typename tValue>
+struct Keyframe {
+	float time;
+	tValue value;
+};
+using KeyframeVector3 = Keyframe<Vector3>;
+using KeyframeQuaternion = Keyframe<Quaternion>;
+
+//Animation
+template<typename tValue>
+struct AnimationCurve {
+	std::vector<Keyframe<tValue>>keyframes;
+};
+
+struct NodeAnimation {
+	AnimationCurve<Vector3>translate;
+	AnimationCurve<Quaternion>rotate;
+	AnimationCurve<Vector3>scale;
+};
+
+struct Animation {
+	float duration;//アニメーション全体の尺(単位は秒)
+	std::map<std::string, NodeAnimation>nodeAnimations;
 };
