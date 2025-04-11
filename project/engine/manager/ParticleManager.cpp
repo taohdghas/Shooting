@@ -12,7 +12,7 @@ ParticleManager* ParticleManager::GetInstance() {
 	return instance;
 }
 
-void ParticleManager::Initialize(DirectXBase*directxBase,SrvManager*srvManager, Camera* camera) {
+void ParticleManager::Initialize(DirectXBase* directxBase, SrvManager* srvManager, Camera* camera) {
 	this->directxBase_ = directxBase;
 	this->srvManager_ = srvManager;
 	this->camera_ = camera;
@@ -70,14 +70,15 @@ void ParticleManager::Update() {
 			if (ParticleGroups.second.kNumInstance < kNumMaxInstance) {
 				//行列計算
 				Matrix4x4 scaleMatrix = Math::MakeScaleMatrix((*particleIterator).transform.scale);
+				Matrix4x4 rotateMatrix = Math::MakeRotateMatrix((*particleIterator).transform.rotate);
 				Matrix4x4 translateMatrix = Math::MakeTranslateMatrix((*particleIterator).transform.translate);
-				Matrix4x4 worldMatrix = Math::Multiply(scaleMatrix, Math::Multiply(billboardMatrix, translateMatrix));
+				Matrix4x4 worldMatrix = Math::Multiply(scaleMatrix,Math::Multiply(rotateMatrix, Math::Multiply(billboardMatrix, translateMatrix)));
 				Matrix4x4 worldViewProjectionMatrix = Math::Multiply(worldMatrix, viewprojectionMatrix);
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].WVP = worldViewProjectionMatrix;
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].World = worldMatrix;
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].color;
 				//Fieldの範囲内のParticleには加速度を適用する
-				
+
 				//速度を適用
 				(*particleIterator).transform.translate.x += (*particleIterator).velocity.x * kDeltaTime;
 				(*particleIterator).transform.translate.y += (*particleIterator).velocity.y * kDeltaTime;
@@ -86,7 +87,7 @@ void ParticleManager::Update() {
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].WVP = worldViewProjectionMatrix;
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].World = worldMatrix;
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].color.w = alpha;
-				++ ParticleGroups.second.kNumInstance;
+				++ParticleGroups.second.kNumInstance;
 			}
 			++particleIterator;
 		}
@@ -94,7 +95,7 @@ void ParticleManager::Update() {
 }
 
 void ParticleManager::Draw() {
-	
+
 	//ルートシグネチャ
 	directxBase_->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
 	//PSO設定
@@ -112,7 +113,7 @@ void ParticleManager::Draw() {
 		//インスタンシングデータのSRVのDescriptorTableを設定
 		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(ParticleGroups.second.SRVIndex));
 		//描画
-		directxBase_->Getcommandlist()->DrawInstanced(UINT(modelData.vertices.size()), ParticleGroups.second.kNumInstance,0,0);
+		directxBase_->Getcommandlist()->DrawInstanced(UINT(modelData.vertices.size()), ParticleGroups.second.kNumInstance, 0, 0);
 	}
 }
 
@@ -141,7 +142,7 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 	newParticle.SRVIndex = srvManager_->Allccate();
 	srvManager_->CreateSRVforStructuredBuffer(newParticle.SRVIndex, newParticle.
 		instancingResource.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
-	
+
 	particleGroups[name] = newParticle;
 }
 
@@ -150,14 +151,21 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 	std::uniform_real_distribution<float>distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
 	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
+	std::uniform_real_distribution<float>distScale(0.4f, 1.5f);
+	std::uniform_real_distribution<float>distRotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
 	Vector3 randomTranslate{ distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 	Particle particle;
-	particle.transform.scale = { 1.0f,1.0f,1.0f };
-	particle.transform.rotate = { 0.0f,0.0f,0.0f };
-	particle.transform.translate = Math::Add(translate, randomTranslate);
-	particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+	particle.transform.scale = { 0.05f,1.0f,1.0f };
+	//particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f };
+	//particle.transform.rotate = { 0.0f,0.0f,0.0f };
+	particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine) };
+	//particle.transform.translate = Math::Add(translate, randomTranslate);
+	particle.transform.translate = translate;
+	//particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+	particle.velocity = { 0.0f,0.0f,0.0f };
 	particle.color = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0f };
-	particle.lifeTime = distTime(randomEngine);
+	//particle.lifeTime = distTime(randomEngine);
+	particle.lifeTime = 1.0f;
 	particle.currentTime = 0;
 	return particle;
 }
@@ -166,7 +174,7 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count) {
 	//登録済みかチェック
 	assert(particleGroups.find(name) != particleGroups.end());
-	
+
 	//新たなパーティクル作成し、指定されたグループに登録
 	for (uint32_t i = 0; i < count; ++i) {
 		particleGroups[name].particles.push_back(MakeNewParticle(randomEngine, position));
@@ -179,8 +187,7 @@ bool ParticleManager::IsCollision(const AABB& aabb, const Vector3& point) {
 		(aabb_.min.y <= point.y && aabb.max.y >= point.y) &&
 		(aabb.min.z <= point.z && aabb.max.z >= point.z)) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }
