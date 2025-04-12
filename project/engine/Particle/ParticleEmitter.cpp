@@ -3,8 +3,8 @@
 //初期化
 void ParticleEmitter::Initialize(std::string name) {
 	name_ = name;
-	emitter_.count = 1;
-	emitter_.frequency = 0.5f;//秒ごとに発生
+	emitter_.count = 8;
+	emitter_.frequency = 5.0f;//秒ごとに発生
 	emitter_.frequencyTime = 0.0f;
 	emitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };

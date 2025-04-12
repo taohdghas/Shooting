@@ -35,7 +35,7 @@ void TitleScene::Initialize() {
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle2.png");
 	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/uvChecker.png");
 	//パーティクルエミッター
-	for (uint32_t i = 0; i < 8; ++i) {
+	for (uint32_t i = 0; i < 1; ++i) {
 		auto particle = std::make_unique<ParticleEmitter>();
 		particle->Initialize("particle");
 		particle->Emit();

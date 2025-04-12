@@ -20,5 +20,6 @@ private:
 	Emitter emitter_;
 	std::string name_;
 	const float kDeltaTime = 1.0f / 60.0f;
+	bool Emitted_ = false;
 };
 
