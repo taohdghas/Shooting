@@ -567,7 +567,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource>DirectXBase::CreateBufferResource(size_t s
 }
 //テクスチャリソースの生成
 Microsoft::WRL::ComPtr<ID3D12Resource>DirectXBase::CreateTextureResource( const DirectX::TexMetadata& metadata) {
-	// 1.metadeを基にResourceの設定
+	// 1.metadetaを基にResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
 	resourceDesc.Width = UINT(metadata.width); //Textureの幅
 	resourceDesc.Height = UINT(metadata.height); //Textureの高さ
@@ -590,6 +590,35 @@ Microsoft::WRL::ComPtr<ID3D12Resource>DirectXBase::CreateTextureResource( const 
 		nullptr,
 		IID_PPV_ARGS(&resource));
 	assert(SUCCEEDED(hr));
+	return resource;
+}
+//レンダーテクスチャの生成
+Microsoft::WRL::ComPtr<ID3D12Resource>DirectXBase::CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device,
+	uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
+	//metadetaを基にResourceの
+	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Width = width;
+	resourceDesc.Height = height;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.Format = format;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;//RENDERTARGETとして利用可能に
+	//利用するHeapの設定
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;//VRAM上に作る
+	//ClearValue
+	D3D12_CLEAR_VALUE clearValue;
+	clearValue.Format = format;
+	clearValue.Color[0] = clearColor.x;
+	clearValue.Color[1] = clearColor.y;
+	clearValue.Color[2] = clearColor.z;
+	clearValue.Color[3] = clearColor.w;
+	//Resourceの作成
+	device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE,
+		&resourceDesc, D3D12_RESOURCE_STATE_RENDER_TARGET,
+		&clearValue, IID_PPV_ARGS(&resource));//Clear最適値。ClearRenderTargetをこの色でClearする
 	return resource;
 }
 //テクスチャファイルの読み込み

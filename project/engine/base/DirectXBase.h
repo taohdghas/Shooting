@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include <array>
 #include "WindowsAPI.h"
+#include "Struct.h"
 #include <dxcapi.h>
 #include <string>
 #include <chrono>
@@ -42,6 +43,9 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateBufferResource(size_t sizeInBytes);
 	//テクスチャリソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateTextureResource( const DirectX::TexMetadata& metadata);
+	//レンダーテクスチャの生成
+	Microsoft::WRL::ComPtr<ID3D12Resource>CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device,
+		uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 	//テクスチャファイル読み込み
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
 	//最大SRV数(最大テクスチャ数)
