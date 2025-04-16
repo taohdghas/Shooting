@@ -245,6 +245,14 @@ void DirectXBase::RendertargetviewInitialize() {
 	}
 	*/
 }
+//レンダーターゲットビューの作成
+void DirectXBase::RendertargetviewCreate() {
+	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };//赤
+	auto renderTextureResource = CreateRenderTextureResource(device, WindowsAPI::kClientWitdh, WindowsAPI::kClientHeight,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
+	device->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc, rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+}
+
 //深度ステンシルビューの初期化
 void DirectXBase::DepthstencilviewInitialize() {
 	depthStencilResource = CreateDepthStencilTextureResource(device, WindowsAPI::kClientWitdh, WindowsAPI::kClientHeight);

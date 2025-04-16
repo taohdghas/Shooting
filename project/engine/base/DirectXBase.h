@@ -50,6 +50,8 @@ public:
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
 	//最大SRV数(最大テクスチャ数)
 	//static const uint32_t kMaxSRVCount;
+	
+public:
 	//デバイスの取得
 	Microsoft::WRL::ComPtr<ID3D12Device>Getdevice() { return device; }
 	//コマンドリストの取得
@@ -70,6 +72,8 @@ private:
 	void DescriptorheapGenerate();
 	//レンダーターゲットビューの初期化
 	void RendertargetviewInitialize();
+	//レンダーテクスチャビューの作成
+	void RendertargetviewCreate();
 	//深度ステンシルビューの初期化
 	void DepthstencilviewInitialize();
 	//フェンスの初期化
