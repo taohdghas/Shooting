@@ -94,6 +94,8 @@ private:
 	void GenerategraphicsPipeline();
 	//頂点データ作成
 	void VertexDataCreate();
+	//Ringの頂点データ生成
+	void RingVertexDataGenerate();
 	//マテリアルデータ作成
 	void MaterialCreate();
 private:

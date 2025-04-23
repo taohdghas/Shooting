@@ -22,7 +22,9 @@ void ParticleManager::Initialize(DirectXBase* directxBase, SrvManager* srvManage
 	//グラフィックスパイプライン
 	GenerategraphicsPipeline();
 	//頂点データ
-	VertexDataCreate();
+	//VertexDataCreate();
+	//Ringの頂点データ
+	RingVertexDataGenerate();
 	//マテリアルデータ
 	MaterialCreate();
 	//Field
@@ -74,7 +76,7 @@ void ParticleManager::Update() {
 				Matrix4x4 scaleMatrix = Math::MakeScaleMatrix((*particleIterator).transform.scale);
 				Matrix4x4 rotateMatrix = Math::MakeRotateMatrix((*particleIterator).transform.rotate);
 				Matrix4x4 translateMatrix = Math::MakeTranslateMatrix((*particleIterator).transform.translate);
-				Matrix4x4 worldMatrix = Math::Multiply(scaleMatrix,Math::Multiply(rotateMatrix, Math::Multiply(billboardMatrix, translateMatrix)));
+				Matrix4x4 worldMatrix = Math::Multiply(scaleMatrix, Math::Multiply(rotateMatrix, Math::Multiply(billboardMatrix, translateMatrix)));
 				Matrix4x4 worldViewProjectionMatrix = Math::Multiply(worldMatrix, viewprojectionMatrix);
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].WVP = worldViewProjectionMatrix;
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].World = worldMatrix;
@@ -157,15 +159,16 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 	std::uniform_real_distribution<float>distRotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
 	Vector3 randomTranslate{ distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 	Particle particle;
-	particle.transform.scale = { 0.05f,1.0f,1.0f };
+	particle.transform.scale = { 1.0f,1.0f,1.0f };
 	//particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f };
-	//particle.transform.rotate = { 0.0f,0.0f,0.0f };
-	particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine) };
+	particle.transform.rotate = { 0.0f,0.0f,0.0f };
+	//particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine) };
 	//particle.transform.translate = Math::Add(translate, randomTranslate);
 	particle.transform.translate = translate;
 	//particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 	particle.velocity = { 0.0f,0.0f,0.0f };
-	particle.color = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0f };
+	particle.color = { 1.0f,1.0f,1.0f,1.0f };
+	//particle.color = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0f };
 	//particle.lifeTime = distTime(randomEngine);
 	particle.lifeTime = 1.0f;
 	particle.currentTime = 0;
@@ -238,7 +241,7 @@ void ParticleManager::GenerateRootSignature() {
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_POINT_MIP_LINEAR;
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;
@@ -362,11 +365,51 @@ void ParticleManager::VertexDataCreate() {
 	vertexResource = directxBase_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 	// リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	// 使用するリソースのサイズは頂点6つ分
+	// 使用するリソースのサイズ
 	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
 	// 1頂点当たりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 	//VertexResourceにデータを書き込むためのアドレス取得
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	//頂点データをリソースにコピー
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+}
+//Ringの頂点データ生成
+void ParticleManager::RingVertexDataGenerate() {
+
+	const uint32_t kRingDivide = 32;
+	const float kOuterRadius = 1.0f;
+	const float kInnerRadius = 0.2f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
+
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+		float sin = std::sin(index * radianPerDivide);
+		float cos = std::cos(index * radianPerDivide);
+		float sinNext = std::sin((index + 1) * radianPerDivide);
+		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float u = float(index) / float(kRingDivide);
+		float uNext = float(index + 1) / float(kRingDivide);
+		//positionとuv(必要ならnormalのzも)
+
+		modelData.vertices.push_back({ .position = { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f }, .texcoord = {u, 0.0f}, .normal = {0.0f, 0.0f,1.0f} });
+		modelData.vertices.push_back({ .position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f }, .texcoord = {uNext, 0.0f}, .normal = {0.0f, 0.0f,1.0f} });
+		modelData.vertices.push_back({ .position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f }, .texcoord = {u, 1.0f}, .normal = {0.0f, 0.0f,1.0f} });
+
+		modelData.vertices.push_back({ .position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f }, .texcoord = {u, 1.0f}, .normal = {0.0f, 0.0f,1.0f} });
+		modelData.vertices.push_back({ .position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f }, .texcoord = {uNext, 0.0f}, .normal = {0.0f, 0.0f,1.0f} });
+		modelData.vertices.push_back({ .position = { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f }, .texcoord = {uNext, 1.0f}, .normal = {0.0f, 0.0f,1.0f} });
+
+	}
+	modelData.material.textureFilePath = "./resources/gradationLine.png";
+	//リソースを作る
+	vertexResource = directxBase_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	//リソースの先頭のアドレスから使う
+	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	//使用するリソースのサイズ
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	//1頂点当たりのサイズ
+	vertexBufferView.StrideInBytes = sizeof(VertexData);
+	//VertexResourceにデータを書き込む為のアドレス取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//頂点データをリソースにコピー
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
