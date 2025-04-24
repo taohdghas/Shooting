@@ -23,6 +23,10 @@ public:
 	void PreDraw();
 	//描画後処理
 	void PostDraw();
+	//描画前処理(RenderTexture用)
+	void PreDrawRenderTexture();
+	//描画後処理(RenderTexture用)
+	void PostDrawRenderTexture();
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
@@ -37,12 +41,12 @@ public:
 		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 	*/
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
-    //シェーダーのコンパイル
+	//シェーダーのコンパイル
 	Microsoft::WRL::ComPtr<IDxcBlob>CompileShader(const std::wstring& filePath, const wchar_t* profile);
 	//バッファリソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateBufferResource(size_t sizeInBytes);
 	//テクスチャリソースの生成
-	Microsoft::WRL::ComPtr<ID3D12Resource>CreateTextureResource( const DirectX::TexMetadata& metadata);
+	Microsoft::WRL::ComPtr<ID3D12Resource>CreateTextureResource(const DirectX::TexMetadata& metadata);
 	//レンダーテクスチャの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device,
 		uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
@@ -50,12 +54,12 @@ public:
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
 	//最大SRV数(最大テクスチャ数)
 	//static const uint32_t kMaxSRVCount;
-	
+
 public:
 	//デバイスの取得
 	Microsoft::WRL::ComPtr<ID3D12Device>Getdevice() { return device; }
 	//コマンドリストの取得
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>Getcommandlist(){ return commandList; }
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>Getcommandlist() { return commandList; }
 	//スワップチェーンリソースの数を取得
 	size_t GetSwapChainResourcesNum()const { return swapChainDesc.BufferCount; }
 
@@ -85,7 +89,7 @@ private:
 	//DXCコンパイラの生成
 	void DXCcompilerInitialize();
 	//Imguiの初期化
-	void ImguiInitialize();
+	//void ImguiInitialize();
 	//FPS固定初期化
 	void InitializeFixFPS();
 	//FPS固定更新
@@ -134,6 +138,8 @@ private:
 	WindowsAPI* windowsAPI = nullptr;
 	//スワップチェインリソース
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
+	//レンダータゲットリソース
+	Microsoft::WRL::ComPtr < ID3D12Resource> renderTextureResource;
 	//
 	HANDLE fenceEvent;
 	//フェンス値
@@ -149,7 +155,7 @@ private:
 	HRESULT hr;
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
-    
+
 	static DirectXBase* instance;
 	DirectXBase* directxBase_ = nullptr;
 };

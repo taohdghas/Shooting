@@ -244,6 +244,9 @@ void DirectXBase::RendertargetviewInitialize() {
 		device->CreateRenderTargetView(swapChainResources[i].Get(), &rtvDesc, rtvHandles[i]);
 	}
 	*/
+
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	device->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc, rtvHandles);
 }
 //レンダーターゲットビューの作成
 void DirectXBase::RendertargetviewCreate() {
@@ -302,21 +305,6 @@ void DirectXBase::DXCcompilerInitialize() {
 	assert(SUCCEEDED(hr));
 }
 
-//Imguiの初期化
-void DirectXBase::ImguiInitialize() {
-	/*
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(windowsAPI->GetHwnd());
-	ImGui_ImplDX12_Init(device.Get(),
-		swapChainDesc.BufferCount,
-		rtvDesc.Format,
-		srvDescriptorHeap.Get(),
-		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-	*/
-}
 //FPS初期化
 void DirectXBase::InitializeFixFPS() {
 	//現在時間を記録
@@ -373,6 +361,8 @@ void DirectXBase::PreDraw() {
 	//commandList->SetDescriptorHeaps(1, descriptorHeaps);
 	commandList->RSSetViewports(1, &viewport);
 	commandList->RSSetScissorRects(1, &scissorRect);
+
+	//従来のswapchainに対しての設定・描画
 }
 //描画後処理
 void DirectXBase::PostDraw() {
@@ -398,6 +388,73 @@ void DirectXBase::PostDraw() {
 	commandQueue->ExecuteCommandLists(1, commandLists);
 	// GPUとosに画面王交換を行うよう通知する
 	swapChain->Present(1, 0);
+	// Fenceの更新
+	fenceValue++;
+	// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+	commandQueue->Signal(fence.Get(), fenceValue);
+	// Fenceの値が指定したSignal値にたどり着いているか確認する
+	// GetCompletedValueの初期値はFence作成時に渡した初期値
+	if (fence->GetCompletedValue() < fenceValue) {
+		// 指定したSignalにたどりつかないので、たどり着くまで待つようにイベントを設定する
+		fence->SetEventOnCompletion(fenceValue, fenceEvent);
+		// イベントを待つ
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
+	//FPS固定
+	UpdateFixFPS();
+	// 次のフレーム用のコマンドリストを準備
+	hr = commandAllocator->Reset();
+	assert(SUCCEEDED(hr));
+	hr = commandList->Reset(commandAllocator.Get(), nullptr);
+	assert(SUCCEEDED(hr));
+}
+//描画前処理(RenderTexture)
+void DirectXBase::PreDrawRenderTexture() {
+	// 今回のバリアばTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る大将のリソース。現在のバックバッファに対して行う
+	barrier.Transition.pResource = renderTextureResource.Get();
+	// 遷移前（現在）のResourceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	// 遷移後のResourceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
+	// 描画先のRTVとDSVを設定する
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHadle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	//描画ターゲット設定
+	commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHadle);
+	// 指定した色で画面全体をクリアする
+	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f }; // 青っぽい色。RGBAの順
+	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	// 指定した震度で画面全体をクリアする
+	commandList->ClearDepthStencilView(dsvHadle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	commandList->RSSetViewports(1, &viewport);
+	commandList->RSSetScissorRects(1, &scissorRect);
+}
+//描画後処理(RenderTexture)
+void DirectXBase::PostDrawRenderTexture() {
+	// 今回のバリアばTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る大将のリソース。現在のバックバッファに対して行う
+	barrier.Transition.pResource = renderTextureResource.Get();
+	// 遷移前（現在）のResourceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// 遷移後のResourceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	// TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
+	// コマンドリストの内容を確定させる。すべてのコマンドを詰んでからCloseする
+	hr = commandList->Close();
+	assert(SUCCEEDED(hr));
+	// GPUにコマンドリストの実行を行わせる
+	ID3D12CommandList* commandLists[] = { commandList.Get() };
+	commandQueue->ExecuteCommandLists(1, commandLists);
 	// Fenceの更新
 	fenceValue++;
 	// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
@@ -449,22 +506,6 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>DirectXBase::CreateDescriptorHeap(D3
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
 }
-/*
-//CPUデスクリプタハンドル取得関数
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXBase::GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
-	& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
-//GPUデスクリプタハンドル取得関数
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetGPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
-	& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	handleGPU.ptr += (descriptorSize * index);
-	return handleGPU;
-}
-*/
 Microsoft::WRL::ComPtr<ID3D12Resource> DirectXBase::CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height) {
 	//生成するResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
