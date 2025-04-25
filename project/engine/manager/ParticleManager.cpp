@@ -304,7 +304,8 @@ void ParticleManager::GenerategraphicsPipeline() {
 	//カリングしない(裏面も表示)
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 三角形の中を塗りつぶす
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	//rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 
 	// shaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directxBase_->CompileShader(L"resources/shaders/Particle.VS.hlsl",
@@ -416,7 +417,7 @@ void ParticleManager::RingVertexDataGenerate() {
 }
 //マテリアルデータ作成
 void ParticleManager::MaterialCreate() {
-	//リソースを作る
+	//リソースを作るdousiyou int GAkuHatutemia;
 	materialResource = directxBase_->CreateBufferResource(sizeof(Material));
 	// 書き込むためのアドレスと取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
