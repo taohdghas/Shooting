@@ -392,14 +392,14 @@ void ParticleManager::RingVertexDataGenerate() {
 		float uNext = float(index + 1) / float(kRingDivide);
 		//positionとuv(必要ならnormalのzも)
 
-		modelData.vertices.push_back({ .position = { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f }, .texcoord = {u, 0.0f}, .normal = {0.0f, 0.0f,1.0f} });
-		modelData.vertices.push_back({ .position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f }, .texcoord = {uNext, 0.0f}, .normal = {0.0f, 0.0f,1.0f} });
-		modelData.vertices.push_back({ .position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f }, .texcoord = {u, 1.0f}, .normal = {0.0f, 0.0f,1.0f} });
+		modelData.vertices.push_back({ { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f }, { u, 0.0f }, { 0.0f, 0.0f, 1.0f } });
+		modelData.vertices.push_back({ { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f }, { uNext, 0.0f }, { 0.0f, 0.0f, 1.0f } });
+		modelData.vertices.push_back({ { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f }, { u, 1.0f }, { 0.0f, 0.0f, 1.0f } });
 
-		modelData.vertices.push_back({ .position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f }, .texcoord = {u, 1.0f}, .normal = {0.0f, 0.0f,1.0f} });
-		modelData.vertices.push_back({ .position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f }, .texcoord = {uNext, 0.0f}, .normal = {0.0f, 0.0f,1.0f} });
-		modelData.vertices.push_back({ .position = { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f }, .texcoord = {uNext, 1.0f}, .normal = {0.0f, 0.0f,1.0f} });
-
+		// 三角形2（内→外）
+		modelData.vertices.push_back({ { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f }, { u, 1.0f }, { 0.0f, 0.0f, 1.0f } });
+		modelData.vertices.push_back({ { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f }, { uNext, 0.0f }, { 0.0f, 0.0f, 1.0f } });
+		modelData.vertices.push_back({ { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f }, { uNext, 1.0f }, { 0.0f, 0.0f, 1.0f } });
 	}
 	modelData.material.textureFilePath = "./resources/gradationLine.png";
 	//リソースを作る
