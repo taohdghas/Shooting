@@ -23,10 +23,7 @@ public:
 	void PreDraw();
 	//描画後処理
 	void PostDraw();
-	//描画前処理(RenderTexture用)
-	void PreDrawRenderTexture();
-	//描画後処理(RenderTexture用)
-	void PostDrawRenderTexture();
+
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
@@ -60,6 +57,8 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12Device>Getdevice() { return device; }
 	//コマンドリストの取得
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>Getcommandlist() { return commandList; }
+	//リソース取得
+	ID3D12Resource* GetRenderTextureResource() const { return renderTextureResource.Get(); }
 	//スワップチェーンリソースの数を取得
 	size_t GetSwapChainResourcesNum()const { return swapChainDesc.BufferCount; }
 

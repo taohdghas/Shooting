@@ -56,9 +56,7 @@ void SrvManager::CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource*
 }
 //SRV作成(Render Texture用)
 void SrvManager::CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format) {
-	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };//赤
-	auto renderTextureResource =directxBase->CreateRenderTextureResource(directxBase->Getdevice(), WindowsAPI::kClientWitdh, WindowsAPI::kClientHeight,
-		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
+
 	//SRVの設定             
 	D3D12_SHADER_RESOURCE_VIEW_DESC renderTextureSrvDesc{};
 	renderTextureSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
@@ -67,7 +65,7 @@ void SrvManager::CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pR
 	renderTextureSrvDesc.Texture2D.MipLevels = 1;
 
 	//SRVの生成
-	directxBase->Getdevice()->CreateShaderResourceView(renderTextureResource.Get(), &renderTextureSrvDesc, GetCPUDescriptorHandle(srvIndex));
+	directxBase->Getdevice()->CreateShaderResourceView(directxBase->GetRenderTextureResource(), &renderTextureSrvDesc, GetCPUDescriptorHandle(srvIndex));
 }
 
 //ヒープセットコマンド
