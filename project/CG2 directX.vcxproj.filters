@@ -293,9 +293,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Particle.hlsli" />
+    <None Include="resources\shaders\CopyImage.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle.PS.hlsl" />
     <FxCompile Include="resources\shaders\Particle.VS.hlsl" />
+    <FxCompile Include="resources\shaders\CopyImage.PS.hlsl" />
+    <FxCompile Include="resources\shaders\CopyImage.VS.hlsl" />
   </ItemGroup>
 </Project>
