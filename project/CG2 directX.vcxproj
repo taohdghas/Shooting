@@ -16,8 +16,10 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\DirectXBase.cpp" />
+    <ClCompile Include="game\player\Player.cpp" />
     <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="game\skydome\Skydome.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
@@ -56,8 +58,10 @@
     <ClInclude Include="D3DResourceLeakChecker.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="engine\base\DirectXBase.h" />
+    <ClInclude Include="game\player\Player.h" />
     <ClInclude Include="SceneFactory.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="game\skydome\Skydome.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -180,7 +184,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -207,7 +211,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
