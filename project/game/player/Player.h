@@ -12,8 +12,14 @@ public:
 	void Update();
 	//描画
 	void Draw();
+	//移動
+	void Move();
 
 private:
 	Object3d* object_ = nullptr;
+	Transform transform_;
+
+	//移動速度
+	float speed = 1.0f;
 };
 
