@@ -9,6 +9,9 @@
 #include "ModelManager.h"
 #include "BaseScene.h"
 
+#include "Player.h"
+#include "Skydome.h"
+
 class GameScene : public BaseScene
 {
 public:
@@ -21,9 +24,10 @@ public:
 	//描画
 	void Draw()override;
 private:
-	//Sprite初期化
-	std::vector<std::unique_ptr<Sprite>>sprites;
-	//3Dオブジェクト
-	std::vector<std::unique_ptr<Object3d>>object3ds;
+	//プレイヤー
+	std::unique_ptr<Player>player;
+	Object3d* playerObject;
+	//天球
+	std::unique_ptr<Skydome>skydome;
 };
 
