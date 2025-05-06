@@ -23,12 +23,17 @@ public:
 	void PreDraw();
 	//描画後処理
 	void PostDraw();
+	//RenderTexture描画前処理
+	void PreDrawRenderTexture();
+	//RenderTexture描画後処理
+	void PostDrawRenderTexture();
 
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisivle);
+
 	/*
 	//CPUデスクリプタハンドル取得関数
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
@@ -62,6 +67,16 @@ public:
 	//スワップチェーンリソースの数を取得
 	size_t GetSwapChainResourcesNum()const { return swapChainDesc.BufferCount; }
 
+	//CPUデスクリプタハンドル取得関数
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
+		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	//GPUデスクリプタハンドル取得関数
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
+		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	//RTVのデスクリプタハンドル取得
+	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
+
 private:
 	//デバイスの初期化
 	void DeviceInitialize();
@@ -75,8 +90,6 @@ private:
 	void DescriptorheapGenerate();
 	//レンダーターゲットビューの初期化
 	void RendertargetviewInitialize();
-	//レンダーテクスチャビューの作成
-	void RendertargetviewCreate();
 	//深度ステンシルビューの初期化
 	void DepthstencilviewInitialize();
 	//フェンスの初期化
@@ -137,8 +150,10 @@ private:
 	WindowsAPI* windowsAPI = nullptr;
 	//スワップチェインリソース
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
-	//レンダータゲットリソース
+	//レンダーテクスチャリソース
 	Microsoft::WRL::ComPtr < ID3D12Resource> renderTextureResource;
+	//レンダーテクスチャRTV
+	D3D12_CPU_DESCRIPTOR_HANDLE renderTextureRTV;
 	//
 	HANDLE fenceEvent;
 	//フェンス値
