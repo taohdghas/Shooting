@@ -154,7 +154,7 @@ void DrawTitleScene() {
 }
 
 void DrawGameScene(Player* player, Enemy* enemy, Skydome* skydome) {
-	skydome->Draw();
+	//skydome->Draw();
 	player->Draw();
 	enemy->Draw();
 }
@@ -319,7 +319,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		switch (currentScene) {
 		case Scene::Title:
 			DrawTitleScene();
-			skydome_->Draw();
+			//skydome_->Draw();
 		 //   title_->Draw();
 			break;
 		case Scene::Game:

@@ -18,7 +18,7 @@ void Player::Initialize(Object3dBase* object3dbase, Camera* camera) {
 	//オブジェクト初期化
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
-	object_->SetModel("mm_frame.obj");
+	object_->SetModel("plane.obj");
 	object_->SetScale({ 0.6f,0.6f,0.6f });
 	transform_.translate = { 0.0f,0.0f,0.0f };
 }
