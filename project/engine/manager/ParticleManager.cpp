@@ -304,8 +304,8 @@ void ParticleManager::GenerategraphicsPipeline() {
 	//カリングしない(裏面も表示)
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 三角形の中を塗りつぶす
-	//rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	//rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 
 	// shaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directxBase_->CompileShader(L"resources/shaders/Particle.VS.hlsl",
@@ -382,7 +382,7 @@ void ParticleManager::RingVertexDataGenerate() {
 	const float kOuterRadius = 1.0f;
 	const float kInnerRadius = 0.2f;
 	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
-
+	
 	for (uint32_t index = 0; index < kRingDivide; ++index) {
 		float sin = std::sin(index * radianPerDivide);
 		float cos = std::cos(index * radianPerDivide);
@@ -396,7 +396,6 @@ void ParticleManager::RingVertexDataGenerate() {
 		modelData.vertices.push_back({ { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f }, { uNext, 0.0f }, { 0.0f, 0.0f, 1.0f } });
 		modelData.vertices.push_back({ { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f }, { u, 1.0f }, { 0.0f, 0.0f, 1.0f } });
 
-		// 三角形2（内→外）
 		modelData.vertices.push_back({ { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f }, { u, 1.0f }, { 0.0f, 0.0f, 1.0f } });
 		modelData.vertices.push_back({ { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f }, { uNext, 0.0f }, { 0.0f, 0.0f, 1.0f } });
 		modelData.vertices.push_back({ { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f }, { uNext, 1.0f }, { 0.0f, 0.0f, 1.0f } });

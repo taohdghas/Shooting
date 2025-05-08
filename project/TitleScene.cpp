@@ -32,7 +32,7 @@ void TitleScene::Initialize() {
 	object3d->SetModel("plane.gltf");
 
 
-	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle2.png");
+	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/gradationLine.png");
 	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/uvChecker.png");
 	//パーティクルエミッター
 	for (uint32_t i = 0; i < 1; ++i) {
