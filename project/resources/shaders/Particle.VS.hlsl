@@ -23,5 +23,4 @@ VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_Instan
     output.texcoord = input.texcoord;
     output.color = gParticle[instanceId].color;
     return output;
-
 }

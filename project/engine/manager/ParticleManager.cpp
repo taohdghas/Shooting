@@ -24,7 +24,10 @@ void ParticleManager::Initialize(DirectXBase* directxBase, SrvManager* srvManage
 	//頂点データ
 	//VertexDataCreate();
 	//Ringの頂点データ
-	RingVertexDataGenerate();
+	//RingVertexDataGenerate();
+	//Cylinderの頂点データ
+	CylinderVertexDataGenerate();
+
 	//マテリアルデータ
 	MaterialCreate();
 	//Field
@@ -414,6 +417,47 @@ void ParticleManager::RingVertexDataGenerate() {
 	//頂点データをリソースにコピー
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 }
+
+//Cylinderの頂点データを生成
+void ParticleManager::CylinderVertexDataGenerate() {
+	const uint32_t kCylinderDivide = 32;
+	const float kTopRadius = 1.0f;
+	const float kBottomRadius = 1.0f;
+	const float kHeight = 3.0f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide);
+
+	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
+		float sin = std::sin(index * radianPerDivide);
+		float cos = std::cos(index * radianPerDivide);
+		float sinNext = std::sin((index + 1) * radianPerDivide);
+		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float u = float(index) / float(kCylinderDivide);
+		float uNext = float(index + 1) / float(kCylinderDivide);
+
+		//positoin,texcoord,normal
+		modelData.vertices.push_back({ { -sin * kTopRadius,kHeight,cos * kTopRadius,1.0f }, { u, 0.0f }, {-sin, 0.0f,cos } });
+		modelData.vertices.push_back({ { -sinNext * kTopRadius,kHeight, cosNext * kTopRadius, 1.0f }, { uNext, 0.0f }, { -sinNext, 0.0f,cosNext } });
+		modelData.vertices.push_back({ { -sin * kBottomRadius,0.0f, cos * kBottomRadius, 1.0f }, { u, 1.0f }, { -sin, 0.0f,cos } });
+
+		modelData.vertices.push_back({ { -sin *kBottomRadius,0.0f, cos * kBottomRadius, 1.0f }, { u, 1.0f }, { -sin, 0.0f,cos} });
+		modelData.vertices.push_back({ { -sinNext * kTopRadius,kHeight, cosNext * kTopRadius, 1.0f }, { uNext, 0.0f }, {-sinNext, 0.0f,cosNext } });
+		modelData.vertices.push_back({ { -sinNext * kBottomRadius, 0.0f,cosNext * kBottomRadius,1.0f }, { uNext, 1.0f }, {-sinNext, 0.0f,cosNext } });
+
+		//リソースを作る
+		vertexResource = directxBase_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+		//リソースの先頭のアドレスから使う
+		vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+		//使用するリソースのサイズ
+		vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+		//1頂点当たりのサイズ
+		vertexBufferView.StrideInBytes = sizeof(VertexData);
+		//VertexResourceにデータを書き込む為のアドレス取得
+		vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+		//頂点データをリソースにコピー
+		std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	}
+}
+
 //マテリアルデータ作成
 void ParticleManager::MaterialCreate() {
 	//リソースを作るdousiyou int GAkuHatutemia;

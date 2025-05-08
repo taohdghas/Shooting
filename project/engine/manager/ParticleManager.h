@@ -96,6 +96,8 @@ private:
 	void VertexDataCreate();
 	//Ringの頂点データ生成
 	void RingVertexDataGenerate();
+	//Cylinderの頂点データを生成
+	void CylinderVertexDataGenerate();
 	//マテリアルデータ作成
 	void MaterialCreate();
 private:
