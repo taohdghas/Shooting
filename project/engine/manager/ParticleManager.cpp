@@ -122,7 +122,7 @@ void ParticleManager::Draw() {
 }
 
 //パーティクルグループの生成
-void ParticleManager::CreateparticleGroup(const std::string name, const std::string textureFilePath) {
+void ParticleManager::CreateparticleGroup(const std::string name, const std::string textureFilePath, ParticleType type) {
 	//登録済みの名前かチェック
 	assert(particleGroups.find(name) == particleGroups.end());
 	ParticleGroup newParticle;
@@ -133,6 +133,18 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 	TextureManager::GetInstance()->LoadTexture(textureFilePath);
 	//マテリアルデータにテクスチャSRVインデックスを記録
 	newParticle.materialData.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
+	//パーティクルの種類
+	newParticle.type = type;
+
+	//頂点生成
+	if (modelData.vertices.empty()) {
+		if (type == ParticleType::Normal) {
+			VertexDataCreate();
+		} else if (type == ParticleType::Ring) {
+			RingVertexDataGenerate();
+		}
+	}
+
 	//インスタンシング用のリソース生成
 	newParticle.instancingResource = directxBase_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 	//アドレス取得
@@ -151,7 +163,7 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 }
 
 //パーティクル生成関数
-ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate) {
+ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate, ParticleType type) {
 	std::uniform_real_distribution<float>distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
 	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
@@ -159,6 +171,11 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 	std::uniform_real_distribution<float>distRotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
 	Vector3 randomTranslate{ distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 	Particle particle;
+
+	if (type == ParticleType::Normal) {
+		particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f };
+
+	}
 	particle.transform.scale = { 1.0f,1.0f,1.0f };
 	//particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f };
 	particle.transform.rotate = { 0.0f,0.0f,0.0f };

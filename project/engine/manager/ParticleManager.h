@@ -12,6 +12,11 @@
 #include <string>
 #include <random>
 
+//パーティクル種類
+enum class ParticleType {
+	Normal,
+	Ring,
+};
 
 class ParticleManager
 {
@@ -67,6 +72,7 @@ public:
 		Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;//インスタンシングリソース
 		uint32_t kNumInstance;//インスタンス数
 		ParticleForGPU* instancingData ;//インスタンシングデータを書き込むためのポインタ
+		ParticleType type;//パーティクルの種類
 	};
 public:
 	//シングルトンインスタンスの取得
@@ -80,9 +86,9 @@ public:
 
 	void Draw();
 	//パーティクルグループの生成
-	void CreateparticleGroup(const std::string name, const std::string textureFilePath);
+	void CreateparticleGroup(const std::string name, const std::string textureFilePath, ParticleType type);
 	//パーティクル生成関数
-	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate);
+	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate, ParticleType type);
 	//パーティクルの発生
 	void Emit(const std::string name, const Vector3& position, uint32_t count);
 	//ParticleがFieldの範囲内か判定
