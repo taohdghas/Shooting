@@ -32,18 +32,13 @@ void TitleScene::Initialize() {
 	object3d->SetModel("plane.gltf");
 
 
-	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle.png");
-	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/uvChecker.png");
+	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png");
+	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/circle2.png");
+	ParticleManager::GetInstance()->CreateparticleGroup("particle3", "resources/gradationLine.png");
 	//パーティクルエミッター
-	for (uint32_t i = 0; i < 2; ++i) {
+	for (uint32_t i = 0; i < 1; ++i) {
 		auto particle = std::make_unique<ParticleEmitter>();
-		if (i == 0) {
-			particle->Initialize("particle");
-		} else
-		{
-
-			particle->Initialize("particle2");
-		}
+		particle->Initialize("particle3");
 		particle->Emit();
 		particleEmitter.push_back(std::move(particle));
 	}
@@ -70,7 +65,13 @@ void TitleScene::Finalize() {
 void TitleScene::Update() {
 	camera->Update();
 
-	object3d->Update();
+	//object3d->Update();
+
+	ParticleManager::GetInstance()->Update();
+	for (size_t i = 0; i < particleEmitter.size(); ++i) {
+		auto& particle = particleEmitter[i];
+		particle->Update();
+	}
 
 	//エンターキーを押したらゲームシーンへ
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
@@ -113,6 +114,7 @@ void TitleScene::Draw() {
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
-	object3d->Draw();
+	//object3d->Draw();
 
+	ParticleManager::GetInstance()->Draw();
 }

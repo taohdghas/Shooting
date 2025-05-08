@@ -3,12 +3,12 @@
 //初期化
 void ParticleEmitter::Initialize(std::string name) {
 	name_ = name;
-	emitter_.count = 3;
-	emitter_.frequency = 0.5f;//0.5秒ごとに発生
+	emitter_.count = 1;
+	emitter_.frequency = 1.0f;//秒ごとに発生
 	emitter_.frequencyTime = 0.0f;
-	emitter_.transform.translate = { 0.0f,0.0f,0.0f };
-	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 	emitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+	emitter_.transform.translate = { 0.0f,0.0f,0.0f };
 }
 
 //更新
