@@ -9,6 +9,7 @@
 #include <string>
 #include <chrono>
 #include "externals/DirectXTex/DirectXTex.h"
+#include <Vector4.h>
 class DirectXBase
 {
 public:
@@ -22,19 +23,15 @@ public:
 	void PreDraw();
 	//描画後処理
 	void PostDraw();
+	//RenderTexture描画前処理
+	void PreDrawRenderTexture();
+	//RenderTexture描画後処理
+	void PostDrawRenderTexture();
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisivle);
-	/*
-	//CPUデスクリプタハンドル取得関数
-	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
-		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-	//GPUデスクリプタハンドル取得関数
-	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
-		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-	*/
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
     //シェーダーのコンパイル
 	Microsoft::WRL::ComPtr<IDxcBlob>CompileShader(const std::wstring& filePath, const wchar_t* profile);
@@ -42,6 +39,10 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateBufferResource(size_t sizeInBytes);
 	//テクスチャリソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateTextureResource( const DirectX::TexMetadata& metadata);
+	//レンダーテクスチャの生成
+	Microsoft::WRL::ComPtr<ID3D12Resource>CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device,
+		uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+
 	//テクスチャファイル読み込み
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
 	//最大SRV数(最大テクスチャ数)
@@ -50,9 +51,16 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12Device>Getdevice() { return device; }
 	//コマンドリストの取得
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>Getcommandlist(){ return commandList; }
+	//リソース取得
+	ID3D12Resource* GetRenderTextureResource()const { return renderTextureResource.Get(); }
 	//スワップチェーンリソースの数を取得
 	size_t GetSwapChainResourcesNum()const { return swapChainDesc.BufferCount; }
-
+	//CPUデスクリプタハンドル取得関数
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
+		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	//GPUデスクリプタハンドル取得関数
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
+		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 private:
 	//デバイスの初期化
 	void DeviceInitialize();
@@ -76,8 +84,6 @@ private:
 	void ScissorrectInitialize();
 	//DXCコンパイラの生成
 	void DXCcompilerInitialize();
-	//Imguiの初期化
-	void ImguiInitialize();
 	//FPS固定初期化
 	void InitializeFixFPS();
 	//FPS固定更新
@@ -126,7 +132,9 @@ private:
 	WindowsAPI* windowsAPI = nullptr;
 	//スワップチェインリソース
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
-	//
+	//レンダーテクスチャリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource>renderTextureResource;
+	
 	HANDLE fenceEvent;
 	//フェンス値
 	UINT64 fenceValue = 0;
@@ -134,8 +142,8 @@ private:
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	// RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-	//RTVハンドルの要素数を2個に変更する
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	//RTVハンドルの要素数
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[3];
 	// TransitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};
 	HRESULT hr;

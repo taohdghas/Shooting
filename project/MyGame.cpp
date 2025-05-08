@@ -35,8 +35,12 @@ void MyGame::Update() {
 
 //描画
 void MyGame::Draw() {
+
 	//描画前処理
 	directxBase_->PreDraw();
+
+	//RenderTexture描画前処理
+	//directxBase_->PreDrawRenderTexture();
 
 	SrvManager::GetInstance()->PreDraw();
 
@@ -46,6 +50,10 @@ void MyGame::Draw() {
 	//ImGui描画
 	imguimanager_->Draw();
 
+	//RenderTexture描画後処理
+	//directxBase_->PostDrawRenderTexture();
+
 	//描画後処理
 	directxBase_->PostDraw();
+
 }
