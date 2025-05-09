@@ -21,10 +21,6 @@ void ParticleManager::Initialize(DirectXBase* directxBase, SrvManager* srvManage
 	//GenerateRootSignature();
 	//グラフィックスパイプライン
 	GenerategraphicsPipeline();
-	//頂点データ
-	//VertexDataCreate();
-	//Ringの頂点データ
-	RingVertexDataGenerate();
 	//マテリアルデータ
 	MaterialCreate();
 	//Field
@@ -72,6 +68,12 @@ void ParticleManager::Update() {
 			}
 			float alpha = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
 			if (ParticleGroups.second.kNumInstance < kNumMaxInstance) {
+
+				//Cylinder回転
+				if (ParticleGroups.second.type == ParticleType::Cylinder) {
+					(*particleIterator).transform.rotate.y += 1.0f * kDeltaTime;
+				}
+
 				//行列計算
 				Matrix4x4 scaleMatrix = Math::MakeScaleMatrix((*particleIterator).transform.scale);
 				Matrix4x4 rotateMatrix = Math::MakeRotateMatrix((*particleIterator).transform.rotate);
@@ -142,6 +144,8 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 			VertexDataCreate();
 		} else if (type == ParticleType::Ring) {
 			RingVertexDataGenerate();
+		} else if (type == ParticleType::Cylinder) {
+			CylinderVertexDataGenerate();
 		}
 	}
 
@@ -190,25 +194,17 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 		particle.color = { 1.0f,1.0f,1.0f,1.0f };
 		particle.lifeTime = 1.0f;
 
+	} else if (type == ParticleType::Cylinder) {
+		//Cylinder型
+		particle.transform.scale = { 1.0f,1.0f,1.0f };
+		particle.transform.rotate = { 0.0f,0.0f,0.0f };
+		particle.transform.translate = translate;
+		particle.velocity = { 0.0f,0.0f,0.0f };
+		particle.color = { 1.0f,1.0f,1.0f,1.0f };
+		particle.lifeTime = 99.0f;
 	}
 	particle.currentTime = 0.0f;
 	return particle;
-	/*
-	particle.transform.scale = { 1.0f,1.0f,1.0f };
-	//particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f };
-	particle.transform.rotate = { 0.0f,0.0f,0.0f };
-	//particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine) };
-	//particle.transform.translate = Math::Add(translate, randomTranslate);
-	particle.transform.translate = translate;
-	//particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
-	particle.velocity = { 0.0f,0.0f,0.0f };
-	particle.color = { 1.0f,1.0f,1.0f,1.0f };
-	//particle.color = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0f };
-	//particle.lifeTime = distTime(randomEngine);
-	particle.lifeTime = 1.0f;
-	particle.currentTime = 0;
-	return particle;
-	*/
 }
 
 //パーティクルの発生
@@ -450,6 +446,47 @@ void ParticleManager::RingVertexDataGenerate() {
 	//頂点データをリソースにコピー
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 }
+
+//Cylinderの頂点データ作成
+void ParticleManager::CylinderVertexDataGenerate() {
+	const uint32_t kCylinderDivide = 32;
+	const float kTopRadius = 1.0f;
+	const float kBottomRadius = 1.0f;
+	const float kHeight = 3.0f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide);
+
+	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
+		float sin = std::sin(index * radianPerDivide);
+		float cos = std::cos(index * radianPerDivide);
+		float sinNext = std::sin((index + 1) * radianPerDivide);
+		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float u = float(index) / float(kCylinderDivide);
+		float uNext = float(index + 1) / float(kCylinderDivide);
+
+		//positoin,texcoord,normal
+		modelData.vertices.push_back({ { -sin * kTopRadius,kHeight,cos * kTopRadius,1.0f }, { u, 0.0f }, {-sin, 0.0f,cos } });
+		modelData.vertices.push_back({ { -sinNext * kTopRadius,kHeight, cosNext * kTopRadius, 1.0f }, { uNext, 0.0f }, { -sinNext, 0.0f,cosNext } });
+		modelData.vertices.push_back({ { -sin * kBottomRadius,0.0f, cos * kBottomRadius, 1.0f }, { u, 1.0f }, { -sin, 0.0f,cos } });
+
+		modelData.vertices.push_back({ { -sin * kBottomRadius,0.0f, cos * kBottomRadius, 1.0f }, { u, 1.0f }, { -sin, 0.0f,cos} });
+		modelData.vertices.push_back({ { -sinNext * kTopRadius,kHeight, cosNext * kTopRadius, 1.0f }, { uNext, 0.0f }, {-sinNext, 0.0f,cosNext } });
+		modelData.vertices.push_back({ { -sinNext * kBottomRadius, 0.0f,cosNext * kBottomRadius,1.0f }, { uNext, 1.0f }, {-sinNext, 0.0f,cosNext } });
+
+		//リソースを作る
+		vertexResource = directxBase_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+		//リソースの先頭のアドレスから使う
+		vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+		//使用するリソースのサイズ
+		vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+		//1頂点当たりのサイズ
+		vertexBufferView.StrideInBytes = sizeof(VertexData);
+		//VertexResourceにデータを書き込む為のアドレス取得
+		vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+		//頂点データをリソースにコピー
+		std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	}
+}
+
 //マテリアルデータ作成
 void ParticleManager::MaterialCreate() {
 	//リソースを作るdousiyou int GAkuHatutemia;

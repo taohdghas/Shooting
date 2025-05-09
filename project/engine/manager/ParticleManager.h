@@ -16,6 +16,7 @@
 enum class ParticleType {
 	Normal,
 	Ring,
+	Cylinder,
 };
 
 class ParticleManager
@@ -106,6 +107,8 @@ private:
 	void VertexDataCreate();
 	//Ringの頂点データ生成
 	void RingVertexDataGenerate();
+	//Cylinderの頂点データ作成
+	void CylinderVertexDataGenerate();
 	//マテリアルデータ作成
 	void MaterialCreate();
 private:
