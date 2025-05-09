@@ -93,6 +93,10 @@ public:
 	void Emit(const std::string name, const Vector3& position, uint32_t count);
 	//ParticleがFieldの範囲内か判定
 	bool IsCollision(const AABB& aabb, const Vector3& point);
+
+public:
+	//ParticleTypeのゲッター
+	ParticleType GetParticleType(const std::string& name);
 private:
 	//ルートシグネチャの作成
 	void GenerateRootSignature();

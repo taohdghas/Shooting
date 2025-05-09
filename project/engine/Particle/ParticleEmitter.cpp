@@ -2,13 +2,28 @@
 
 //初期化
 void ParticleEmitter::Initialize(std::string name) {
-	name_ = name;
-	emitter_.count = 1;
-	emitter_.frequency = 1.0f;//秒ごとに発生
-	emitter_.frequencyTime = 0.0f;
-	emitter_.transform.scale = { 1.0f,1.0f,1.0f };
-	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	emitter_.transform.translate = { 0.0f,0.0f,0.0f };
+    name_ = name;
+    emitter_.frequencyTime = 0.0f;
+
+    ParticleType type = ParticleManager::GetInstance()->GetParticleType(name_);
+
+    switch (type) {
+    case ParticleType::Normal:
+        emitter_.count = 10;
+        emitter_.frequency = 0.2f;
+        emitter_.transform.scale = { 1.0f,1.0f,1.0f };
+        emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+        emitter_.transform.translate = { 0.0f,0.0f,0.0f };
+        break;
+
+    case ParticleType::Ring:
+        emitter_.count = 1;
+        emitter_.frequency = 1.0f;
+        emitter_.transform.scale = { 1.0f,1.0f,1.0f };
+        emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+        emitter_.transform.translate = { 0.0f,0.0f,0.0f };
+        break;
+    }
 }
 
 //更新

@@ -172,10 +172,28 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 	Vector3 randomTranslate{ distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 	Particle particle;
 
+	//通常
 	if (type == ParticleType::Normal) {
 		particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f };
+		particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine)};
+		particle.transform.translate = translate;
+		particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+		particle.color = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine) };
+		particle.lifeTime = distTime(randomEngine);
+
+	} else if (type == ParticleType::Ring) {
+		//Ring型
+		particle.transform.scale = { 1.0f,1.0f,1.0f };
+		particle.transform.rotate = { 0.0f,0.0f,0.0f };
+		particle.transform.translate = translate;
+		particle.velocity = { 0.0f,0.0f,0.0f };
+		particle.color = { 1.0f,1.0f,1.0f,1.0f };
+		particle.lifeTime = 1.0f;
 
 	}
+	particle.currentTime = 0.0f;
+	return particle;
+	/*
 	particle.transform.scale = { 1.0f,1.0f,1.0f };
 	//particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f };
 	particle.transform.rotate = { 0.0f,0.0f,0.0f };
@@ -190,16 +208,17 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 	particle.lifeTime = 1.0f;
 	particle.currentTime = 0;
 	return particle;
+	*/
 }
 
 //パーティクルの発生
 void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count) {
 	//登録済みかチェック
 	assert(particleGroups.find(name) != particleGroups.end());
-
+	ParticleType type = particleGroups[name].type;
 	//新たなパーティクル作成し、指定されたグループに登録
 	for (uint32_t i = 0; i < count; ++i) {
-		particleGroups[name].particles.push_back(MakeNewParticle(randomEngine, position));
+		particleGroups[name].particles.push_back(MakeNewParticle(randomEngine, position,type));
 	}
 }
 
@@ -443,4 +462,10 @@ void ParticleManager::MaterialCreate() {
 	materialData->enableLighting = false;
 	//UVTransform行列を単位行列で初期化
 	materialData->uvTransform = Math::MakeIdentity4x4();
+}
+
+//ParticleTypeのゲッター
+ParticleType ParticleManager::GetParticleType(const std::string& name) {
+	assert(particleGroups.find(name) != particleGroups.end());
+	return particleGroups[name].type;
 }
