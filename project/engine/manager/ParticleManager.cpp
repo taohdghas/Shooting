@@ -75,6 +75,10 @@ void ParticleManager::Update() {
 			}
 			float alpha = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
 			if (ParticleGroups.second.kNumInstance < kNumMaxInstance) {
+
+				//回転cylinder
+				(*particleIterator).transform.rotate.y += 1.0f * kDeltaTime;
+
 				//行列計算
 				Matrix4x4 scaleMatrix = Math::MakeScaleMatrix((*particleIterator).transform.scale);
 				Matrix4x4 rotateMatrix = Math::MakeRotateMatrix((*particleIterator).transform.rotate);
@@ -173,7 +177,7 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 	particle.color = { 1.0f,1.0f,1.0f,1.0f };
 	//particle.color = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0f };
 	//particle.lifeTime = distTime(randomEngine);
-	particle.lifeTime = 1.0f;
+	particle.lifeTime = 99.0f;
 	particle.currentTime = 0;
 	return particle;
 }
