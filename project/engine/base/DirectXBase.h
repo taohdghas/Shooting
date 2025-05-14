@@ -10,6 +10,8 @@
 #include <chrono>
 #include "externals/DirectXTex/DirectXTex.h"
 #include <Vector4.h>
+
+class Object3dBase;
 class DirectXBase
 {
 public:
@@ -27,6 +29,8 @@ public:
 	void PreDrawRenderTexture();
 	//RenderTexture描画後処理
 	void PostDrawRenderTexture();
+	//Object3dbaseセット
+	void SetObject3dBase(Object3dBase* object3dbase);
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
@@ -61,6 +65,11 @@ public:
 	//GPUデスクリプタハンドル取得関数
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
 		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	//DSV　CPUデスクリプタハンドル取得関数
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
+	//DSV　GPUデスクリプタハンドル取得関数
+	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
+
 private:
 	//デバイスの初期化
 	void DeviceInitialize();
@@ -103,7 +112,7 @@ private:
 	//Resource
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 	//DescriptorSizeSRVを取得
-	//uint32_t descriptorSizeSRV;
+	uint32_t descriptorSizeSRV;
 	//DescriptorSizeRTVを取得
 	uint32_t descriptorSizeRTV;
 	//DescriptorSizeDSVを取得
@@ -112,6 +121,10 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 	//DSV用のDescriptorSize
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
+	//SRV用のDescriptorSize
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>srvDescriptorHeap;
+	//レンダーテクスチャ用のDescriptorSize
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>renderrtvDescriptorHeap;
 	///深度ステンシルリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> depthStencilResource;
 	//フェンス
@@ -134,7 +147,13 @@ private:
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
 	//レンダーテクスチャリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource>renderTextureResource;
-	
+	//レンダーテクスチャのSRV
+	D3D12_SHADER_RESOURCE_VIEW_DESC renderTextureSrvDesc{};
+	//最大SRV数
+	const uint32_t kMaxSRVCount = 512;
+	//SRVデスクリプタヒープ
+	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+
 	HANDLE fenceEvent;
 	//フェンス値
 	UINT64 fenceValue = 0;
@@ -152,5 +171,6 @@ private:
     
 	static DirectXBase* instance;
 	DirectXBase* directxBase_ = nullptr;
+	Object3dBase* object3dbase_ = nullptr;
 };
 

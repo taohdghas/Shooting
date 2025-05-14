@@ -115,8 +115,10 @@ void Object3dBase::GenerategraphicsPipeline() {
 	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	inputLayoutDesc.pInputElementDescs = inputElementDescs;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs);
+	//inputLayoutDesc.pInputElementDescs = inputElementDescs;
+	inputLayoutDesc.pInputElementDescs = nullptr;
+	//inputLayoutDesc.NumElements = _countof(inputElementDescs);
+	inputLayoutDesc.NumElements = 0;
 
 	// BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};
@@ -132,11 +134,11 @@ void Object3dBase::GenerategraphicsPipeline() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directxBase_->CompileShader(L"resources/shaders/Object3D.VS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directxBase_->CompileShader(L"resources/shaders/CopyImage.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directxBase_->CompileShader(L"resources/shaders/Object3D.ps.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directxBase_->CompileShader(L"resources/shaders/CopyImage.ps.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
@@ -162,7 +164,7 @@ void Object3dBase::GenerategraphicsPipeline() {
 	// DepthStencilStateの設定
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	// Depthの昨日を有効化にする
-	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthEnable = false;
 	// 書き込みします
 	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	// 比較関数はLessEqual.つまり、近ければ描画される

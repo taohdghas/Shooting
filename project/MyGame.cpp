@@ -12,6 +12,9 @@ void MyGame::Initialize() {
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory.get());
     //シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
+
+	//object3dの初期化
+	directxBase_->SetObject3dBase(Object3dBase::GetInstance());
 }
 
 //終了
@@ -36,22 +39,20 @@ void MyGame::Update() {
 //描画
 void MyGame::Draw() {
 
+	//RenderTexture描画前処理
+	directxBase_->PreDrawRenderTexture();
 	//描画前処理
 	directxBase_->PreDraw();
-
-	//RenderTexture描画前処理
-	//directxBase_->PreDrawRenderTexture();
-
 	SrvManager::GetInstance()->PreDraw();
 
 	//シーンマネージャ描画
 	SceneManager::GetInstance()->Draw();
 
+	//RenderTexture描画後処理
+	directxBase_->PostDrawRenderTexture();
+
 	//ImGui描画
 	imguimanager_->Draw();
-
-	//RenderTexture描画後処理
-	//directxBase_->PostDrawRenderTexture();
 
 	//描画後処理
 	directxBase_->PostDraw();

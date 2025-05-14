@@ -23,6 +23,8 @@ public:
 	///getter///
 	DirectXBase* GetDxBase()const { return directxBase_; }
 	Camera* GetDefaultCamera()const { return defaultCamera; }
+	ID3D12RootSignature* GetRootSignature()const { return rootSignature.Get(); }
+	ID3D12PipelineState* GetGraphicsPipelineState()const { return graphicsPipelineState.Get(); }
 private:
 	static Object3dBase* instance;
 	Object3dBase* object3dbase_ = nullptr;
