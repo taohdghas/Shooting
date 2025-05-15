@@ -39,7 +39,7 @@ void TitleScene::Initialize() {
 	//パーティクルエミッター
 	for (uint32_t i = 0; i < 1; ++i) {
 		auto particle = std::make_unique<ParticleEmitter>();
-		particle->Initialize("particle4");
+		particle->Initialize("particle3");
 		particle->Emit();
 		particleEmitter.push_back(std::move(particle));
 	}
