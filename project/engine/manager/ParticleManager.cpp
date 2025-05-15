@@ -17,8 +17,7 @@ void ParticleManager::Initialize(DirectXBase* directxBase, SrvManager* srvManage
 	this->srvManager_ = srvManager;
 	this->camera_ = camera;
 	randomEngine.seed(seedGenerator());
-	//ルートシグネチャ
-	//GenerateRootSignature();
+
 	//グラフィックスパイプライン
 	GenerategraphicsPipeline();
 	//マテリアルデータ
@@ -108,18 +107,19 @@ void ParticleManager::Draw() {
 	directxBase_->Getcommandlist()->SetPipelineState(graphicsPipelineState.Get());
 	//描画形状設定
 	directxBase_->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//VBV設定
-	directxBase_->Getcommandlist()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	//パーティクルについて処理
-	for (auto& ParticleGroups : particleGroups) {
-		//マテリアルCBufferの場所を設定
+	for (auto& [name, ParticleGroup] : particleGroups) {
+		//頂点バッファ切り替え
+		directxBase_->Getcommandlist()->IASetVertexBuffers(0, 1, &ParticleGroup.vertexBufferView);
+
+		//マテリアルCBufferの場所設定
 		directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-		//テクスチャのSRVのDescriptorTableを設定
-		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(ParticleGroups.second.materialData.textureIndex));
-		//インスタンシングデータのSRVのDescriptorTableを設定
-		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(ParticleGroups.second.SRVIndex));
+		//テクスチャSRVセット
+		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(ParticleGroup.materialData.textureIndex));
+		//インスタンスSRVセット
+		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(ParticleGroup.SRVIndex));
 		//描画
-		directxBase_->Getcommandlist()->DrawInstanced(UINT(modelData.vertices.size()), ParticleGroups.second.kNumInstance, 0, 0);
+		directxBase_->Getcommandlist()->DrawInstanced(UINT(ParticleGroup.modelData.vertices.size()), ParticleGroup.kNumInstance, 0, 0);
 	}
 }
 
@@ -139,15 +139,24 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 	newParticle.type = type;
 
 	//頂点生成
+
 	if (modelData.vertices.empty()) {
 		if (type == ParticleType::Normal) {
-			VertexDataCreate();
+			VertexDataCreate(newParticle.modelData);
 		} else if (type == ParticleType::Ring) {
-			RingVertexDataGenerate();
+			RingVertexDataGenerate(newParticle.modelData);
 		} else if (type == ParticleType::Cylinder) {
-			CylinderVertexDataGenerate();
+			CylinderVertexDataGenerate(newParticle.modelData);
 		}
 	}
+
+	newParticle.vertexResource = directxBase_->CreateBufferResource(sizeof(VertexData) * newParticle.modelData.vertices.size());
+	newParticle.vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	std::memcpy(vertexData, newParticle.modelData.vertices.data(), sizeof(VertexData) * newParticle.modelData.vertices.size());
+
+	newParticle.vertexBufferView.BufferLocation = newParticle.vertexResource->GetGPUVirtualAddress();
+	newParticle.vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * newParticle.modelData.vertices.size());
+	newParticle.vertexBufferView.StrideInBytes = sizeof(VertexData);
 
 	//インスタンシング用のリソース生成
 	newParticle.instancingResource = directxBase_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
@@ -337,7 +346,6 @@ void ParticleManager::GenerategraphicsPipeline() {
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-	//rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 
 	// shaderをコンパイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directxBase_->CompileShader(L"resources/shaders/Particle.VS.hlsl",
@@ -386,7 +394,7 @@ void ParticleManager::GenerategraphicsPipeline() {
 	assert(SUCCEEDED(hr));
 }
 //頂点データ作成
-void ParticleManager::VertexDataCreate() {
+void ParticleManager::VertexDataCreate(ModelData& modelData) {
 	modelData.vertices.push_back({ .position = {1.0f,1.0f,0.0f,1.0f},.texcoord = {0.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//左上
 	modelData.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f},.texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//右上
 	modelData.vertices.push_back({ .position = {1.0f,-1.0f,0.0f,1.0f},.texcoord = {0.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });//左下
@@ -408,7 +416,7 @@ void ParticleManager::VertexDataCreate() {
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 }
 //Ringの頂点データ生成
-void ParticleManager::RingVertexDataGenerate() {
+void ParticleManager::RingVertexDataGenerate(ModelData& modelData) {
 
 	const uint32_t kRingDivide = 32;
 	const float kOuterRadius = 1.0f;
@@ -448,7 +456,7 @@ void ParticleManager::RingVertexDataGenerate() {
 }
 
 //Cylinderの頂点データ作成
-void ParticleManager::CylinderVertexDataGenerate() {
+void ParticleManager::CylinderVertexDataGenerate(ModelData& modelData) {
 	const uint32_t kCylinderDivide = 32;
 	const float kTopRadius = 1.0f;
 	const float kBottomRadius = 1.0f;
@@ -471,7 +479,7 @@ void ParticleManager::CylinderVertexDataGenerate() {
 		modelData.vertices.push_back({ { -sin * kBottomRadius,0.0f, cos * kBottomRadius, 1.0f }, { u, 1.0f }, { -sin, 0.0f,cos} });
 		modelData.vertices.push_back({ { -sinNext * kTopRadius,kHeight, cosNext * kTopRadius, 1.0f }, { uNext, 0.0f }, {-sinNext, 0.0f,cosNext } });
 		modelData.vertices.push_back({ { -sinNext * kBottomRadius, 0.0f,cosNext * kBottomRadius,1.0f }, { uNext, 1.0f }, {-sinNext, 0.0f,cosNext } });
-
+		}
 		//リソースを作る
 		vertexResource = directxBase_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 		//リソースの先頭のアドレスから使う
@@ -484,7 +492,7 @@ void ParticleManager::CylinderVertexDataGenerate() {
 		vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 		//頂点データをリソースにコピー
 		std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
-	}
+	
 }
 
 //マテリアルデータ作成

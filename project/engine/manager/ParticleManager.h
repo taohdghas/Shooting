@@ -74,6 +74,9 @@ public:
 		uint32_t kNumInstance;//インスタンス数
 		ParticleForGPU* instancingData ;//インスタンシングデータを書き込むためのポインタ
 		ParticleType type;//パーティクルの種類
+		ModelData modelData;
+		Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;//頂点リソース
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 	};
 public:
 	//シングルトンインスタンスの取得
@@ -104,11 +107,11 @@ private:
 	//グラフィックスパイプラインの生成
 	void GenerategraphicsPipeline();
 	//頂点データ作成
-	void VertexDataCreate();
+	void VertexDataCreate(ModelData&modelData);
 	//Ringの頂点データ生成
-	void RingVertexDataGenerate();
+	void RingVertexDataGenerate(ModelData& modelData);
 	//Cylinderの頂点データ作成
-	void CylinderVertexDataGenerate();
+	void CylinderVertexDataGenerate(ModelData&modelData);
 	//マテリアルデータ作成
 	void MaterialCreate();
 private:
@@ -138,7 +141,6 @@ private:
 	std::mt19937 randomEngine;
 	//グループコンテナ
 	std::unordered_map<std::string, ParticleGroup>particleGroups;
-
 	const uint32_t kNumMaxInstance =128;
 	//Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
