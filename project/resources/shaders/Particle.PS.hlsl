@@ -31,6 +31,11 @@ PixelShaderOutput main(VertexShaderOutput input)
     {
         discard;
     }
-    
+    /*cylinder
+    if (output.color.a <= 0.5)
+    {
+        discard;
+    }
+    */
     return output;
 }
