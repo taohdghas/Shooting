@@ -12,7 +12,6 @@
 #include <Vector4.h>
 
 class PSO;
-class Object3dBase;
 class DirectXBase
 {
 public:
@@ -30,8 +29,6 @@ public:
 	void PreDrawRenderTexture();
 	//RenderTexture描画後処理
 	void PostDrawRenderTexture();
-	//Object3dbaseセット
-	void SetObject3dBase(Object3dBase* object3dbase);
 	//PSOセット
 	void SetPSO(PSO* pso);
 	//テクスチャデータの転送
@@ -174,7 +171,6 @@ private:
     
 	static DirectXBase* instance;
 	DirectXBase* directxBase_ = nullptr;
-	Object3dBase* object3dbase_ = nullptr;
 	PSO* pso_ = nullptr;
 };
 

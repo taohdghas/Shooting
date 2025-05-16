@@ -1,7 +1,6 @@
 #include "DirectXBase.h"
 #include "Logger.h"
 #include "StringUtility.h"
-#include "Object3dBase.h"
 #include "PSO.h"
 #include <cassert>
 #include <format>
@@ -477,11 +476,6 @@ void DirectXBase::PostDrawRenderTexture() {
 	//TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &barrier2);
 	
-}
-
-//Object3dbaseセット
-void DirectXBase::SetObject3dBase(Object3dBase* object3dbase) {
-	this->object3dbase_ = object3dbase;
 }
 
 //PSOセット

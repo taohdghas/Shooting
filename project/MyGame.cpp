@@ -13,8 +13,6 @@ void MyGame::Initialize() {
     //シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
 
-	//object3dの初期化
-	directxBase_->SetObject3dBase(Object3dBase::GetInstance());
 }
 
 //終了
