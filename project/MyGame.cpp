@@ -43,6 +43,8 @@ void MyGame::Draw() {
 	directxBase_->PreDrawRenderTexture();
 	//描画前処理
 	directxBase_->PreDraw();
+
+	//SRV描画
 	SrvManager::GetInstance()->PreDraw();
 
 	//シーンマネージャ描画

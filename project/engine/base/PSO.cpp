@@ -1,31 +1,14 @@
-#include "Object3dBase.h"
+#include "PSO.h"
 #include "Logger.h"
 
-Object3dBase* Object3dBase::instance = nullptr;
-
-//シングルトンインスタンス
-Object3dBase* Object3dBase::GetInstance() {
-	if (instance == nullptr) {
-		instance = new Object3dBase;
-	}
-	return instance;
-}
-
 //初期化
-void Object3dBase::Initialize(DirectXBase*directxBase) {
+void PSO::Initialize(DirectXBase* directxBase) {
 	directxBase_ = directxBase;
-	//グラフィックスパイプラインの生成
-	GenerategraphicsPipeline();
+	CreatePipelineState();
 }
 
-//終了
-void Object3dBase::Finalize() {
-	delete instance;
-	instance = nullptr;
-}
-
-//ルートシグネチャの作成
-void Object3dBase::GenerateRootSignature() {
+//ルートシグネチャ作成
+void PSO::CreateRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};
 	descriptitonRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -97,9 +80,10 @@ void Object3dBase::GenerateRootSignature() {
 		IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(hr));
 }
-//グラフィックスパイプラインの生成
-void Object3dBase::GenerategraphicsPipeline() {
-	GenerateRootSignature();
+
+//グラフィックスパイプライン作成
+void PSO::CreatePipelineState() {
+	CreateRootSignature();
 	// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -115,9 +99,8 @@ void Object3dBase::GenerategraphicsPipeline() {
 	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	inputLayoutDesc.pInputElementDescs = inputElementDescs;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs);
-
+	inputLayoutDesc.pInputElementDescs = nullptr;
+	inputLayoutDesc.NumElements = 0;
 
 	// BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};
@@ -133,11 +116,11 @@ void Object3dBase::GenerategraphicsPipeline() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directxBase_->CompileShader(L"resources/shaders/Object3D.VS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directxBase_->CompileShader(L"resources/shaders//CopyImage.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directxBase_->CompileShader(L"resources/shaders/Object3D.ps.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directxBase_->CompileShader(L"resources/shaders//CopyImage.ps.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
@@ -163,7 +146,7 @@ void Object3dBase::GenerategraphicsPipeline() {
 	// DepthStencilStateの設定
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	// Depthの昨日を有効化にする
-	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthEnable = false;
 	// 書き込みします
 	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	// 比較関数はLessEqual.つまり、近ければ描画される
@@ -177,15 +160,4 @@ void Object3dBase::GenerategraphicsPipeline() {
 	hr = directxBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
-}
-//共通描画設定
-void Object3dBase::DrawBaseSet() {
-
-	//ルートシグネチャのセットコマンド
-	directxBase_->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
-	//グラフィックスパイプラインステートのセットコマンド
-	directxBase_->Getcommandlist()->SetPipelineState(graphicsPipelineState.Get());
-	//プリミティブトポロジーをセットするコマンド
-	// 形状を設定
-	directxBase_->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

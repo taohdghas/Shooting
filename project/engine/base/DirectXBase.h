@@ -11,6 +11,7 @@
 #include "externals/DirectXTex/DirectXTex.h"
 #include <Vector4.h>
 
+class PSO;
 class Object3dBase;
 class DirectXBase
 {
@@ -31,6 +32,8 @@ public:
 	void PostDrawRenderTexture();
 	//Object3dbaseセット
 	void SetObject3dBase(Object3dBase* object3dbase);
+	//PSOセット
+	void SetPSO(PSO* pso);
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
@@ -172,5 +175,6 @@ private:
 	static DirectXBase* instance;
 	DirectXBase* directxBase_ = nullptr;
 	Object3dBase* object3dbase_ = nullptr;
+	PSO* pso_ = nullptr;
 };
 

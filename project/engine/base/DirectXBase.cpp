@@ -2,6 +2,7 @@
 #include "Logger.h"
 #include "StringUtility.h"
 #include "Object3dBase.h"
+#include "PSO.h"
 #include <cassert>
 #include <format>
 #include "externals/DirectXTex/d3dx12.h"
@@ -51,6 +52,9 @@ void DirectXBase::Initialize(WindowsAPI* windowsAPI) {
 	ScissorrectInitialize();
 	//DXCコンパイラの生成
 	DXCcompilerInitialize();
+
+	pso_ = new PSO();
+	pso_->Initialize(this);
 }
 
 //終了
@@ -452,8 +456,8 @@ void DirectXBase::PostDrawRenderTexture() {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
 	commandList->SetDescriptorHeaps(1, descriptorHeaps);
 
-	commandList->SetGraphicsRootSignature(object3dbase_->GetRootSignature());
-	commandList->SetPipelineState(object3dbase_->GetGraphicsPipelineState());
+	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
+	commandList->SetPipelineState(pso_->GetGraphicsPipelineState());
 	commandList->SetGraphicsRootDescriptorTable(2,GetGPUDescriptorHandle(srvDescriptorHeap,descriptorSizeSRV,0));
 	//頂点3つ描画
 	commandList->DrawInstanced(3, 1, 0, 0);
@@ -478,6 +482,11 @@ void DirectXBase::PostDrawRenderTexture() {
 //Object3dbaseセット
 void DirectXBase::SetObject3dBase(Object3dBase* object3dbase) {
 	this->object3dbase_ = object3dbase;
+}
+
+//PSOセット
+void DirectXBase::SetPSO(PSO* pso) {
+	pso_ = pso;
 }
 
 //テクスチャデータの転送
