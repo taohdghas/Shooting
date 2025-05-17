@@ -80,16 +80,6 @@ public:
 	//DSV　GPUデスクリプタハンドル取得関数
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
-	//CPUデスクリプタハンドル取得関数
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
-		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-	//GPUデスクリプタハンドル取得関数
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
-		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-	//RTVのデスクリプタハンドル取得
-	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
-	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
-
 private:
 	//デバイスの初期化
 	void DeviceInitialize();
