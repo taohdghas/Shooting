@@ -16,7 +16,6 @@ enum class RenderTextureState {
 	PixelShaderResource
 };
 
-class PSO;
 class DirectXBase
 {
 public:
@@ -36,8 +35,10 @@ public:
 	void DrawRenderTextureToScreen();
 	//RenderTextureをSRV用に切り替え
 	void TransitionRenderTextureToSRV();
-	//PSOセット
-	void SetPSO(PSO* pso);
+	//ルートシグネチャ作成
+	void CreateRootSignature();
+	//グラフィックスパイプライン作成
+	void CreatePipelineState();
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
@@ -160,6 +161,10 @@ private:
 	const uint32_t kMaxSRVCount = 512;
 	//SRVデスクリプタヒープ
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+	//ルートシグネチャ
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
+	//グラフィックスパイプライン
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState;
 
 	HANDLE fenceEvent;
 	//フェンス値
@@ -178,6 +183,5 @@ private:
 	RenderTextureState renderTextureState = RenderTextureState::RenderTarget;
 	static DirectXBase* instance;
 	DirectXBase* directxBase_ = nullptr;
-	PSO* pso_ = nullptr;
 };
 
