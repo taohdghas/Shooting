@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include <array>
 #include "WindowsAPI.h"
+#include "Struct.h"
 #include <dxcapi.h>
 #include <string>
 #include <chrono>
@@ -45,7 +46,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisivle);
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
-    //シェーダーのコンパイル
+	//シェーダーのコンパイル
 	Microsoft::WRL::ComPtr<IDxcBlob>CompileShader(const std::wstring& filePath, const wchar_t* profile);
 	//バッファリソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateBufferResource(size_t sizeInBytes);
@@ -54,11 +55,12 @@ public:
 	//レンダーテクスチャの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device,
 		uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
-
 	//テクスチャファイル読み込み
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
 	//最大SRV数(最大テクスチャ数)
 	//static const uint32_t kMaxSRVCount;
+
+public:
 	//デバイスの取得
 	Microsoft::WRL::ComPtr<ID3D12Device>Getdevice() { return device; }
 	//コマンドリストの取得
@@ -77,6 +79,16 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
 	//DSV　GPUデスクリプタハンドル取得関数
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
+
+	//CPUデスクリプタハンドル取得関数
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
+		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	//GPUデスクリプタハンドル取得関数
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
+		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	//RTVのデスクリプタハンドル取得
+	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
 
 private:
 	//デバイスの初期化
@@ -165,7 +177,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
 	//グラフィックスパイプライン
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState;
-
 	HANDLE fenceEvent;
 	//フェンス値
 	UINT64 fenceValue = 0;
@@ -180,7 +191,9 @@ private:
 	HRESULT hr;
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
+
 	RenderTextureState renderTextureState = RenderTextureState::RenderTarget;
+
 	static DirectXBase* instance;
 	DirectXBase* directxBase_ = nullptr;
 };

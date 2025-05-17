@@ -28,7 +28,7 @@ void SrvManager::Finalize() {
 	instance = nullptr;
 }
 
-//SRV生成(テクスチャ用)
+//SRV作成(テクスチャ用)
 void SrvManager::CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	//SRVの設定
@@ -40,7 +40,7 @@ void SrvManager::CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResou
 
 	directxBase->Getdevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 }
-//SRV生成(Structured Buffer用)
+//SRV作成(Structured Buffer用)
 void SrvManager::CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	//SRVの設定

@@ -55,6 +55,8 @@ void MyGame::Draw() {
     //ImGui描画
     imguimanager_->Draw();
 
+
     //描画後処理
     directxBase_->PostDraw();
+
 }
