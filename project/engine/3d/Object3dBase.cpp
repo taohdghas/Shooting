@@ -118,6 +118,7 @@ void Object3dBase::GenerategraphicsPipeline() {
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 
+
 	// BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};
 	// すべての色要素を書き込む
@@ -179,6 +180,7 @@ void Object3dBase::GenerategraphicsPipeline() {
 }
 //共通描画設定
 void Object3dBase::DrawBaseSet() {
+
 	//ルートシグネチャのセットコマンド
 	directxBase_->Getcommandlist()->SetGraphicsRootSignature(rootSignature.Get());
 	//グラフィックスパイプラインステートのセットコマンド
