@@ -11,6 +11,11 @@
 #include "externals/DirectXTex/DirectXTex.h"
 #include <Vector4.h>
 
+enum class RenderTextureState {
+	RenderTarget,
+	PixelShaderResource
+};
+
 class PSO;
 class DirectXBase
 {
@@ -27,8 +32,10 @@ public:
 	void PostDraw();
 	//RenderTexture描画前処理
 	void PreDrawRenderTexture();
-	//RenderTexture描画後処理
-	void PostDrawRenderTexture();
+	//swapchainに描画
+	void DrawRenderTextureToScreen();
+	//RenderTextureをSRV用に切り替え
+	void TransitionRenderTextureToSRV();
 	//PSOセット
 	void SetPSO(PSO* pso);
 	//テクスチャデータの転送
@@ -168,7 +175,7 @@ private:
 	HRESULT hr;
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
-    
+	RenderTextureState renderTextureState = RenderTextureState::RenderTarget;
 	static DirectXBase* instance;
 	DirectXBase* directxBase_ = nullptr;
 	PSO* pso_ = nullptr;

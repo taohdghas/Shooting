@@ -429,6 +429,18 @@ void DirectXBase::PostDraw() {
 //RenderTexture描画前処理
 void DirectXBase::PreDrawRenderTexture() {
 
+	if (renderTextureState == RenderTextureState::PixelShaderResource) {
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = renderTextureResource.Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	commandList->ResourceBarrier(1, &barrier);
+
+	renderTextureState = RenderTextureState::RenderTarget;
+	}
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = renderrtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
@@ -441,9 +453,21 @@ void DirectXBase::PreDrawRenderTexture() {
 	commandList->RSSetScissorRects(1, &scissorRect);
 }
 
-//RenderTexture描画後処理
-void DirectXBase::PostDrawRenderTexture() {
+//swapchainに描画
+void DirectXBase::DrawRenderTextureToScreen() {
+	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
+	commandList->SetDescriptorHeaps(1, descriptorHeaps);
 
+	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
+	commandList->SetPipelineState(pso_->GetGraphicsPipelineState());
+	commandList->SetGraphicsRootDescriptorTable(2, GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 0));
+	//頂点3つ描画
+	commandList->DrawInstanced(3, 1, 0, 0);
+}
+
+//RenderTextureをSRV用に切り替え
+void DirectXBase::TransitionRenderTextureToSRV() {
+	if (renderTextureState == RenderTextureState::RenderTarget) {
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
@@ -451,31 +475,8 @@ void DirectXBase::PostDrawRenderTexture() {
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	commandList->ResourceBarrier(1, &barrier);
-
-	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
-	commandList->SetDescriptorHeaps(1, descriptorHeaps);
-
-	commandList->SetGraphicsRootSignature(pso_->GetRootSignature());
-	commandList->SetPipelineState(pso_->GetGraphicsPipelineState());
-	commandList->SetGraphicsRootDescriptorTable(2,GetGPUDescriptorHandle(srvDescriptorHeap,descriptorSizeSRV,0));
-	//頂点3つ描画
-	commandList->DrawInstanced(3, 1, 0, 0);
-	
-	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier2{};
-	//今回のバリアはTransition
-	barrier2.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//Noneにしておく
-	barrier2.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//バリアを張る対象のリソース。現在のバックバッファに対して使う
-	barrier2.Transition.pResource = renderTextureResource.Get();
-	//遷移前（現在）のResourceState
-	barrier2.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	//遷移後のResourceState
-	barrier2.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier2);
-	
+	renderTextureState = RenderTextureState::PixelShaderResource;
+	}
 }
 
 //PSOセット
