@@ -462,6 +462,7 @@ void DirectXBase::DrawRenderTextureToScreen() {
 	commandList->DrawInstanced(3, 1, 0, 0);
 }
 
+
 //RenderTextureをSRV用に切り替え
 void DirectXBase::TransitionRenderTextureToSRV() {
 	if (renderTextureState == RenderTextureState::RenderTarget) {
