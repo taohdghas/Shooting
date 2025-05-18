@@ -293,12 +293,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Particle.hlsli" />
-    <None Include="resources\shaders\CopyImage.hlsli" />
+    <None Include="resources\shaders\Fullscreen.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle.PS.hlsl" />
     <FxCompile Include="resources\shaders\Particle.VS.hlsl" />
-    <FxCompile Include="resources\shaders\CopyImage.PS.hlsl" />
-    <FxCompile Include="resources\shaders\CopyImage.VS.hlsl" />
+    <FxCompile Include="resources\shaders\Fullscreen.PS.hlsl" />
+    <FxCompile Include="resources\shaders\Fullscreen.VS.hlsl" />
+    <FxCompile Include="resources\shaders\Grayscale.PS.hlsl" />
   </ItemGroup>
 </Project>
