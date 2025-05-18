@@ -359,7 +359,6 @@ void DirectXBase::UpdateFixFPS() {
 }
 //描画前処理
 void DirectXBase::PreDraw() {
-
 	// 書き込むバックバッファのインデックスの取得
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 	// 今回のバリアばTransition
@@ -367,13 +366,11 @@ void DirectXBase::PreDraw() {
 	// Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	// バリアを張る大将のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextureResource.Get();
+	barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
 	// 遷移前（現在）のResourceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 	// 遷移後のResourceState
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	// TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &barrier);
 	// 描画先のRTVとDSVを設定する
@@ -383,14 +380,12 @@ void DirectXBase::PreDraw() {
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f }; // 青っぽい色。RGBAの順
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
 	// 指定した震度で画面全体をクリアする
-	//commandList->ClearDepthStencilView(dsvHadle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	commandList->ClearDepthStencilView(dsvHadle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	// 描画用のDescriptorHeapの設定
 	//ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
 	//commandList->SetDescriptorHeaps(1, descriptorHeaps);
 	commandList->RSSetViewports(1, &viewport);
 	commandList->RSSetScissorRects(1, &scissorRect);
-
-	//従来のswapchainに対しての設定・描画
 }
 //描画後処理
 void DirectXBase::PostDraw() {
