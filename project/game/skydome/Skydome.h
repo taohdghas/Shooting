@@ -13,5 +13,6 @@ public:
 	void Draw();
 private:
 	Object3d* object_ = nullptr;
+	Transform* transform_ = nullptr;
 };
 

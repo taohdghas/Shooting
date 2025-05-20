@@ -14,7 +14,8 @@ public:
 	void Draw();
 	//移動
 	void Move();
-
+	//攻撃
+	void Attack();
 private:
 	Object3d* object_ = nullptr;
 	Transform transform_;

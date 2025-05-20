@@ -3,11 +3,14 @@
 //初期化
 void Skydome::Initialize(Object3d* object) {
 	object_ = object;
-	object_->SetTranslate(Vector3{ 0.0f,0.0f,0.0f });
+	object_->SetModel("skydome.obj");
+	//object_->SetTranslate(Vector3{ 0.0f,0.0f,0.0f });
+
 }
 
 //更新
 void Skydome::Update() {
+
 	object_->Update();
 }
 

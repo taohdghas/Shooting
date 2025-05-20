@@ -29,5 +29,6 @@ private:
 	Object3d* playerObject;
 	//天球
 	std::unique_ptr<Skydome>skydome;
+	Object3d* skydomeObject;
 };
 
