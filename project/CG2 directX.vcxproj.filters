@@ -302,5 +302,6 @@
     <FxCompile Include="resources\shaders\Fullscreen.VS.hlsl" />
     <FxCompile Include="resources\shaders\Grayscale.PS.hlsl" />
     <FxCompile Include="resources\shaders\Vignette.PS.hlsl" />
+    <FxCompile Include="resources\shaders\BoxFilter.PS.hlsl" />
   </ItemGroup>
 </Project>
