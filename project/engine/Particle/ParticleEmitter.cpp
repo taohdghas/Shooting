@@ -10,7 +10,7 @@ void ParticleEmitter::Initialize(std::string name) {
     switch (type) {
     //通常
     case ParticleType::Normal:
-        emitter_.count = 10;
+        emitter_.count = 1;
         emitter_.frequency = 0.2f;
         emitter_.transform.scale = { 1.0f,1.0f,1.0f };
         emitter_.transform.rotate = { 0.0f,0.0f,0.0f };

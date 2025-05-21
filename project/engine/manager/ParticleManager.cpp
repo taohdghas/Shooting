@@ -188,11 +188,11 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 	//通常
 	if (type == ParticleType::Normal) {
 		particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f };
-		particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine)};
+		particle.transform.rotate = { 0.0f,0.0f,0.0f};
 		particle.transform.translate = translate;
-		particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+		particle.velocity = { 0.0f,-10.0f,0.0f };
 		particle.color = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine) };
-		particle.lifeTime = distTime(randomEngine);
+		particle.lifeTime = 1.0f;
 
 	} else if (type == ParticleType::Ring) {
 		//Ring型
