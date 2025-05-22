@@ -47,7 +47,7 @@ void GameScene::Update() {
 	player->Update();
 
 	//天球
-	skydome->Update();
+	//skydome->Update();
 }
 
 //描画
@@ -59,7 +59,7 @@ void GameScene::Draw() {
 	player->Draw();
 
 	//天球
-	skydome->Draw();
+	//skydome->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

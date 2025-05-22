@@ -2,6 +2,8 @@
 #include "Object3d.h"
 #include "Input.h"
 #include "Transform.h"
+#include "playerBullet.h"
+#include "Camera.h"
 
 class Player
 {
@@ -18,6 +20,7 @@ public:
 	void Attack();
 private:
 	Object3d* object_ = nullptr;
+	Camera* camera_;
 	Transform transform_;
 
 	//移動速度

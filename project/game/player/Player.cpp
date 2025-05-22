@@ -5,7 +5,7 @@
 void Player::Initialize(Object3d* object) {
 	object_ = object;
 	object_->SetTranslate(Vector3{ 0.0f,0.0f,0.0f });
-	object_->SetScale(Vector3{0.2f,0.2f,0.2f});
+	//object_->SetScale(Vector3{0.2f,0.2f,0.2f});
 }
 
 //更新
@@ -13,6 +13,8 @@ void Player::Update() {
 
 	//移動
 	Move();
+
+	object_->SetTranslate(transform_.translate);
 
 	object_->Update();
 }
@@ -36,8 +38,6 @@ void Player::Move() {
 	if (Input::GetInstance()->PushKey(DIK_W)) {
 		transform_.translate.y += speed;
 	}
-
-	object_->SetTranslate(transform_.translate);
 }
 
 //攻撃
