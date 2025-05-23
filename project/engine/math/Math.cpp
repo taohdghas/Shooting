@@ -6,6 +6,25 @@ namespace Math {
 	Vector3 Math::Add(const Vector3& v1, const Vector3& v2) {
 		return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 	}
+
+	//Subtract
+	Vector3 Math::Subtract(const Vector3& v1, const Vector3& v2) {
+		return { v1.x - v2.x,v1.y - v2.y,v1.z - v2.z };
+	}
+
+	Vector3 Math::Multiply(const Vector3& v, float scalar) {
+		return { v.x * scalar, v.y * scalar, v.z * scalar };
+	}
+
+	Vector3 Math::Divide(const Vector3& v, float scalar) {
+
+		if (scalar != 0.0f) {
+			return { v.x / scalar, v.y / scalar, v.z / scalar };
+		} else {
+			return { 0.0f, 0.0f, 0.0f };
+		}
+	}
+
 	//単位行列
 	Matrix4x4 Math::MakeIdentity4x4() {
 		Matrix4x4 result;

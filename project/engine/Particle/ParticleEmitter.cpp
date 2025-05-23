@@ -11,7 +11,7 @@ void ParticleEmitter::Initialize(std::string name) {
     //通常
     case ParticleType::Normal:
         emitter_.count = 1;
-        emitter_.frequency = 0.2f;
+        emitter_.frequency = 99.0f;
         emitter_.transform.scale = { 1.0f,1.0f,1.0f };
         emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
         emitter_.transform.translate = { 0.0f,0.0f,0.0f };
@@ -27,13 +27,18 @@ void ParticleEmitter::Initialize(std::string name) {
     //Cylinder型
     case ParticleType::Cylinder:
         emitter_.count = 1;
-        emitter_.frequency = 99.0f;//秒ごとに発生
+        emitter_.frequency = 99.0f;
         emitter_.transform.scale = { 1.0f,1.0f,1.0f };
         emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
         emitter_.transform.translate = { 0.0f,0.0f,0.0f };
         break;
+    case ParticleType::Explosive:
+        emitter_.count = 15;
+        emitter_.frequency =99.0f;
+        emitter_.transform.scale = { 1.0f, 1.0f, 1.0f };
+        emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
+        break;
     }
-
 }
 
 //更新

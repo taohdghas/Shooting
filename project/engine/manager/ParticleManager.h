@@ -17,7 +17,9 @@ enum class ParticleType {
 	Normal,
 	Ring,
 	Cylinder,
+	Explosive,
 };
+
 
 class ParticleManager
 {

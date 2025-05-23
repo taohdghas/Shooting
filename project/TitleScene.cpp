@@ -36,10 +36,12 @@ void TitleScene::Initialize() {
 	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/circle2.png",ParticleType::Normal);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle3", "resources/gradationLine.png",ParticleType::Ring);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
+	ParticleManager::GetInstance()->CreateparticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
+
 	//パーティクルエミッター
 	for (uint32_t i = 0; i < 1; ++i) {
 		auto particle = std::make_unique<ParticleEmitter>();
-		particle->Initialize("particle2");
+		particle->Initialize("particle5");
 		particle->Emit();
 		particleEmitter.push_back(std::move(particle));
 	}

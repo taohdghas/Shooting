@@ -73,6 +73,29 @@ void ParticleManager::Update() {
 					(*particleIterator).transform.rotate.y += 1.0f * kDeltaTime;
 				}
 
+				if (ParticleGroups.second.type == ParticleType::Explosive) {
+					float t = (*particleIterator).currentTime / (*particleIterator).lifeTime;
+
+					if (t < 0.5f) {
+						//縮小
+						float scale = 1.0f - t * 2.0f; 
+						scale = max(scale, 0.05f);
+						(*particleIterator).transform.scale = { scale, scale, scale };
+					} else {
+						//爆発
+						std::uniform_real_distribution<float> distScale(0.1f, 0.35f); 
+						float randomScale = distScale(randomEngine);
+						(*particleIterator).transform.scale = { randomScale, randomScale, randomScale };
+						//拡散
+						if ((*particleIterator).velocity.x == 0.0f) {
+							std::uniform_real_distribution<float> dist(-3.0f, 3.0f);
+							(*particleIterator).velocity = {
+								dist(randomEngine), dist(randomEngine), dist(randomEngine)
+							};
+						}
+					}
+				}
+				
 				//行列計算
 				Matrix4x4 scaleMatrix = Math::MakeScaleMatrix((*particleIterator).transform.scale);
 				Matrix4x4 rotateMatrix = Math::MakeRotateMatrix((*particleIterator).transform.rotate);
@@ -147,6 +170,8 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 			RingVertexDataGenerate(newParticle.modelData);
 		} else if (type == ParticleType::Cylinder) {
 			CylinderVertexDataGenerate(newParticle.modelData);
+		} else if (type == ParticleType::Explosive) {
+			VertexDataCreate(newParticle.modelData);
 		}
 	}
 
@@ -211,6 +236,13 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 		particle.velocity = { 0.0f,0.0f,0.0f };
 		particle.color = { 1.0f,1.0f,1.0f,1.0f };
 		particle.lifeTime = 99.0f;
+	} else if (type == ParticleType::Explosive) {
+		particle.transform.scale = { 1.0f, 1.0f, 1.0f };
+		particle.transform.rotate = { 0.0f, 0.0f, -5.0f };
+		particle.transform.translate = translate;
+		particle.velocity = { 0.0f, 0.0f, 1.0f };
+		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f }; 
+		particle.lifeTime = 1.5f;
 	}
 	particle.currentTime = 0.0f;
 	return particle;
