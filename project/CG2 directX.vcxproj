@@ -112,7 +112,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resources\shaders\GaussianFilter.PS.hlsl" />
+    <FxCompile Include="resources\shaders\GaussianFilter.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="resources\shaders\BoxFilter.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
