@@ -5,7 +5,14 @@
 #include "Matrix4x4.h"
 #include <string>
 #include <vector>
+#include <list>
 
+//トランスフォーム
+struct Transform {
+	Vector3 scale;
+	Vector3 rotate;
+	Vector3 translate;
+};
 //頂点データ
 struct VertexData {
 	Vector4 position;
@@ -75,4 +82,13 @@ struct SpotLight {
 	float cosAngle;//スポットライトの余弦
 	float cosFalloffStart;
 	float padding[2];
+};
+//オブジェクトデータ
+struct ObjectData {
+	std::string filename;
+	Transform transform;
+};
+//レベルデータ
+struct LevelData {
+	std::list<ObjectData>objects;
 };
