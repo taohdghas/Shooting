@@ -34,7 +34,7 @@ void ParticleEmitter::Initialize(std::string name) {
         break;
     case ParticleType::Explosive:
         emitter_.count = 15;
-        emitter_.frequency =99.0f;
+        emitter_.frequency =5.0f;
         emitter_.transform.scale = { 1.0f, 1.0f, 1.0f };
         emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
         break;
