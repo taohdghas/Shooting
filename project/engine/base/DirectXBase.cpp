@@ -599,7 +599,7 @@ void DirectXBase::CreatePipelineState() {
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"resources/shaders/GaussianFilter.ps.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"resources/shaders/LuminanceBasedOutline.ps.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
