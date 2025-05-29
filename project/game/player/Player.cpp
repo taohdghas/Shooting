@@ -11,8 +11,23 @@ void Player::Initialize(Object3d* object) {
 //更新
 void Player::Update() {
 
+
+	//デスフラグが立った弾を削除
+	bullets_.remove_if([](playerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+		});
+
 	//移動
 	Move();
+
+	//弾の更新
+	for (playerBullet* bullet : bullets_) {
+		bullet->Update();
+	}
 
 	object_->SetTranslate(transform_.translate);
 
@@ -21,6 +36,12 @@ void Player::Update() {
 
 //描画
 void Player::Draw() {
+
+	//プレイヤー弾の描画
+	for(playerBullet*bullet:bullets_){
+		bullet->Draw();
+	}
+
 	object_->Draw();
 }
 
@@ -42,5 +63,16 @@ void Player::Move() {
 
 //攻撃
 void Player::Attack() {
+
+	if (attackCooldown_ > 0) {
+		return;
+	}
+
+	//弾の速度
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity(0, 0, kBulletSpeed);
+
+	//弾の生成と初期化
+	playerBullet* newBullet = new playerBullet();
 
 }

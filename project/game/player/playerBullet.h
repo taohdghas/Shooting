@@ -11,11 +11,18 @@ public:
 	void Update();
 	//描画
 	void Draw();
+	//デスフラグがたったか
+	bool IsDead()const { return isDead_; }
+public:
+
 private:
 	Object3d* object_ = nullptr;
 	Transform transform_;
 
 	//速度
 	Vector3 velocity_;
+
+	//デスフラグ
+	bool isDead_ = false;
 };
 

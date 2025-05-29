@@ -11,6 +11,10 @@ void playerBullet::Initialize(Object3d*object) {
 //更新
 void playerBullet::Update() {
 
+	if (isDead_) {
+		return;
+	}
+
 	transform_.translate = Math::Add(transform_.translate, velocity_);
 
 	object_->SetTranslate(transform_.translate);
@@ -20,6 +24,10 @@ void playerBullet::Update() {
 
 //描画
 void playerBullet::Draw() {
+
+	if (isDead_) {
+		return;
+	}
 
 	object_->Draw();
 }

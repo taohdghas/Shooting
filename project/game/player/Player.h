@@ -22,8 +22,14 @@ private:
 	Object3d* object_ = nullptr;
 	Camera* camera_;
 	Transform transform_;
-
+	//弾のリスト
+	std::list<playerBullet*>bullets_;
+	
 	//移動速度
 	float speed = 1.0f;
+	//攻撃クールタイム
+	int attackCooldown_ = 0;
+	//攻撃間隔
+	static const int attackInterval_ = 5;
 };
 

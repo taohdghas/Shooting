@@ -153,7 +153,7 @@
     <ClCompile Include="game\player\Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="playerBullet.cpp">
+    <ClCompile Include="game\player\playerBullet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -302,7 +302,7 @@
     <ClInclude Include="game\player\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="playerBullet.h">
+    <ClInclude Include="game\player\playerBullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
