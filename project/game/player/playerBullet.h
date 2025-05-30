@@ -1,12 +1,13 @@
 #pragma once
 #include "Object3d.h"
 #include "Transform.h"
+#include <memory>
 
 class playerBullet
 {
 public:
 	//初期化
-	void Initialize(Object3d*object);
+	void Initialize(std::unique_ptr<Object3d>object);
 	//更新
 	void Update();
 	//描画
@@ -14,11 +15,16 @@ public:
 	//デスフラグがたったか
 	bool IsDead()const { return isDead_; }
 public:
+	///Getter///
+	const Vector3& GetPosition()const { return transform_.translate; }
+
+	///Setter///
+	void SetPosition(const Vector3& position) { transform_.translate = position; }
+	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 
 private:
-	Object3d* object_ = nullptr;
+	std::unique_ptr<Object3d>object_;
 	Transform transform_;
-
 	//速度
 	Vector3 velocity_;
 

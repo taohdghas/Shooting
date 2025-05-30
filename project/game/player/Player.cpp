@@ -5,17 +5,18 @@
 void Player::Initialize(Object3d* object) {
 	object_ = object;
 	object_->SetTranslate(Vector3{ 0.0f,0.0f,0.0f });
-	//object_->SetScale(Vector3{0.2f,0.2f,0.2f});
 }
 
 //更新
 void Player::Update() {
 
+	if (attackCooldown_ > 0) {
+		attackCooldown_--;
+	}
 
 	//デスフラグが立った弾を削除
-	bullets_.remove_if([](playerBullet* bullet) {
+	bullets_.remove_if([](const std::unique_ptr<playerBullet>& bullet) {
 		if (bullet->IsDead()) {
-			delete bullet;
 			return true;
 		}
 		return false;
@@ -24,11 +25,15 @@ void Player::Update() {
 	//移動
 	Move();
 
-	//弾の更新
-	for (playerBullet* bullet : bullets_) {
-		bullet->Update();
+	//攻撃
+	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		Attack();
 	}
 
+	//弾の更新
+	for (const std::unique_ptr<playerBullet>& bullet : bullets_) {
+		bullet->Update();
+	}
 	object_->SetTranslate(transform_.translate);
 
 	object_->Update();
@@ -38,7 +43,7 @@ void Player::Update() {
 void Player::Draw() {
 
 	//プレイヤー弾の描画
-	for(playerBullet*bullet:bullets_){
+	for (const std::unique_ptr<playerBullet>& bullet : bullets_) {
 		bullet->Draw();
 	}
 
@@ -68,11 +73,20 @@ void Player::Attack() {
 		return;
 	}
 
-	//弾の速度
-	const float kBulletSpeed = 1.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
+	//弾の生成(オブジェクト)
+	std::unique_ptr<Object3d>bulletobject = std::make_unique<Object3d>();
+	bulletobject->Initialize(Object3dBase::GetInstance());
+	bulletobject->SetModel("plane.obj");
+	bulletobject->SetScale(Vector3{ 0.1f,0.1f,0.1f });
 
-	//弾の生成と初期化
-	playerBullet* newBullet = new playerBullet();
+	//弾インスタンス作成
+	std::unique_ptr<playerBullet>bullet = std::make_unique<playerBullet>();
+	bullet->Initialize(std::move(bulletobject));
+	bullet->SetPosition(transform_.translate);
+	bullet->SetVelocity(Vector3{ 0.0f,0.0f,1.0f });
 
+	bullets_.push_back(std::move(bullet));
+
+	//クールタイムに攻撃間隔を設定
+	attackCooldown_ = attackInterval_;
 }

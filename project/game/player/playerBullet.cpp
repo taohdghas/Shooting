@@ -2,10 +2,9 @@
 #include "Math.h"
 
 //初期化
-void playerBullet::Initialize(Object3d*object) {
-	object_ = object;
-	object_->SetTranslate(Vector3{ 0.0f,0.0f,0.0f });
-	object_->SetScale(Vector3{ 0.1f,0.1f,0.1f });
+void playerBullet::Initialize(std::unique_ptr<Object3d>object) {
+	object_ = std::move(object);
+	object_->SetScale(Vector3{ 0.05f,0.05f,0.05f });
 }
 
 //更新

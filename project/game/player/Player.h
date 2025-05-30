@@ -1,9 +1,12 @@
 #pragma once
 #include "Object3d.h"
+#include "Object3dBase.h"
 #include "Input.h"
 #include "Transform.h"
 #include "playerBullet.h"
 #include "Camera.h"
+#include <list>
+#include <memory>
 
 class Player
 {
@@ -23,10 +26,10 @@ private:
 	Camera* camera_;
 	Transform transform_;
 	//弾のリスト
-	std::list<playerBullet*>bullets_;
+	std::list<std::unique_ptr<playerBullet>>bullets_;
 	
 	//移動速度
-	float speed = 1.0f;
+	float speed = 0.1f;
 	//攻撃クールタイム
 	int attackCooldown_ = 0;
 	//攻撃間隔
