@@ -6,6 +6,33 @@ namespace Math {
 	Vector3 Math::Add(const Vector3& v1, const Vector3& v2) {
 		return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 	}
+
+	//正規化
+	Vector3 Math::Normalize(const Vector3& v) {
+		Vector3 result;
+		float length = Length(v);
+		result.x = v.x / length;
+		result.y = v.y / length;
+		result.z = v.z / length;
+		return result;
+	}
+
+	Vector3 Math::Multiply(const Vector3& v1, const Vector3& v2) {
+		Vector3 result{};
+		result.x = v1.x * v2.x;
+		result.y = v1.y * v2.y;
+		result.z = v1.z * v2.z;
+		return result;
+	}
+
+	Vector3 Math::Multiply(const Vector3& v, const float scalar) {
+		Vector3 result{};
+		result.x = v.x * scalar;
+		result.y = v.y * scalar;
+		result.z = v.z * scalar;
+		return result;
+	}
+
 	//単位行列
 	Matrix4x4 Math::MakeIdentity4x4() {
 		Matrix4x4 result;
@@ -34,14 +61,6 @@ namespace Math {
 		return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 	}
 
-	Vector3 Math::Normalize(const Vector3& v) {
-		Vector3 result;
-		float length = Length(v);
-		result.x = v.x / length;
-		result.y = v.y / length;
-		result.z = v.z / length;
-		return result;
-	}
 	//平行移動行列
 	Matrix4x4 Math::MakeTranslateMatrix(const Vector3& translate) {
 		Matrix4x4 translateMatrix;

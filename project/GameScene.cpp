@@ -20,10 +20,10 @@ void GameScene::Initialize() {
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
-	ModelManager::GetInstance()->LoadModel("player.obj");
-	ModelManager::GetInstance()->LoadModel("playerbullet.obj");
-	ModelManager::GetInstance()->LoadModel("enemy.obj");
-	ModelManager::GetInstance()->LoadModel("enemybullet.obj");
+	ModelManager::GetInstance()->LoadModel("player/player.obj");
+	ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
+	ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
+	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
 
 
 	//プレイヤー

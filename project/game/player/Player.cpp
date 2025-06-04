@@ -15,7 +15,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	object3dBase_ = object3dbase;
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
-	object_->SetModel("player.obj");
+	object_->SetModel("player/player.obj");
 	object_->SetScale({ 0.1f,0.1f,0.1f });
 	transform_.translate = { 0.0f,0.0f,0.0f };
 }
@@ -42,6 +42,10 @@ void Player::Update() {
 
 	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Attack();
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_R)) {
+		ThreeAttack();
 	}
 
 	//位置をobjectに反映
@@ -93,17 +97,50 @@ void Player::Attack() {
 	if (attackCooldown_ > 0) {
 		return;
 	}
-	// 弾の速度
+	//弾の速度
 	const float kBulletSpeed = 1.0f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
-	// 弾を生成し初期化
+	//弾を生成
 	playerBullet* newBullet = new playerBullet();
 	newBullet->Initialize(object3dBase_);
 	newBullet->SetVelocity(velocity);
-	newBullet->SetPosition(transform_.translate); // プレイヤーの位置に弾を設定
+	newBullet->SetPosition(transform_.translate); 
 
-	// 弾を登録
 	bullets_.push_back(newBullet);
 	attackCooldown_ = attackInterval_;
+}
+
+//三方向攻撃
+void Player::ThreeAttack() {
+	if (attackCooldown_ > 0) {
+		return;
+	}
+
+	const float kBulletSpeed = 1.0f;
+
+	//発射方向
+	std::vector<Vector3> directions = {
+		Vector3(-1, 0, 1),  
+		Vector3(0, 0, 1),   
+		Vector3(1, 0, 1)    
+	};
+
+	for (const auto& dir : directions) {
+		Vector3 velocity = Math::Normalize(dir); 
+		velocity = Math::Multiply(velocity ,kBulletSpeed);     
+
+		playerBullet* bullet = new playerBullet();
+		bullet->Initialize(object3dBase_);
+		bullet->SetVelocity(velocity);
+		bullet->SetPosition(transform_.translate);
+		bullets_.push_back(bullet);
+	}
+
+	attackCooldown_ = attackInterval_;
+}
+
+//衝突時コールバック
+void Player::OnCollision() {
+	isDead_ = true;
 }

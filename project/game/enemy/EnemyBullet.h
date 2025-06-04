@@ -2,6 +2,7 @@
 #include "Object3dBase.h"
 #include "Object3d.h"
 #include "Transform.h"
+#include "Math.h"
 
 class EnemyBullet
 {
@@ -12,7 +13,8 @@ public:
 	void Update();
 	//描画
 	void Draw();
-
+	//衝突時コールバック
+	void OnCollision();
 private:
 	Object3dBase* object3dBase_;
 	std::unique_ptr<Object3d>object_;
@@ -22,5 +24,10 @@ private:
 
 	//デスフラグ
 	bool isDead_ = false;
+	//デスタイマー
+	int deathTimer_ = kLifeTime;
+
+	//生存時間
+	static const int kLifeTime = 60 * 5;
 };
 

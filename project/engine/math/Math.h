@@ -6,6 +6,10 @@
 namespace Math {
 
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
+	//正規化
+	Vector3 Normalize(const Vector3& v);
+	Vector3 Multiply(const Vector3& v1, const Vector3& v2);
+	Vector3 Multiply(const Vector3& v, const float scalar);
 	//単位行列
 	Matrix4x4 MakeIdentity4x4();
 
@@ -13,7 +17,6 @@ namespace Math {
 
 	float Length(const Vector3& v);
 
-	Vector3 Normalize(const Vector3& v);
 
 	//平行移動行列
 	Matrix4x4 MakeTranslateMatrix(const Vector3& translate);

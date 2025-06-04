@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include <list>
 #include <memory>
+#include <vector>
 
 class Player
 {
@@ -24,6 +25,10 @@ public:
 	void Move();
 	//攻撃
 	void Attack();
+	//三方向攻撃
+	void ThreeAttack();
+	//衝突時コールバック
+	void OnCollision();
 public:
 	///Getter/// 
 

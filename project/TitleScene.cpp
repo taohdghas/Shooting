@@ -23,14 +23,15 @@ void TitleScene::Initialize() {
 	//タイトルのオブジェクト
 	title = std::make_unique<Object3d>();
 	title->Initialize(Object3dBase::GetInstance());
-	//title->SetModel("title.obj");
-	title->SetTranslate({ 0.0f,1.0f,0.0f });
+	title->SetModel("title.obj");
+	title->SetTranslate({ 0.0f,1.2f,1.0f });
 
 	//pushspaceのオブジェクト
 	pushspace = std::make_unique<Object3d>();
 	pushspace->Initialize(Object3dBase::GetInstance());
 	pushspace->SetModel("pushspace.obj");
-	pushspace->SetTranslate({ 0.0f,0.5f,0.0f });
+	pushspace->SetTranslate({ 0.0f,-1.0f,1.0f });
+	pushspace->SetScale({ 0.5f,0.5f,0.5f });
 
 	//カメラ
 	camera = std::make_unique<Camera>();
@@ -51,7 +52,7 @@ void TitleScene::Update() {
 	camera->Update();
 
 	//タイトルオブジェクト
-	//title->Update();
+	title->Update();
 
 	//pushspaceオブジェクト
 	pushspace->Update();
@@ -63,8 +64,11 @@ void TitleScene::Update() {
 
 	if (pushspaceMove) {
 		Vector3 pushspaceTranslate = pushspace->GetTranslate();
-		pushspaceTranslate.z -= 1.0f;
+		Vector3 titleTranslate = title->GetTranslate();
+		pushspaceTranslate.z -= 3.0f;
+		titleTranslate.z -= 3.0f;
 		pushspace->SetTranslate(pushspaceTranslate);
+		title->SetTranslate(titleTranslate);
 		if (pushspaceTranslate.z <= -300.0f) {
 			SceneManager::GetInstance()->ChangeScene("GAME");
 		}
@@ -91,7 +95,7 @@ void TitleScene::Draw() {
 	Object3dBase::GetInstance()->DrawBaseSet();
 
 	//タイトルオブジェクト
-	//title->Draw();
+	title->Draw();
 
 	//pushspaceオブジェクト
 	pushspace->Draw();
