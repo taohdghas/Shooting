@@ -49,6 +49,12 @@ void Input::Update() {
 	keyboard->GetDeviceState(sizeof(key), key);
 }
 
+//1フレーム入力無視
+void Input::ClearInput() {
+	memset(key, 0, sizeof(key));
+	memset(keyPre, 0, sizeof(keyPre));
+}
+
 bool Input::PushKey(BYTE keyNumber) {
 	//指定キーを押していればtrueを返す
 	if (key[keyNumber]) {

@@ -26,16 +26,15 @@ public:
 	//描画
 	void Draw() override;
 private:
-	//Sprite初期化
-	std::vector<std::unique_ptr<Sprite>>sprites;
-	//3Dオブジェクト
-	//std::vector<std::unique_ptr<Object3d>>object3ds;
-	std::unique_ptr<Object3d>object3d;
+	std::unique_ptr<Object3d>pushspace;
 	//パーティクルエミッター
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
 	//カメラ
 	std::unique_ptr<Camera>camera;
 	//ライト
 	std::unique_ptr<DirectionalLight>directionallight;
+
+	//スタート演出
+	bool pushspaceMove = false;
 };
 

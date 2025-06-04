@@ -8,6 +8,7 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "BaseScene.h"
+#include "Camera.h"
 
 #include "Player.h"
 #include "Skydome.h"

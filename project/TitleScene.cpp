@@ -11,27 +11,22 @@ void TitleScene::Initialize() {
 	//テクスチャ読み込み
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+	TextureManager::GetInstance()->LoadTexture("resources/pushspacecolor.png");
 
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.gltf");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
-
-	//オブジェクト
-	object3d = std::make_unique<Object3d>();
-	object3d->Initialize(Object3dBase::GetInstance());
-	object3d->SetTranslate({ 0.0f,0.0f,0.0f });
-	object3d->SetModel("plane.gltf");
-
+	ModelManager::GetInstance()->LoadModel("pushspace.obj");
 
 	//カメラ
 	camera = std::make_unique<Camera>();
 	camera->SetRotate({ 0.0f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
-	object3d->SetCamera(camera.get());
 
-	//ライト
-	directionallight = std::make_unique<DirectionalLight>();
-
+	pushspace = std::make_unique<Object3d>();
+	pushspace->Initialize(Object3dBase::GetInstance());
+	pushspace->SetModel("pushspace.obj");
+	pushspace->SetTranslate({ 0.0f,0.5f,0.0f });
 }
 
 //終了
@@ -44,11 +39,20 @@ void TitleScene::Finalize() {
 void TitleScene::Update() {
 	camera->Update();
 
-	object3d->Update();
+	pushspace->Update();
 
 	//エンターキーを押したらゲームシーンへ
-	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
-		SceneManager::GetInstance()->ChangeScene("GAME");
+	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		pushspaceMove = true;
+	}
+
+	if (pushspaceMove) {
+		Vector3 pushspaceTranslate = pushspace->GetTranslate();
+		pushspaceTranslate.z -= 1.0f;
+		pushspace->SetTranslate(pushspaceTranslate);
+		if (pushspaceTranslate.z <= -300.0f) {
+			SceneManager::GetInstance()->ChangeScene("GAME");
+		}
 	}
 
 #ifdef USE_IMGUI
@@ -62,19 +66,6 @@ void TitleScene::Update() {
 		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNode("Object")) {
-		Vector3 objectScale = object3d->GetScale();
-		Vector3 objectRotate = object3d->GetRotate();
-		Vector3 objectTranslate = object3d->GetTranslate();
-		ImGui::DragFloat3("ObjectScale", &objectScale.x, 0.1f);
-		ImGui::DragFloat3("ObjectRotate", &objectRotate.x, 0.1f);
-		ImGui::DragFloat3("ObjectTranslate", &objectTranslate.x, 0.1f);
-		object3d->SetScale({ objectScale.x,objectScale.y,objectScale.z });
-		object3d->SetRotate({ objectRotate.x,objectRotate.y,objectRotate.z });
-		object3d->SetTranslate({ objectTranslate.x,objectTranslate.y,objectTranslate.z });
-		ImGui::TreePop();
-	}
-	object3d->DebugUpdate();
 	ImGui::End();
 #endif
 }
@@ -84,7 +75,7 @@ void TitleScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
 
-	object3d->Draw();
+	pushspace->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

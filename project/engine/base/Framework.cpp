@@ -36,7 +36,7 @@ void Framework::Initialize() {
 	camera_ = std::make_unique<Camera>();
 	camera_->SetRotate({ 0.3f,0.0f,0.0f });
 	camera_->SetTranslate({ 0.0f,4.0f,-10.0f });
-
+	Object3dBase::GetInstance()->SetDefaultCamera(camera_.get());
 	//パーティクルマネージャ
 	ParticleManager::GetInstance()->Initialize(directxBase_.get(), SrvManager::GetInstance(), camera_.get());
 

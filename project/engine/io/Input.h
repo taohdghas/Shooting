@@ -17,6 +17,9 @@ public:
 	void Finalize();
 	//更新
 	void Update();
+	//1フレーム入力無視
+	void ClearInput();
+
 /// <summary>
 /// キーの押下をチェック
 /// </summary>

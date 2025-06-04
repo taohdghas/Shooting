@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "SceneManager.h"
 #include "ImGuiManager.h"
 
 
@@ -18,11 +19,7 @@ void GameScene::Initialize() {
 
 	//プレイヤー
 	player = std::make_unique<Player>();
-	playerObject = new Object3d();
-	playerObject->Initialize(Object3dBase::GetInstance());
-	playerObject->SetModel("plane.obj");
-	playerObject->SetScale(Vector3{ 0.2f,0.2f,0.2f });
-	player->Initialize(playerObject);
+	player->Initialize(Object3dBase::GetInstance());
 
 	//天球
 	skydome = std::make_unique<Skydome>();
@@ -30,6 +27,10 @@ void GameScene::Initialize() {
 	skydomeObject->Initialize(Object3dBase::GetInstance());
 	//skydomeObject->SetModel("skydome.obj");
 	skydome->Initialize(skydomeObject);
+
+	//最初の1フレーム入力を無視
+	Input::GetInstance()->ClearInput();
+
 }
 
 //終了
@@ -37,7 +38,6 @@ void GameScene::Finalize() {
 	//Audio
 	Audio::GetInstance()->Finalize();
 
-	delete playerObject;
 	delete skydomeObject;
 }
 
@@ -48,6 +48,11 @@ void GameScene::Update() {
 
 	//天球
 	//skydome->Update();
+
+	//タイトルシーンへ
+	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
 }
 
 //描画
