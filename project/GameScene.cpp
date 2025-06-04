@@ -12,10 +12,19 @@ void GameScene::Initialize() {
 	//テクスチャ読み込み
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+	TextureManager::GetInstance()->LoadTexture("resources/player.png");
+	TextureManager::GetInstance()->LoadTexture("resources/playerbullet.png");
+	TextureManager::GetInstance()->LoadTexture("resources/enemy.png");
+	TextureManager::GetInstance()->LoadTexture("resources/enemybullet.png");
 
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+	ModelManager::GetInstance()->LoadModel("player.obj");
+	ModelManager::GetInstance()->LoadModel("playerbullet.obj");
+	ModelManager::GetInstance()->LoadModel("enemy.obj");
+	ModelManager::GetInstance()->LoadModel("enemybullet.obj");
+
 
 	//プレイヤー
 	player = std::make_unique<Player>();

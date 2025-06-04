@@ -26,13 +26,16 @@ public:
 	//描画
 	void Draw() override;
 private:
-	std::unique_ptr<Object3d>pushspace;
 	//パーティクルエミッター
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
 	//カメラ
 	std::unique_ptr<Camera>camera;
 	//ライト
 	std::unique_ptr<DirectionalLight>directionallight;
+	//タイトルのオブジェクト
+	std::unique_ptr<Object3d>title;
+	//pushspaceのオブジェクト
+	std::unique_ptr<Object3d>pushspace;
 
 	//スタート演出
 	bool pushspaceMove = false;

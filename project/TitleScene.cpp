@@ -12,21 +12,32 @@ void TitleScene::Initialize() {
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 	TextureManager::GetInstance()->LoadTexture("resources/pushspacecolor.png");
+	TextureManager::GetInstance()->LoadTexture("resources/white.png");
 
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.gltf");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+	ModelManager::GetInstance()->LoadModel("title.obj");
 	ModelManager::GetInstance()->LoadModel("pushspace.obj");
+
+	//タイトルのオブジェクト
+	title = std::make_unique<Object3d>();
+	title->Initialize(Object3dBase::GetInstance());
+	//title->SetModel("title.obj");
+	title->SetTranslate({ 0.0f,1.0f,0.0f });
+
+	//pushspaceのオブジェクト
+	pushspace = std::make_unique<Object3d>();
+	pushspace->Initialize(Object3dBase::GetInstance());
+	pushspace->SetModel("pushspace.obj");
+	pushspace->SetTranslate({ 0.0f,0.5f,0.0f });
 
 	//カメラ
 	camera = std::make_unique<Camera>();
 	camera->SetRotate({ 0.0f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
 
-	pushspace = std::make_unique<Object3d>();
-	pushspace->Initialize(Object3dBase::GetInstance());
-	pushspace->SetModel("pushspace.obj");
-	pushspace->SetTranslate({ 0.0f,0.5f,0.0f });
+	pushspace->SetCamera(camera.get());
 }
 
 //終了
@@ -39,6 +50,10 @@ void TitleScene::Finalize() {
 void TitleScene::Update() {
 	camera->Update();
 
+	//タイトルオブジェクト
+	//title->Update();
+
+	//pushspaceオブジェクト
 	pushspace->Update();
 
 	//エンターキーを押したらゲームシーンへ
@@ -75,6 +90,10 @@ void TitleScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
 
+	//タイトルオブジェクト
+	//title->Draw();
+
+	//pushspaceオブジェクト
 	pushspace->Draw();
 
 	//共通描画設定

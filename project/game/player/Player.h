@@ -15,7 +15,7 @@ public:
 
 	~Player();
 	//初期化
-	void Initialize(Object3dBase*object3dbase);
+	void Initialize(Object3dBase* object3dbase);
 	//更新
 	void Update();
 	//描画
@@ -24,6 +24,17 @@ public:
 	void Move();
 	//攻撃
 	void Attack();
+public:
+	///Getter/// 
+
+	//位置取得
+	const Vector3& GetPosition()const { return transform_.translate; }
+
+	///Setter/// 
+	void SetPosition(const Vector3& position) { transform_.translate = position; }
+	
+
+
 private:
 	Object3dBase* object3dBase_;
 
@@ -32,7 +43,7 @@ private:
 	Transform transform_;
 	//弾のリスト
 	std::list<playerBullet*>bullets_;
-	
+
 	//デスフラグ
 	bool isDead_ = false;
 	//プレイヤーの移動速度

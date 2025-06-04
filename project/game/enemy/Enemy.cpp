@@ -42,5 +42,14 @@ void Enemy::Laser() {
 		return;
 	}
 
+	//発射タイマー
+	static int fireTimer = 0;
+	fireTimer++;
+
+	//インターバルよりも小さい場合スルー
+	if (fireTimer < kFireInterval) {
+		return;
+	}
+
 
 }

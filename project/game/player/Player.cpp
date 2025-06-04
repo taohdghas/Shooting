@@ -15,7 +15,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	object3dBase_ = object3dbase;
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
-	object_->SetModel("plane.obj");
+	object_->SetModel("player.obj");
 	object_->SetScale({ 0.1f,0.1f,0.1f });
 	transform_.translate = { 0.0f,0.0f,0.0f };
 }
