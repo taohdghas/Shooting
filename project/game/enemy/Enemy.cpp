@@ -44,6 +44,7 @@ void Enemy::Laser() {
 	}
 
 	//発射タイマー
+
 	static int fireTimer = 0;
 	fireTimer++;
 
