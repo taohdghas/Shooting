@@ -12,6 +12,12 @@
 #include <string>
 #include <random>
 
+//パーティクル種類
+enum class ParticleType {
+	Normal,
+	Ring,
+	Cylinder,
+};
 
 class ParticleManager
 {
@@ -67,6 +73,10 @@ public:
 		Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;//インスタンシングリソース
 		uint32_t kNumInstance;//インスタンス数
 		ParticleForGPU* instancingData ;//インスタンシングデータを書き込むためのポインタ
+		ParticleType type;//パーティクルの種類
+		ModelData modeldata;
+		Microsoft::WRL::ComPtr<ID3D12Resource>vertexResource;//頂点リソース
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 	};
 public:
 	//シングルトンインスタンスの取得
@@ -80,13 +90,16 @@ public:
 
 	void Draw();
 	//パーティクルグループの生成
-	void CreateparticleGroup(const std::string name, const std::string textureFilePath);
+	void CreateparticleGroup(const std::string name, const std::string textureFilePath,ParticleType type);
 	//パーティクル生成関数
-	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate);
+	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate, ParticleType type);
 	//パーティクルの発生
 	void Emit(const std::string name, const Vector3& position, uint32_t count);
 	//ParticleがFieldの範囲内か判定
 	bool IsCollision(const AABB& aabb, const Vector3& point);
+public:
+	//ParticleTypeのゲッター
+	ParticleType GetParticleType(const std::string& name);
 private:
 	//ルートシグネチャの作成
 	void GenerateRootSignature();
@@ -94,6 +107,10 @@ private:
 	void GenerategraphicsPipeline();
 	//頂点データ作成
 	void VertexDataCreate();
+	//Ringの頂点データ作成
+	void RingVertexDataCreate();
+	//Cylinderの頂点データ作成
+	void CylinderVertexDataCreate();
 	//マテリアルデータ作成
 	void MaterialCreate();
 private:

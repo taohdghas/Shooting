@@ -362,6 +362,26 @@ void ParticleManager::VertexDataCreate() {
 	//頂点データをリソースにコピー
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 }
+
+//Ringの頂点データ作成
+void ParticleManager::RingVertexDataCreate() {
+	const uint32_t kRingDivide = 32;
+	const float kOuterRadius = 1.0f;
+	const float kInnerRadius = 0.2f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
+
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+		float sin = std::sin(index * radianPerDivide);
+		float cost = std::cos(index * radianPerDivide);
+		float sinNext = std::sin((index + 1) * radianPerDivide);
+		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float u = float(index) / float(kRingDivide);
+		float uNext = float(index + 1) / float(kRingDivide);
+
+	
+	}
+}
+
 //マテリアルデータ作成
 void ParticleManager::MaterialCreate() {
 	//リソースを作る
@@ -374,4 +394,10 @@ void ParticleManager::MaterialCreate() {
 	materialData->enableLighting = false;
 	//UVTransform行列を単位行列で初期化
 	materialData->uvTransform = Math::MakeIdentity4x4();
+}
+
+//ParticleTypeのゲッター
+ParticleType ParticleManager::GetParticleType(const std::string& name) {
+	assert(particleGroups.find(name) != particleGroups.end());
+	return particleGroups[name].type;
 }
