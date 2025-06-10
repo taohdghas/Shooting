@@ -8,6 +8,7 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "BaseScene.h"
+#include "JsonManager.h"
 
 class GameScene : public BaseScene
 {
@@ -25,5 +26,10 @@ private:
 	std::vector<std::unique_ptr<Sprite>>sprites;
 	//3Dオブジェクト
 	std::vector<std::unique_ptr<Object3d>>object3ds;
+	//jsonManager
+	std::unique_ptr<JsonManager>jsonManager;
+	//レベルデータ
+	LevelData* levelData;
+
 };
 

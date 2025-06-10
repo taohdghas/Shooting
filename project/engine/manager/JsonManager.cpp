@@ -14,9 +14,9 @@ JsonManager* JsonManager::GetInstance() {
 }
 
 //Jsonファイルの読み込み
-void JsonManager::LoadJsonFile() {
+LevelData* JsonManager::LoadJsonFile(const std::string&filename) {
 	//連続してフルパスを得る
-	const std::string fullpath =;
+	const std::string fullpath = "resources/levels" + filename + ".json";
 
 	//ファイルストリーム
 	std::ifstream file;
@@ -27,7 +27,7 @@ void JsonManager::LoadJsonFile() {
 	if (file.fail()) {
 		assert(0);
 	}
-
+	
 	//JSON文字列から解凍したデータ
 	nlohmann::json deserialized;
 
@@ -54,38 +54,40 @@ void JsonManager::LoadJsonFile() {
 		//種別を取得
 		std::string type = object["type"].get<std::string>();
 
+		//種類ごとの処理
 		//MESH
 		if (type.compare("MESH") == 0) {
 			//要素追加
-			levelData->objects.emplace_back(ObjectData{});
+			levelData->objects.emplace_back(LevelData::ObjectData{});
 			//追加した要素の参照を得る
-			ObjectData& objectData = levelData->objects.back();
+			LevelData::ObjectData& objectData = levelData->objects.back();
 
 			if (object.contains("file_name")) {
 				//ファイル名
-				objectData.filename = object["file_name"];
+				objectData.fileName = object["file_name"];
 			}
 
 			//トランスフォームのパラメータ読み込み
 			nlohmann::json& transform = object["transform"];
 			//平行移動
-			objectData.transform.translate.x = (float)transform["translation"][0];
-			objectData.transform.translate.y = (float)transform["translation"][2];
-			objectData.transform.translate.z = (float)transform["translation"][1];
+			objectData.translation.x = (float)transform["translation"][0];
+			objectData.translation.y = (float)transform["translation"][2];
+			objectData.translation.z = (float)transform["translation"][1];
 			//回転角
-			objectData.transform.rotate.x = -(float)transform["rotation"][0];
-			objectData.transform.rotate.y = -(float)transform["rotation"][2];
-			objectData.transform.rotate.z = -(float)transform["rotation"][1];
+			objectData.rotation.x = -(float)transform["rotation"][0];
+			objectData.rotation.y = -(float)transform["rotation"][2];
+			objectData.rotation.z = -(float)transform["rotation"][1];
 			//スケーリング
-			objectData.transform.scale.x = (float)transform["scaling"][0];
-			objectData.transform.scale.y = (float)transform["scaling"][2];
-			objectData.transform.scale.z = (float)transform["scaling"][1];
+			objectData.scaling.x = (float)transform["scaling"][0];
+			objectData.scaling.y = (float)transform["scaling"][2];
+			objectData.scaling.z = (float)transform["scaling"][1];
 		}
 
 		//オブジェクトを再帰関数にまとめ再帰呼出で枝を走査する
 		if (object.contains("children")) {
 
 		}
+
 
 	}
 

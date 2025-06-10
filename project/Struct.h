@@ -83,12 +83,4 @@ struct SpotLight {
 	float cosFalloffStart;
 	float padding[2];
 };
-//オブジェクトデータ
-struct ObjectData {
-	std::string filename;
-	Transform transform;
-};
-//レベルデータ
-struct LevelData {
-	std::list<ObjectData>objects;
-};
+//

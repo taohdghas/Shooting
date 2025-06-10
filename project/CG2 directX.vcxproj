@@ -163,13 +163,13 @@
     <LibraryPath>$(ProjectDir)Lib;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)..\generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\generated\outputs\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)imgui;$(ProjectDir)externals\nlohmannjson\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(ProjectDir)Lib;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)..\generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\generated\outputs\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)imgui;$(ProjectDir)externals\nlohmannjson\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

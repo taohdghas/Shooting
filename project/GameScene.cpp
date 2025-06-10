@@ -35,6 +35,12 @@ void GameScene::Initialize() {
 	object3ds[1]->SetTranslate({ 2.0f,0.0f,0.0f });
 
 	Vector3 objectrotate = object3ds[0]->GetRotate();
+
+	//JsonManager
+	jsonManager = std::make_unique<JsonManager>();
+	levelData = jsonManager->LoadJsonFile("untitled");
+	
+
 }
 
 //終了
