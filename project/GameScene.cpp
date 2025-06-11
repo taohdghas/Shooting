@@ -37,6 +37,20 @@ void GameScene::Initialize() {
 	//skydomeObject->SetModel("skydome.obj");
 	skydome->Initialize(skydomeObject);
 
+	//パーティクル
+	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
+	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/circle2.png", ParticleType::Normal);
+	ParticleManager::GetInstance()->CreateparticleGroup("particle3", "resources/gradationLine.png", ParticleType::Ring);
+	ParticleManager::GetInstance()->CreateparticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
+	ParticleManager::GetInstance()->CreateparticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
+
+	for (uint32_t i = 0; i < 1; ++i) {
+		auto particle = std::make_unique<ParticleEmitter>();
+		particle->Initialize("particle5");
+		particle->Emit();
+		particleEmitter.push_back(std::move(particle));
+	}
+
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
 
@@ -58,6 +72,13 @@ void GameScene::Update() {
 	//天球
 	//skydome->Update();
 
+	//パーティクル
+	ParticleManager::GetInstance()->Update();
+	for (size_t i = 0; i < particleEmitter.size(); ++i) {
+		auto& particle = particleEmitter[i];
+		particle->Update();
+	}
+
 	//タイトルシーンへ
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
 		SceneManager::GetInstance()->ChangeScene("TITLE");
@@ -77,4 +98,7 @@ void GameScene::Draw() {
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
+
+	//パーティクル
+	ParticleManager::GetInstance()->Draw();
 }

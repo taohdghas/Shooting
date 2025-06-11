@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 #include "Sprite.h"
 #include "SpriteBase.h"
 #include "Object3d.h"
@@ -7,8 +6,11 @@
 #include "Audio.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
+#include "ParticleEmitter.h"
 #include "BaseScene.h"
 #include "Camera.h"
+
+#include <vector>
 
 #include "Player.h"
 #include "Skydome.h"
@@ -31,5 +33,9 @@ private:
 	//天球
 	std::unique_ptr<Skydome>skydome;
 	Object3d* skydomeObject;
+
+	//パーティクルエミッター
+	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
+
 };
 

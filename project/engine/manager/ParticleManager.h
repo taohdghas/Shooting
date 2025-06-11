@@ -14,9 +14,10 @@
 
 //パーティクル種類
 enum class ParticleType {
-	Normal,
-	Ring,
-	Cylinder,
+	Normal,//通常
+	Ring,//Ring型
+	Cylinder,//Cylinder型
+	Explosive,//爆発
 };
 
 class ParticleManager
@@ -74,7 +75,7 @@ public:
 		uint32_t kNumInstance;//インスタンス数
 		ParticleForGPU* instancingData ;//インスタンシングデータを書き込むためのポインタ
 		ParticleType type;//パーティクルの種類
-		ModelData modeldata;
+		ModelData modelData;
 		Microsoft::WRL::ComPtr<ID3D12Resource>vertexResource;//頂点リソース
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 	};
@@ -106,11 +107,11 @@ private:
 	//グラフィックスパイプラインの生成
 	void GenerategraphicsPipeline();
 	//頂点データ作成
-	void VertexDataCreate();
+	void VertexDataCreate(ModelData&modelData);
 	//Ringの頂点データ作成
-	void RingVertexDataCreate();
+	void RingVertexDataCreate(ModelData&modelData);
 	//Cylinderの頂点データ作成
-	void CylinderVertexDataCreate();
+	void CylinderVertexDataCreate(ModelData&modelData);
 	//マテリアルデータ作成
 	void MaterialCreate();
 private:
