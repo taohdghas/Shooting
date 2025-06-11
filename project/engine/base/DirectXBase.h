@@ -40,6 +40,8 @@ public:
 	void CreateRootSignature();
 	//グラフィックスパイプライン作成
 	void CreatePipelineState();
+	//Deapth用SRV作成
+	void CreateDepthSRV();
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
@@ -79,6 +81,10 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
 	//DSV　GPUデスクリプタハンドル取得関数
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
+	//SRV CPUデスクリプタハンドル取得関数
+	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
+	//SRV GPUデスクリプタハンドル取得関数
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
 
 private:
 	//デバイスの初期化

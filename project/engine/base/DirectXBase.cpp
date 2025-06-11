@@ -641,6 +641,16 @@ void DirectXBase::CreatePipelineState() {
 	assert(SUCCEEDED(hr));
 }
 
+//Deapth用SRV作成
+void DirectXBase::CreateDepthSRV() {
+	D3D12_SHADER_RESOURCE_VIEW_DESC depthTextureSrvDesc{};
+	depthTextureSrvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	depthTextureSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	depthTextureSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	depthTextureSrvDesc.Texture2D.MipLevels = 1;
+	device->CreateShaderResourceView(depthStencilResource.Get(),&depthTextureSrvDesc,)
+}
+
 //テクスチャデータの転送
 Microsoft::WRL::ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages) {
 	std::vector<D3D12_SUBRESOURCE_DATA>subresources;
@@ -880,4 +890,14 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectXBase::GetDSVCPUDescriptorHandle(uint32_t inde
 //DSV　GPUデスクリプタハンドル取得関数
 D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetDSVGPUDescriptorHandle(uint32_t index) {
 	return GetGPUDescriptorHandle(dsvDescriptorHeap, descriptorSizeDSV, index);
+}
+
+//SRV CPUデスクリプタハンドル取得関数
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXBase::GetSRVCPUDescriptorHandle(uint32_t index) {
+	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
+}
+
+//SRV GPUデスクリプタハンドル取得関数
+D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetSRVGPUDescriptorHandle(uint32_t index) {
+	return GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
 }
