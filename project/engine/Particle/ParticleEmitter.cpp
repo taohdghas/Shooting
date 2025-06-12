@@ -40,13 +40,6 @@ void ParticleEmitter::Initialize(std::string name) {
 		emitter_.transform.translate = { 0.0f,0.0f,0.0f };
 		break;
 	}
-
-	emitter_.count = 3;
-	emitter_.frequency = 0.5f;//0.5秒ごとに発生
-	emitter_.frequencyTime = 0.0f;
-	emitter_.transform.translate = { 0.0f,0.0f,0.0f };
-	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	emitter_.transform.scale = { 1.0f,1.0f,1.0f };
 }
 
 //更新

@@ -17,8 +17,6 @@ void ParticleManager::Initialize(DirectXBase*directxBase,SrvManager*srvManager, 
 	this->srvManager_ = srvManager;
 	this->camera_ = camera;
 	randomEngine.seed(seedGenerator());
-	//ルートシグネチャ
-	//GenerateRootSignature();
 	//グラフィックスパイプライン
 	GenerategraphicsPipeline();
 	//マテリアルデータ
@@ -126,8 +124,7 @@ void ParticleManager::Draw() {
 	directxBase_->Getcommandlist()->SetPipelineState(graphicsPipelineState.Get());
 	//描画形状設定
 	directxBase_->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//VBV設定
-	directxBase_->Getcommandlist()->IASetVertexBuffers(0, 1, &vertexBufferView);
+
 	//パーティクルについて処理
 	for (auto& [name,ParticleGroups] : particleGroups) {
 		//頂点バッファ
@@ -148,7 +145,6 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 	//登録済みの名前かチェック
 	assert(particleGroups.find(name) == particleGroups.end());
 	ParticleGroup newParticle;
-	//particleGroups[name] = newParticle;
 	//テクスチャファイルパスを設定
 	newParticle.materialData.textureFilePath = textureFilePath;
 	//テクスチャを読み込む
