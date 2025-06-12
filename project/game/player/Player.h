@@ -34,6 +34,8 @@ public:
 
 	//位置取得
 	const Vector3& GetPosition()const { return transform_.translate; }
+	//弾リスト取得
+	const std::list<playerBullet*>& GetBullets()const { return bullets_; }
 
 	///Setter/// 
 	void SetPosition(const Vector3& position) { transform_.translate = position; }

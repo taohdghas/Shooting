@@ -30,6 +30,10 @@ void GameScene::Initialize() {
 	player = std::make_unique<Player>();
 	player->Initialize(Object3dBase::GetInstance());
 
+	//敵
+	enemy = std::make_unique<Enemy>();
+	enemy->Initialize(Object3dBase::GetInstance());
+
 	//天球
 	skydome = std::make_unique<Skydome>();
 	skydomeObject = new Object3d();
@@ -44,12 +48,14 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->CreateparticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
 
+	/*
 	for (uint32_t i = 0; i < 1; ++i) {
 		auto particle = std::make_unique<ParticleEmitter>();
 		particle->Initialize("particle5");
 		particle->Emit();
 		particleEmitter.push_back(std::move(particle));
 	}
+	*/
 
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
@@ -58,6 +64,8 @@ void GameScene::Initialize() {
 
 //終了
 void GameScene::Finalize() {
+	//パーティクル
+	ParticleManager::GetInstance()->Finalize();
 	//Audio
 	Audio::GetInstance()->Finalize();
 
@@ -69,15 +77,20 @@ void GameScene::Update() {
 	//プレイヤー
 	player->Update();
 
+	//敵
+	enemy->Update();
+
 	//天球
 	//skydome->Update();
 
+	/*
 	//パーティクル
 	ParticleManager::GetInstance()->Update();
 	for (size_t i = 0; i < particleEmitter.size(); ++i) {
 		auto& particle = particleEmitter[i];
 		particle->Update();
 	}
+	*/
 
 	//タイトルシーンへ
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
@@ -93,6 +106,9 @@ void GameScene::Draw() {
 	//プレイヤー
 	player->Draw();
 
+	//敵
+	enemy->Draw();
+
 	//天球
 	//skydome->Draw();
 
@@ -100,5 +116,5 @@ void GameScene::Draw() {
 	SpriteBase::GetInstance()->DrawBaseSet();
 
 	//パーティクル
-	ParticleManager::GetInstance()->Draw();
+//	ParticleManager::GetInstance()->Draw();
 }

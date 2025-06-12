@@ -6,6 +6,8 @@
 namespace Math {
 
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
+	//減算
+	Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 	//正規化
 	Vector3 Normalize(const Vector3& v);
 	Vector3 Multiply(const Vector3& v1, const Vector3& v2);

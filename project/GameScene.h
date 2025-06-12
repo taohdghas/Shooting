@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "Player.h"
+#include "Enemy.h"
 #include "Skydome.h"
 
 class GameScene : public BaseScene
@@ -30,6 +31,9 @@ private:
 	//プレイヤー
 	std::unique_ptr<Player>player;
 	Object3d* playerObject;
+	//敵
+	std::unique_ptr<Enemy>enemy;
+
 	//天球
 	std::unique_ptr<Skydome>skydome;
 	Object3d* skydomeObject;

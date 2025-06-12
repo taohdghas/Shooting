@@ -15,6 +15,16 @@ public:
 	void Draw();
 	//衝突時コールバック
 	void OnCollision();
+
+	//デスフラグが立ったか
+	bool IsDead()const { return isDead_; }
+public:
+///Getter///
+const Vector3& GetPosition()const { return transform_.translate; }
+
+///Setter///
+void SetPosition(const Vector3& position) { transform_.translate = position; }
+void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 private:
 	Object3dBase* object3dBase_;
 	std::unique_ptr<Object3d>object_;

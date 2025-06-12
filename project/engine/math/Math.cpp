@@ -7,6 +7,11 @@ namespace Math {
 		return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 	}
 
+	//減算
+	Vector3 Math::Subtract(const Vector3& v1, const Vector3& v2) {
+		return { v1.x - v2.x,v1.y - v2.y,v1.z - v2.z };
+	}
+
 	//正規化
 	Vector3 Math::Normalize(const Vector3& v) {
 		Vector3 result;
