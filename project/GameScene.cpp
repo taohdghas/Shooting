@@ -36,10 +36,7 @@ void GameScene::Initialize() {
 
 	//天球
 	skydome = std::make_unique<Skydome>();
-	skydomeObject = new Object3d();
-	skydomeObject->Initialize(Object3dBase::GetInstance());
-	//skydomeObject->SetModel("skydome.obj");
-	skydome->Initialize(skydomeObject);
+
 
 	//パーティクル
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
@@ -48,15 +45,14 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->CreateparticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
 
-	/*
+	
 	for (uint32_t i = 0; i < 1; ++i) {
 		auto particle = std::make_unique<ParticleEmitter>();
 		particle->Initialize("particle5");
 		particle->Emit();
 		particleEmitter.push_back(std::move(particle));
 	}
-	*/
-
+	
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
 
@@ -64,12 +60,10 @@ void GameScene::Initialize() {
 
 //終了
 void GameScene::Finalize() {
-	//パーティクル
-	ParticleManager::GetInstance()->Finalize();
+	//パーティクルグループの開放
+	ParticleManager::GetInstance()->Clear();
 	//Audio
 	Audio::GetInstance()->Finalize();
-
-	delete skydomeObject;
 }
 
 //更新
@@ -83,14 +77,14 @@ void GameScene::Update() {
 	//天球
 	//skydome->Update();
 
-	/*
+	
 	//パーティクル
 	ParticleManager::GetInstance()->Update();
 	for (size_t i = 0; i < particleEmitter.size(); ++i) {
 		auto& particle = particleEmitter[i];
 		particle->Update();
 	}
-	*/
+	
 
 	//タイトルシーンへ
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
@@ -116,5 +110,5 @@ void GameScene::Draw() {
 	SpriteBase::GetInstance()->DrawBaseSet();
 
 	//パーティクル
-//	ParticleManager::GetInstance()->Draw();
+	ParticleManager::GetInstance()->Draw();
 }

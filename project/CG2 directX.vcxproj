@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseScene.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="game\enemy\EnemyBullet.cpp" />
     <ClCompile Include="game\enemy\Enemy.cpp" />
     <ClCompile Include="engine\manager\CameraManager.cpp" />
@@ -57,6 +58,7 @@
   <ItemGroup>
     <ClInclude Include="AbstractSceneFactory.h" />
     <ClInclude Include="BaseScene.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="game\enemy\EnemyBullet.h" />
     <ClInclude Include="game\enemy\Enemy.h" />
     <ClInclude Include="engine\manager\CameraManager.h" />

@@ -82,13 +82,15 @@ public:
 public:
 	//シングルトンインスタンスの取得
 	static ParticleManager* GetInstance();
-
+	//初期化
 	void Initialize(DirectXBase* directxBase, SrvManager* srvManager, Camera* camera);
 	//終了
 	void Finalize();
-
+	//シーン終了時に呼ぶ
+	void Clear();
+	//更新
 	void Update();
-
+	//描画
 	void Draw();
 	//パーティクルグループの生成
 	void CreateparticleGroup(const std::string name, const std::string textureFilePath,ParticleType type);
