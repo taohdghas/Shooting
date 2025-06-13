@@ -25,6 +25,10 @@ void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
             if (length <= combinedRadius) {
                 enemy->TakeDamage(bullet->GetAttack());
                 bullet->OnCollision();
+
+                if (enemy->IsDead()) {
+                    enemy->SetisDeathParticle(true);
+                }
             }
         }
     }

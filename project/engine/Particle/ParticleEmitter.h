@@ -16,6 +16,8 @@ public:
 	void Update();
 	//パーティクルの発生
 	void Emit();
+public:
+	void SetPosition(const Vector3& pos) { emitter_.transform.translate = pos; }
 private:
 	Emitter emitter_;
 	std::string name_;

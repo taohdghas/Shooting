@@ -22,6 +22,9 @@ public:
 	void TakeDamage(int damege);
 	//デスフラグが立ったか
 	bool IsDead()const { return isDead_; }
+	//デスパーティクル発生フラグが立ったか
+	bool IsDeathParticle()const { return isDeathParticle_; }
+
 public:
 	///Gettter///
 	//位置
@@ -31,6 +34,9 @@ public:
 	//弾リストを取得
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets()const { return bullets_; }
 
+	///Setter///
+	//デスパーティクルフラグ
+	void SetisDeathParticle(bool flag) { isDeathParticle_ = flag; }
 private:
 	Object3dBase* object3dBase_;
 	std::unique_ptr<Object3d>object_;
@@ -47,6 +53,8 @@ private:
 	float radius_ = 1.0f;
 	//デスフラグ
 	bool isDead_ = false;
+	//デスパーティクル発生フラグ
+	bool isDeathParticle_ = false;
 	//レーザー発射カウントタイマー
 	int fireTimerCount_ = 0;
 	//発射間隔

@@ -93,6 +93,7 @@ void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
 	if (hp_ <= 0) {
 		hp_ = 0;
-		onCollision();
+		isDead_ = true;
+		isDeathParticle_ = true;
 	}
 }

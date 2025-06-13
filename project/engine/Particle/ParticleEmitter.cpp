@@ -19,7 +19,7 @@ void ParticleEmitter::Initialize(std::string name) {
 	//Ring型
 	case ParticleType::Ring:
 		emitter_.count = 1;
-		emitter_.frequency = 1.0f;
+		emitter_.frequency = 99.0f;
 		emitter_.transform.scale = { 1.0f,1.0f,1.0f };
 		emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 		emitter_.transform.translate = { 0.0f,0.0f,0.0f };
