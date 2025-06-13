@@ -89,7 +89,7 @@ void Enemy::onCollision() {
 }
 
 //HP減少関数
-void Enemy::TakeDamege(int damage) {
+void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
 	if (hp_ <= 0) {
 		hp_ = 0;

@@ -4,10 +4,7 @@
 Player::Player() {}
 
 Player::~Player() {
-	//弾の解放
-	for (playerBullet* bullet : bullets_) {
-		delete bullet;
-	}
+	
 }
 
 //初期化
@@ -30,12 +27,8 @@ void Player::Update() {
 		attackCooldown_--;
 	}
 	//デスフラグが立った弾を削除
-	bullets_.remove_if([](playerBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
+	bullets_.remove_if([](const std::unique_ptr<playerBullet>& bullet) {
+		return bullet->IsDead();
 		});
 
 	Move();
@@ -54,7 +47,7 @@ void Player::Update() {
 	object_->Update();
 
 	//弾の更新
-	for (playerBullet* bullet : bullets_) {
+	for (const auto& bullet : bullets_) {
 		bullet->Update();
 	}
 
@@ -70,7 +63,7 @@ void Player::Draw() {
 	object_->Draw();
 
 	//プレイヤー弾の描画
-	for (playerBullet* bullet : bullets_) {
+	for (const auto& bullet : bullets_) {
 		bullet->Draw();
 	}
 }
@@ -102,12 +95,11 @@ void Player::Attack() {
 	Vector3 velocity(0, 0, kBulletSpeed);
 
 	//弾を生成
-	playerBullet* newBullet = new playerBullet();
+	auto newBullet = std::make_unique<playerBullet>();
 	newBullet->Initialize(object3dBase_);
 	newBullet->SetVelocity(velocity);
-	newBullet->SetPosition(transform_.translate); 
-
-	bullets_.push_back(newBullet);
+	newBullet->SetPosition(transform_.translate);
+	bullets_.push_back(std::move(newBullet));
 	attackCooldown_ = attackInterval_;
 }
 
@@ -130,11 +122,11 @@ void Player::ThreeAttack() {
 		Vector3 velocity = Math::Normalize(dir); 
 		velocity = Math::Multiply(velocity ,kBulletSpeed);     
 
-		playerBullet* bullet = new playerBullet();
-		bullet->Initialize(object3dBase_);
-		bullet->SetVelocity(velocity);
-		bullet->SetPosition(transform_.translate);
-		bullets_.push_back(bullet);
+		auto newBullet = std::make_unique<playerBullet>();
+		newBullet->Initialize(object3dBase_);
+		newBullet->SetVelocity(velocity);
+		newBullet->SetPosition(transform_.translate);
+		bullets_.push_back(std::move(newBullet));
 	}
 
 	attackCooldown_ = attackInterval_;
@@ -143,4 +135,13 @@ void Player::ThreeAttack() {
 //衝突時コールバック
 void Player::OnCollision() {
 	isDead_ = true;
+}
+
+//HP減少関数
+void Player::TakeDamage(int damage) {
+	hp_ -= damage;
+	if (hp_ <= 0) {
+		hp_ = 0;
+		OnCollision();
+	}
 }

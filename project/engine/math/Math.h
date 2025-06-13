@@ -3,8 +3,12 @@
 #include "Matrix4x4.h"
 #include <corecrt_math.h>
 
-namespace Math {
+inline Vector3 operator-(const Vector3& lhs, const Vector3& rhs) {
+	return { lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z };
+}
 
+namespace Math {
+	
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	//減算
 	Vector3 Subtract(const Vector3& v1, const Vector3& v2);
@@ -18,7 +22,6 @@ namespace Math {
 	Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 
 	float Length(const Vector3& v);
-
 
 	//平行移動行列
 	Matrix4x4 MakeTranslateMatrix(const Vector3& translate);

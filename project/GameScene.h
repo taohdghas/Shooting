@@ -9,6 +9,7 @@
 #include "ParticleEmitter.h"
 #include "BaseScene.h"
 #include "Camera.h"
+#include "CollisionManager.h"
 
 #include <vector>
 
@@ -40,6 +41,7 @@ private:
 
 	//パーティクルエミッター
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
-
+	//衝突マネージャー
+	std::unique_ptr<CollisionManager>collisionManager;
 };
 

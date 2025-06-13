@@ -37,7 +37,7 @@ private:
 	int deathTimer;
 	//デスフラグ
 	bool isDead_ = false;
-	float radius_ = 1.0f;
+	float radius_ = 0.1f;
 	uint32_t attack = 5;
 
 };

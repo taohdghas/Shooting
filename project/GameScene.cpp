@@ -53,6 +53,9 @@ void GameScene::Initialize() {
 		particleEmitter.push_back(std::move(particle));
 	}
 	
+	//衝突マネージャー
+	collisionManager = std::make_unique<CollisionManager>();
+
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
 
@@ -77,7 +80,9 @@ void GameScene::Update() {
 	//天球
 	//skydome->Update();
 
-	
+	//衝突チェック
+	collisionManager->CheckPECollisions(player.get(), enemy.get());
+
 	//パーティクル
 	ParticleManager::GetInstance()->Update();
 	for (size_t i = 0; i < particleEmitter.size(); ++i) {

@@ -29,13 +29,18 @@ public:
 	void ThreeAttack();
 	//衝突時コールバック
 	void OnCollision();
+	//HP減少関数
+	void TakeDamage(int damage);
 public:
 	///Getter/// 
 
 	//位置取得
 	const Vector3& GetPosition()const { return transform_.translate; }
+	//半径
+	float GetRadius()const { return radius_; }
+
 	//弾リスト取得
-	const std::list<playerBullet*>& GetBullets()const { return bullets_; }
+	const std::list<std::unique_ptr<playerBullet>>& GetBullets() const { return bullets_; }
 
 	///Setter/// 
 	void SetPosition(const Vector3& position) { transform_.translate = position; }
@@ -49,7 +54,7 @@ private:
 	Camera* camera_;
 	Transform transform_;
 	//弾のリスト
-	std::list<playerBullet*>bullets_;
+	std::list<std::unique_ptr<playerBullet>>bullets_;
 
 	//デスフラグ
 	bool isDead_ = false;
