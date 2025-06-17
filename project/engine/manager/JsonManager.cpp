@@ -16,7 +16,7 @@ JsonManager* JsonManager::GetInstance() {
 //Jsonファイルの読み込み
 LevelData* JsonManager::LoadJsonFile(const std::string&filename) {
 	//連続してフルパスを得る
-	const std::string fullpath = "resources/levels" + filename + ".json";
+	const std::string fullpath = "resources/levels/" + filename + ".json";
 
 	//ファイルストリーム
 	std::ifstream file;
@@ -90,5 +90,5 @@ LevelData* JsonManager::LoadJsonFile(const std::string&filename) {
 
 
 	}
-
+	return levelData;
 }

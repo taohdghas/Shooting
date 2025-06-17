@@ -38,7 +38,26 @@ void GameScene::Initialize() {
 
 	//JsonManager
 	jsonManager = std::make_unique<JsonManager>();
-	levelData = jsonManager->LoadJsonFile("untitled");
+    levelData = jsonManager->LoadJsonFile("untitled");
+
+	for (auto& objectData : levelData->objects) {
+		Transform transform;
+		transform.scale = objectData.scaling;
+		transform.rotate = objectData.rotation;
+		transform.translate = objectData.translation;
+
+		std::string name = objectData.fileName + ".obj";
+
+		ModelManager::GetInstance()->LoadModel(name);
+
+		auto object3d = std::make_unique<Object3d>();
+		object3d->Initialize(Object3dBase::GetInstance());
+		object3d->SetModel(name);
+		object3d->SetScale(objectData.scaling);
+		object3d->SetRotate(objectData.rotation);
+		object3d->SetTranslate(objectData.translation);
+		object3ds.push_back(std::move(object3d));
+	}
 	
 
 }
@@ -52,12 +71,20 @@ void GameScene::Finalize() {
 //更新
 void GameScene::Update() {
 
+	for (auto& object : object3ds) {
+		object->Update();
+	}
+
 }
 
 //描画
 void GameScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
+
+	for (auto& object : object3ds) {
+		object->Draw();
+	}
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

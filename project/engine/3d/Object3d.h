@@ -4,7 +4,6 @@
 #include "Vector4.h"
 #include "Matrix4x4.h"
 #include "DirectionalLight.h"
-#include "Transform.h"
 #include "Struct.h"
 #include <string>
 #include <vector>

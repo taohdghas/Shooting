@@ -4,9 +4,7 @@
 #include "TextureManager.h"
 #include "Logger.h"
 #include "Camera.h"
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
+#include "Struct.h"
 
 #include <unordered_map>
 #include <string>
