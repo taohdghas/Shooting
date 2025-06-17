@@ -31,13 +31,12 @@ public:
 private:
 	//プレイヤー
 	std::unique_ptr<Player>player;
-	Object3d* playerObject;
+
 	//敵
 	std::unique_ptr<Enemy>enemy;
 
 	//天球
 	std::unique_ptr<Skydome>skydome;
-	Object3d* skydomeObject;
 
 	//パーティクルエミッター
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;

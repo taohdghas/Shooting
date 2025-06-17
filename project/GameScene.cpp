@@ -16,6 +16,7 @@ void GameScene::Initialize() {
 	TextureManager::GetInstance()->LoadTexture("resources/playerbullet.png");
 	TextureManager::GetInstance()->LoadTexture("resources/enemy.png");
 	TextureManager::GetInstance()->LoadTexture("resources/enemybullet.png");
+	TextureManager::GetInstance()->LoadTexture("resources/sky_sphere.png");
 
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
@@ -24,6 +25,7 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
 	ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
+	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 
 
 	//プレイヤー
@@ -36,7 +38,7 @@ void GameScene::Initialize() {
 
 	//天球
 	skydome = std::make_unique<Skydome>();
-
+	skydome->Initialize(Object3dBase::GetInstance());
 
 	//パーティクル
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
@@ -70,7 +72,7 @@ void GameScene::Update() {
 	enemy->Update();
 
 	//天球
-	//skydome->Update();
+	skydome->Update();
 
 	//衝突チェック
 	collisionManager->CheckPECollisions(player.get(), enemy.get());
@@ -111,7 +113,7 @@ void GameScene::Draw() {
 	enemy->Draw();
 
 	//天球
-	//skydome->Draw();
+	skydome->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
