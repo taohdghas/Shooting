@@ -71,7 +71,7 @@ private:
 	//プレイヤーの半径
 	float radius_ = 1.0f;
 	//HP
-	uint32_t hp_ = 100;
+	int hp_ = 100;
 	//弾の速度
 	const float kBulletSpeed = 1.0f;
 	//Δtを定義

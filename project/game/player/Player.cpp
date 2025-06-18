@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Input.h"
+#include "ImGuiManager.h"
 
 Player::Player() {}
 
@@ -60,6 +61,7 @@ void Player::Update() {
 	for (const auto& bullet : bullets_) {
 		bullet->Update();
 	}
+	
 }
 
 //描画
@@ -209,4 +211,23 @@ void Player::TakeDamage(int damage) {
 		hp_ = 0;
 		OnCollision();
 	}
+}
+
+//デバック表示
+void Player::Debug() {
+#ifdef USE_IMGUI
+	if (ImGui::TreeNode("Player")) {
+		Vector3 playerScale = object_->GetScale();
+		Vector3 playerRotate = object_->GetRotate();
+		Vector3 playerTranslate = object_->GetTranslate();
+		ImGui::DragInt("PlayerHp", &hp_, 1);
+		ImGui::DragFloat3("PlayerScale", &playerScale.x, 0.1f);
+		ImGui::DragFloat3("PlayerRotate", &playerRotate.x, 0.1f);
+		ImGui::DragFloat3("PlayerTranslate", &playerTranslate.x, 0.1f);
+		object_->SetScale(playerScale);
+		object_->SetRotate(playerRotate);
+		object_->SetTranslate(playerTranslate);
+		ImGui::TreePop();
+	}
+#endif
 }

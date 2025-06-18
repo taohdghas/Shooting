@@ -99,6 +99,13 @@ void GameScene::Update() {
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
+
+#ifdef USE_IMGUI
+	ImGui::Begin("SetUp");
+	//プレイヤーDebug
+	player->Debug();
+	ImGui::End();
+#endif
 }
 
 //描画
