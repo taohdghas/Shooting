@@ -42,6 +42,8 @@ public:
 	void CreatePipelineState();
 	//Deapth用SRV作成
 	void CreateDepthSRV();
+	//CBuffer用リソース作成
+	void CreateCBuffer();
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
@@ -153,6 +155,10 @@ private:
 	Microsoft::WRL::ComPtr<IDxcIncludeHandler>includeHandler;
 	//頂点リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
+	//レンダーテクスチャリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource>renderTextureResource;
+	//CBufferリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource>cBufferResource;
 	// ビューポート
 	D3D12_VIEWPORT viewport{};
 	// シザー矩形
@@ -161,8 +167,6 @@ private:
 	WindowsAPI* windowsAPI = nullptr;
 	//スワップチェインリソース
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
-	//レンダーテクスチャリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource>renderTextureResource;
 	//レンダーテクスチャのSRV
 	D3D12_SHADER_RESOURCE_VIEW_DESC renderTextureSrvDesc{};
 	//最大SRV数
