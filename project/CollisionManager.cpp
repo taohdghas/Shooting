@@ -6,16 +6,15 @@
 #include "playerBullet.h"
 #include "EnemyBullet.h"
 
-
 //playerとenemyの当たり判定
 void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
     if (!player || !enemy) return;
 
-    // プレイヤーと敵の弾の取得
+    //プレイヤーと敵の弾の取得
     const std::list<std::unique_ptr<playerBullet>>& playerBullets = player->GetBullets();
     const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
 
-    // --- プレイヤー弾 vs 敵 ---
+    //プレイヤー弾と敵
     if (!enemy->IsDead()) {
         for (const auto& bullet : playerBullets) {
             if (bullet->IsDead()) continue;
@@ -33,7 +32,7 @@ void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
         }
     }
 
-    // --- 敵弾 vs プレイヤー ---
+    //敵弾とプレイヤー
     Vector3 posPlayer = player->GetPosition();
     for (const auto& bullet : enemyBullets) {
         if (bullet->IsDead()) continue;
@@ -46,7 +45,7 @@ void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
         }
     }
 
-    // --- プレイヤー vs 敵 ---
+    //プレイヤーと敵
     float length = Math::Length(enemy->GetPosition() - posPlayer);
     float combinedRadius = player->GetRadius() + enemy->GetRadius();
     if (length <= combinedRadius) {

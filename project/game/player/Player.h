@@ -27,10 +27,14 @@ public:
 	void Attack();
 	//三方向攻撃
 	void ThreeAttack();
+	//回避
+	void Dodge();
 	//衝突時コールバック
 	void OnCollision();
 	//HP減少関数
 	void TakeDamage(int damage);
+    //デバック表示
+	void Debug();
 public:
 	///Getter/// 
 
@@ -55,16 +59,39 @@ private:
 	Transform transform_;
 	//弾のリスト
 	std::list<std::unique_ptr<playerBullet>>bullets_;
+	//回避の方向
+	std::string dodgeDirection_;
 
 	//デスフラグ
 	bool isDead_ = false;
+	//回避状態
+	bool dodge_ = false;
 	//プレイヤーの移動速度
 	float speed = 0.1f;
 	//プレイヤーの半径
 	float radius_ = 1.0f;
 	//HP
 	uint32_t hp_ = 100;
-	int attackCooldown_ = 0;
-	static const int attackInterval_ = 10;
+	//弾の速度
+	const float kBulletSpeed = 1.0f;
+	//Δtを定義
+	const float kDeltaTime = 1.0f / 60.0f;
+	//回避速度
+	const float dodgeSpeed_ = 0.2f;
+	//回避時の回転
+	const float rotateAngle_ = 360.0f;
+
+	//攻撃のクールタイム
+	float  attackCooldown_ = 0.0f;
+	//再攻撃できるまでの間隔
+	 float attackInterval_ = 10.0f;
+	//回避タイマー
+	float dodgeTimer_ = 0.0f;
+	//回避適用時間
+	float applyDodge_ = 1.0f;
+	//回避のクールタイム
+	float dodgeCooldown_ = 0.0f;
+	//回避コマンド再使用待機時間
+	float dodgeInterval_ = 10.0f;
 };
 

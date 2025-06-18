@@ -4,7 +4,7 @@
 Player::Player() {}
 
 Player::~Player() {
-	
+
 }
 
 //初期化
@@ -19,29 +19,39 @@ void Player::Initialize(Object3dBase* object3dbase) {
 
 //更新
 void Player::Update() {
-
+	//デスの場合スキップ
 	if (isDead_) {
 		return;
 	}
+	//攻撃クールタイム
 	if (attackCooldown_ > 0) {
 		attackCooldown_--;
+	}
+	//回避クールタイム
+	if (dodgeCooldown_ > 0) {
+		dodgeCooldown_ -= kDeltaTime;
+		if (dodgeCooldown_ < 0.0f) {
+			dodgeCooldown_ = 0.0f;
+		}
 	}
 	//デスフラグが立った弾を削除
 	bullets_.remove_if([](const std::unique_ptr<playerBullet>& bullet) {
 		return bullet->IsDead();
 		});
-
+	//移動
 	Move();
-
+	//攻撃
 	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Attack();
 	}
-
+	//3方向攻撃
 	if (Input::GetInstance()->PushKey(DIK_R)) {
 		ThreeAttack();
 	}
-
-	//位置をobjectに反映
+	//回避
+	Dodge();
+	//回転と位置をobjectに反映
+	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
 
 	object_->Update();
@@ -50,18 +60,16 @@ void Player::Update() {
 	for (const auto& bullet : bullets_) {
 		bullet->Update();
 	}
-
 }
 
 //描画
 void Player::Draw() {
-
+	//デスの場合スキップ
 	if (isDead_) {
 		return;
 	}
 	//プレイヤーの描画
 	object_->Draw();
-
 	//プレイヤー弾の描画
 	for (const auto& bullet : bullets_) {
 		bullet->Draw();
@@ -86,7 +94,7 @@ void Player::Move() {
 
 //攻撃
 void Player::Attack() {
-
+	//クールタイムが0より大きければスキップ
 	if (attackCooldown_ > 0) {
 		return;
 	}
@@ -105,22 +113,21 @@ void Player::Attack() {
 
 //三方向攻撃
 void Player::ThreeAttack() {
+	//クールタイムが0より大きければスキップ
 	if (attackCooldown_ > 0) {
 		return;
 	}
 
-	const float kBulletSpeed = 1.0f;
-
 	//発射方向
 	std::vector<Vector3> directions = {
-		Vector3(-1, 0, 1),  
-		Vector3(0, 0, 1),   
-		Vector3(1, 0, 1)    
+		Vector3(-1, 0, 1),
+		Vector3(0, 0, 1),
+		Vector3(1, 0, 1)
 	};
 
 	for (const auto& dir : directions) {
-		Vector3 velocity = Math::Normalize(dir); 
-		velocity = Math::Multiply(velocity ,kBulletSpeed);     
+		Vector3 velocity = Math::Normalize(dir);
+		velocity = Math::Multiply(velocity, kBulletSpeed);
 
 		auto newBullet = std::make_unique<playerBullet>();
 		newBullet->Initialize(object3dBase_);
@@ -132,6 +139,58 @@ void Player::ThreeAttack() {
 	attackCooldown_ = attackInterval_;
 }
 
+//回避
+void Player::Dodge() {
+	
+	//回避適用中
+	if (dodge_) {
+
+		//各方向へ回避
+		if (dodgeDirection_ == "Left") {//左
+			transform_.translate.x -= dodgeSpeed_ * kDeltaTime;
+			transform_.rotate.z += rotateAngle_ * kDeltaTime / applyDodge_;
+		} else if (dodgeDirection_ == "Right") {//右
+			transform_.translate.x += dodgeSpeed_ * kDeltaTime;
+			transform_.rotate.z += rotateAngle_ * kDeltaTime / applyDodge_;
+		} else if (dodgeDirection_ == "Up") {//上
+
+		} else if (dodgeDirection_ == "Down") {//下
+
+		}
+
+		dodgeTimer_ += kDeltaTime;
+		//回避適用時間を超えたらフラグをオフ
+		if (dodgeTimer_ > applyDodge_) {
+			dodge_ = false;
+			dodgeTimer_ = 0.0f;
+			transform_.rotate.z = 0.0f;
+		}
+		return;
+	}
+
+	//クールダウン中は処理をスキップ
+	if (dodgeCooldown_ > 0.0f) {
+		return;
+	}
+
+	//回避方向マッピング
+	std::vector<std::pair<int, std::string>>directions = {
+		{DIK_A,"Left"},
+		{DIK_D,"Right"},
+		{DIK_W,"Up"},
+		{DIK_S,"Down"}
+	};
+	//各方向に回避
+	for (const auto& [key, direction] : directions) {
+		if (Input::GetInstance()->PushKey(key) && Input::GetInstance()->PushKey(DIK_F)) {
+			dodge_ = true;
+			dodgeCooldown_ = dodgeInterval_;
+			dodgeDirection_ = direction;
+			break;
+		}
+	}
+}
+
 //衝突時コールバック
 void Player::OnCollision() {
 	isDead_ = true;
@@ -139,7 +198,13 @@ void Player::OnCollision() {
 
 //HP減少関数
 void Player::TakeDamage(int damage) {
+	//回避フラグがオンならスキップ
+	if (dodge_) {
+		return;
+	}
+	//HPを減らす
 	hp_ -= damage;
+	//HPが0より少なくなったら衝突時コールバックを呼びだす。
 	if (hp_ <= 0) {
 		hp_ = 0;
 		OnCollision();
