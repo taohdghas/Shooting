@@ -23,28 +23,12 @@ void GameScene::Initialize() {
 	}
 	sprites[0]->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
 
-	//3Dオブジェクト
-	for (uint32_t i = 0; i < 2; ++i) {
-		auto object3d = std::make_unique<Object3d>();
-		object3d->Initialize(Object3dBase::GetInstance());
-		object3ds.push_back(std::move(object3d));
-	}
-	object3ds[0]->SetModel("plane.obj");
-	object3ds[0]->SetTranslate({ 0.0f,0.0f,0.0f });
-	object3ds[1]->SetModel("axis.obj");
-	object3ds[1]->SetTranslate({ 2.0f,0.0f,0.0f });
-
-	Vector3 objectrotate = object3ds[0]->GetRotate();
 
 	//JsonManager
 	jsonManager = std::make_unique<JsonManager>();
     levelData = jsonManager->LoadJsonFile("untitled");
 
 	for (auto& objectData : levelData->objects) {
-		Transform transform;
-		transform.scale = objectData.scaling;
-		transform.rotate = objectData.rotation;
-		transform.translate = objectData.translation;
 
 		std::string name = objectData.fileName + ".obj";
 
