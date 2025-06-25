@@ -35,6 +35,8 @@ public:
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets()const { return bullets_; }
 
 	///Setter///
+	//Playerのポインタをセット
+	void SetPlayer(Player* player) { player_ = player; }
 	//デスパーティクルフラグ
 	void SetisDeathParticle(bool flag) { isDeathParticle_ = flag; }
 private:

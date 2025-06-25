@@ -12,7 +12,7 @@
 #include "BaseScene.h"
 #include "ParticleEmitter.h"
 #include "Camera.h"
-#include "DirectionalLight.h"
+#include "Struct.h"
 
 class TitleScene : public BaseScene
 {

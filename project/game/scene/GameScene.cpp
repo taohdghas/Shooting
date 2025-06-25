@@ -27,7 +27,6 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
 	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 
-
 	//プレイヤー
 	player = std::make_unique<Player>();
 	player->Initialize(Object3dBase::GetInstance());
@@ -35,6 +34,7 @@ void GameScene::Initialize() {
 	//敵
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(Object3dBase::GetInstance());
+	enemy->SetPlayer(player.get());
 
 	//天球
 	skydome = std::make_unique<Skydome>();
@@ -77,6 +77,7 @@ void GameScene::Update() {
 	//衝突チェック
 	collisionManager->CheckPECollisions(player.get(), enemy.get());
 
+	/*
 	if (enemy->IsDeathParticle()) {
 		auto emitter = std::make_unique<ParticleEmitter>();
 		emitter->Initialize("particle3");
@@ -87,7 +88,7 @@ void GameScene::Update() {
 		// フラグをリセット
 		enemy->SetisDeathParticle(false);
 	}
-
+	*/
 	//パーティクル
 	ParticleManager::GetInstance()->Update();
 	for (auto& particle : particleEmitter) {
@@ -104,6 +105,7 @@ void GameScene::Update() {
 	ImGui::Begin("SetUp");
 	//プレイヤーDebug
 	player->Debug();
+
 	ImGui::End();
 #endif
 }
@@ -120,7 +122,7 @@ void GameScene::Draw() {
 	enemy->Draw();
 
 	//天球
-	skydome->Draw();
+	//skydome->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

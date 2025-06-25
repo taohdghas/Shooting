@@ -18,7 +18,6 @@ void Enemy::Update() {
 	if (isDead_) {
 		return;
 	}
-
 	
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
 		(*it)->Update();
@@ -32,13 +31,15 @@ void Enemy::Update() {
 
 	//移動
 
-
 	//攻撃(レーザー)
 	Laser();
 
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
-
+	//弾の更新
+	for (const auto& bullet : bullets_) {
+		bullet->Update();
+	}
 }
 
 //描画
@@ -49,6 +50,10 @@ void Enemy::Draw() {
 	}
 
 	object_->Draw();
+	//弾の描画
+	for (const auto& bullet : bullets_) {
+		bullet->Draw();
+	}
 }
 
 //攻撃(レーザー)
@@ -78,7 +83,7 @@ void Enemy::Laser() {
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3dBase_);
 	bullet->SetPosition(transform_.translate);
-	bullet->SetPosition(Math::Multiply(direction, 0.2f));
+	bullet->SetVelocity(Math::Multiply(direction, 0.2f));
 
 	bullets_.emplace_back(std::move(bullet));
 }
