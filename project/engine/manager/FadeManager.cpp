@@ -23,11 +23,11 @@ void FadeManager::Draw() {
 }
 
 //フェードイン
-void FadeManager::FadeIn() {
+void FadeManager::FadeIn(float duration) {
 
 }
 
 //フェードアウト
-void FadeManager::FadeOut() {
+void FadeManager::FadeOut(float duration) {
 
 }
