@@ -23,6 +23,8 @@ public:
 	void Draw();
 	//移動
 	void Move();
+	//ジャンプ
+	void Jump();
 	//攻撃
 	void Attack();
 	//三方向攻撃
@@ -68,12 +70,20 @@ private:
 	bool isDead_ = false;
 	//回避状態
 	bool dodge_ = false;
+	//ジャンプフラグ
+	bool isJumping_ = false;
 	//プレイヤーの移動速度
 	float speed = 0.1f;
 	//プレイヤーの半径
 	float radius_ = 1.0f;
+	//ジャンプ速度
+	float jumpVelocity_ = 0.0f;
 	//HP
 	int hp_ = 100;
+
+	int jumpCount_ = 0;
+
+	const int maxJumpCount_ = 2;
 	//弾の速度
 	const float kBulletSpeed = 1.0f;
 	//Δtを定義
@@ -82,7 +92,13 @@ private:
 	const float dodgeSpeed_ = 0.2f;
 	//回避時の回転
 	const float rotateAngle_ = 1440.0f;
-
+	const float groundminY = -3.0f;   
+	const float groundminX = -4.0f;
+	const float groundmaxX = 4.0f;
+	const float gravity_ = -0.01f;
+	const float jumpPower_ = 0.15f;
+	const float groundY_ = -1.5f;
+	const float jumpRotateSpeed_ = 720.0f;
 	//攻撃のクールタイム
 	float  attackCooldown_ = 0.0f;
 	//再攻撃できるまでの間隔

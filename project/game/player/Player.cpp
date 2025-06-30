@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Input.h"
 #include "ImGuiManager.h"
+#include <algorithm>
 
 Player::Player() {}
 
@@ -14,8 +15,8 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
 	object_->SetModel("player/player.obj");
-	transform_.scale = { 0.1f,0.1f,0.1f };
-	transform_.translate = { 0.0f,0.0f,0.0f };
+	transform_.scale = { 0.25f,0.25f,0.25f };
+	transform_.translate = { 0.0f,-1.5f,0.0f };
 }
 
 //更新
@@ -41,6 +42,13 @@ void Player::Update() {
 		});
 	//移動
 	Move();
+	//ジャンプ
+	Jump();
+	//二段ジャンプ時継続回転
+	if (jumpCount_ == 2) {
+		transform_.rotate.x += jumpRotateSpeed_ * kDeltaTime;
+	}
+
 	//攻撃
 	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Attack();
@@ -81,6 +89,7 @@ void Player::Draw() {
 
 //移動
 void Player::Move() {
+	/*
 	if (Input::GetInstance()->PushKey(DIK_A)) {
 		transform_.translate.x -= speed;
 	}
@@ -92,6 +101,50 @@ void Player::Move() {
 	}
 	if (Input::GetInstance()->PushKey(DIK_W)) {
 		transform_.translate.y += speed;
+	}
+	*/
+	Vector3 newPos = transform_.translate;
+
+	//左右移動
+	if (Input::GetInstance()->PushKey(DIK_A)) {
+		newPos.x -= speed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_D)) {
+		newPos.x += speed;
+	}
+
+	//移動制限
+	newPos.x = std::clamp(newPos.x, groundminX, groundmaxX);
+	if (newPos.y < groundminY) {
+		newPos.y = groundminY;
+	}
+
+	transform_.translate = newPos;
+}
+
+//ジャンプ
+void Player::Jump() {
+	if (Input::GetInstance()->TriggerKey(DIK_W) && jumpCount_ < maxJumpCount_) {
+		jumpVelocity_ = jumpPower_;
+		jumpCount_++;
+
+		
+	}
+
+	//ジャンプ中
+	if (jumpCount_ > 0) {
+		transform_.translate.y += jumpVelocity_;
+		jumpVelocity_ += gravity_;
+
+		//着地
+		if (transform_.translate.y <= groundY_) {
+			transform_.translate.y = groundY_;
+			jumpVelocity_ = 0.0f;
+			jumpCount_ = 0;
+
+			//回転リセット
+			transform_.rotate.x = 0.0f;
+		}
 	}
 }
 
