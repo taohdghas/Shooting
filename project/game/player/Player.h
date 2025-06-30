@@ -35,6 +35,8 @@ public:
 	void TakeDamage(int damage);
     //デバック表示
 	void Debug();
+	//デスフラグが立ったか
+	bool IsDead()const { return isDead_; }
 public:
 	///Getter/// 
 
@@ -92,6 +94,6 @@ private:
 	//回避のクールタイム
 	float dodgeCooldown_ = 0.0f;
 	//回避コマンド再使用待機時間
-	float dodgeInterval_ = 10.0f;
+	float dodgeInterval_ = 5.0f;
 };
 

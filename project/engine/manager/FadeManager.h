@@ -15,6 +15,12 @@ public:
 	void FadeIn(float duration);
 	//フェードアウト
 	void FadeOut(float duration);
+	//フェード中か
+	bool IsFade()const { return fadeIn_ || fadeOut_; }
+	//フェードイン終了
+	bool IsFadeInEnd()const { return fadeInEnd_; }
+	//フェードアウト終了
+	bool IsFadeOutEnd() const { return fadeOutEnd_; }
 public:
 	///Getter///
 
@@ -23,9 +29,14 @@ public:
 
 private:
 	std::unique_ptr<Sprite>sprite_;
-	bool faseIn_ = false;
-	bool faseOut_ = false;
-	float faseTimer_ = 0.0f;
-	float faseDuration_ = 1.0f;
+	bool fadeIn_ = false;
+	bool fadeOut_ = false;
+	bool fadeStarted_ = false;
+	bool fadeInEnd_ = false;
+	bool fadeOutEnd_ = false;
+	float fadeTimer_ = 0.0f;
+	float fadeDuration_ = 1.0f;
+	//Δtを定義
+	const float kDeltaTime = 1.0f / 60.0f;
 };
 

@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "SceneManager.h"
+#include "CameraManager.h"
 #include "ImGuiManager.h"
 
 
@@ -27,6 +28,13 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
 	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 
+	//カメラ
+	camera = std::make_unique<Camera>();
+	camera->SetTranslate({ 0,0,-10 });
+	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->SetActiveCamera("Main");
+	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+
 	//プレイヤー
 	player = std::make_unique<Player>();
 	player->Initialize(Object3dBase::GetInstance());
@@ -46,9 +54,11 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->CreateparticleGroup("particle3", "resources/gradationLine.png", ParticleType::Ring);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
-	
+
 	//衝突マネージャー
 	collisionManager = std::make_unique<CollisionManager>();
+
+	
 
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
@@ -57,6 +67,7 @@ void GameScene::Initialize() {
 
 //終了
 void GameScene::Finalize() {
+	CameraManager::GetInstance()->Finalize();
 	//パーティクルグループの開放
 	ParticleManager::GetInstance()->Clear();
 	//Audio
@@ -65,6 +76,9 @@ void GameScene::Finalize() {
 
 //更新
 void GameScene::Update() {
+	//カメラ
+	CameraManager::GetInstance()->GetActiveCamera()->Update();
+
 	//プレイヤー
 	player->Update();
 
@@ -94,17 +108,19 @@ void GameScene::Update() {
 	for (auto& particle : particleEmitter) {
 		particle->Update();
 	}
-	
+
 
 	//タイトルシーンへ
-	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+	if (player->IsDead()) {
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
-
+	
 #ifdef USE_IMGUI
 	ImGui::Begin("SetUp");
 	//プレイヤーDebug
 	player->Debug();
+	//敵Debug
+	enemy->Debug();
 
 	ImGui::End();
 #endif

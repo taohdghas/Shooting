@@ -20,6 +20,8 @@ public:
 	void onCollision();
 	//HP減少
 	void TakeDamage(int damege);
+	//Debug
+	void Debug();
 	//デスフラグが立ったか
 	bool IsDead()const { return isDead_; }
 	//デスパーティクル発生フラグが立ったか
@@ -50,7 +52,7 @@ private:
 	//移動速度
 	Vector3 velocity_ = { 0.0,0 };
 	//HP
-	uint32_t hp_ = 100;
+	int hp_ = 100;
 	//半径
 	float radius_ = 1.0f;
 	//デスフラグ

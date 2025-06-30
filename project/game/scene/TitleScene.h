@@ -13,6 +13,7 @@
 #include "ParticleEmitter.h"
 #include "Camera.h"
 #include "Struct.h"
+#include "FadeManager.h"
 
 class TitleScene : public BaseScene
 {
@@ -36,8 +37,11 @@ private:
 	std::unique_ptr<Object3d>title;
 	//pushspaceのオブジェクト
 	std::unique_ptr<Object3d>pushspace;
+	//フェードマネージャー
+	std::unique_ptr<FadeManager>fadeManager;
 
 	//スタート演出
 	bool pushspaceMove = false;
+	bool fadeOutStarted = false;
 };
 

@@ -61,7 +61,7 @@ void Player::Update() {
 	for (const auto& bullet : bullets_) {
 		bullet->Update();
 	}
-	
+
 }
 
 //描画
@@ -143,22 +143,11 @@ void Player::ThreeAttack() {
 
 //回避
 void Player::Dodge() {
-	
+
 	//回避適用中
 	if (dodge_) {
-
-		//各方向へ回避
-		if (dodgeDirection_ == "Left") {//左
-			transform_.translate.x -= dodgeSpeed_ * kDeltaTime;
-			transform_.rotate.z += rotateAngle_ * kDeltaTime / applyDodge_;
-		} else if (dodgeDirection_ == "Right") {//右
-			transform_.translate.x += dodgeSpeed_ * kDeltaTime;
-			transform_.rotate.z += rotateAngle_ * kDeltaTime / applyDodge_;
-		} else if (dodgeDirection_ == "Up") {//上
-
-		} else if (dodgeDirection_ == "Down") {//下
-
-		}
+		//回転
+		transform_.rotate.z += rotateAngle_ * kDeltaTime / applyDodge_;
 
 		dodgeTimer_ += kDeltaTime;
 		//回避適用時間を超えたらフラグをオフ
@@ -175,21 +164,10 @@ void Player::Dodge() {
 		return;
 	}
 
-	//回避方向マッピング
-	std::vector<std::pair<int, std::string>>directions = {
-		{DIK_A,"Left"},
-		{DIK_D,"Right"},
-		{DIK_W,"Up"},
-		{DIK_S,"Down"}
-	};
-	//各方向に回避
-	for (const auto& [key, direction] : directions) {
-		if (Input::GetInstance()->PushKey(key) && Input::GetInstance()->PushKey(DIK_F)) {
-			dodge_ = true;
-			dodgeCooldown_ = dodgeInterval_;
-			dodgeDirection_ = direction;
-			break;
-		}
+	//Fキーで回避発動
+	if (Input::GetInstance()->PushKey(DIK_F)) {
+		dodge_ = true;
+		dodgeCooldown_ = dodgeInterval_;
 	}
 }
 
@@ -227,6 +205,13 @@ void Player::Debug() {
 		object_->SetScale(playerScale);
 		object_->SetRotate(playerRotate);
 		object_->SetTranslate(playerTranslate);
+
+		//回避
+		if (ImGui::CollapsingHeader("Dodge Info")) {
+			ImGui::Text("Is Dodging: %s", dodge_ ? "True" : "False");
+			ImGui::Text("Dodge Timer: %.2f / %.2f", dodgeTimer_, applyDodge_);
+			ImGui::Text("Dodge Cooldown: %.2f / %.2f", dodgeCooldown_, dodgeInterval_);
+		}
 		ImGui::TreePop();
 	}
 #endif

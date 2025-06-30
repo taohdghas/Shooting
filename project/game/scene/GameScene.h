@@ -39,5 +39,7 @@ private:
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
 	//衝突マネージャー
 	std::unique_ptr<CollisionManager>collisionManager;
+	//カメラ
+	std::unique_ptr<Camera>camera;
 };
 

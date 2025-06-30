@@ -1,5 +1,6 @@
 #include "ParticleManager.h"
 #include "Math.h"
+#include "CameraManager.h"
 #include <assert.h>
 #include <numbers>
 
@@ -41,15 +42,15 @@ void ParticleManager::Clear() {
 }
 
 void ParticleManager::Update() {
-	Matrix4x4 cameraMatrix = camera_->GetWorldMatrix();
+	Matrix4x4 cameraMatrix =CameraManager::GetInstance()->GetActiveCamera()->GetWorldMatrix();
 	Matrix4x4 backToFrontMatrix = Math::MakeRotateYMatrix(std::numbers::pi_v<float>);
 	Matrix4x4 billboardMatrix = Math::Multiply(backToFrontMatrix, cameraMatrix);
 	//ビュー行列
-	Matrix4x4 viewMatrix = camera_->GetViewMatrix();
+	Matrix4x4 viewMatrix = CameraManager::GetInstance()->GetActiveCamera()->GetViewMatrix();
 	//プロジェクション行列
-	Matrix4x4 projectionMatrix = camera_->GetProjectionMatrix();
+	Matrix4x4 projectionMatrix = CameraManager::GetInstance()->GetActiveCamera()->GetProjectionMatrix();
 	//ビュープロジェクション行列
-	Matrix4x4 viewprojectionMatrix = camera_->GetViewProjectionMatrix();
+	Matrix4x4 viewprojectionMatrix = CameraManager::GetInstance()->GetActiveCamera()->GetViewProjectionMatrix();
 	//trueなら使う
 	if (useBillboard) {
 		billboardMatrix.m[3][0] = 0.0f;

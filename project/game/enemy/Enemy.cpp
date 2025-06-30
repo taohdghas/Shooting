@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Player.h"
+#include "ImGuiManager.h"
 
 //初期化
 void Enemy::Initialize(Object3dBase*object3dBase) {
@@ -8,7 +9,7 @@ void Enemy::Initialize(Object3dBase*object3dBase) {
 	object_->Initialize(object3dBase_);
 	object_->SetModel("enemy/enemy.obj");
 	object_->SetScale({ 0.5f,0.5f,0.5f });
-	transform_.translate = { 0.0f,0.0f,20.0f };
+	transform_.translate = { 0.0f,3.0f,20.0f };
 }
 
 //更新
@@ -101,4 +102,23 @@ void Enemy::TakeDamage(int damage) {
 		isDead_ = true;
 		isDeathParticle_ = true;
 	}
+}
+
+//Debug
+void Enemy::Debug() {
+#ifdef USE_IMGUI
+	if (ImGui::TreeNode("Enemy")) {
+		Vector3 enemyScale = object_->GetScale();
+		Vector3 enemyRotate = object_->GetRotate();
+		Vector3 enemyTranslate = object_->GetTranslate();
+		ImGui::DragInt("EnemyHp", &hp_, 1);
+		ImGui::DragFloat3("EnemyScale", &enemyScale.x, 0.1f);
+		ImGui::DragFloat3("EnemyRotate", &enemyRotate.x, 0.1f);
+		ImGui::DragFloat3("EnemyTranslate", &enemyTranslate.x, 0.1f);
+		object_->SetScale(enemyScale);
+		object_->SetRotate(enemyRotate);
+		object_->SetTranslate(enemyTranslate);
+		ImGui::TreePop();
+	}
+#endif
 }

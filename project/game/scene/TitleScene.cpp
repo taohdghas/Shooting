@@ -37,8 +37,12 @@ void TitleScene::Initialize() {
 	camera = std::make_unique<Camera>();
 	camera->SetRotate({ 0.0f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
-
 	pushspace->SetCamera(camera.get());
+
+	//フェードマネージャー
+	fadeManager = std::make_unique<FadeManager>();
+	fadeManager->Initialize();
+	fadeManager->FadeIn(1.0f);
 }
 
 //終了
@@ -69,10 +73,17 @@ void TitleScene::Update() {
 		titleTranslate.z -= 3.0f;
 		pushspace->SetTranslate(pushspaceTranslate);
 		title->SetTranslate(titleTranslate);
-		if (pushspaceTranslate.z <= -300.0f) {
-			SceneManager::GetInstance()->ChangeScene("GAME");
+		
+		if (!fadeManager->IsFade() && pushspaceTranslate.z <= -300.0f) {
+			fadeManager->FadeOut(1.0f);
 		}
 	}
+
+	if (fadeManager->IsFadeOutEnd()) {
+		SceneManager::GetInstance()->ChangeScene("GAME");
+	}
+
+	fadeManager->Update();
 
 #ifdef USE_IMGUI
 	ImGui::Begin("SetUp");
@@ -103,4 +114,6 @@ void TitleScene::Draw() {
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
+	//フェードマネージャ
+	fadeManager->Draw();
 }
