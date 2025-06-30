@@ -14,7 +14,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
 	object_->SetModel("player/player.obj");
-	object_->SetScale({ 0.1f,0.1f,0.1f });
+	transform_.scale = { 0.1f,0.1f,0.1f };
 	transform_.translate = { 0.0f,0.0f,0.0f };
 }
 
@@ -51,7 +51,8 @@ void Player::Update() {
 	}
 	//回避
 	Dodge();
-	//回転と位置をobjectに反映
+	//各Transformをobjectに反映
+	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
 
@@ -194,17 +195,12 @@ void Player::TakeDamage(int damage) {
 //デバック表示
 void Player::Debug() {
 #ifdef USE_IMGUI
-	if (ImGui::TreeNode("Player")) {
-		Vector3 playerScale = object_->GetScale();
-		Vector3 playerRotate = object_->GetRotate();
-		Vector3 playerTranslate = object_->GetTranslate();
+	//if (ImGui::TreeNode("Player")) {
+	if (ImGui::TreeNodeEx("Player", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::DragInt("PlayerHp", &hp_, 1);
-		ImGui::DragFloat3("PlayerScale", &playerScale.x, 0.1f);
-		ImGui::DragFloat3("PlayerRotate", &playerRotate.x, 0.1f);
-		ImGui::DragFloat3("PlayerTranslate", &playerTranslate.x, 0.1f);
-		object_->SetScale(playerScale);
-		object_->SetRotate(playerRotate);
-		object_->SetTranslate(playerTranslate);
+		ImGui::DragFloat3("PlayerScale", &transform_.scale.x, 0.1f);
+		ImGui::DragFloat3("PlayerRotate", &transform_.rotate.x, 0.1f);
+		ImGui::DragFloat3("PlayerTranslate", &transform_.translate.x, 0.1f);
 
 		//回避
 		if (ImGui::CollapsingHeader("Dodge Info")) {

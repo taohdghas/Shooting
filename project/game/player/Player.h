@@ -81,7 +81,7 @@ private:
 	//回避速度
 	const float dodgeSpeed_ = 0.2f;
 	//回避時の回転
-	const float rotateAngle_ = 360.0f;
+	const float rotateAngle_ = 1440.0f;
 
 	//攻撃のクールタイム
 	float  attackCooldown_ = 0.0f;
