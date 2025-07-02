@@ -12,6 +12,8 @@ public:
 	virtual void Update() = 0;
 	//描画
 	virtual void Draw() = 0;
+	//デバック
+	virtual void Debug() = 0;
 	//仮想デストラクタ
 	virtual ~BaseScene() = default;
 public:

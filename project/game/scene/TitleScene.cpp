@@ -8,17 +8,12 @@ void TitleScene::Initialize() {
 	//サウンド
 	Audio::GetInstance()->Initialize();
 
-	//テクスチャ読み込み
-	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
-	TextureManager::GetInstance()->LoadTexture("resources/pushspacecolor.png");
-	TextureManager::GetInstance()->LoadTexture("resources/white.png");
-
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.gltf");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
 	ModelManager::GetInstance()->LoadModel("title.obj");
 	ModelManager::GetInstance()->LoadModel("pushspace.obj");
+	ModelManager::GetInstance()->LoadModel("player/player.obj");
 
 	//タイトルのオブジェクト
 	title = std::make_unique<Object3d>();
@@ -32,6 +27,14 @@ void TitleScene::Initialize() {
 	pushspace->SetModel("pushspace.obj");
 	pushspace->SetTranslate({ 0.0f,-1.0f,1.0f });
 	pushspace->SetScale({ 0.5f,0.5f,0.5f });
+
+	//プレイヤーオブジェクト(外見のみ)
+	playerobj = std::make_unique<Object3d>();
+	playerobj->Initialize(Object3dBase::GetInstance());
+	playerobj->SetModel("player/player.obj");
+	playerobjTransform.scale = { 0.8f,0.8f,0.8f };
+	playerobjTransform.rotate = { 0.0f,0.0f,0.0f };
+	playerobjTransform.translate = { 0.0f,0.0f,0.0f };
 
 	//カメラ
 	camera = std::make_unique<Camera>();
@@ -57,34 +60,45 @@ void TitleScene::Update() {
 
 	//タイトルオブジェクト
 	title->Update();
-
 	//pushspaceオブジェクト
 	pushspace->Update();
 
-	//エンターキーを押したらゲームシーンへ
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		pushspaceMove = true;
-	}
+	//演出
+	Effect();
 
-	if (pushspaceMove) {
-		Vector3 pushspaceTranslate = pushspace->GetTranslate();
-		Vector3 titleTranslate = title->GetTranslate();
-		pushspaceTranslate.z -= 3.0f;
-		titleTranslate.z -= 3.0f;
-		pushspace->SetTranslate(pushspaceTranslate);
-		title->SetTranslate(titleTranslate);
-		
-		if (!fadeManager->IsFade() && pushspaceTranslate.z <= -300.0f) {
-			fadeManager->FadeOut(1.0f);
-		}
-	}
+	//プレイヤーオブジェクト
+	playerobj->Update();
 
-	if (fadeManager->IsFadeOutEnd()) {
-		SceneManager::GetInstance()->ChangeScene("GAME");
-	}
+	//シーン遷移
+	SceneChange();
 
 	fadeManager->Update();
 
+	//デバック
+	Debug();
+}
+
+//描画
+void TitleScene::Draw() {
+	//3Dオブジェクト描画準備
+	Object3dBase::GetInstance()->DrawBaseSet();
+
+	//タイトルオブジェクト
+	title->Draw();
+	//pushspaceオブジェクト
+	pushspace->Draw();
+	//プレイヤーオブジェクト
+	//playerobj->Draw();
+
+	//共通描画設定
+	SpriteBase::GetInstance()->DrawBaseSet();
+
+	//フェードマネージャ
+	fadeManager->Draw();
+}
+
+//デバック
+void TitleScene::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Begin("SetUp");
 	if (ImGui::TreeNode("Camera")) {
@@ -100,20 +114,34 @@ void TitleScene::Update() {
 #endif
 }
 
-//描画
-void TitleScene::Draw() {
-	//3Dオブジェクト描画準備
-	Object3dBase::GetInstance()->DrawBaseSet();
+//演出
+void TitleScene::Effect() {
+	//プレイヤーオブジェクトの回転
+	playerobjTransform.rotate.x += RotateSpeed * kDeltaTime;
 
-	//タイトルオブジェクト
-	title->Draw();
+}
 
-	//pushspaceオブジェクト
-	pushspace->Draw();
+//シーン遷移
+void TitleScene::SceneChange() {
+	//エンターキーを押したらゲームシーンへ
+	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		pushspaceMove = true;
+	}
 
-	//共通描画設定
-	SpriteBase::GetInstance()->DrawBaseSet();
+	if (pushspaceMove) {
+		Vector3 pushspaceTranslate = pushspace->GetTranslate();
+		Vector3 titleTranslate = title->GetTranslate();
+		pushspaceTranslate.z -= 3.0f;
+		titleTranslate.z -= 3.0f;
+		pushspace->SetTranslate(pushspaceTranslate);
+		title->SetTranslate(titleTranslate);
 
-	//フェードマネージャ
-	fadeManager->Draw();
+		if (!fadeManager->IsFade() && pushspaceTranslate.z <= -300.0f) {
+			fadeManager->FadeOut(1.0f);
+		}
+	}
+
+	if (fadeManager->IsFadeOutEnd()) {
+		SceneManager::GetInstance()->ChangeScene("GAME");
+	}
 }

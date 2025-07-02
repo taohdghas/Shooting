@@ -1,6 +1,8 @@
 #pragma once
 #include "Object3d.h"
 #include "Object3dBase.h"
+#include "Sprite.h"
+#include "SpriteBase.h"
 #include "Input.h"
 #include "Transform.h"
 #include "playerBullet.h"
@@ -31,6 +33,8 @@ public:
 	void ThreeAttack();
 	//回避
 	void Dodge();
+	//レティクル更新
+	void ReticleUpdate();
 	//衝突時コールバック
 	void OnCollision();
 	//HP減少関数
@@ -57,15 +61,17 @@ public:
 
 private:
 	Object3dBase* object3dBase_;
-
-	std::unique_ptr<Object3d>object_;
 	Camera* camera_;
 	Transform transform_;
+	//レティクル用
+	Transform reticleTransform_;
+	std::unique_ptr<Object3d>object_;
 	//弾のリスト
 	std::list<std::unique_ptr<playerBullet>>bullets_;
+	//レティクル
+	std::unique_ptr<Sprite>reticle_;
 	//回避の方向
 	std::string dodgeDirection_;
-
 	//デスフラグ
 	bool isDead_ = false;
 	//回避状態
@@ -80,9 +86,9 @@ private:
 	float jumpVelocity_ = 0.0f;
 	//HP
 	int hp_ = 100;
-
+	//ジャンプ回数
 	int jumpCount_ = 0;
-
+	//最大ジャンプ可能回数
 	const int maxJumpCount_ = 2;
 	//弾の速度
 	const float kBulletSpeed = 1.0f;
@@ -92,12 +98,19 @@ private:
 	const float dodgeSpeed_ = 0.2f;
 	//回避時の回転
 	const float rotateAngle_ = 1440.0f;
-	const float groundminY = -3.0f;   
+	//地面の最小Y移動
+	const float groundminY = -3.0f;
+	//地面の最小X移動
 	const float groundminX = -4.0f;
+	//地面の最大X移動
 	const float groundmaxX = 4.0f;
+	//重力
 	const float gravity_ = -0.01f;
+	//ジャンプ力
 	const float jumpPower_ = 0.15f;
+	//地面のY座標
 	const float groundY_ = -1.5f;
+	//二段ジャンプ回転速度
 	const float jumpRotateSpeed_ = 720.0f;
 	//攻撃のクールタイム
 	float  attackCooldown_ = 0.0f;

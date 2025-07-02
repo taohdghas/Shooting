@@ -3,12 +3,89 @@
 #include "Matrix4x4.h"
 #include <corecrt_math.h>
 
-inline Vector3 operator-(const Vector3& lhs, const Vector3& rhs) {
-	return { lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z };
+// Vector3の足し算
+inline Vector3 operator+(const Vector3& v1, const Vector3& v2) {
+	Vector3 result{};
+	result.x = v1.x + v2.x;
+	result.y = v1.y + v2.y;
+	result.z = v1.z + v2.z;
+	return result;
 }
 
+inline Vector3& operator+=(Vector3& v1, const Vector3& v2) {
+	v1.x += v2.x;
+	v1.y += v2.x;
+	v1.z += v2.x;
+	return v1;
+}
+
+// Vector3の引き算
+inline Vector3 operator-(const Vector3& v1, const Vector3& v2) {
+	Vector3 result{};
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+	result.z = v1.z - v2.z;
+	return result;
+}
+
+inline Vector3 operator-=(Vector3& v1, const Vector3& v2) {
+	v1.x -= v2.x;
+	v1.y -= v2.x;
+	v1.z -= v2.x;
+	return v1;
+}
+
+// Vector3の掛け算(スカラー)
+inline Vector3 operator*(const Vector3& v, float s) {
+	Vector3 result{};
+	result.x = v.x * s;
+	result.y = v.y * s;
+	result.z = v.z * s;
+	return result;
+}
+
+inline Vector3& operator*=(Vector3& v, float s) {
+	v.x *= s;
+	v.y *= s;
+	v.z *= s;
+	return v;
+}
+
+// Vector3同士の掛け算
+inline Vector3 operator*(const Vector3& v1, const Vector3& v2) {
+	Vector3 result{};
+	result.x = v1.x * v2.x;
+	result.y = v1.y * v2.y;
+	result.z = v1.z * v2.z;
+	return result;
+}
+inline Vector3& operator*=(Vector3& v1, const Vector3& v2) {
+	v1.x *= v2.x;
+	v1.y *= v2.y;
+	v1.z *= v2.z;
+	return v1;
+}
+
+
 namespace Math {
-	
+	// Vector3の足し算
+	Vector3 operator+(const Vector3& v1, const Vector3& v2);
+	Vector3& operator+=(Vector3& v1, const Vector3& v2);
+
+	// Vector3の引き算
+	Vector3 operator-(const Vector3& v1, const Vector3& v2);
+	Vector3 operator-=(Vector3& v1, const Vector3& v2);
+
+	// Vector3の掛け算(スカラー)
+	Vector3 operator*(const Vector3& v, float s);
+	Vector3& operator*=(Vector3& v, float s);
+
+	// Vector3同士の掛け算
+	Vector3 operator*(const Vector3& v1, const Vector3& v2);
+	Vector3& operator*=(Vector3& v1, const Vector3& v2);
+
+	float Length(const Vector3& v);
+
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	//減算
 	Vector3 Subtract(const Vector3& v1, const Vector3& v2);
@@ -16,12 +93,14 @@ namespace Math {
 	Vector3 Normalize(const Vector3& v);
 	Vector3 Multiply(const Vector3& v1, const Vector3& v2);
 	Vector3 Multiply(const Vector3& v, const float scalar);
+	//座標ベクトル変換
+	Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+	//法線ベクトル変換
+	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 	//単位行列
 	Matrix4x4 MakeIdentity4x4();
 
 	Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
-
-	float Length(const Vector3& v);
 
 	//平行移動行列
 	Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
@@ -43,6 +122,9 @@ namespace Math {
 	Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
 
 	Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
+	//ビューポート行列
+	Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
+	
 	//転置行列
 	Matrix4x4 Transpose(const Matrix4x4& m);
 }

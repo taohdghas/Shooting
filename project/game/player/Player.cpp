@@ -17,6 +17,11 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	object_->SetModel("player/player.obj");
 	transform_.scale = { 0.25f,0.25f,0.25f };
 	transform_.translate = { 0.0f,-1.5f,0.0f };
+	//レティクル
+	reticle_ = std::make_unique<Sprite>();
+	//reticle_->Initialize(SpriteBase::GetInstance(), "reticle.png");
+	reticle_->SetSize({ 16,16 });
+	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
 
 //更新
@@ -127,8 +132,6 @@ void Player::Jump() {
 	if (Input::GetInstance()->TriggerKey(DIK_W) && jumpCount_ < maxJumpCount_) {
 		jumpVelocity_ = jumpPower_;
 		jumpCount_++;
-
-		
 	}
 
 	//ジャンプ中
@@ -204,7 +207,7 @@ void Player::Dodge() {
 		transform_.rotate.z += rotateAngle_ * kDeltaTime / applyDodge_;
 
 		dodgeTimer_ += kDeltaTime;
-		//回避適用時間を超えたらフラグをオフ
+		//回避時間を超えたらフラグをオフ
 		if (dodgeTimer_ > applyDodge_) {
 			dodge_ = false;
 			dodgeTimer_ = 0.0f;
@@ -218,11 +221,25 @@ void Player::Dodge() {
 		return;
 	}
 
-	//Fキーで回避発動
+	//回避発動
 	if (Input::GetInstance()->PushKey(DIK_F)) {
 		dodge_ = true;
 		dodgeCooldown_ = dodgeInterval_;
 	}
+}
+
+//レティクル更新
+void Player::ReticleUpdate() {
+	//プレイヤーの向いている方向
+	Vector3 offset = { 0.0f,0.0f,1.0f };
+	//プレイヤーの行列の回転を反映
+	offset = Math::TransformNormal(offset, Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate));
+	//ベクトルの長さを変える
+	offset = Math::Normalize(offset) * 25.0f;
+	//レティクルの座標を設定
+	Vector3 reticleWorldPos = transform_.translate + offset;
+	//ビュー,プロジェクション,ビューポート行列合成
+
 }
 
 //衝突時コールバック
@@ -238,7 +255,7 @@ void Player::TakeDamage(int damage) {
 	}
 	//HPを減らす
 	hp_ -= damage;
-	//HPが0より少なくなったら衝突時コールバックを呼びだす。
+	//HPが0より少なくなったら衝突時コールバック
 	if (hp_ <= 0) {
 		hp_ = 0;
 		OnCollision();

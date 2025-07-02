@@ -114,16 +114,9 @@ void GameScene::Update() {
 	if (player->IsDead()) {
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
-	
-#ifdef USE_IMGUI
-	ImGui::Begin("SetUp");
-	//プレイヤーDebug
-	player->Debug();
-	//敵Debug
-	enemy->Debug();
 
-	ImGui::End();
-#endif
+	//デバック
+	Debug();
 }
 
 //描画
@@ -145,4 +138,17 @@ void GameScene::Draw() {
 
 	//パーティクル
 	ParticleManager::GetInstance()->Draw();
+}
+
+//デバック
+void GameScene::Debug() {
+#ifdef USE_IMGUI
+	ImGui::Begin("SetUp");
+	//プレイヤーDebug
+	player->Debug();
+	//敵Debug
+	enemy->Debug();
+
+	ImGui::End();
+#endif
 }

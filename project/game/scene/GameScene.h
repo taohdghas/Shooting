@@ -28,6 +28,9 @@ public:
 	void Update()override;
 	//描画
 	void Draw()override;
+	//デバック
+	void Debug()override;
+
 private:
 	//プレイヤー
 	std::unique_ptr<Player>player;
