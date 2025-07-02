@@ -5,7 +5,7 @@
 Camera::Camera()
 	:transform({ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} })
 	, FovY(0.45f)
-	, aspectRatio((WindowsAPI::kClientWitdh) / float(WindowsAPI::kClientHeight))
+	, aspectRatio((WindowsAPI::kClientWidth) / float(WindowsAPI::kClientHeight))
 	, nearClip(0.1f)
 	, farClip(100.0f)
 	, worldMatrix(Math::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate))

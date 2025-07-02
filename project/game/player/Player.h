@@ -34,7 +34,7 @@ public:
 	//回避
 	void Dodge();
 	//レティクル更新
-	void ReticleUpdate();
+	void ReticleUpdate(const Matrix4x4& view, const Matrix4x4& projection, int screenWidth, int screenHeight);
 	//衝突時コールバック
 	void OnCollision();
 	//HP減少関数

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Input.h"
 #include "ImGuiManager.h"
+#include "WindowsAPI.h"
 #include <algorithm>
 
 Player::Player() {}
@@ -229,7 +230,7 @@ void Player::Dodge() {
 }
 
 //レティクル更新
-void Player::ReticleUpdate() {
+void Player::ReticleUpdate(const Matrix4x4& view, const Matrix4x4& projection, int screenWidth, int screenHeight) {
 	//プレイヤーの向いている方向
 	Vector3 offset = { 0.0f,0.0f,1.0f };
 	//プレイヤーの行列の回転を反映
@@ -239,6 +240,8 @@ void Player::ReticleUpdate() {
 	//レティクルの座標を設定
 	Vector3 reticleWorldPos = transform_.translate + offset;
 	//ビュー,プロジェクション,ビューポート行列合成
+	Matrix4x4 matViewPort = Math::MakeViewportMatrix(0, 0, float(WindowsAPI::GetInstance()->kClientWidth),
+		float(WindowsAPI::GetInstance()->kClientHeight), 0, 1);
 
 }
 

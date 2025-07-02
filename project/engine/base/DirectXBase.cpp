@@ -161,7 +161,7 @@ void DirectXBase::CommandInitialize() {
 }
 //スワップチェーンの生成
 void DirectXBase::SwapchainGenerate() {
-	swapChainDesc.Width = WindowsAPI::kClientWitdh;     // 画面の幅。ウィンドウのクライアント領域と同じものにしておく
+	swapChainDesc.Width = WindowsAPI::kClientWidth;     // 画面の幅。ウィンドウのクライアント領域と同じものにしておく
 	swapChainDesc.Height = WindowsAPI::kClientHeight;   // 画面の高さ。
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;  // 色の形成
 	swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
@@ -177,7 +177,7 @@ void DirectXBase::DepthbufferGenerate() {
 
 	//生成するResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Width = windowsAPI->kClientWitdh;//Textureの幅
+	resourceDesc.Width = windowsAPI->kClientWidth;//Textureの幅
 	resourceDesc.Height = windowsAPI->kClientHeight;//Textureの高さ
 	resourceDesc.MipLevels = 1;//mipmapの数
 	resourceDesc.DepthOrArraySize = 1;//奥行きor配列Textureの配列数
@@ -247,7 +247,7 @@ void DirectXBase::RendertargetviewInitialize() {
 }
 //深度ステンシルビューの初期化
 void DirectXBase::DepthstencilviewInitialize() {
-	depthStencilResource = CreateDepthStencilTextureResource(device, WindowsAPI::kClientWitdh, WindowsAPI::kClientHeight);
+	depthStencilResource = CreateDepthStencilTextureResource(device, WindowsAPI::kClientWidth, WindowsAPI::kClientHeight);
 	// DSVの設定
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -267,7 +267,7 @@ void DirectXBase::FenceInitialize() {
 //ビューポート矩形の初期化
 void DirectXBase::ViewportInitialize() {
 	// クライアント領域のサイズと一緒にして画面全体に表示
-	viewport.Width = windowsAPI->kClientWitdh;
+	viewport.Width = windowsAPI->kClientWidth;
 	viewport.Height = windowsAPI->kClientHeight;
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
@@ -278,7 +278,7 @@ void DirectXBase::ViewportInitialize() {
 void DirectXBase::ScissorrectInitialize() {
 	// 基本的にビューポートと同じ矩形が構成されるようになる
 	scissorRect.left = 0;
-	scissorRect.right = windowsAPI->kClientWitdh;
+	scissorRect.right = windowsAPI->kClientWidth;
 	scissorRect.top = 0;
 	scissorRect.bottom = windowsAPI->kClientHeight;
 }
