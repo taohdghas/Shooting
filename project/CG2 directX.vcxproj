@@ -18,6 +18,7 @@
     <ClCompile Include="engine\base\DirectXBase.cpp" />
     <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="engine\base\DirectXBase.h" />
     <ClInclude Include="SceneFactory.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
