@@ -51,6 +51,17 @@ LevelData* JsonManager::LoadJsonFile(const std::string&filename) {
 	//"objects"の全オブジェクトを走査
 	for (nlohmann::json& object : deserialized["objects"]) {
 		assert(object.contains("type"));
+
+
+		if (object.contains("disabled_flag")) {
+			//有効無効フラグ
+			bool disabled = object["disabled_flag"].get<bool>();
+			if (disabled) {
+				//配置しない
+				continue;
+			}
+		}
+
 		//種別を取得
 		std::string type = object["type"].get<std::string>();
 
