@@ -43,7 +43,15 @@ void GameScene::Initialize() {
 		object3ds.push_back(std::move(object3d));
 	}
 	
-
+	//プレイヤー
+	player_ = std::make_unique<player>();
+	player_->Initialize(Object3dBase::GetInstance());
+	//プレイヤー配置データからプレイヤーを配置
+	if (!levelData->players.empty()) {
+		auto& playerData = levelData->players[0];
+		player_->SetPosition(playerData.translation);
+		player_->SetRotate(playerData.rotation);
+	}
 }
 
 //終了
@@ -59,6 +67,7 @@ void GameScene::Update() {
 		object->Update();
 	}
 
+	player_->Update();
 }
 
 //描画
@@ -69,6 +78,8 @@ void GameScene::Draw() {
 	for (auto& object : object3ds) {
 		object->Draw();
 	}
+
+	player_->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

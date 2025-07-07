@@ -93,6 +93,23 @@ LevelData* JsonManager::LoadJsonFile(const std::string&filename) {
 			objectData.scaling.y = (float)transform["scaling"][2];
 			objectData.scaling.z = (float)transform["scaling"][1];
 		}
+		//自キャラ発生ポイント
+		else if (type.compare("PlayerSpawn") == 0) {
+			PlayerSpawnData playerSpawn{};
+			
+			//トランスフォームのパラメータ読み込み
+			nlohmann::json& transform = object["transform"];
+			//平行移動
+			playerSpawn.translation.x = (float)transform["translation"][0];
+			playerSpawn.translation.y = (float)transform["translation"][2];
+			playerSpawn.translation.z = (float)transform["translation"][1];
+			//回転角
+			playerSpawn.rotation.x = -(float)transform["rotation"][0];
+			playerSpawn.rotation.y = -(float)transform["rotation"][2];
+			playerSpawn.rotation.z = -(float)transform["rotation"][1];
+
+			levelData->players.push_back(playerSpawn);
+		}
 
 		//オブジェクトを再帰関数にまとめ再帰呼出で枝を走査する
 		if (object.contains("children")) {

@@ -83,4 +83,25 @@ struct SpotLight {
 	float cosFalloffStart;
 	float padding[2];
 };
-//
+//自キャラの生成データ
+struct PlayerSpawnData {
+	//平行移動
+	Vector3 translation;
+	//回転角
+	Vector3 rotation;
+};
+//レベルデータ
+struct LevelData {
+	//オブジェクト1個分のデータ
+	struct ObjectData {
+		//ファイル名
+		std::string fileName;
+		Vector3 translation;
+		Vector3 rotation;
+		Vector3 scaling;
+	};
+	//オブジェクトのコンテナ
+	std::vector<ObjectData>objects;
+	//自キャラ配列
+	std::vector<PlayerSpawnData>players;
+};

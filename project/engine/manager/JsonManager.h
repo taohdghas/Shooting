@@ -3,20 +3,6 @@
 #include <string>
 #include <vector>
 
-//レベルデータ
-struct LevelData {
-	//オブジェクト1個分のデータ
-	struct ObjectData {
-		//ファイル名
-		std::string fileName;
-		Vector3 translation;
-		Vector3 rotation;
-		Vector3 scaling;
-	};
-	//オブジェクトのコンテナ
-	std::vector<ObjectData>objects;
-};
-
 class JsonManager
 {
 

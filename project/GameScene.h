@@ -9,6 +9,7 @@
 #include "ModelManager.h"
 #include "BaseScene.h"
 #include "JsonManager.h"
+#include "player.h"
 
 class GameScene : public BaseScene
 {
@@ -28,6 +29,8 @@ private:
 	std::vector<std::unique_ptr<Object3d>>object3ds;
 	//jsonManager
 	std::unique_ptr<JsonManager>jsonManager;
+	//プレイヤー
+	std::unique_ptr<player>player_;
 	//レベルデータ
 	LevelData* levelData;
 
