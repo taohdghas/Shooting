@@ -30,8 +30,8 @@ inline Vector3 operator-(const Vector3& v1, const Vector3& v2) {
 
 inline Vector3 operator-=(Vector3& v1, const Vector3& v2) {
 	v1.x -= v2.x;
-	v1.y -= v2.x;
-	v1.z -= v2.x;
+	v1.y -= v2.y;
+	v1.z -= v2.z;
 	return v1;
 }
 
@@ -68,21 +68,6 @@ inline Vector3& operator*=(Vector3& v1, const Vector3& v2) {
 
 
 namespace Math {
-	// Vector3の足し算
-	Vector3 operator+(const Vector3& v1, const Vector3& v2);
-	Vector3& operator+=(Vector3& v1, const Vector3& v2);
-
-	// Vector3の引き算
-	Vector3 operator-(const Vector3& v1, const Vector3& v2);
-	Vector3 operator-=(Vector3& v1, const Vector3& v2);
-
-	// Vector3の掛け算(スカラー)
-	Vector3 operator*(const Vector3& v, float s);
-	Vector3& operator*=(Vector3& v, float s);
-
-	// Vector3同士の掛け算
-	Vector3 operator*(const Vector3& v1, const Vector3& v2);
-	Vector3& operator*=(Vector3& v1, const Vector3& v2);
 
 	float Length(const Vector3& v);
 

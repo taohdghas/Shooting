@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Input.h"
+#include "TextureManager.h"
 #include "ImGuiManager.h"
 #include "WindowsAPI.h"
 #include <algorithm>
@@ -20,7 +21,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	transform_.translate = { 0.0f,-1.5f,0.0f };
 	//レティクル
 	reticle_ = std::make_unique<Sprite>();
-	//reticle_->Initialize(SpriteBase::GetInstance(), "reticle.png");
+	//reticle_->Initialize(SpriteBase::GetInstance(), "resources/reticle.png");
 	reticle_->SetSize({ 16,16 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
@@ -240,9 +241,13 @@ void Player::ReticleUpdate(const Matrix4x4& view, const Matrix4x4& projection, i
 	//レティクルの座標を設定
 	Vector3 reticleWorldPos = transform_.translate + offset;
 	//ビュー,プロジェクション,ビューポート行列合成
-	Matrix4x4 matViewPort = Math::MakeViewportMatrix(0, 0, float(WindowsAPI::GetInstance()->kClientWidth),
+	Matrix4x4 ViewPort = Math::MakeViewportMatrix(0, 0, float(WindowsAPI::GetInstance()->kClientWidth),
 		float(WindowsAPI::GetInstance()->kClientHeight), 0, 1);
-
+	Matrix4x4 VPV = Math::Multiply(Math::Multiply(view, projection), ViewPort);
+	//スクリーン座標変換
+	Vector3 screenPos = Math::Transform(reticleWorldPos, VPV);
+	//座標に適用
+	reticle_->SetPosition({ screenPos.x,screenPos.y });
 }
 
 //衝突時コールバック

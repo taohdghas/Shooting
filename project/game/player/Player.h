@@ -71,7 +71,7 @@ private:
 	//レティクル
 	std::unique_ptr<Sprite>reticle_;
 	//回避の方向
-	std::string dodgeDirection_;
+	//std::string dodgeDirection_;
 	//デスフラグ
 	bool isDead_ = false;
 	//回避状態
@@ -95,9 +95,11 @@ private:
 	//Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	//回避速度
-	const float dodgeSpeed_ = 0.2f;
+	const float dodgeSpeed_ = 0.1f;
 	//回避時の回転
-	const float rotateAngle_ = 1440.0f;
+	const float rotateAngle_ = 360.0f;
+	//回避方向
+	Vector3 dodgeDirection_{ 0.0f,0.0f,0.0f };
 	//地面の最小Y移動
 	const float groundminY = -3.0f;
 	//地面の最小X移動
@@ -119,7 +121,7 @@ private:
 	//回避タイマー
 	float dodgeTimer_ = 0.0f;
 	//回避適用時間
-	float applyDodge_ = 1.0f;
+	float applyDodge_ = 0.5f;
 	//回避のクールタイム
 	float dodgeCooldown_ = 0.0f;
 	//回避コマンド再使用待機時間
