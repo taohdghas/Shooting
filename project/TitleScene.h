@@ -13,6 +13,7 @@
 #include "ParticleEmitter.h"
 #include "Camera.h"
 #include "DirectionalLight.h"
+#include "Skybox.h"
 
 class TitleScene : public BaseScene
 {
@@ -37,5 +38,7 @@ private:
 	std::unique_ptr<Camera>camera;
 	//ライト
 	std::unique_ptr<DirectionalLight>directionallight;
+	//skybox
+	std::unique_ptr<Skybox>skybox;
 };
 

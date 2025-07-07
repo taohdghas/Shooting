@@ -50,7 +50,9 @@ void TitleScene::Initialize() {
 
 	//ライト
 	directionallight = std::make_unique<DirectionalLight>();
-
+	//skybox
+	skybox = std::make_unique<Skybox>();
+	skybox->Initialize("resources/rostock_laage_airport_4k.dds");
 }
 
 //終了
@@ -62,7 +64,9 @@ void TitleScene::Finalize() {
 
 //更新
 void TitleScene::Update() {
+	//カメラ
 	camera->Update();
+	
 
 	//object3d->Update();
 
@@ -109,6 +113,9 @@ void TitleScene::Update() {
 void TitleScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
+
+	//skybox
+//	skybox->Draw()
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

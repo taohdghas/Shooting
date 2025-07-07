@@ -17,9 +17,6 @@ public:
 	void Update();
 	//描画
 	void Draw();
-	//テクスチャ変更
-	//void SetTexture(std::string textureFilePath);
-
 	///getter///
 	//位置
 	const Vector2& GetPosition()const { return position; }
@@ -85,7 +82,6 @@ private:
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
-
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 	//Sprite個々の座標
 	Vector2 position = { 0.0f,0.0f };
