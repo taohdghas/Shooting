@@ -72,6 +72,8 @@ private:
 	std::unique_ptr<Sprite>reticle_;
 	//色
 	Vector4 color_;
+	//回避方向
+	Vector3 dodgeDirection_{ 0.0f,0.0f,0.0f };
 	//回避の方向
 	//std::string dodgeDirection_;
 	//デスフラグ
@@ -97,13 +99,11 @@ private:
 	//弾の速度
 	const float kBulletSpeed = 1.0f;
 	//Δtを定義
-	const float kDeltaTime = 1.0f / 60.0f;
+	const float DeltaTime = 1.0f / 60.0f;
 	//回避速度
 	const float dodgeSpeed_ = 0.1f;
 	//回避時の回転
 	const float rotateAngle_ = 360.0f;
-	//回避方向
-	Vector3 dodgeDirection_{ 0.0f,0.0f,0.0f };
 	//地面の最小Y移動
 	const float groundminY = -3.0f;
 	//地面の最小X移動
@@ -118,10 +118,12 @@ private:
 	const float groundY_ = -1.5f;
 	//二段ジャンプ回転速度
 	const float jumpRotateSpeed_ = 720.0f;
+	//色変化時間
+	const float DamageColorDuration = 0.1f;
 	//攻撃のクールタイム
 	float  attackCooldown_ = 0.0f;
 	//再攻撃できるまでの間隔
-	 float attackInterval_ = 10.0f;
+	float attackInterval_ = 10.0f;
 	//回避タイマー
 	float dodgeTimer_ = 0.0f;
 	//回避適用時間
@@ -130,5 +132,7 @@ private:
 	float dodgeCooldown_ = 0.0f;
 	//回避コマンド再使用待機時間
 	float dodgeInterval_ = 5.0f;
+	//ダメージ色変化タイマー
+	float damageColorTimer_ = 0.0f;
 };
 

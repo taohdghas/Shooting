@@ -38,7 +38,7 @@ void Player::Update() {
 	}
 	//回避クールタイム
 	if (dodgeCooldown_ > 0) {
-		dodgeCooldown_ -= kDeltaTime;
+		dodgeCooldown_ -= DeltaTime;
 		if (dodgeCooldown_ < 0.0f) {
 			dodgeCooldown_ = 0.0f;
 		}
@@ -53,7 +53,7 @@ void Player::Update() {
 	Jump();
 	//二段ジャンプ時継続回転
 	if (jumpCount_ == 2) {
-		transform_.rotate.x += jumpRotateSpeed_ * kDeltaTime;
+		transform_.rotate.x += jumpRotateSpeed_ * DeltaTime;
 	}
 
 	//攻撃
@@ -70,6 +70,15 @@ void Player::Update() {
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
+
+	//色タイマー更新
+	if (damageColorTimer_ > 0.0f) {
+		damageColorTimer_ -= DeltaTime;
+		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
+	} else {
+		//元の色
+		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f }); 
+	}
 
 	object_->Update();
 
@@ -206,9 +215,9 @@ void Player::Dodge() {
 	//回避適用中
 	if (dodge_) {
 		//回転
-		transform_.rotate.z += rotateAngle_ * kDeltaTime / applyDodge_;
+		transform_.rotate.z += rotateAngle_ * DeltaTime / applyDodge_;
 
-		dodgeTimer_ += kDeltaTime;
+		dodgeTimer_ += DeltaTime;
 		//回避時間を超えたらフラグをオフ
 		if (dodgeTimer_ > applyDodge_) {
 			dodge_ = false;
@@ -275,6 +284,8 @@ void Player::TakeDamage(int damage) {
 		hp_ = 0;
 		OnCollision();
 	}
+	//色変える
+	damageColorTimer_ = DamageColorDuration;
 }
 
 //デバック表示
@@ -294,13 +305,13 @@ void Player::Debug() {
 		}
 
 		//回避
-		if (ImGui::CollapsingHeader("Dodge Info")) {
+		if (ImGui::CollapsingHeader("回避")) {
 			ImGui::Text("Is Dodging: %s", dodge_ ? "True" : "False");
 			ImGui::Text("Dodge Timer: %.2f / %.2f", dodgeTimer_, applyDodge_);
 			ImGui::Text("Dodge Cooldown: %.2f / %.2f", dodgeCooldown_, dodgeInterval_);
 		}
 
-		if (ImGui::Button("無敵ボタン")) {
+		if (ImGui::Button("無敵")) {
 			isInvincible = !isInvincible;
 		}
 		ImGui::TreePop();

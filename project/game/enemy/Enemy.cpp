@@ -39,6 +39,16 @@ void Enemy::Update() {
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
+
+	//色タイマー更新
+	if (damageColorTimer_ > 0.0f) {
+		damageColorTimer_ -= DeltaTime;
+		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
+	} else {
+		//元の色
+		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+
 	object_->Update();
 	//弾の更新
 	for (const auto& bullet : bullets_) {
@@ -105,6 +115,8 @@ void Enemy::TakeDamage(int damage) {
 		isDead_ = true;
 		isDeathParticle_ = true;
 	}
+	//色変える
+	damageColorTimer_ = DamageColorDuration;
 }
 
 //Debug

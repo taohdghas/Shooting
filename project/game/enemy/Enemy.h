@@ -51,19 +51,27 @@ private:
 	std::list<std::unique_ptr<EnemyBullet>>bullets_;
 	//移動速度
 	Vector3 velocity_ = { 0.0,0 };
-	//HP
-	int hp_ = 100;
-	//半径
-	float radius_ = 1.0f;
+	//色
+	Vector4 color_;
 	//デスフラグ
 	bool isDead_ = false;
 	//デスパーティクル発生フラグ
 	bool isDeathParticle_ = false;
+	//HP
+	int hp_ = 100;
 	//レーザー発射カウントタイマー
 	int fireTimerCount_ = 0;
-	//発射間隔
-	static const int kFireInterval = 30;
 	//発射タイマー
 	int fireTimer_ = 0;
+	//半径
+	float radius_ = 1.0f;
+	//発射間隔
+	static const int kFireInterval = 30;
+	//Δtを定義
+	const float DeltaTime = 1.0f / 60.0f;
+	//色変化時間
+	const float DamageColorDuration = 0.1f;
+	//ダメージ色変化タイマー
+	float damageColorTimer_ = 0.0f;
 };
 
