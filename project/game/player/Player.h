@@ -70,6 +70,8 @@ private:
 	std::list<std::unique_ptr<playerBullet>>bullets_;
 	//レティクル
 	std::unique_ptr<Sprite>reticle_;
+	//色
+	Vector4 color_;
 	//回避の方向
 	//std::string dodgeDirection_;
 	//デスフラグ
@@ -78,6 +80,8 @@ private:
 	bool dodge_ = false;
 	//ジャンプフラグ
 	bool isJumping_ = false;
+	//無敵フラグ(デバック)
+	bool isInvincible = false;
 	//プレイヤーの移動速度
 	float speed = 0.1f;
 	//プレイヤーの半径

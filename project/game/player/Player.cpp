@@ -257,6 +257,13 @@ void Player::OnCollision() {
 
 //HP減少関数
 void Player::TakeDamage(int damage) {
+#ifdef USE_IMGUI
+	//無敵の際はスキップ(デバックのみ)
+	if (isInvincible) {
+		return;
+	}
+#endif
+
 	//回避フラグがオンならスキップ
 	if (dodge_) {
 		return;
@@ -273,6 +280,7 @@ void Player::TakeDamage(int damage) {
 //デバック表示
 void Player::Debug() {
 #ifdef USE_IMGUI
+	//Player
 	//if (ImGui::TreeNode("Player")) {
 	if (ImGui::TreeNodeEx("Player", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::DragInt("PlayerHp", &hp_, 1);
@@ -280,11 +288,20 @@ void Player::Debug() {
 		ImGui::DragFloat3("PlayerRotate", &transform_.rotate.x, 0.1f);
 		ImGui::DragFloat3("PlayerTranslate", &transform_.translate.x, 0.1f);
 
+		//Playerの色変更
+		if (ImGui::ColorEdit4("PlayerColor", &color_.x)) {
+			object_->SetColor(color_);
+		}
+
 		//回避
 		if (ImGui::CollapsingHeader("Dodge Info")) {
 			ImGui::Text("Is Dodging: %s", dodge_ ? "True" : "False");
 			ImGui::Text("Dodge Timer: %.2f / %.2f", dodgeTimer_, applyDodge_);
 			ImGui::Text("Dodge Cooldown: %.2f / %.2f", dodgeCooldown_, dodgeInterval_);
+		}
+
+		if (ImGui::Button("無敵ボタン")) {
+			isInvincible = !isInvincible;
 		}
 		ImGui::TreePop();
 	}

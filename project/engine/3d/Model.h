@@ -35,7 +35,10 @@ private:
 	//assimpの構造体変換
 	Node ReadNode(aiNode* node);
 public:
+	///Getter///
 	const ModelData& GetModelData()const { return modelData_; }
+	///Setter///
+	void SetColor(const Vector4& color) { materialData->color = color; }
 private:
 	//ModelBaseのポインタ
 	ModelBase* modelBase_;

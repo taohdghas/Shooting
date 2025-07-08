@@ -58,8 +58,6 @@ void GameScene::Initialize() {
 	//衝突マネージャー
 	collisionManager = std::make_unique<CollisionManager>();
 
-	
-
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
 

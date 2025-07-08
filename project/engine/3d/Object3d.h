@@ -31,6 +31,7 @@ public:
 	void SetRotate(const Vector3& rotate) { this->transform_.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
 	void SetCamera(Camera* camera) { this->camera = camera; }
+	void SetColor(const Vector4& color);
 	///getter///
 	const Vector3& GetScale()const { return transform_.scale; }
 	const Vector3& GetRotate()const { return transform_.rotate; }

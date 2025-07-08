@@ -86,6 +86,12 @@ void Object3d::SetModel(const std::string& filePath) {
 	//モデルを検索してセットする
 	model_ = ModelManager::GetInstance()->FindModel(filePath);
 }
+void Object3d::SetColor(const Vector4& color) {
+	if (model_) {
+		model_->SetColor(color);
+	}
+}
+
 //座標変換行列データ作成
 void Object3d::TransformationCreate() {
 	//リソースを作る

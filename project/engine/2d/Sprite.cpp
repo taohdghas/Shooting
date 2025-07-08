@@ -54,14 +54,6 @@ void Sprite::Update() {
 	vertexData[3].position = { right,top,0.0f,1.0f };// 左上
 	vertexData[3].texcoord = { tex_right,tex_top };
 	vertexData[3].normal = { 0.0f,0.0f,-1.0f };
-	/*
-	vertexData[4].position = { 640.0f,0.0f,0.0f,1.0f };// 右上
-	vertexData[4].texcoord = { 1.0f,0.0f };
-	vertexData[4].normal = { 0.0f,0.0f,-1.0f };
-	vertexData[5].position = { 640.0f,360.0f,0.0f,1.0f };// 右下
-	vertexData[5].texcoord = { 1.0f,1.0f };
-	vertexData[5].normal = { 0.0f,0.0f,-1.0f };
-	*/
 
 	//Transform情報を作る
 	Transform transform{ {size.x,size.y,1.0f},{0.0f,0.0f,rotation},{position.x,position.y,0.0f} };

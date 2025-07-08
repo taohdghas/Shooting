@@ -34,6 +34,9 @@ void ImGuiManager::Initialize([[maybe_unused]]WindowsAPI* windowsAPI,DirectXBase
 	ImGui::CreateContext();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
+	//日本語フォントの読み込み
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF("resources/font/07にくまるフォント.otf", 15.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
 	//win32用初期化
 	ImGui_ImplWin32_Init(windowsAPI_->GetHwnd());
 	//////DirectX12用初期化//////
