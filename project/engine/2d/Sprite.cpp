@@ -2,7 +2,7 @@
 #include "SpriteBase.h"
 #include  "TextureManager.h"
 #include "Math.h"
-#include "Transform.h"
+#include "Struct.h"
 
 //初期化
 void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath) {

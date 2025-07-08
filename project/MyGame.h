@@ -10,7 +10,6 @@
 #include <sstream>
 #include <dinput.h>
 #include "Matrix4x4.h"
-#include "Transform.h"
 #include "DirectionalLight.h"
 #include "MaterialData.h"
 #include "Math.h"

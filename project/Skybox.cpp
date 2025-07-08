@@ -22,6 +22,20 @@ void Skybox::Initialize(std::string textureFilePath) {
 	transform_ = { {1000.0f,1000.0f,1000.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 }
 
+//更新
+void Skybox::Update() {
+	Matrix4x4 worldMatrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	Matrix4x4 worldViewProjectionMatrix;
+	if (camera_) {
+		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+		worldViewProjectionMatrix = Math::Multiply(worldMatrix, viewProjectionMatrix);
+	} else {
+		worldViewProjectionMatrix = worldMatrix;
+	}
+	transformationMatrixData->WVP = worldViewProjectionMatrix;
+	transformationMatrixData->World = worldMatrix;
+}
+
 //描画
 void Skybox::Draw() {
 	//ルートシグネチャ
@@ -32,11 +46,12 @@ void Skybox::Draw() {
 	directxBase_->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//VBV設定
 	directxBase_->Getcommandlist()->IASetVertexBuffers(0, 1, &vertexBufferView);
-
+	//index設定
+	directxBase_->Getcommandlist()->IASetIndexBuffer(&indexBufferView);
 	//マテリアルCBufferの場所を設定
 	directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	//テクスチャのDescriptorTableを設定
-	directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(modelData.material.textureFilePath));
+	directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
 	//インスタンシングデータのSRVのDescriptorTableを設定
 	directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	//描画
@@ -46,6 +61,7 @@ void Skybox::Draw() {
 
 //index作成
 void Skybox::CreateIndex() {
+
 	indices = {
 		0,1,2,2,1,3,
 		4,5,6,6,5,7,
@@ -60,11 +76,13 @@ void Skybox::CreateIndex() {
 	//リソースの先頭のアドレスから使う
 	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
 	//使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView.SizeInBytes = sizeof(uint32_t) * indices.size();
+	indexBufferView.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indices.size());
 	//インデックスはuint32_tとする
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	//IndexResourceにデータを書き込むためのアドレスを取得
 	indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
+	std::memcpy(indexData, indices.data(), sizeof(uint32_t) * indices.size());
+	indexResource->Unmap(0, nullptr);
 }
 
 //マテリアル作成
@@ -94,6 +112,9 @@ void Skybox::CreateTransformation() {
 
 //頂点データ作成
 void Skybox::CreateVertex() {
+
+	modelData.vertices.resize(24);
+
 	//右面
 	modelData.vertices[0].position = { 1.0f,1.0f,1.0f,1.0f };
 	modelData.vertices[1].position = { 1.0f,1.0f,-1.0f,1.0f };

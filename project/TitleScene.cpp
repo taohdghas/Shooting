@@ -67,6 +67,7 @@ void TitleScene::Update() {
 	//カメラ
 	camera->Update();
 	
+	skybox->Update();
 
 	//object3d->Update();
 
@@ -115,7 +116,7 @@ void TitleScene::Draw() {
 	Object3dBase::GetInstance()->DrawBaseSet();
 
 	//skybox
-//	skybox->Draw()
+	skybox->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

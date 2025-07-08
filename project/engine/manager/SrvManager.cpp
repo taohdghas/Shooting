@@ -41,7 +41,7 @@ void SrvManager::CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResou
 		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 	} else {
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = metadata.mipLevels;
+		srvDesc.Texture2D.MipLevels = static_cast<UINT>(metadata.mipLevels);
 	}
 
 	directxBase->Getdevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));

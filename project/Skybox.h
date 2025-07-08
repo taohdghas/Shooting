@@ -8,6 +8,8 @@ class Skybox
 public:
 	//初期化
 	void Initialize(std::string textureFilePath);
+	//更新
+	void Update();
 	//描画
 	void Draw();
 	//index作成

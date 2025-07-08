@@ -7,6 +7,7 @@ struct Material
     float4x4 uvTransform;
     float shininess;
 };
+
 struct PixelShaderOutput
 {
     float4 color : SV_TARGET0;
