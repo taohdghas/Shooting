@@ -76,3 +76,14 @@ struct SpotLight {
 	float cosFalloffStart;
 	float padding[2];
 };
+//AABB
+struct AABB {
+	Vector3 min;//最小点
+	Vector3 max;//最大点
+};
+//OBB
+struct OBB {
+	Vector3 center;//中心点
+	Vector3 orientations[3];//座標軸
+	Vector3 size;//座標軸方向の長さの半分
+};
