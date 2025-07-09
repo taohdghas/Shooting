@@ -9,8 +9,6 @@
 #include <fstream>
 #include <sstream>
 #include <dinput.h>
-#include "Matrix4x4.h"
-#include "Transform.h"
 #include "Math.h"
 #include "Object3d.h"
 #include "ModelBase.h"
