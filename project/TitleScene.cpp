@@ -31,7 +31,6 @@ void TitleScene::Initialize() {
 	object3d->SetTranslate({ 0.0f,0.0f,0.0f });
 	object3d->SetModel("plane.gltf");
 
-
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/circle.png");
 	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/uvChecker.png");
 	//パーティクルエミッター
