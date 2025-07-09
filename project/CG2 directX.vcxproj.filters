@@ -338,9 +338,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Particle.hlsli" />
+    <None Include="resources\shaders\Fullscreen.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle.PS.hlsl" />
     <FxCompile Include="resources\shaders\Particle.VS.hlsl" />
+    <FxCompile Include="resources\shaders\Fullscreen.PS.hlsl" />
+    <FxCompile Include="resources\shaders\Fullscreen.VS.hlsl" />
+    <FxCompile Include="resources\shaders\Grayscale.PS.hlsl" />
+    <FxCompile Include="resources\shaders\Vignette.PS.hlsl" />
+    <FxCompile Include="resources\shaders\BoxFilter.PS.hlsl" />
+    <FxCompile Include="resources\shaders\GaussianFilter.PS.hlsl" />
   </ItemGroup>
 </Project>

@@ -35,17 +35,27 @@ void MyGame::Update() {
 
 //描画
 void MyGame::Draw() {
-	//描画前処理
-	directxBase_->PreDraw();
 
-	SrvManager::GetInstance()->PreDraw();
+    //RenderTexture描画準備
+    directxBase_->PreDrawRenderTexture();
 
-	//シーンマネージャ描画
-	SceneManager::GetInstance()->Draw();
+    SrvManager::GetInstance()->PreDraw();
+    SceneManager::GetInstance()->Draw();
 
-	//ImGui描画
-	imguimanager_->Draw();
+    //RenderTextureをSRV用に切り替え
+    directxBase_->TransitionRenderTextureToSRV();
 
-	//描画後処理
-	directxBase_->PostDraw();
+    //SwapChain描画準備
+    directxBase_->PreDraw();
+
+    //swapchainに描画
+    directxBase_->DrawRenderTextureToScreen();
+
+    //ImGui描画
+    imguimanager_->Draw();
+
+
+    //描画後処理
+    directxBase_->PostDraw();
+
 }
