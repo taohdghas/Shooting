@@ -83,12 +83,7 @@ void Sprite::Draw() {
 	//DrawCall(描画)
 	spriteBase->GetDxBase()->Getcommandlist()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
-/*
-//テクスチャ変更
-void Sprite::SetTexture(std::string textureFilePath) {
-	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
-}
-*/
+
 //頂点データ作成
 void Sprite::VertexDataCreate() {
 	//リソースを作る

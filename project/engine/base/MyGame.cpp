@@ -10,7 +10,7 @@ void MyGame::Initialize() {
 	//シーンファクトリーを生成してマネージャにセット
 	sceneFactory = std::make_unique<SceneFactory>();
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory.get());
-    //シーンマネージャに最初のシーンをセット
+	//シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("GAME");
 }
 
@@ -22,12 +22,20 @@ void MyGame::Finalize() {
 
 //毎フレーム更新
 void MyGame::Update() {
-	
+
 	//ImGui開始
 	imguimanager_->Begin();
 
 	//基底クラスの更新
 	Framework::Update();
+
+#ifdef USE_IMGUI
+	//RenderTextureの切り替え
+	if (ImGui::Begin("MyGame SetUp")) {
+		ImGui::Checkbox("Use RenderTexture", & useRenderTexture_);
+	}
+	ImGui::End();
+#endif
 
 	//ImGui終了
 	imguimanager_->End();
@@ -36,26 +44,37 @@ void MyGame::Update() {
 //描画
 void MyGame::Draw() {
 
-    //RenderTexture描画準備
-    directxBase_->PreDrawRenderTexture();
+	//RenderTexture使用時
+	if (useRenderTexture_) {
 
-    SrvManager::GetInstance()->PreDraw();
-    SceneManager::GetInstance()->Draw();
-
-    //RenderTextureをSRV用に切り替え
-    directxBase_->TransitionRenderTextureToSRV();
-
-    //SwapChain描画準備
-    directxBase_->PreDraw();
-
-    //swapchainに描画
-    directxBase_->DrawRenderTextureToScreen();
-
-    //ImGui描画
-    imguimanager_->Draw();
-
-
-    //描画後処理
-    directxBase_->PostDraw();
-
+		//RenderTexture描画準備
+		directxBase_->PreDrawRenderTexture();
+		//Srv描画準備
+		SrvManager::GetInstance()->PreDraw();
+		//シーン描画
+		SceneManager::GetInstance()->Draw();
+		//RenderTextureをSRV用に切り替え
+		directxBase_->TransitionRenderTextureToSRV();
+		//SwapChain描画準備
+		directxBase_->PreDraw();
+		//swapchainに描画
+		directxBase_->DrawRenderTextureToScreen();
+		//ImGui描画
+		imguimanager_->Draw();
+		//描画後処理
+		directxBase_->PostDraw();
+	}
+	//不使用
+	else {
+		//SwapChain描画準備
+		directxBase_->PreDraw();
+		//Srv描画準備
+		SrvManager::GetInstance()->PreDraw();
+		//シーン描画
+		SceneManager::GetInstance()->Draw();
+		//ImGui描画
+		imguimanager_->Draw();
+		//描画後処理
+		directxBase_->PostDraw();
+	}
 }

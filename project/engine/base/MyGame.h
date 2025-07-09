@@ -39,6 +39,7 @@ public:
 	//描画
 	void Draw()override;
 private:
-
+	//RenderTexture切り替え
+	bool useRenderTexture_ = false;
 };
 

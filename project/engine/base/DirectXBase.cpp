@@ -382,9 +382,6 @@ void DirectXBase::PreDraw() {
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
 	// 指定した震度で画面全体をクリアする
 	commandList->ClearDepthStencilView(dsvHadle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	// 描画用のDescriptorHeapの設定
-	//ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
-	//commandList->SetDescriptorHeaps(1, descriptorHeaps);
 	commandList->RSSetViewports(1, &viewport);
 	commandList->RSSetScissorRects(1, &scissorRect);
 }
