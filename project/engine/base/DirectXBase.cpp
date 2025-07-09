@@ -50,6 +50,7 @@ void DirectXBase::Initialize(WindowsAPI* windowsAPI) {
 	ScissorrectInitialize();
 	//DXCコンパイラの生成
 	DXCcompilerInitialize();
+	//廃プライン作成
 	CreatePipelineState();
 }
 
@@ -253,7 +254,7 @@ void DirectXBase::RendertargetviewInitialize() {
 	device->CreateRenderTargetView(swapChainResources[1].Get(), &rtvDesc, rtvHandles[1]);
 
 	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };//赤
-	renderTextureResource = CreateRenderTextureResource(device, WindowsAPI::kClientWitdh, WindowsAPI::kClientHeight,
+	renderTextureResource = CreateRenderTextureResource(device, WindowsAPI::kClientWidth, WindowsAPI::kClientHeight,
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
 
 	renderrtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1, false);

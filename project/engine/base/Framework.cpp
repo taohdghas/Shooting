@@ -80,9 +80,6 @@ void Framework::Update() {
 	//入力の更新
 	Input::GetInstance()->Update();
 
-	//カメラの更新
-	//camera_->Update();
-
 	//シーンマネージャの更新
 	sceneManager->Update();
 }
