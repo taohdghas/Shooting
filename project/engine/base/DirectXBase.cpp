@@ -75,9 +75,9 @@ void DirectXBase::DeviceInitialize() {
 	// 関数が成功したかどうかをSUCCEDEDマクロで判定できる
 	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
 	// 初期化の根本的な部分でエラーが出た場合はプログラムが間違っているか、どう
-	// にもできない場合が多いのでassertにしておく
+	// にもできない場合が多いのでAssertにしておく
 	assert(SUCCEEDED(hr));
-	// 使用するアダプタ用の変数。最初にnullptrを入れておく
+	// 使用するアダプタ用の変数。最初にNullptrを入れておく
 	Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter = nullptr;
 	// 良い順にアダプタを頼む
 	for (UINT i = 0; dxgiFactory->EnumAdapterByGpuPreference(i,
@@ -198,7 +198,7 @@ void DirectXBase::DepthbufferGenerate() {
 	hr = device->CreateCommittedResource(
 		&heapProperties,//Heapの設定
 		D3D12_HEAP_FLAG_NONE,//Heapの特殊設定。特になし
-		&resourceDesc,//REesourceの設定
+		&resourceDesc,//Resourceの設定
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,//深度値を書き込む状態のしておく
 		&depthClerValue,//Clear最適値
 		IID_PPV_ARGS(&resource));//作成するResourceポインタへのポインタ
@@ -226,9 +226,9 @@ void DirectXBase::DescriptorheapGenerate() {
 }
 //レンダーターゲットビューの初期化
 void DirectXBase::RendertargetviewInitialize() {
-	// SwapChainからRscourceを引っ張ってくる
+	//SwapChainからResourceを引っ張ってくる
 	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0]));
-	// うまく取得できなければ起動できない
+	//うまく取得できなければ起動できない
 	assert(SUCCEEDED(hr));
 	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
 	assert(SUCCEEDED(hr));
@@ -241,9 +241,9 @@ void DirectXBase::RendertargetviewInitialize() {
     
 	device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
 
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGに変換して書き込む
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2dテクスチャとして書き込む
-	// ディスクリプタの先頭を取得する
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; //出力結果をSRGに変換して書き込む
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; //2dテクスチャとして書き込む
+	//ディスクリプタの先頭を取得する
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = GetCPUDescriptorHandle(rtvDescriptorHeap, descriptorSizeRTV, 0);
 	//1つ目
@@ -274,7 +274,7 @@ void DirectXBase::RendertargetviewInitialize() {
 //深度ステンシルビューの初期化
 void DirectXBase::DepthstencilviewInitialize() {
 	depthStencilResource = CreateDepthStencilTextureResource(device, WindowsAPI::kClientWidth, WindowsAPI::kClientHeight);
-	// DSVの設定
+	//DSVの設定
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
@@ -297,13 +297,13 @@ void DirectXBase::FenceInitialize() {
 	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 	assert(SUCCEEDED(hr));
 
-	// FenceをSignalを持つためイベントを作成する
+	//FenceをSignalを持つためイベントを作成する
 	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
 }
 //ビューポート矩形の初期化
 void DirectXBase::ViewportInitialize() {
-	// クライアント領域のサイズと一緒にして画面全体に表示
+	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewport.Width = windowsAPI->kClientWidth;
 	viewport.Height = windowsAPI->kClientHeight;
 	viewport.TopLeftX = 0;
@@ -313,7 +313,7 @@ void DirectXBase::ViewportInitialize() {
 }
 //シザリング矩形の初期化
 void DirectXBase::ScissorrectInitialize() {
-	// 基本的にビューポートと同じ矩形が構成されるようになる
+	//基本的にビューポートと同じ矩形が構成されるようになる
 	scissorRect.left = 0;
 	scissorRect.right = windowsAPI->kClientWidth;
 	scissorRect.top = 0;
@@ -360,70 +360,70 @@ void DirectXBase::UpdateFixFPS() {
 }
 //描画前処理
 void DirectXBase::PreDraw() {
-	// 書き込むバックバッファのインデックスの取得
+	//書き込むバックバッファのインデックスの取得
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-	// 今回のバリアばTransition
+	//今回のバリアばTransition
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにしておく
+	//Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを張る大将のリソース。現在のバックバッファに対して行う
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
 	barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
-	// 遷移前（現在）のResourceState
+	//遷移前のResourceState
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	// 遷移後のResourceState
+	//遷移後のResourceState
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// TransitionBarrierを張る
+	//TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &barrier);
-	// 描画先のRTVとDSVを設定する
+	//描画先のRTVとDSVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHadle = GetDSVCPUDescriptorHandle(0);
 	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHadle);
-	// 指定した色で画面全体をクリアする
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f }; // 青っぽい色。RGBAの順
+	//指定した色で画面全体をクリアする
+	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f }; //青っぽい色。RGBAの順
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
-	// 指定した震度で画面全体をクリアする
+	//指定した震度で画面全体をクリアする
 	commandList->ClearDepthStencilView(dsvHadle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	commandList->RSSetViewports(1, &viewport);
 	commandList->RSSetScissorRects(1, &scissorRect);
 }
 //描画後処理
 void DirectXBase::PostDraw() {
-	// 書き込むバックバッファのインデックスの取得
+	//書き込むバックバッファのインデックスの取得
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-	// 今回のバリアばTransition
+	//今回のバリアばTransition
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにしておく
+	//Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを張る大将のリソース。現在のバックバッファに対して行う
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
 	barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
-	// 遷移前（現在）のResourceState
+	//遷移前のResourceState
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// 遷移後のResourceState
+	//遷移後のResourceState
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	// TransitionBarrierを張る
+	//TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &barrier);
-	// コマンドリストの内容を確定させる。すべてのコマンドを詰んでからCloseする
+	//コマンドリストの内容を確定させる。すべてのコマンドを詰んでからCloseする
 	hr = commandList->Close();
 	assert(SUCCEEDED(hr));
-	// GPUにコマンドリストの実行を行わせる
+	//GPUにコマンドリストの実行を行わせる
 	ID3D12CommandList* commandLists[] = { commandList.Get() };
 	commandQueue->ExecuteCommandLists(1, commandLists);
-	// GPUとosに画面王交換を行うよう通知する
+	//GPUとosに画面王交換を行うよう通知する
 	swapChain->Present(1, 0);
-	// Fenceの更新
+	//Fenceの更新
 	fenceValue++;
-	// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+	//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
 	commandQueue->Signal(fence.Get(), fenceValue);
-	// Fenceの値が指定したSignal値にたどり着いているか確認する
-	// GetCompletedValueの初期値はFence作成時に渡した初期値
+	//Fenceの値が指定したSignal値にたどり着いているか確認する
+	//GetCompletedValueの初期値はFence作成時に渡した初期値
 	if (fence->GetCompletedValue() < fenceValue) {
-		// 指定したSignalにたどりつかないので、たどり着くまで待つようにイベントを設定する
+		//指定したSignalにたどりつかないので、たどり着くまで待つようにイベントを設定する
 		fence->SetEventOnCompletion(fenceValue, fenceEvent);
-		// イベントを待つ
+		//イベントを待つ
 		WaitForSingleObject(fenceEvent, INFINITE);
 	}
 	//FPS固定
 	UpdateFixFPS();
-	// 次のフレーム用のコマンドリストを準備
+	//次のフレーム用のコマンドリストを準備
 	hr = commandAllocator->Reset();
 	assert(SUCCEEDED(hr));
 	hr = commandList->Reset(commandAllocator.Get(), nullptr);
@@ -457,7 +457,7 @@ void DirectXBase::PreDrawRenderTexture() {
 }
 
 
-//swapchainに描画
+//Swapchainに描画
 void DirectXBase::DrawRenderTextureToScreen() {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
 	commandList->SetDescriptorHeaps(1, descriptorHeaps);
