@@ -55,13 +55,13 @@ void Skybox::Draw() {
 	//インスタンシングデータのSRVのDescriptorTableを設定
 	directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	//描画
-	directxBase_->Getcommandlist()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	directxBase_->Getcommandlist()->DrawInstanced(UINT(indices.size()), 1, 0, 0);
 
 }
 
 //index作成
 void Skybox::CreateIndex() {
-
+	
 	indices = {
 		0,1,2,2,1,3,
 		4,5,6,6,5,7,
@@ -113,51 +113,51 @@ void Skybox::CreateTransformation() {
 //頂点データ作成
 void Skybox::CreateVertex() {
 
-	modelData.vertices.resize(24);
-
+	vertices.resize(24);
 	//右面
-	modelData.vertices[0].position = { 1.0f,1.0f,1.0f,1.0f };
-	modelData.vertices[1].position = { 1.0f,1.0f,-1.0f,1.0f };
-	modelData.vertices[2].position = { 1.0f,-1.0f,1.0f,1.0f };
-	modelData.vertices[3].position = { 1.0f,-1.0f,-1.0f,1.0f };
-	//左面
-	modelData.vertices[4].position = { -1.0f,1.0f,-1.0f,1.0f };
-	modelData.vertices[5].position = { -1.0f,1.0f,1.0f,1.0f };
-	modelData.vertices[6].position = { -1.0f,-1.0f,-1.0f,1.0f };
-	modelData.vertices[7].position = { -1.0f,-1.0f,1.0f,1.0f };
-	//前面
-	modelData.vertices[8].position = { -1.0f,1.0f,1.0f,1.0f };
-	modelData.vertices[9].position = { 1.0f,1.0f,1.0f,1.0f };
-	modelData.vertices[10].position = { -1.0f,-1.0f,1.0f,1.0f };
-	modelData.vertices[11].position = { 1.0f,-1.0f,1.0f,1.0f };
-	//後面
-	modelData.vertices[12].position = { 1.0f,1.0f,-1.0f,1.0f };
-	modelData.vertices[13].position = { -1.0f,1.0f,-1.0f,1.0f };
-	modelData.vertices[14].position = { 1.0f,-1.0f,-1.0f,1.0f };
-	modelData.vertices[15].position = { -1.0f,-1.0f,-1.0f,1.0f };
-	//上面
-	modelData.vertices[16].position = { -1.0f,1.0f,-1.0f,1.0f };
-	modelData.vertices[17].position = { 1.0f,1.0f,-1.0f,1.0f };
-	modelData.vertices[18].position = { -1.0f,1.0f,1.0f,1.0f };
-	modelData.vertices[19].position = { 1.0f,1.0f,1.0f,1.0f };
-	//下面
-	modelData.vertices[20].position = { -1.0f,-1.0f,1.0f,1.0f };
-	modelData.vertices[21].position = { 1.0f,-1.0f,1.0f,1.0f };
-	modelData.vertices[22].position = { -1.0f,-1.0f,-1.0f,1.0f };
-	modelData.vertices[23].position = { 1.0f,-1.0f,-1.0f,1.0f };
+	vertices[0].position = { 1.0f,  1.0f, -1.0f, 1.0f };
+	vertices[1].position = { 1.0f,  1.0f,  1.0f, 1.0f };
+	vertices[2].position = { 1.0f, -1.0f, -1.0f, 1.0f };
+	vertices[3].position = { 1.0f, -1.0f,  1.0f, 1.0f };
+    //左面
+	vertices[4].position = { -1.0f,  1.0f,  1.0f, 1.0f };
+	vertices[5].position = { -1.0f,  1.0f, -1.0f, 1.0f };
+	vertices[6].position = { -1.0f, -1.0f,  1.0f, 1.0f };
+	vertices[7].position = { -1.0f, -1.0f, -1.0f, 1.0f };
+    //前面
+	vertices[8].position = { -1.0f,  1.0f,  1.0f, 1.0f };
+	vertices[9].position = { 1.0f,  1.0f,  1.0f, 1.0f };
+	vertices[10].position = { -1.0f, -1.0f,  1.0f, 1.0f };
+	vertices[11].position = { 1.0f, -1.0f,  1.0f, 1.0f };
+    //後面
+	vertices[12].position = { 1.0f,  1.0f, -1.0f, 1.0f };
+	vertices[13].position = { -1.0f,  1.0f, -1.0f, 1.0f };
+	vertices[14].position = { 1.0f, -1.0f, -1.0f, 1.0f };
+	vertices[15].position = { -1.0f, -1.0f, -1.0f, 1.0f };
+    //上面
+	vertices[16].position = { -1.0f,  1.0f, -1.0f, 1.0f };
+	vertices[17].position = { 1.0f,  1.0f, -1.0f, 1.0f };
+	vertices[18].position = { -1.0f,  1.0f,  1.0f, 1.0f };
+	vertices[19].position = { 1.0f,  1.0f,  1.0f, 1.0f };
+    //下面
+	vertices[20].position = { -1.0f, -1.0f,  1.0f, 1.0f };
+	vertices[21].position = { 1.0f, -1.0f,  1.0f, 1.0f };
+	vertices[22].position = { -1.0f, -1.0f, -1.0f, 1.0f };
+	vertices[23].position = { 1.0f, -1.0f, -1.0f, 1.0f };
 
 	//リソースを作る
-	vertexResource = directxBase_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	vertexResource = directxBase_->CreateBufferResource(sizeof(VertexData) *vertices.size());
 	// リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * vertices.size());
 	// 1頂点当たりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 	//VertexResourceにデータを書き込むためのアドレス取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//頂点データをリソースにコピー
-	std::memcpy(vertexData, vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	std::memcpy(vertexData, vertices.data(), sizeof(VertexData) * vertices.size());
+
 }
 
 //ルートシグネチャの作成

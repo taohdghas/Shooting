@@ -59,12 +59,6 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	}
 	assert(SUCCEEDED(hr));
 
-	/*
-	//テクスチャデータを追加
-	textureDatas.resize(textureDatas.size() + 1);
-	//追加したテクスチャデータの参照を取得する
-	TextureData& textureData = textureDatas.back();
-	*/
 	//テクスチャデータを追加して書きこむ
 	TextureData& textureData = textureDatas[filePath];
 
