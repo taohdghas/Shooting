@@ -65,9 +65,10 @@ void GameScene::Initialize() {
 
 //終了
 void GameScene::Finalize() {
-	CameraManager::GetInstance()->Finalize();
 	//パーティクルグループの開放
 	ParticleManager::GetInstance()->Clear();
+	//カメラマネージャ
+	CameraManager::GetInstance()->Finalize();
 	//Audio
 	Audio::GetInstance()->Finalize();
 }
@@ -107,10 +108,14 @@ void GameScene::Update() {
 		particle->Update();
 	}
 
-
 	//タイトルシーンへ
 	if (player->IsDead()) {
 		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+
+	//クリアシーンへ
+	if (Input::GetInstance()->PushKey(DIK_C)) {
+		SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
 
 	//デバック

@@ -52,6 +52,8 @@ void TitleScene::Initialize() {
 
 //終了
 void TitleScene::Finalize() {
+	//カメラマネージャ
+	CameraManager::GetInstance()->Finalize();
 	//Audio
 	Audio::GetInstance()->Finalize();
 }
