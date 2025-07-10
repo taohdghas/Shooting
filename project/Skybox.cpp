@@ -8,6 +8,8 @@ void Skybox::Initialize(std::string textureFilePath) {
 	directxBase_ = DirectXBase::GetInstance();
 	textureFilePath_ = textureFilePath;
 	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
+	//グラフィックスパイプラインの生成
+	GenerateGraphicsPipeline();
 	//頂点データ作成
 	CreateVertex();
 	//index作成
@@ -16,8 +18,6 @@ void Skybox::Initialize(std::string textureFilePath) {
 	CreateMaterial();
 	//座標変換行列データ作成
 	CreateTransformation();
-	//グラフィックスパイプラインの生成
-	GenerateGraphicsPipeline();
 
 	transform_ = { {1000.0f,1000.0f,1000.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 }

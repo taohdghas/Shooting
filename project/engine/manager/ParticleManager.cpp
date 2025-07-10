@@ -17,8 +17,6 @@ void ParticleManager::Initialize(DirectXBase* directxBase, SrvManager* srvManage
 	this->srvManager_ = srvManager;
 	this->camera_ = camera;
 	randomEngine.seed(seedGenerator());
-	//ルートシグネチャ
-	//GenerateRootSignature();
 	//グラフィックスパイプライン
 	GenerategraphicsPipeline();
 	//頂点データ
