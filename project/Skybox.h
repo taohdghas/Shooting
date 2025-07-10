@@ -23,7 +23,7 @@ public:
 	//ルートシグネチャの作成
 	void GenerateRootSignature();
 	//グラフィックスパイプラインの生成
-	void GenerategraphicsPipeline();
+	void GenerateGraphicsPipeline();
 
 private:
 	VertexData* vertexData = nullptr;

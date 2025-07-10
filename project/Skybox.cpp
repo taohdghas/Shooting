@@ -8,16 +8,16 @@ void Skybox::Initialize(std::string textureFilePath) {
 	directxBase_ = DirectXBase::GetInstance();
 	textureFilePath_ = textureFilePath;
 	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
+	//頂点データ作成
+	CreateVertex();
 	//index作成
 	CreateIndex();
 	//マテリアル作成
 	CreateMaterial();
 	//座標変換行列データ作成
 	CreateTransformation();
-	//頂点データ作成
-	CreateVertex();
 	//グラフィックスパイプラインの生成
-	GenerategraphicsPipeline();
+	GenerateGraphicsPipeline();
 
 	transform_ = { {1000.0f,1000.0f,1000.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 }
@@ -61,14 +61,14 @@ void Skybox::Draw() {
 
 //index作成
 void Skybox::CreateIndex() {
-	
+
 	indices = {
 		0,1,2,2,1,3,
 		4,5,6,6,5,7,
 		8, 9,10,10,9,11,
-	    12,13,14,14,13,15,
-	    16,17,18,18,17,19,
-	    20,21,22,22,21,23,
+		12,13,14,14,13,15,
+		16,17,18,18,17,19,
+		20,21,22,22,21,23,
 	};
 
 	//リソースを作る
@@ -82,7 +82,6 @@ void Skybox::CreateIndex() {
 	//IndexResourceにデータを書き込むためのアドレスを取得
 	indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
 	std::memcpy(indexData, indices.data(), sizeof(uint32_t) * indices.size());
-	indexResource->Unmap(0, nullptr);
 }
 
 //マテリアル作成
@@ -119,27 +118,27 @@ void Skybox::CreateVertex() {
 	vertices[1].position = { 1.0f,  1.0f,  1.0f, 1.0f };
 	vertices[2].position = { 1.0f, -1.0f, -1.0f, 1.0f };
 	vertices[3].position = { 1.0f, -1.0f,  1.0f, 1.0f };
-    //左面
+	//左面
 	vertices[4].position = { -1.0f,  1.0f,  1.0f, 1.0f };
 	vertices[5].position = { -1.0f,  1.0f, -1.0f, 1.0f };
 	vertices[6].position = { -1.0f, -1.0f,  1.0f, 1.0f };
 	vertices[7].position = { -1.0f, -1.0f, -1.0f, 1.0f };
-    //前面
+	//前面
 	vertices[8].position = { -1.0f,  1.0f,  1.0f, 1.0f };
 	vertices[9].position = { 1.0f,  1.0f,  1.0f, 1.0f };
 	vertices[10].position = { -1.0f, -1.0f,  1.0f, 1.0f };
 	vertices[11].position = { 1.0f, -1.0f,  1.0f, 1.0f };
-    //後面
+	//後面
 	vertices[12].position = { 1.0f,  1.0f, -1.0f, 1.0f };
 	vertices[13].position = { -1.0f,  1.0f, -1.0f, 1.0f };
 	vertices[14].position = { 1.0f, -1.0f, -1.0f, 1.0f };
 	vertices[15].position = { -1.0f, -1.0f, -1.0f, 1.0f };
-    //上面
+	//上面
 	vertices[16].position = { -1.0f,  1.0f, -1.0f, 1.0f };
 	vertices[17].position = { 1.0f,  1.0f, -1.0f, 1.0f };
 	vertices[18].position = { -1.0f,  1.0f,  1.0f, 1.0f };
 	vertices[19].position = { 1.0f,  1.0f,  1.0f, 1.0f };
-    //下面
+	//下面
 	vertices[20].position = { -1.0f, -1.0f,  1.0f, 1.0f };
 	vertices[21].position = { 1.0f, -1.0f,  1.0f, 1.0f };
 	vertices[22].position = { -1.0f, -1.0f, -1.0f, 1.0f };
@@ -157,7 +156,6 @@ void Skybox::CreateVertex() {
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//頂点データをリソースにコピー
 	std::memcpy(vertexData, vertices.data(), sizeof(VertexData) * vertices.size());
-
 }
 
 //ルートシグネチャの作成
@@ -230,7 +228,7 @@ void Skybox::GenerateRootSignature() {
 }
 
 //グラフィックスパイプラインの生成
-void Skybox::GenerategraphicsPipeline() {
+void Skybox::GenerateGraphicsPipeline() {
 	GenerateRootSignature();
 	// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};

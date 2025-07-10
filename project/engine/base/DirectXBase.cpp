@@ -511,6 +511,7 @@ Microsoft::WRL::ComPtr<IDxcBlob>DirectXBase::CompileShader(const std::wstring& f
 }
 //バッファリソースの生成
 Microsoft::WRL::ComPtr<ID3D12Resource>DirectXBase::CreateBufferResource(size_t sizeInBytes) {//頂点リソース用のヒープの設定
+
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
 	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;//UploadHeapを使う
 	//頂点リソースの設定
