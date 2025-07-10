@@ -21,7 +21,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	transform_.translate = { 0.0f,-1.5f,0.0f };
 	//レティクル
 	reticle_ = std::make_unique<Sprite>();
-	//reticle_->Initialize(SpriteBase::GetInstance(), "resources/white.png");
+	reticle_->Initialize(SpriteBase::GetInstance(), "resources/white.png");
 	reticle_->SetSize({ 16,16 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
@@ -80,6 +80,9 @@ void Player::Update() {
 		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f }); 
 	}
 
+	//レティクル更新
+	//ReticleUpdate();
+
 	object_->Update();
 
 	//弾の更新
@@ -97,6 +100,8 @@ void Player::Draw() {
 	}
 	//プレイヤーの描画
 	object_->Draw();
+	//レティクルの描画
+	//reticle_->Draw();
 	//プレイヤー弾の描画
 	for (const auto& bullet : bullets_) {
 		bullet->Draw();
