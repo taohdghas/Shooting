@@ -1,5 +1,6 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
+#include "CameraManager.h"
 #include "ImGuiManager.h"
 
 //初期化
@@ -14,6 +15,13 @@ void TitleScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("title.obj");
 	ModelManager::GetInstance()->LoadModel("pushspace.obj");
 	ModelManager::GetInstance()->LoadModel("player/player.obj");
+
+	//カメラ
+	camera = std::make_unique<Camera>();
+	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
+	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->SetActiveCamera("Main");
+	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
 	//タイトルのオブジェクト
 	title = std::make_unique<Object3d>();
@@ -32,15 +40,9 @@ void TitleScene::Initialize() {
 	playerobj = std::make_unique<Object3d>();
 	playerobj->Initialize(Object3dBase::GetInstance());
 	playerobj->SetModel("player/player.obj");
-	playerobjTransform.scale = { 0.8f,0.8f,0.8f };
+	playerobjTransform.scale = { 0.5f,0.5f,0.5f };
 	playerobjTransform.rotate = { 0.0f,0.0f,0.0f };
 	playerobjTransform.translate = { 0.0f,0.0f,0.0f };
-
-	//カメラ
-	camera = std::make_unique<Camera>();
-	camera->SetRotate({ 0.0f,0.0f,0.0f });
-	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
-	pushspace->SetCamera(camera.get());
 
 	//フェードマネージャー
 	fadeManager = std::make_unique<FadeManager>();
@@ -63,16 +65,17 @@ void TitleScene::Update() {
 	//pushspaceオブジェクト
 	pushspace->Update();
 
-	//演出
-	Effect();
+	//プレイヤーObj演出
+	PlayerObjEffect();
 
-	//プレイヤーオブジェクト
-	playerobj->Update();
+	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		SceneManager::GetInstance()->ChangeScene("GAME");
+	}
 
 	//シーン遷移
-	SceneChange();
+	//SceneChange();
 
-	fadeManager->Update();
+	//fadeManager->Update();
 
 	//デバック
 	Debug();
@@ -88,7 +91,7 @@ void TitleScene::Draw() {
 	//pushspaceオブジェクト
 	pushspace->Draw();
 	//プレイヤーオブジェクト
-	//playerobj->Draw();
+	playerobj->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
@@ -104,8 +107,8 @@ void TitleScene::Debug() {
 	if (ImGui::TreeNode("Camera")) {
 		Vector3 cameraPos = camera->GetTranslate();
 		Vector3 cameraRot = camera->GetRotate();
-		ImGui::DragFloat3("CameraTranslate", &cameraPos.x, 0.1f);
-		ImGui::DragFloat3("CameraRotate", &cameraRot.x, 0.1f);
+		ImGui::DragFloat3("CameraTranslate", &cameraPos.x, 0.01f);
+		ImGui::DragFloat3("CameraRotate", &cameraRot.x, 0.01f);
 		camera->SetTranslate({ cameraPos.x,cameraPos.y,cameraPos.z });
 		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
 		ImGui::TreePop();
@@ -114,11 +117,14 @@ void TitleScene::Debug() {
 #endif
 }
 
-//演出
-void TitleScene::Effect() {
+//プレイヤーObj演出
+void TitleScene::PlayerObjEffect() {
 	//プレイヤーオブジェクトの回転
-	playerobjTransform.rotate.x += RotateSpeed * kDeltaTime;
-
+	playerobjTransform.rotate.y += RotateSpeed * kDeltaTime;
+	playerobj->SetScale(playerobjTransform.scale);
+	playerobj->SetRotate(playerobjTransform.rotate);
+	playerobj->SetTranslate(playerobjTransform.translate);
+	playerobj->Update();
 }
 
 //シーン遷移

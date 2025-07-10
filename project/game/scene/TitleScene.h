@@ -28,8 +28,8 @@ public:
 	void Draw() override;
 	//デバック
 	void Debug()override;
-	//演出
-	void Effect();
+	//プレイヤーObj演出
+	void PlayerObjEffect();
 	//シーン遷移
 	void SceneChange();
 private:
