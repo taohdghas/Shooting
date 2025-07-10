@@ -1,6 +1,5 @@
 #pragma once
-#include "Vector3.h"
-#include "Matrix4x4.h"
+#include "Struct.h"
 #include <corecrt_math.h>
 
 // Vector3の足し算
@@ -70,7 +69,8 @@ inline Vector3& operator*=(Vector3& v1, const Vector3& v2) {
 namespace Math {
 
 	float Length(const Vector3& v);
-
+	float Dot(const Vector3& v1, const Vector3& v2);
+	//加算
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	//減算
 	Vector3 Subtract(const Vector3& v1, const Vector3& v2);
@@ -82,6 +82,7 @@ namespace Math {
 	Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 	//法線ベクトル変換
 	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
+	Vector3 Cross(const Vector3& v1, const Vector3& v2);
 	//単位行列
 	Matrix4x4 MakeIdentity4x4();
 
@@ -109,7 +110,8 @@ namespace Math {
 	Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
 	//ビューポート行列
 	Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
-	
 	//転置行列
 	Matrix4x4 Transpose(const Matrix4x4& m);
+	//OBB同士の当たり判定
+	bool IsCollisionOBB(const OBB& obb1, const OBB& obb2);
 }
