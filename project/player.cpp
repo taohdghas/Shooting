@@ -10,6 +10,7 @@ void player::Initialize(Object3dBase*object3dbase) {
 }
 
 void player::Update() {
+	object_->SetTranslate(transform_.translate);
 	object_->Update();
 }
 
