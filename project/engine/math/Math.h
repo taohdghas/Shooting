@@ -113,5 +113,5 @@ namespace Math {
 	//転置行列
 	Matrix4x4 Transpose(const Matrix4x4& m);
 	//OBB同士の当たり判定
-	bool IsCollisionOBB(const OBB& obb1, const OBB& obb2);
+	//bool IsCollisionOBB(const OBB& obb1, const OBB& obb2);
 }

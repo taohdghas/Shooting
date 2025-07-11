@@ -1,16 +1,15 @@
 #pragma once
 #include "Windows.h"
+#include "WindowsAPI.h"
+#include "Struct.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <array>
-#include "WindowsAPI.h"
-#include "Struct.h"
 #include <dxcapi.h>
 #include <string>
 #include <chrono>
 #include "externals/DirectXTex/DirectXTex.h"
-#include <Vector4.h>
 
 enum class RenderTextureState {
 	RenderTarget,
