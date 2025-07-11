@@ -9,7 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <dinput.h>
-#include "Math.h"
+#include "MyMath.h"
 #include "Object3d.h"
 #include "ModelBase.h"
 #include "Model.h"

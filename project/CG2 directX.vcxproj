@@ -41,7 +41,7 @@
     <ClCompile Include="game\scene\GameScene.cpp" />
     <ClCompile Include="engine\debug\Logger.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="engine\math\Math.cpp" />
+    <ClCompile Include="engine\math\MyMath.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\ModelBase.cpp" />
     <ClCompile Include="engine\manager\ModelManager.cpp" />
@@ -91,7 +91,7 @@
     <ClInclude Include="engine\base\Framework.h" />
     <ClInclude Include="game\scene\GameScene.h" />
     <ClInclude Include="engine\debug\Logger.h" />
-    <ClInclude Include="engine\math\Math.h" />
+    <ClInclude Include="engine\math\MyMath.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />
     <ClInclude Include="engine\3d\Model.h" />
     <ClInclude Include="engine\3d\ModelBase.h" />

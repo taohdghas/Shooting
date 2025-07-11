@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "Math.h"
+#include "MyMath.h"
 
 //デフォルトコンストラクタ
 Camera::Camera()

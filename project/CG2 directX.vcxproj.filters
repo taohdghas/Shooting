@@ -81,7 +81,7 @@
     <ClCompile Include="engine\io\Input.cpp">
       <Filter>io</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\Math.cpp">
+    <ClCompile Include="engine\math\MyMath.cpp">
       <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="engine\manager\TextureManager.cpp">
@@ -236,7 +236,7 @@
     <ClInclude Include="engine\math\Matrix4x4.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\Math.h">
+    <ClInclude Include="engine\math\MyMath.h">
       <Filter>math</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\Object3d.h">
