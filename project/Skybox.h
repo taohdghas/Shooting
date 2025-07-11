@@ -28,7 +28,6 @@ public:
 private:
 	VertexData* vertexData = nullptr;
 	DirectXBase* directxBase_ = nullptr;
-	Camera* camera_ = nullptr;
 	Material* materialData;
 	Transform transform_;
 	TransformationMatrix* transformationMatrixData;

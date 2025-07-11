@@ -1,6 +1,7 @@
 #include "Skybox.h"
 #include "Logger.h"
 #include "TextureManager.h"
+#include "CameraManager.h"
 #include "Math.h"
 
 //初期化
@@ -25,8 +26,8 @@ void Skybox::Initialize(std::string textureFilePath) {
 void Skybox::Update() {
 	Matrix4x4 worldMatrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	Matrix4x4 worldViewProjectionMatrix;
-	if (camera_) {
-		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+	if (CameraManager::GetInstance()) {
+		const Matrix4x4& viewProjectionMatrix = CameraManager::GetInstance()->GetActiveCamera()->GetViewProjectionMatrix();
 		worldViewProjectionMatrix = Math::Multiply(worldMatrix, viewProjectionMatrix);
 	} else {
 		worldViewProjectionMatrix = worldMatrix;
@@ -54,7 +55,7 @@ void Skybox::Draw() {
 	//インスタンシングデータのSRVのDescriptorTableを設定
 	directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	//描画
-	directxBase_->Getcommandlist()->DrawInstanced(UINT(indices.size()), 1, 0, 0);
+	directxBase_->Getcommandlist()->DrawIndexedInstanced(static_cast<UINT>(indices.size()), 1, 0, 0, 0);
 
 }
 
@@ -181,10 +182,9 @@ void Skybox::GenerateRootSignature() {
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 0;
 
-	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameter[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
-	rootParameter[1].DescriptorTable.NumDescriptorRanges = 0;
+	rootParameter[1].Descriptor.ShaderRegister = 0;
 
 	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;

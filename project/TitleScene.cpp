@@ -1,5 +1,7 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
+#include "CameraManager.h"
+#include "Object3dBase.h"
 #include "ImGuiManager.h"
 
 //初期化
@@ -15,6 +17,12 @@ void TitleScene::Initialize() {
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.gltf");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+
+	//カメラ
+	camera = std::make_unique<Camera>();
+	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
+	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->SetActiveCamera("Main");
 
 	//Sprite初期化
 	for (uint32_t i = 0; i < 1; ++i) {
@@ -42,12 +50,6 @@ void TitleScene::Initialize() {
 		particleEmitter.push_back(std::move(particle));
 	}
 
-	//カメラ
-	camera = std::make_unique<Camera>();
-	camera->SetRotate({ 0.0f,0.0f,0.0f });
-	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
-	object3d->SetCamera(camera.get());
-
 	//ライト
 	directionallight = std::make_unique<DirectionalLight>();
 	//skybox
@@ -58,6 +60,8 @@ void TitleScene::Initialize() {
 //終了
 void TitleScene::Finalize() {
 	ParticleManager::GetInstance()->Finalize();
+	//カメラマネージャ
+	CameraManager::GetInstance()->Finalize();
 	//Audio
 	Audio::GetInstance()->Finalize();
 }
@@ -65,22 +69,19 @@ void TitleScene::Finalize() {
 //更新
 void TitleScene::Update() {
 	//カメラ
-	camera->Update();
+	CameraManager::GetInstance()->GetActiveCamera()->Update();
 	
 	skybox->Update();
 
 	//object3d->Update();
 
-	ParticleManager::GetInstance()->Update();
+	//ParticleManager::GetInstance()->Update();
 	for (size_t i = 0; i < particleEmitter.size(); ++i) {
 		auto& particle = particleEmitter[i];
 		particle->Update();
 	}
 
-	//エンターキーを押したらゲームシーンへ
-	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
-		SceneManager::GetInstance()->ChangeScene("GAME");
-	}
+	
 
 #ifdef USE_IMGUI
 	ImGui::Begin("SetUp");
@@ -121,7 +122,5 @@ void TitleScene::Draw() {
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
-	//object3d->Draw();
-
-	ParticleManager::GetInstance()->Draw();
+	//ParticleManager::GetInstance()->Draw();
 }

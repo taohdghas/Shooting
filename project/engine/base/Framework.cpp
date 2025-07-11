@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include "CameraManager.h"
 
 //初期化
 void Framework::Initialize() {
@@ -32,9 +33,7 @@ void Framework::Initialize() {
 	imguimanager_->Initialize(windowsAPI_.get(), DirectXBase::GetInstance(), SrvManager::GetInstance());
 
 	//カメラ
-	camera_ = std::make_unique<Camera>();
-	camera_->SetRotate({ 0.3f,0.0f,0.0f });
-	camera_->SetTranslate({ 0.0f,4.0f,-10.0f });
+	CameraManager::GetInstance()->Initialize();
 
 	//パーティクルマネージャ
 	ParticleManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance(), camera_.get());
@@ -49,6 +48,8 @@ void Framework::Finalize() {
 	sceneManager->Finalize();
 	//パーティクルマネージャーの終了
 	ParticleManager::GetInstance()->Finalize();
+	//カメラ
+	CameraManager::GetInstance()->Finalize();
 	//ImGui
 	imguimanager_->Finalize();
 	//object3dbase
@@ -78,9 +79,6 @@ void Framework::Update() {
 
 	//入力の更新
 	Input::GetInstance()->Update();
-
-	//カメラの更新
-	camera_->Update();
 
 	//シーンマネージャの更新
 	sceneManager->Update();
