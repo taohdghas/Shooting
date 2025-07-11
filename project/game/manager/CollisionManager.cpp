@@ -1,5 +1,5 @@
 #include "CollisionManager.h"
-#include "Math.h"
+#include "MyMath.h"
 
 #include "Player.h"
 #include "Enemy.h"

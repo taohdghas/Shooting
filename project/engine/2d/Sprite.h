@@ -1,9 +1,5 @@
 #pragma once
 #include "SrvManager.h"
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
-#include "Matrix4x4.h"
 #include "Struct.h"
 #include "externals/DirectXTex/d3dx12.h"
 

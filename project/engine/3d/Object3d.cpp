@@ -1,6 +1,6 @@
 #include "Object3d.h"
 #include "Object3dBase.h"
-#include "Math.h"
+#include "MyMath.h"
 #include "TextureManager.h"
 #include "Model.h"
 #include "ModelManager.h"

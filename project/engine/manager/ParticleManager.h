@@ -4,9 +4,7 @@
 #include "TextureManager.h"
 #include "Logger.h"
 #include "Camera.h"
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
+#include "Struct.h"
 
 #include <unordered_map>
 #include <string>
@@ -23,29 +21,7 @@ enum class ParticleType {
 class ParticleManager
 {
 public:
-	//頂点データ
-	struct VertexData {
-		Vector4 position;
-		Vector2 texcoord;
-		Vector3 normal;
-	};
-	struct MaterialData
-	{
-		std::string textureFilePath;
-		uint32_t textureIndex = 0;
-	};
-	//マテリアルデータ
-	struct Material {
-		Vector4 color;
-		int32_t enableLighting;
-		float padding[3];
-		Matrix4x4 uvTransform;
-	};
-	struct ModelData
-	{
-		std::vector<VertexData>vertices;
-		MaterialData material;
-	};
+
 	//パーティクル
 	struct Particle {
 		Transform transform;
@@ -58,10 +34,6 @@ public:
 		Matrix4x4 WVP;
 		Matrix4x4 World;
 		Vector4 color;
-	};
-	struct AABB {
-		Vector3 min;//最小点
-		Vector3 max;//最大点
 	};
 	struct AccelerationField {
 		Vector3 acceleration;//加速度

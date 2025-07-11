@@ -1,7 +1,7 @@
 #pragma once
 #include "Object3d.h"
 #include "Object3dBase.h"
-#include "Transform.h"
+#include "Struct.h"
 #include <memory>
 
 class playerBullet

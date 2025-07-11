@@ -1,9 +1,5 @@
 #pragma once
 #include "ModelBase.h"
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
-#include "Matrix4x4.h"
 #include "Struct.h"
 #include <string>
 #include <vector>

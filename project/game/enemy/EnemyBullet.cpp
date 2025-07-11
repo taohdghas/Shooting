@@ -1,4 +1,5 @@
 #include "EnemyBullet.h"
+#include "MyMath.h"
 
 //初期化
 void EnemyBullet::Initialize(Object3dBase*object3dBase) {

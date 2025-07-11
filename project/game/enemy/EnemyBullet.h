@@ -2,7 +2,6 @@
 #include "Object3dBase.h"
 #include "Object3d.h"
 #include "Transform.h"
-#include "Math.h"
 
 class EnemyBullet
 {

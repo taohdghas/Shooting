@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "ImGuiManager.h"
+#include "MyMath.h"
 
 //初期化
 void Enemy::Initialize(Object3dBase*object3dBase) {

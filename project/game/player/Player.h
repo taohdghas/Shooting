@@ -4,7 +4,7 @@
 #include "Sprite.h"
 #include "SpriteBase.h"
 #include "Input.h"
-#include "Transform.h"
+#include "Struct.h"
 #include "playerBullet.h"
 #include "Camera.h"
 #include <list>

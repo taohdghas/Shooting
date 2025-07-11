@@ -1,7 +1,7 @@
 #include "Sprite.h"
 #include "SpriteBase.h"
-#include  "TextureManager.h"
-#include "Math.h"
+#include "TextureManager.h"
+#include "MyMath.h"
 #include "Transform.h"
 
 //初期化

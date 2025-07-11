@@ -1,6 +1,6 @@
 #include "Model.h"
 #include "TextureManager.h"
-#include "Math.h"
+#include "MyMath.h"
 #include <cassert>
 #include <fstream>
 #include <sstream>

@@ -1,5 +1,5 @@
 #include "ParticleManager.h"
-#include "Math.h"
+#include "MyMath.h"
 #include "CameraManager.h"
 #include <assert.h>
 #include <numbers>

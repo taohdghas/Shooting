@@ -12,6 +12,12 @@ struct VertexData {
 	Vector2 texcoord;
 	Vector3 normal;
 };
+//トランスフォーム
+struct Transform {
+	Vector3 scale;
+	Vector3 rotate;
+	Vector3 translate;
+};
 //マテリアルデータ
 struct Material {
 	Vector4 color;

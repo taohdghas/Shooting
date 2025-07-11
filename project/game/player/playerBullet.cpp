@@ -1,5 +1,5 @@
 #include "playerBullet.h"
-#include "Math.h"
+#include "MyMath.h"
 
 //初期化
 void playerBullet::Initialize(Object3dBase* object3dbase) {

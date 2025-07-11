@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Input.h"
+#include "MyMath.h"
 #include "TextureManager.h"
 #include "ImGuiManager.h"
 #include "WindowsAPI.h"
