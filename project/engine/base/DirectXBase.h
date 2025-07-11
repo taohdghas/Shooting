@@ -54,6 +54,10 @@ public:
 	size_t GetSwapChainResourcesNum()const { return swapChainDesc.BufferCount; }
 
 private:
+	//コンストラクタ
+	DirectXBase() = default;
+	//デストラクタ
+	~DirectXBase() = default;
 	//デバイスの初期化
 	void DeviceInitialize();
 	//コマンド関連の初期化
@@ -141,8 +145,12 @@ private:
 	HRESULT hr;
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
-    
+    //インスタンス
 	static DirectXBase* instance;
 	DirectXBase* directxBase_ = nullptr;
+	//コピーコンストラクタを無効にする
+	DirectXBase(const DirectXBase&) = delete;
+	//代入演算子を無効にする
+	DirectXBase& operator = (const DirectXBase&) = delete;
 };
 

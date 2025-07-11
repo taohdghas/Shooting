@@ -7,30 +7,29 @@ void Framework::Initialize() {
 	windowsAPI_->Initialize();
 
 	//DirectXの初期化
-	directxBase_ = std::make_unique<DirectXBase>();
-	directxBase_->Initialize(windowsAPI_.get());
+	DirectXBase::GetInstance()->Initialize(windowsAPI_.get());
 
 	//入力の初期化
 	Input::GetInstance()->Initialize(windowsAPI_.get());
 
 	//SpriteBaseの初期化
-	SpriteBase::GetInstance()->Initialize(directxBase_.get());
+	SpriteBase::GetInstance()->Initialize(DirectXBase::GetInstance());
 
 	//srvManagerの初期化
-	SrvManager::GetInstance()->Initialize(directxBase_.get());
+	SrvManager::GetInstance()->Initialize(DirectXBase::GetInstance());
 
 	//テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(directxBase_.get(), SrvManager::GetInstance());
+	TextureManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance());
 
 	//初期化
-	Object3dBase::GetInstance()->Initialize(directxBase_.get());
+	Object3dBase::GetInstance()->Initialize(DirectXBase::GetInstance());
 
 	//モデルマネージャ-
-	ModelManager::GetInstance()->Initialize(directxBase_.get());
+	ModelManager::GetInstance()->Initialize(DirectXBase::GetInstance());
 
 	//ImGuiマネージャ
 	imguimanager_ = std::make_unique<ImGuiManager>();
-	imguimanager_->Initialize(windowsAPI_.get(), directxBase_.get(), SrvManager::GetInstance());
+	imguimanager_->Initialize(windowsAPI_.get(), DirectXBase::GetInstance(), SrvManager::GetInstance());
 
 	//カメラ
 	camera_ = std::make_unique<Camera>();
@@ -38,7 +37,7 @@ void Framework::Initialize() {
 	camera_->SetTranslate({ 0.0f,4.0f,-10.0f });
 
 	//パーティクルマネージャ
-	ParticleManager::GetInstance()->Initialize(directxBase_.get(), SrvManager::GetInstance(), camera_.get());
+	ParticleManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance(), camera_.get());
 
 	//シーンマネージャの生成
 	sceneManager = SceneManager::GetInstance();
