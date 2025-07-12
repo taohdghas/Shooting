@@ -64,6 +64,7 @@ void Framework::Finalize() {
 	SpriteBase::GetInstance()->Finalize();
 	//入力解放
 	Input::GetInstance()->Finalize();
+	DirectXBase::GetInstance()->Finalize();
 	//windowsAPI
 	windowsAPI_->Finalize();
 }

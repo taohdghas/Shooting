@@ -55,6 +55,8 @@ void DirectXBase::Initialize(WindowsAPI* windowsAPI) {
 //終了
 void DirectXBase::Finalize() {
 	CloseHandle(fenceEvent);
+	delete instance;
+	instance = nullptr;
 }
 
 //デバイスの初期化
