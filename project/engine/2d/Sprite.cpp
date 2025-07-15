@@ -69,7 +69,6 @@ void Sprite::Update() {
 }
 //描画
 void Sprite::Draw() {
-//	textureSrvHandleGPU = spriteBase->GetDxBase()->GetSRVGPUDescriptorHandle(1);
 	//VertexBufferViewを設定
 	spriteBase->GetDxBase()->Getcommandlist()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	//IndexBufferViewを設定

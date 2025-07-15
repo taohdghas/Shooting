@@ -67,8 +67,9 @@ inline Vector3& operator*=(Vector3& v1, const Vector3& v2) {
 
 
 namespace Math {
-
+	//長さ
 	float Length(const Vector3& v);
+	//内積
 	float Dot(const Vector3& v1, const Vector3& v2);
 	//加算
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
@@ -76,18 +77,20 @@ namespace Math {
 	Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 	//正規化
 	Vector3 Normalize(const Vector3& v);
+	//積(Vector同士)
 	Vector3 Multiply(const Vector3& v1, const Vector3& v2);
+	//積(Vectorｘscaler)
 	Vector3 Multiply(const Vector3& v, const float scalar);
 	//座標ベクトル変換
 	Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 	//法線ベクトル変換
 	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
+	//外積
 	Vector3 Cross(const Vector3& v1, const Vector3& v2);
 	//単位行列
 	Matrix4x4 MakeIdentity4x4();
-
+	//積
 	Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
-
 	//平行移動行列
 	Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 	//拡大縮小行列
@@ -104,9 +107,9 @@ namespace Math {
 	Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 	//逆行列
 	Matrix4x4 Inverse(const Matrix4x4& m);
-
+	//透視投影行列
 	Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
-
+	//正射影行列
 	Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
 	//ビューポート行列
 	Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);

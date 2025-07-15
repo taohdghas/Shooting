@@ -13,8 +13,6 @@ public:
 	void Update();
 	//描画
 	void Draw();
-	//テクスチャ変更
-	//void SetTexture(std::string textureFilePath);
 
 	///getter///
 	//位置

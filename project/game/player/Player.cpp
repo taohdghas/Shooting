@@ -44,6 +44,18 @@ void Player::Update() {
 			dodgeCooldown_ = 0.0f;
 		}
 	}
+	//無敵タイマー更新
+	if (invincibleTimer_ > 0.0f) {
+		invincibleTimer_ -= DeltaTime;
+	}
+	//色タイマー更新
+		if (damageColorTimer_ > 0.0f) {
+			damageColorTimer_ -= DeltaTime;
+			object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
+		} else {
+			//元の色
+			object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		}
 	//デスフラグが立った弾を削除
 	bullets_.remove_if([](const std::unique_ptr<playerBullet>& bullet) {
 		return bullet->IsDead();
@@ -71,15 +83,6 @@ void Player::Update() {
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
-
-	//色タイマー更新
-	if (damageColorTimer_ > 0.0f) {
-		damageColorTimer_ -= DeltaTime;
-		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
-	} else {
-		//元の色
-		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f }); 
-	}
 
 	//レティクル更新
 	//ReticleUpdate();
@@ -111,20 +114,7 @@ void Player::Draw() {
 
 //移動
 void Player::Move() {
-	/*
-	if (Input::GetInstance()->PushKey(DIK_A)) {
-		transform_.translate.x -= speed;
-	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
-		transform_.translate.x += speed;
-	}
-	if (Input::GetInstance()->PushKey(DIK_S)) {
-		transform_.translate.y -= speed;
-	}
-	if (Input::GetInstance()->PushKey(DIK_W)) {
-		transform_.translate.y += speed;
-	}
-	*/
+
 	Vector3 newPos = transform_.translate;
 
 	//左右移動
@@ -272,6 +262,10 @@ void Player::OnCollision() {
 
 //HP減少関数
 void Player::TakeDamage(int damage) {
+	//無敵時間中
+	if (invincibleTimer_ > 0.0f) {
+		return;
+	}
 #ifdef USE_IMGUI
 	//無敵の際はスキップ(デバックのみ)
 	if (isInvincible) {
@@ -285,13 +279,17 @@ void Player::TakeDamage(int damage) {
 	}
 	//HPを減らす
 	hp_ -= damage;
+
+	//無敵時間をセット
+	invincibleTimer_ = InvincivleTime;
+	//色変える
+	damageColorTimer_ = DamageColorDuration;
+
 	//HPが0より少なくなったら衝突時コールバック
 	if (hp_ <= 0) {
 		hp_ = 0;
 		OnCollision();
 	}
-	//色変える
-	damageColorTimer_ = DamageColorDuration;
 }
 
 //デバック表示

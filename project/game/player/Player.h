@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Object3d.h"
 #include "Object3dBase.h"
 #include "Sprite.h"
@@ -74,8 +75,6 @@ private:
 	Vector4 color_;
 	//回避方向
 	Vector3 dodgeDirection_{ 0.0f,0.0f,0.0f };
-	//回避の方向
-	//std::string dodgeDirection_;
 	//デスフラグ
 	bool isDead_ = false;
 	//回避状態
@@ -120,6 +119,8 @@ private:
 	const float jumpRotateSpeed_ = 720.0f;
 	//色変化時間
 	const float DamageColorDuration = 0.1f;
+	//無敵時間
+	const float InvincivleTime = 0.1f;
 	//攻撃のクールタイム
 	float  attackCooldown_ = 0.0f;
 	//再攻撃できるまでの間隔
@@ -134,5 +135,7 @@ private:
 	float dodgeInterval_ = 5.0f;
 	//ダメージ色変化タイマー
 	float damageColorTimer_ = 0.0f;
+	//無敵タイマー
+	float invincibleTimer_ = 0.0f;
 };
 

@@ -3,11 +3,12 @@
 #include <cassert>
 
 namespace Math {
+	//長さ
 	float Math::Length(const Vector3& v) {
 
 		return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 	}
-
+	//内積
 	float Math::Dot(const Vector3& v1, const Vector3& v2) {
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	}
@@ -28,7 +29,7 @@ namespace Math {
 		result.z = v.z / length;
 		return result;
 	}
-
+	//積(Vector同士)
 	Vector3 Math::Multiply(const Vector3& v1, const Vector3& v2) {
 		Vector3 result{};
 		result.x = v1.x * v2.x;
@@ -36,7 +37,7 @@ namespace Math {
 		result.z = v1.z * v2.z;
 		return result;
 	}
-
+	//積(Vectorｘscaler)
 	Vector3 Math::Multiply(const Vector3& v, const float scalar) {
 		Vector3 result{};
 		result.x = v.x * scalar;
@@ -44,7 +45,7 @@ namespace Math {
 		result.z = v.z * scalar;
 		return result;
 	}
-
+	//座標ベクトル変換
 	Vector3 Math::Transform(const Vector3& vector, const Matrix4x4& matrix) {
 		Vector3 result;
 		result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
@@ -57,7 +58,7 @@ namespace Math {
 		result.z /= w;
 		return result;
 	}
-
+	//法線ベクトル変換
 	Vector3 Math::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 		Vector3 result{
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
@@ -65,6 +66,7 @@ namespace Math {
 		v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] };
 		return result;
 	}
+	//外積
 	Vector3 Math::Cross(const Vector3& v1, const Vector3& v2) {
 		Vector3 result;
 		result.x = v1.y * v2.z - v1.z * v2.y;
@@ -82,7 +84,7 @@ namespace Math {
 		}
 		return result;
 	}
-
+	//積
 	Matrix4x4 Math::Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 		Matrix4x4 result{};
 		for (int row = 0; row < 4; ++row) {
@@ -335,7 +337,7 @@ namespace Math {
 
 		return result;
 	}
-
+	//透視投影行列
 	Matrix4x4 Math::MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
 		Matrix4x4 perspectiveMatrix;
 		perspectiveMatrix.m[0][0] = 1.0f / float((aspectRatio * tan(fovY / 2.0f)));
@@ -356,7 +358,7 @@ namespace Math {
 		perspectiveMatrix.m[3][3] = 0;
 		return perspectiveMatrix;
 	}
-
+	//正射影行列
 	Matrix4x4 Math::MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
 		Matrix4x4 orthoMatrix;
 		orthoMatrix.m[0][0] = 2.0f / (right - left);
