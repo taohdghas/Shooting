@@ -74,5 +74,7 @@ private:
 	SpotLight* spotLight = nullptr;
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+	//環境マップテクスチャ
+	std::string textureFilePath_;
 };
 

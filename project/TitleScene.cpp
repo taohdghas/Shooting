@@ -24,15 +24,6 @@ void TitleScene::Initialize() {
 	CameraManager::GetInstance()->AddCamera("Main", camera.get());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 
-	//Sprite初期化
-	for (uint32_t i = 0; i < 1; ++i) {
-		auto sprite = std::make_unique<Sprite>();
-		sprite->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
-		sprite->SetPosition({ 100.0f,100.0f });
-		sprites.push_back(std::move(sprite));
-	}
-	sprites[0]->Initialize(SpriteBase::GetInstance(), "resources/uvChecker.png");
-
 	//オブジェクト
 	object3d = std::make_unique<Object3d>();
 	object3d->Initialize(Object3dBase::GetInstance());
@@ -73,7 +64,7 @@ void TitleScene::Update() {
 	
 	skybox->Update();
 
-	//object3d->Update();
+	object3d->Update();
 
 	//ParticleManager::GetInstance()->Update();
 	for (size_t i = 0; i < particleEmitter.size(); ++i) {
@@ -118,6 +109,8 @@ void TitleScene::Draw() {
 
 	//skybox
 	skybox->Draw();
+
+	object3d->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
