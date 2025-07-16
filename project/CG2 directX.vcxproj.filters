@@ -177,6 +177,9 @@
     <ClCompile Include="game\scene\GameClearScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="engine\base\Pso.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -338,6 +341,9 @@
     <ClInclude Include="game\scene\GameClearScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="engine\base\Pso.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -346,6 +352,8 @@
     <None Include="resources\shaders\Fullscreen.hlsli" />
     <None Include="resources\shaders\Object3d.hlsli" />
     <None Include="resources\shaders\Particle.hlsli" />
+    <None Include="resources\shaders\Sprite.hlsli" />
+    <None Include="resources\shaders\Skybox.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Fullscreen.PS.hlsl" />
@@ -358,5 +366,9 @@
     <FxCompile Include="resources\shaders\Object3d.VS.hlsl" />
     <FxCompile Include="resources\shaders\Particle.PS.hlsl" />
     <FxCompile Include="resources\shaders\Particle.VS.hlsl" />
+    <FxCompile Include="resources\shaders\Sprite.PS.hlsl" />
+    <FxCompile Include="resources\shaders\Sprite.VS.hlsl" />
+    <FxCompile Include="resources\shaders\Skybox.PS.hlsl" />
+    <FxCompile Include="resources\shaders\Skybox.VS.hlsl" />
   </ItemGroup>
 </Project>
