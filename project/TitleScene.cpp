@@ -23,6 +23,7 @@ void TitleScene::Initialize() {
 	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
 	CameraManager::GetInstance()->AddCamera("Main", camera.get());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
+	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
 	//オブジェクト
 	object3d = std::make_unique<Object3d>();
@@ -71,8 +72,6 @@ void TitleScene::Update() {
 		auto& particle = particleEmitter[i];
 		particle->Update();
 	}
-
-	
 
 #ifdef USE_IMGUI
 	ImGui::Begin("SetUp");
