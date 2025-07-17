@@ -1,4 +1,5 @@
 #include "Pso.h"
+#include "DirectXBase.h"
 #include "Logger.h"
 
 //初期化
@@ -34,7 +35,7 @@ void Pso::CreateRootSignature() {
 	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[2].DescriptorTable.pDescriptorRanges = descriptorRange;
-	rootParameter[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+	rootParameter[2].DescriptorTable.NumDescriptorRanges =1;
 
 	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
@@ -75,7 +76,7 @@ void Pso::CreateRootSignature() {
 	// シリアライズしてバイナリにする
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-	hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
+	HRESULT hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
 		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
@@ -164,7 +165,7 @@ void Pso::CreatePipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }
@@ -229,7 +230,7 @@ void Pso::CreateSpriteRootSignature() {
 	// シリアライズしてバイナリにする
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-	hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
+	HRESULT hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
 		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
@@ -317,7 +318,7 @@ void Pso::CreateSpritePipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&spriteGraphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }
@@ -377,7 +378,7 @@ void Pso::CreateParticleRootSignature() {
 	// シリアライズしてバイナリにする
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-	hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
+	HRESULT hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
 		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
@@ -472,7 +473,7 @@ void Pso::CreateParticlePipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&particleGraphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }
@@ -537,7 +538,7 @@ void Pso::CreatePostEffectRootSignature() {
 	// シリアライズしてバイナリにする
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-	hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
+	HRESULT hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
 		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
@@ -625,7 +626,7 @@ void Pso::CreatePostEffectPipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&postEffectGraphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }
@@ -684,7 +685,7 @@ void Pso::CreateSkyBoxRootSignature() {
 	// シリアライズしてバイナリにする
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-	hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
+	HRESULT hr = D3D12SerializeRootSignature(&descriptitonRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
 		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
@@ -772,7 +773,7 @@ void Pso::CreateSkyBoxPipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&skyBoxGraphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }

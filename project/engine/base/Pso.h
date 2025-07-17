@@ -1,5 +1,8 @@
 #pragma once
-#include "DirectXBase.h"
+#include <d3d12.h>
+#include <wrl.h>
+
+class DirectXBase;
 
 class Pso
 {
@@ -46,7 +49,6 @@ public:
 
 private:
 	DirectXBase* directXBase_;
-	HRESULT hr;
 	//Object3D用
 	Microsoft::WRL::ComPtr<ID3D12RootSignature>rootSignature;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState>graphicsPipelineState;

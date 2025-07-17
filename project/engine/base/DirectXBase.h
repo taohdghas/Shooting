@@ -1,6 +1,7 @@
 #pragma once
 #include "Windows.h"
 #include "WindowsAPI.h"
+#include "Pso.h"
 #include "Struct.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -35,10 +36,6 @@ public:
 	void DrawRenderTextureToScreen();
 	//RenderTextureをSRV用に切り替え
 	void TransitionRenderTextureToSRV();
-	//ルートシグネチャ作成
-	void CreateRootSignature();
-	//グラフィックスパイプライン作成
-	void CreatePipelineState();
 	//テクスチャデータの転送
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 	//デスクリプタヒープを生成
@@ -56,8 +53,6 @@ public:
 		uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 	//テクスチャファイル読み込み
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
-	//最大SRV数(最大テクスチャ数)
-	//static const uint32_t kMaxSRVCount;
 
 public:
 	//デバイスの取得
@@ -80,6 +75,10 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
 private:
+	//コンストラクタ
+	DirectXBase() = default;
+	//デストラクタ
+	~DirectXBase() = default;
 	//デバイスの初期化
 	void DeviceInitialize();
 	//コマンド関連の初期化
@@ -152,6 +151,8 @@ private:
 	D3D12_RECT scissorRect{};
 	//WindowsAPI
 	WindowsAPI* windowsAPI = nullptr;
+	//Pso
+	std::unique_ptr<Pso>pso_;
 	//スワップチェインリソース
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
 	//レンダーテクスチャリソース
@@ -162,10 +163,6 @@ private:
 	const uint32_t kMaxSRVCount = 512;
 	//SRVデスクリプタヒープ
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-	//ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
-	//グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState;
 	HANDLE fenceEvent;
 	//フェンス値
 	UINT64 fenceValue = 0;
@@ -185,5 +182,9 @@ private:
 
 	static DirectXBase* instance;
 	DirectXBase* directxBase_ = nullptr;
+	//コピーコンストラクタを無効にする
+	DirectXBase(const DirectXBase&) = delete;
+	//代入演算子を無効にする
+	DirectXBase& operator = (const DirectXBase&) = delete;
 };
 

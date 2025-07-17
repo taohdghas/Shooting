@@ -10,15 +10,6 @@ void GameScene::Initialize() {
 	//サウンド
 	Audio::GetInstance()->Initialize();
 
-	//テクスチャ読み込み
-	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
-	TextureManager::GetInstance()->LoadTexture("resources/player.png");
-	TextureManager::GetInstance()->LoadTexture("resources/playerbullet.png");
-	TextureManager::GetInstance()->LoadTexture("resources/enemy.png");
-	TextureManager::GetInstance()->LoadTexture("resources/enemybullet.png");
-	TextureManager::GetInstance()->LoadTexture("resources/sky_sphere.png");
-
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
@@ -90,7 +81,7 @@ void GameScene::Update() {
 	//衝突チェック
 	collisionManager->CheckPECollisions(player.get(), enemy.get());
 
-	/*
+	
 	if (enemy->IsDeathParticle()) {
 		auto emitter = std::make_unique<ParticleEmitter>();
 		emitter->Initialize("particle3");
@@ -101,7 +92,7 @@ void GameScene::Update() {
 		// フラグをリセット
 		enemy->SetisDeathParticle(false);
 	}
-	*/
+	
 	//パーティクル
 	ParticleManager::GetInstance()->Update();
 	for (auto& particle : particleEmitter) {

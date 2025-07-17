@@ -45,7 +45,10 @@ void Object3d::Update() {
 }
 //描画
 void Object3d::Draw() {
-
+	//Rootsignatureセット
+	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootSignature(object3dBase_->GetRootSignature());
+	//GraphicsPipeLineセット
+	object3dBase_->GetDxBase()->Getcommandlist()->SetPipelineState(object3dBase_->GetGraphicsPipelineState());
 	//座標変換行列CBufferの場所を設定
 	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	//Lighting
@@ -56,7 +59,8 @@ void Object3d::Draw() {
 	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(5, PointLightResource->GetGPUVirtualAddress());
 	//SpotLight
 	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(6, SpotLightResource->GetGPUVirtualAddress());
-
+	//環境マップ
+	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSrvHandleGPU("resources/rostock_laage_airport_4k.dds"));
 	//3Dモデルが割り当てられていたら描画する
 	if (model_) {
 		model_->Draw();

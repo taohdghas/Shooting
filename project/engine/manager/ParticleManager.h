@@ -1,8 +1,8 @@
 #pragma once
 #include "DirectXBase.h"
 #include "SrvManager.h"
+#include "Pso.h"
 #include "TextureManager.h"
-#include "Logger.h"
 #include "Camera.h"
 #include "Struct.h"
 
@@ -76,10 +76,6 @@ public:
 	//ParticleTypeのゲッター
 	ParticleType GetParticleType(const std::string& name);
 private:
-	//ルートシグネチャの作成
-	void GenerateRootSignature();
-	//グラフィックスパイプラインの生成
-	void GenerategraphicsPipeline();
 	//頂点データ作成
 	void VertexDataCreate(ModelData&modelData);
 	//Ringの頂点データ作成
@@ -93,15 +89,12 @@ private:
 	static ParticleManager* instance;
 	DirectXBase* directxBase_;
 	SrvManager* srvManager_;
+	std::unique_ptr<Pso>pso_;
 	Camera* camera_;
 	ModelData modelData;
 	AABB aabb_;
 	AccelerationField accelerationfield_;
 	HRESULT hr;
-	//ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
-	//グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState;
 	//バッファリソース内のデータを指すポインタ
 	VertexData* vertexData = nullptr;
 	Material* materialData = nullptr;

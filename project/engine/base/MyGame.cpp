@@ -48,26 +48,26 @@ void MyGame::Draw() {
 	if (useRenderTexture_) {
 
 		//RenderTexture描画準備
-		directxBase_->PreDrawRenderTexture();
+		DirectXBase::GetInstance()->PreDrawRenderTexture();
 		//Srv描画準備
 		SrvManager::GetInstance()->PreDraw();
 		//シーン描画
 		SceneManager::GetInstance()->Draw();
 		//RenderTextureをSRV用に切り替え
-		directxBase_->TransitionRenderTextureToSRV();
+		DirectXBase::GetInstance()->TransitionRenderTextureToSRV();
 		//SwapChain描画準備
-		directxBase_->PreDraw();
+		DirectXBase::GetInstance()->PreDraw();
 		//swapchainに描画
-		directxBase_->DrawRenderTextureToScreen();
+		DirectXBase::GetInstance()->DrawRenderTextureToScreen();
 		//ImGui描画
 		imguimanager_->Draw();
 		//描画後処理
-		directxBase_->PostDraw();
+		DirectXBase::GetInstance()->PostDraw();
 	}
 	//不使用
 	else {
 		//SwapChain描画準備
-		directxBase_->PreDraw();
+		DirectXBase::GetInstance()->PreDraw();
 		//Srv描画準備
 		SrvManager::GetInstance()->PreDraw();
 		//シーン描画
@@ -75,6 +75,6 @@ void MyGame::Draw() {
 		//ImGui描画
 		imguimanager_->Draw();
 		//描画後処理
-		directxBase_->PostDraw();
+		DirectXBase::GetInstance()->PostDraw();
 	}
 }

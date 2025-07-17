@@ -48,6 +48,9 @@ void TitleScene::Initialize() {
 	fadeManager = std::make_unique<FadeManager>();
 	fadeManager->Initialize();
 	fadeManager->FadeIn(1.0f);
+	//Skybox
+	skybox = std::make_unique<Skybox>();
+	skybox->Initialize("resources/rostock_laage_airport_4k.dds");
 }
 
 //終了
@@ -60,8 +63,10 @@ void TitleScene::Finalize() {
 
 //更新
 void TitleScene::Update() {
-	camera->Update();
-
+	//カメラ
+	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	//Skybox
+	skybox->Update();
 	//タイトルオブジェクト
 	title->Update();
 	//pushspaceオブジェクト
@@ -87,7 +92,8 @@ void TitleScene::Update() {
 void TitleScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
-
+	//Skybox
+	skybox->Draw();
 	//タイトルオブジェクト
 	title->Draw();
 	//pushspaceオブジェクト
@@ -99,7 +105,7 @@ void TitleScene::Draw() {
 	SpriteBase::GetInstance()->DrawBaseSet();
 
 	//フェードマネージャ
-	fadeManager->Draw();
+	//fadeManager->Draw();
 }
 
 //デバック
