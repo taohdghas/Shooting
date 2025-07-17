@@ -1,5 +1,7 @@
 #pragma once
 #include "DirectXBase.h"
+#include "Pso.h"
+
 
 class SpriteBase
 {
@@ -12,25 +14,24 @@ public:
 	void Finalize();
 	//共通描画設定
 	void DrawBaseSet();
-
+public:
 	DirectXBase* GetDxBase()const { return directxBase_; }
+private:
+	//コンストラクタ
+	SpriteBase() = default;
+	//デストラクタ
+	~SpriteBase() = default;
 private:
 	static SpriteBase* instance;
 	SpriteBase* spritebase_ = nullptr;
+	//コピーコンストラクタを無効にする
+	SpriteBase(const SpriteBase&) = delete;
+	//代入演算子を無効にする
+	SpriteBase& operator = (const SpriteBase&) = delete;
 
-	HRESULT hr;
-
-	//DirectXBaseのポインタ
+	//DirectXBase
 	DirectXBase* directxBase_;
-	//ルートシグネチャの作成
-	void RootSignatureGenerate();
-	//グラフィックスパイプラインの生成
-	void graphicsPipelineGenerate();
-	//ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
-	//inputlayout
-	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	//グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState;
+	//Pso
+	std::unique_ptr<Pso>pso_;
 };
 

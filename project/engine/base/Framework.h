@@ -36,8 +36,6 @@ protected:
 	D3DResourceLeakChecker leakCheck;
 	//WindowsAPIポインタ
 	std::unique_ptr<WindowsAPI>windowsAPI_;
-	//DirectXBaseポインタ
-	std::unique_ptr<DirectXBase>directxBase_;
 	//ImGuiマネージャ
 	std::unique_ptr<ImGuiManager>imguimanager_;
 	//カメラ

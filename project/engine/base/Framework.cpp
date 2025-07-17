@@ -8,35 +8,34 @@ void Framework::Initialize() {
 	windowsAPI_->Initialize();
 
 	//DirectXの初期化
-	directxBase_ = std::make_unique<DirectXBase>();
-	directxBase_->Initialize(windowsAPI_.get());
+	DirectXBase::GetInstance()->Initialize(windowsAPI_.get());
 
 	//入力の初期化
 	Input::GetInstance()->Initialize(windowsAPI_.get());
 
 	//SpriteBaseの初期化
-	SpriteBase::GetInstance()->Initialize(directxBase_.get());
+	SpriteBase::GetInstance()->Initialize(DirectXBase::GetInstance());
 
 	//srvManagerの初期化
-	SrvManager::GetInstance()->Initialize(directxBase_.get());
+	SrvManager::GetInstance()->Initialize(DirectXBase::GetInstance());
 
 	//テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(directxBase_.get(), SrvManager::GetInstance());
+	TextureManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance());
 
 	//初期化
-	Object3dBase::GetInstance()->Initialize(directxBase_.get());
+	Object3dBase::GetInstance()->Initialize(DirectXBase::GetInstance());
 
 	//モデルマネージャ-
-	ModelManager::GetInstance()->Initialize(directxBase_.get());
+	ModelManager::GetInstance()->Initialize(DirectXBase::GetInstance());
 
 	//ImGuiマネージャ
 	imguimanager_ = std::make_unique<ImGuiManager>();
-	imguimanager_->Initialize(windowsAPI_.get(), directxBase_.get(), SrvManager::GetInstance());
+	imguimanager_->Initialize(windowsAPI_.get(), DirectXBase::GetInstance(), SrvManager::GetInstance());
 
 	//カメラ
 	CameraManager::GetInstance()->Initialize();
 	//パーティクルマネージャ
-	ParticleManager::GetInstance()->Initialize(directxBase_.get(), SrvManager::GetInstance(), camera_.get());
+	ParticleManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance(), camera_.get());
 
 	//シーンマネージャの生成
 	sceneManager = SceneManager::GetInstance();
@@ -50,7 +49,7 @@ void Framework::Finalize() {
 	ParticleManager::GetInstance()->Finalize();
 	//カメラ
 	CameraManager::GetInstance()->Finalize();
-	//ImGui
+	//ImGui解放
 	imguimanager_->Finalize();
 	//object3dbase
 	Object3dBase::GetInstance()->Finalize();
@@ -64,6 +63,8 @@ void Framework::Finalize() {
 	SpriteBase::GetInstance()->Finalize();
 	//入力解放
 	Input::GetInstance()->Finalize();
+	//DirectXBase
+	DirectXBase::GetInstance()->Finalize();
 	//windowsAPI
 	windowsAPI_->Finalize();
 }

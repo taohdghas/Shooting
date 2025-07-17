@@ -14,6 +14,7 @@
 #include "Camera.h"
 #include "Struct.h"
 #include "FadeManager.h"
+#include "Skybox.h"
 
 class TitleScene : public BaseScene
 {
@@ -47,6 +48,8 @@ private:
 	std::unique_ptr<Object3d>playerobj;
 	//フェードマネージャー
 	std::unique_ptr<FadeManager>fadeManager;
+	//Skybox
+	std::unique_ptr<Skybox>skybox;
 
 	//プレイヤーオブジェクトTransform
 	Transform playerobjTransform;
