@@ -13,9 +13,9 @@ struct PixelShaderOutput
 };
 struct DirectionalLight
 {
-    float4 color;//ライトの色
-    float3 direction;//ライトの向き
-    float intensity;//輝度
+    float4 color; //ライトの色
+    float3 direction; //ライトの向き
+    float intensity; //輝度
 };
 struct Camera
 {
@@ -23,11 +23,11 @@ struct Camera
 };
 struct PointLight
 {
-    float4 color;//ライトの色
-    float3 position;//ライトの位置
-    float intensity;//輝度
-    float radius;//ライトの届く最大距離
-    float decay;//減衰率
+    float4 color; //ライトの色
+    float3 position; //ライトの位置
+    float intensity; //輝度
+    float radius; //ライトの届く最大距離
+    float decay; //減衰率
 };
 struct SpotLight
 {
@@ -47,14 +47,15 @@ ConstantBuffer<Camera> gCamera : register(b2);
 ConstantBuffer<PointLight> gPointLight : register(b3);
 ConstantBuffer<SpotLight> gSpotLight : register(b4);
 Texture2D<float4> gTexture : register(t0);
+TextureCube<float4> gEnvironmentTexture : register(t1);
 SamplerState gSampler : register(s0);
 
 PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
    // output.color = gMaterial.color;
-    float4 transformedUV = mul(float4(input.texcoord,0.0f,1.0f), gMaterial.uvTransform);
-    float4 textureColor = gTexture.Sample(gSampler,transformedUV.xy);
+    float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
+    float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
    
     if (gMaterial.enableLighting != 0)//Lightingする場合
     {
@@ -104,14 +105,22 @@ PixelShaderOutput main(VertexShaderOutput input)
         //鏡面反射
         float3 specularSpotLight = gSpotLight.color.rgb * gSpotLight.intensity *
         spotspecularPow * attenuationFactor * falloffFactor;
- 
+        
+         //環境光
+        float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+        float3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
+        float4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
+        
         //拡散反射+鏡面反射
         output.color.rgb = diffuse + specular + diffusePointLight + specularPointLight
         + diffuseSpotLight + specularSpotLight;
         
+        //環境光加算
+        output.color.rgb += environmentColor.rgb;
+        
         output.color.a = gMaterial.color.a * textureColor.a;
     }
-    else//Lightingしない場合。前回と同じ演算
+    else //Lightingしない場合。前回と同じ演算
     {
         output.color = gMaterial.color * textureColor;
     }
