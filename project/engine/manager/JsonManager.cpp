@@ -107,6 +107,10 @@ LevelData* JsonManager::LoadJsonFile(const std::string&filename) {
 			playerSpawn.rotation.x = -(float)transform["rotation"][0];
 			playerSpawn.rotation.y = -(float)transform["rotation"][2];
 			playerSpawn.rotation.z = -(float)transform["rotation"][1];
+			//スケーリング
+			playerSpawn.scaling.x = (float)transform["scaling"][0];
+			playerSpawn.scaling.y = (float)transform["scaling"][2];
+			playerSpawn.scaling.z = (float)transform["scaling"][1];
 
 			levelData->players.push_back(playerSpawn);
 		}

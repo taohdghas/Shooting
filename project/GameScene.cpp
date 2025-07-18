@@ -51,6 +51,7 @@ void GameScene::Initialize() {
 		auto& playerData = levelData->players[0];
 		player_->SetPosition(playerData.translation);
 		player_->SetRotate(playerData.rotation);
+		player_->SetScale(playerData.scaling);
 	}
 }
 

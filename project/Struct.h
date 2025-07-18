@@ -89,6 +89,8 @@ struct PlayerSpawnData {
 	Vector3 translation;
 	//回転角
 	Vector3 rotation;
+	//スケーリング
+	Vector3 scaling;
 };
 //レベルデータ
 struct LevelData {
