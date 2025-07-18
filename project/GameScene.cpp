@@ -52,13 +52,11 @@ void GameScene::Initialize() {
 	}
 	
 	//プレイヤー
-	auto playerObject = std::make_unique<Object3d>();
-	playerObject->Initialize(Object3dBase::GetInstance());
+	ModelManager::GetInstance()->LoadModel("player.obj");
 	for (auto& playerData : levelData->players) {
-
-		//
-		//playerObject->SetModel("plane.obj");
-
+		auto playerObject = std::make_unique<Object3d>();
+		playerObject->Initialize(Object3dBase::GetInstance());
+		playerObject->SetModel("player.obj");
 		playerObject->SetTranslate(playerData.translation);
 		playerObject->SetRotate(playerData.rotation);
 		playerObject->SetScale(playerData.scaling);
@@ -81,7 +79,7 @@ void GameScene::Update() {
 	//カメラ
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
 
-	for (auto& object : object3ds) {
+	for (auto& object : playerObjects) {
 		object->Update();
 	}
 }
@@ -92,7 +90,7 @@ void GameScene::Draw() {
 	Object3dBase::GetInstance()->DrawBaseSet();
 
 	
-	for (auto& object : object3ds) {
+	for (auto& object : playerObjects) {
 		object->Draw();
 	}
 	//共通描画設定

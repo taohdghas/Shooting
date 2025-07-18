@@ -2,13 +2,35 @@
     "name": "scene",
     "objects": [
         {
-            "type": "MESH",
-            "name": "立方体",
+            "type": "PlayerSpawn",
+            "name": "PlayerSpawn",
             "transform": {
                 "translation": [
-                    0.0,
+                    1.0955528020858765,
                     0.0,
                     0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    0.692358136177063,
+                    0.692358136177063,
+                    0.692358136177063
+                ]
+            },
+            "file_name": "player"
+        },
+        {
+            "type": "PlayerSpawn",
+            "name": "PlayerSpawn.001",
+            "transform": {
+                "translation": [
+                    -0.5072973370552063,
+                    0.2959604263305664,
+                    0.9405902028083801
                 ],
                 "rotation": [
                     0.0,
@@ -21,7 +43,7 @@
                     1.0
                 ]
             },
-            "file_name": "plane"
+            "file_name": "player"
         }
     ]
 }
