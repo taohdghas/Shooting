@@ -138,6 +138,16 @@ void GameScene::Draw() {
 void GameScene::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Begin("SetUp");
+	//カメラ
+	if (ImGui::TreeNode("Camera")) {
+		Vector3 cameraPos = camera->GetTranslate();
+		Vector3 cameraRot = camera->GetRotate();
+		ImGui::DragFloat3("CameraTranslate", &cameraPos.x, 0.01f);
+		ImGui::DragFloat3("CameraRotate", &cameraRot.x, 0.01f);
+		camera->SetTranslate({ cameraPos.x,cameraPos.y,cameraPos.z });
+		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
+		ImGui::TreePop();
+	}
 	//プレイヤーDebug
 	player->Debug();
 	//敵Debug

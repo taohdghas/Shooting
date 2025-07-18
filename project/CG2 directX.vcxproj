@@ -59,6 +59,7 @@
     <ClCompile Include="engine\base\Pso.cpp" />
     <ClCompile Include="game\skybox\Skybox.cpp" />
     <ClCompile Include="Ui.cpp" />
+    <ClCompile Include="engine\math\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\base\WindowsAPI.h" />
     <ClInclude Include="Ui.h" />
+    <ClInclude Include="engine\math\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

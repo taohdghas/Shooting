@@ -236,23 +236,8 @@ void Player::Dodge() {
 }
 
 //レティクル更新
-void Player::ReticleUpdate(const Matrix4x4& view, const Matrix4x4& projection, int screenWidth, int screenHeight) {
-	//プレイヤーの向いている方向
-	Vector3 offset = { 0.0f,0.0f,1.0f };
-	//プレイヤーの行列の回転を反映
-	offset = Math::TransformNormal(offset, Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate));
-	//ベクトルの長さを変える
-	offset = Math::Normalize(offset) * 25.0f;
-	//レティクルの座標を設定
-	Vector3 reticleWorldPos = transform_.translate + offset;
-	//ビュー,プロジェクション,ビューポート行列合成
-	Matrix4x4 ViewPort = Math::MakeViewportMatrix(0, 0, float(WindowsAPI::GetInstance()->kClientWidth),
-		float(WindowsAPI::GetInstance()->kClientHeight), 0, 1);
-	Matrix4x4 VPV = Math::Multiply(Math::Multiply(view, projection), ViewPort);
-	//スクリーン座標変換
-	Vector3 screenPos = Math::Transform(reticleWorldPos, VPV);
-	//座標に適用
-	reticle_->SetPosition({ screenPos.x,screenPos.y });
+void Player::ReticleUpdate() {
+	
 }
 
 //衝突時コールバック
