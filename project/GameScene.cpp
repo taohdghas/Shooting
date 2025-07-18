@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "CameraManager.h"
 
 //初期化
 void GameScene::Initialize() {
@@ -13,6 +14,13 @@ void GameScene::Initialize() {
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+
+	//カメラ
+	camera = std::make_unique<Camera>();
+	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
+	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->SetActiveCamera("Main");
+	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
 	//Sprite初期化
 	for (uint32_t i = 0; i < 2; ++i) {
@@ -44,19 +52,25 @@ void GameScene::Initialize() {
 	}
 	
 	//プレイヤー
-	player_ = std::make_unique<player>();
-	player_->Initialize(Object3dBase::GetInstance());
-	//プレイヤー配置データからプレイヤーを配置
-	if (!levelData->players.empty()) {
-		auto& playerData = levelData->players[0];
-		player_->SetPosition(playerData.translation);
-		player_->SetRotate(playerData.rotation);
-		player_->SetScale(playerData.scaling);
+	auto playerObject = std::make_unique<Object3d>();
+	playerObject->Initialize(Object3dBase::GetInstance());
+	for (auto& playerData : levelData->players) {
+
+		//
+		//playerObject->SetModel("plane.obj");
+
+		playerObject->SetTranslate(playerData.translation);
+		playerObject->SetRotate(playerData.rotation);
+		playerObject->SetScale(playerData.scaling);
+
+		playerObjects.push_back(std::move(playerObject));
 	}
 }
 
 //終了
 void GameScene::Finalize() {
+	//カメラマネージャ
+	CameraManager::GetInstance()->Finalize();
 	//Audio
 	Audio::GetInstance()->Finalize();
 }
@@ -64,11 +78,12 @@ void GameScene::Finalize() {
 //更新
 void GameScene::Update() {
 
+	//カメラ
+	CameraManager::GetInstance()->GetActiveCamera()->Update();
+
 	for (auto& object : object3ds) {
 		object->Update();
 	}
-
-	player_->Update();
 }
 
 //描画
@@ -76,12 +91,10 @@ void GameScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
 
+	
 	for (auto& object : object3ds) {
 		object->Draw();
 	}
-
-	player_->Draw();
-
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 }

@@ -10,6 +10,7 @@
 #include "ModelManager.h"
 #include "ImGuiManager.h"
 #include "Camera.h"
+#include "CameraManager.h"
 #include "ParticleManager.h"
 #include "SceneManager.h"
 #include "AbstractSceneFactory.h"

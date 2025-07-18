@@ -28,8 +28,6 @@ public:
 private:
 	//Sprite初期化
 	std::vector<std::unique_ptr<Sprite>>sprites;
-	//3Dオブジェクト
-	//std::vector<std::unique_ptr<Object3d>>object3ds;
 	std::unique_ptr<Object3d>object3d;
 	//パーティクルエミッター
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;

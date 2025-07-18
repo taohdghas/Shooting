@@ -5,6 +5,7 @@
 #include "Object3d.h"
 #include "Object3dBase.h"
 #include "Audio.h"
+#include "Camera.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "BaseScene.h"
@@ -23,10 +24,13 @@ public:
 	//描画
 	void Draw()override;
 private:
+	//カメラ
+	std::unique_ptr<Camera>camera;
 	//Sprite初期化
 	std::vector<std::unique_ptr<Sprite>>sprites;
 	//3Dオブジェクト
 	std::vector<std::unique_ptr<Object3d>>object3ds;
+	std::vector<std::unique_ptr<Object3d>> playerObjects;
 	//jsonManager
 	std::unique_ptr<JsonManager>jsonManager;
 	//プレイヤー

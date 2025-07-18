@@ -1,5 +1,6 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
+#include "CameraManager.h"
 #include "ImGuiManager.h"
 
 //初期化
@@ -15,6 +16,13 @@ void TitleScene::Initialize() {
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.gltf");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+
+	//カメラ
+	camera = std::make_unique<Camera>();
+	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
+	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->SetActiveCamera("Main");
+	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
 	//Sprite初期化
 	for (uint32_t i = 0; i < 1; ++i) {
@@ -43,12 +51,6 @@ void TitleScene::Initialize() {
 		particle->Emit();
 		particleEmitter.push_back(std::move(particle));
 	}
-
-	//カメラ
-	camera = std::make_unique<Camera>();
-	camera->SetRotate({ 0.0f,0.0f,0.0f });
-	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
-	object3d->SetCamera(camera.get());
 
 	//ライト
 	directionallight = std::make_unique<DirectionalLight>();
