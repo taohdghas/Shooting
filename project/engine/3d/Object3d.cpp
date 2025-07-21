@@ -116,6 +116,7 @@ void Object3d::DirectionalLightCreate() {
 	directionalLight->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight->direction = { 0.0f,-1.0f,0.0f };
 	directionalLight->intensity = 1.0f;
+	directionalLight->enable = 0;
 }
 //カメラデータ作成
 void Object3d::CameraDataCreate() {
@@ -134,6 +135,7 @@ void Object3d::PointLightCreate() {
 	pointLight->position = { 0.0f,2.0f,0.0f };
 	pointLight->radius = 10.0f;
 	pointLight->decay = 2.0f;
+	pointLight->enable = 0;
 }
 //スポットライトデータ作成
 void Object3d::SpotLightCreate() {
@@ -149,4 +151,5 @@ void Object3d::SpotLightCreate() {
 	spotLight->decay = 2.0f;
 	spotLight->cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
 	spotLight->cosFalloffStart = 1.0f;
+	spotLight->enable = 0;
 }

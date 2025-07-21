@@ -56,6 +56,7 @@ struct DirectionalLight {
 	Vector4 color;//ライトの色
 	Vector3 direction;//ライトの向き
 	float intensity;//輝度
+	int enable;//有効
 };
 //カメラ
 struct CameraForGPU {
@@ -69,6 +70,7 @@ struct PointLight {
 	float radius;//ライトの届く最大距離
 	float decay;//減衰率
 	float padding[2];
+	int enable;//有効
 };
 //スポットライト
 struct SpotLight {
@@ -81,6 +83,7 @@ struct SpotLight {
 	float cosAngle;//スポットライトの余弦
 	float cosFalloffStart;
 	float padding[2];
+	int enable;//有効
 };
 //AABB
 struct AABB {
