@@ -6,31 +6,9 @@
             "name": "PlayerSpawn",
             "transform": {
                 "translation": [
-                    1.0955528020858765,
                     0.0,
+                    -9.554949760437012,
                     0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    0.692358136177063,
-                    0.692358136177063,
-                    0.692358136177063
-                ]
-            },
-            "file_name": "player"
-        },
-        {
-            "type": "PlayerSpawn",
-            "name": "PlayerSpawn.001",
-            "transform": {
-                "translation": [
-                    -0.5072973370552063,
-                    0.2959604263305664,
-                    0.9405902028083801
                 ],
                 "rotation": [
                     0.0,
@@ -44,6 +22,94 @@
                 ]
             },
             "file_name": "player"
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn",
+            "transform": {
+                "translation": [
+                    4.248524188995361,
+                    12.687191009521484,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "enemy"
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn.001",
+            "transform": {
+                "translation": [
+                    -5.147124290466309,
+                    12.85084056854248,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "enemy"
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn.002",
+            "transform": {
+                "translation": [
+                    -6.561617851257324,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "enemy"
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn.003",
+            "transform": {
+                "translation": [
+                    6.434816837310791,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "enemy"
         }
     ]
 }

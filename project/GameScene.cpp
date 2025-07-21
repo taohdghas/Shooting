@@ -8,13 +8,14 @@ void GameScene::Initialize() {
 	Audio::GetInstance()->Initialize();
 
 	//テクスチャ読み込み
-	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+	//TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
+	//TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
-
+	ModelManager::GetInstance()->LoadModel("player.obj");
+	ModelManager::GetInstance()->LoadModel("enemy.obj");
 	//カメラ
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
@@ -52,7 +53,6 @@ void GameScene::Initialize() {
 	}
 	
 	//プレイヤー
-	ModelManager::GetInstance()->LoadModel("player.obj");
 	for (auto& playerData : levelData->players) {
 		auto playerObject = std::make_unique<Object3d>();
 		playerObject->Initialize(Object3dBase::GetInstance());
@@ -62,6 +62,18 @@ void GameScene::Initialize() {
 		playerObject->SetScale(playerData.scaling);
 
 		playerObjects.push_back(std::move(playerObject));
+	}
+	//敵
+	for (auto& enemyData : levelData->enemies) {
+		//生成
+		auto enemyObject = std::make_unique<Object3d>();
+		//初期化
+		enemyObject->Initialize(Object3dBase::GetInstance());
+		enemyObject->SetModel("enemy.obj");
+		enemyObject->SetTranslate(enemyData.translation);
+		enemyObject->SetRotate(enemyData.rotation);
+		enemyObject->SetScale(enemyData.scaling);
+		enemyObjects.push_back(std::move(enemyObject));
 	}
 }
 
@@ -82,6 +94,9 @@ void GameScene::Update() {
 	for (auto& object : playerObjects) {
 		object->Update();
 	}
+	for (auto& enemyObject : enemyObjects) {
+		enemyObject->Update();
+	}
 }
 
 //描画
@@ -92,6 +107,9 @@ void GameScene::Draw() {
 	
 	for (auto& object : playerObjects) {
 		object->Draw();
+	}
+	for (auto& enemyObject : enemyObjects) {
+		enemyObject->Draw();
 	}
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

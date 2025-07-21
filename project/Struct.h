@@ -92,6 +92,17 @@ struct PlayerSpawnData {
 	//スケーリング
 	Vector3 scaling;
 };
+//敵キャラの生成データ
+struct EnemySpawnData {
+	//ファイル名
+	std::string fileName;
+	//平行移動
+	Vector3 translation;
+	//回転角
+	Vector3 rotation;
+	//スケーリング
+	Vector3 scaling;
+};
 //レベルデータ
 struct LevelData {
 	//オブジェクト1個分のデータ
@@ -106,4 +117,6 @@ struct LevelData {
 	std::vector<ObjectData>objects;
 	//自キャラ配列
 	std::vector<PlayerSpawnData>players;
+	//敵配列
+	std::vector<EnemySpawnData>enemies;
 };

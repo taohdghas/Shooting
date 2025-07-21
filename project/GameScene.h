@@ -31,6 +31,7 @@ private:
 	//3Dオブジェクト
 	std::vector<std::unique_ptr<Object3d>>object3ds;
 	std::vector<std::unique_ptr<Object3d>> playerObjects;
+	std::vector<std::unique_ptr<Object3d>>enemyObjects;
 	//jsonManager
 	std::unique_ptr<JsonManager>jsonManager;
 	//プレイヤー
