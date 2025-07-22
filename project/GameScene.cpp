@@ -1,15 +1,12 @@
 #include "GameScene.h"
 #include "CameraManager.h"
+#include "ImGuiManager.h"
 
 //初期化
 void GameScene::Initialize() {
 
 	//サウンド
 	Audio::GetInstance()->Initialize();
-
-	//テクスチャ読み込み
-	//TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-	//TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
 	//モデル読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
@@ -18,7 +15,7 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("enemy.obj");
 	//カメラ
 	camera = std::make_unique<Camera>();
-	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
+	camera->SetTranslate({ 0.0f,0.0f,-30.0f });
 	CameraManager::GetInstance()->AddCamera("Main", camera.get());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
@@ -97,6 +94,20 @@ void GameScene::Update() {
 	for (auto& enemyObject : enemyObjects) {
 		enemyObject->Update();
 	}
+
+#ifdef USE_IMGUI
+	ImGui::Begin("SetUp");
+	if (ImGui::TreeNode("Camera")) {
+		Vector3 cameraPos = camera->GetTranslate();
+		Vector3 cameraRotate = camera->GetRotate();
+		ImGui::DragFloat3("CameraTranslate", &cameraPos.x, 0.01f);
+		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
+		camera->SetTranslate({ cameraPos.x,cameraPos.y,cameraPos.z });
+		camera->SetRotate({ cameraRotate.x,cameraRotate.y,cameraRotate.z });
+		ImGui::TreePop();
+	}
+	ImGui::End();
+#endif
 }
 
 //描画

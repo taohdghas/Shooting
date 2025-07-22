@@ -131,7 +131,7 @@ LevelData* JsonManager::LoadJsonFile(const std::string&filename) {
 			//スケーリング
 			enemySpawn.scaling.x = (float)transform["scaling"][0];
 			enemySpawn.scaling.y = (float)transform["scaling"][2];
-			enemySpawn.scaling.z = (float)transform["scaling"][3];
+			enemySpawn.scaling.z = (float)transform["scaling"][1];
 
 			levelData->enemies.push_back(enemySpawn);
 
