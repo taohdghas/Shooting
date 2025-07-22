@@ -34,7 +34,8 @@ public:
 	///Getter///
 	const ModelData& GetModelData()const { return modelData_; }
 	///Setter///
-	void SetColor(const Vector4& color) { materialData->color = color; }
+	void SetColor(const Vector4& color) { materialData->color = color; }//色
+	void SetEnableLighting(bool enable) { materialData->enableLighting = enable; }//Lighting
 private:
 	//ModelBaseのポインタ
 	ModelBase* modelBase_;

@@ -23,26 +23,9 @@ void TitleScene::Initialize() {
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
-	//タイトルのオブジェクト
-	title = std::make_unique<Object3d>();
-	title->Initialize(Object3dBase::GetInstance());
-	title->SetModel("title.obj");
-	title->SetTranslate({ 0.0f,1.2f,1.0f });
-
-	//pushspaceのオブジェクト
-	pushspace = std::make_unique<Object3d>();
-	pushspace->Initialize(Object3dBase::GetInstance());
-	pushspace->SetModel("pushspace.obj");
-	pushspace->SetTranslate({ 0.0f,-1.0f,1.0f });
-	pushspace->SetScale({ 0.5f,0.5f,0.5f });
-
-	//プレイヤーオブジェクト(外見のみ)
-	playerobj = std::make_unique<Object3d>();
-	playerobj->Initialize(Object3dBase::GetInstance());
-	playerobj->SetModel("player/player.obj");
-	playerobjTransform.scale = { 0.5f,0.5f,0.5f };
-	playerobjTransform.rotate = { 0.0f,0.0f,0.0f };
-	playerobjTransform.translate = { 0.0f,0.0f,0.0f };
+	//タイトルオブジェクト
+	titleObject = std::make_unique<TitleObject>();
+	titleObject->Initialize();
 
 	//フェードマネージャー
 	fadeManager = std::make_unique<FadeManager>();
@@ -68,12 +51,7 @@ void TitleScene::Update() {
 	//Skybox
 	skybox->Update();
 	//タイトルオブジェクト
-	title->Update();
-	//pushspaceオブジェクト
-	pushspace->Update();
-
-	//プレイヤーObj演出
-	PlayerObjEffect();
+	titleObject->Update();
 
 	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 		SceneManager::GetInstance()->ChangeScene("GAME");
@@ -95,11 +73,7 @@ void TitleScene::Draw() {
 	//Skybox
 	skybox->Draw();
 	//タイトルオブジェクト
-	title->Draw();
-	//pushspaceオブジェクト
-	pushspace->Draw();
-	//プレイヤーオブジェクト
-	playerobj->Draw();
+	titleObject->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
@@ -125,18 +99,9 @@ void TitleScene::Debug() {
 #endif
 }
 
-//プレイヤーObj演出
-void TitleScene::PlayerObjEffect() {
-	//プレイヤーオブジェクトの回転
-	playerobjTransform.rotate.y += RotateSpeed * kDeltaTime;
-	playerobj->SetScale(playerobjTransform.scale);
-	playerobj->SetRotate(playerobjTransform.rotate);
-	playerobj->SetTranslate(playerobjTransform.translate);
-	playerobj->Update();
-}
-
 //シーン遷移
 void TitleScene::SceneChange() {
+	/*
 	//エンターキーを押したらゲームシーンへ
 	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 		pushspaceMove = true;
@@ -158,4 +123,5 @@ void TitleScene::SceneChange() {
 	if (fadeManager->IsFadeOutEnd()) {
 		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
+	*/
 }

@@ -15,6 +15,7 @@
 #include "Struct.h"
 #include "FadeManager.h"
 #include "Skybox.h"
+#include "TitleObject.h"
 
 class TitleScene : public BaseScene
 {
@@ -29,8 +30,6 @@ public:
 	void Draw() override;
 	//デバック
 	void Debug()override;
-	//プレイヤーObj演出
-	void PlayerObjEffect();
 	//シーン遷移
 	void SceneChange();
 private:
@@ -40,25 +39,12 @@ private:
 	std::unique_ptr<Camera>camera;
 	//ライト
 	std::unique_ptr<DirectionalLight>directionallight;
-	//タイトルのオブジェクト
-	std::unique_ptr<Object3d>title;
-	//pushspaceのオブジェクト
-	std::unique_ptr<Object3d>pushspace;
-	//プレイヤーオブジェクト
-	std::unique_ptr<Object3d>playerobj;
 	//フェードマネージャー
 	std::unique_ptr<FadeManager>fadeManager;
 	//Skybox
 	std::unique_ptr<Skybox>skybox;
-
-	//プレイヤーオブジェクトTransform
-	Transform playerobjTransform;
-
-	//Δtを定義
-	const float kDeltaTime = 1.0f / 60.0f;
-	//playerObj回転速度
-	const float RotateSpeed = 0.5f;
-
+	//タイトルオブジェクト
+	std::unique_ptr<TitleObject>titleObject;
 	//スタート演出
 	bool pushspaceMove = false;
 	bool fadeOutStarted = false;

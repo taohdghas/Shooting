@@ -27,6 +27,10 @@ public:
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
 	void SetCamera(Camera* camera) { this->camera = camera; }
 	void SetColor(const Vector4& color);
+	void SetLight(bool enable) { enableLighting = enable; }
+	void SetDirectionalLightEnable(int enable) { directionalLight->enable = enable ? 1 : 0; }
+	void SetPointLightEnable(int enable) { pointLight->enable = enable ? 1 : 0; }
+	void SetSpotLightEnable(int enable) { spotLight->enable = enable ? 1 : 0; }
 	///getter///
 	const Vector3& GetScale()const { return transform_.scale; }
 	const Vector3& GetRotate()const { return transform_.rotate; }
@@ -70,5 +74,7 @@ private:
 	SpotLight* spotLight = nullptr;
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+	//ライト有効フラグ
+	bool enableLighting = false;
 };
 
