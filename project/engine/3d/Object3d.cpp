@@ -25,7 +25,7 @@ void Object3d::Initialize(Object3dBase* object3dBase) {
 void Object3d::Update() {
 	modelData_ = model_->GetModelData();
 
-	//model_->SetEnableLighting(true);
+	model_->SetEnableLighting(enableLighting);
 
 	//TransformからWorldMatrixを作る
 	Matrix4x4 worldMatrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);

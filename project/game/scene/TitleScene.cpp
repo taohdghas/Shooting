@@ -40,9 +40,10 @@ void TitleScene::Initialize() {
 	playerobj = std::make_unique<Object3d>();
 	playerobj->Initialize(Object3dBase::GetInstance());
 	playerobj->SetModel("player/player.obj");
-	playerobj->SetDirectionalLightEnable(1);
-	playerobj->SetPointLightEnable(1);
-	playerobj->SetSpotLightEnable(1);
+	playerobj->SetLight(false);
+	playerobj->SetDirectionalLightEnable(0);
+	playerobj->SetPointLightEnable(0);
+	playerobj->SetSpotLightEnable(0);
 	playerobjTransform.scale = { 0.5f,0.5f,0.5f };
 	playerobjTransform.rotate = { 0.0f,0.0f,0.0f };
 	playerobjTransform.translate = { 0.0f,0.0f,0.0f };
