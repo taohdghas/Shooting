@@ -40,6 +40,9 @@ void TitleScene::Initialize() {
 	playerobj = std::make_unique<Object3d>();
 	playerobj->Initialize(Object3dBase::GetInstance());
 	playerobj->SetModel("player/player.obj");
+	playerobj->SetDirectionalLightEnable(1);
+	playerobj->SetPointLightEnable(1);
+	playerobj->SetSpotLightEnable(1);
 	playerobjTransform.scale = { 0.5f,0.5f,0.5f };
 	playerobjTransform.rotate = { 0.0f,0.0f,0.0f };
 	playerobjTransform.translate = { 0.0f,0.0f,0.0f };
@@ -93,11 +96,11 @@ void TitleScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
 	//Skybox
-	skybox->Draw();
+	//skybox->Draw();
 	//タイトルオブジェクト
-	title->Draw();
+	//title->Draw();
 	//pushspaceオブジェクト
-	pushspace->Draw();
+	//pushspace->Draw();
 	//プレイヤーオブジェクト
 	playerobj->Draw();
 
@@ -122,6 +125,7 @@ void TitleScene::Debug() {
 		ImGui::TreePop();
 	}
 	ImGui::End();
+	playerobj->DebugUpdate();
 #endif
 }
 

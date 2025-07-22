@@ -61,7 +61,7 @@ PixelShaderOutput main(VertexShaderOutput input)
    
     if (gMaterial.enableLighting != 0)
     {
-        float3 totalDiffuse = float3(0, 0, 0);
+        float3 totalDiffuse = gMaterial.color.rgb * textureColor.rgb;
         float3 totalSpecular = float3(0, 0, 0);
         float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
 

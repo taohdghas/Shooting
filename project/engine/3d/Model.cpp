@@ -157,3 +157,10 @@ Node Model::ReadNode(aiNode* node) {
 	}
 	return result;
 }
+//ライトの有効セッター
+void Model::SetEnableLighting(bool enable) {
+	enableLighting = enable;
+	if (materialData) {
+		materialData->enableLighting = enable ? 1 : 0;;
+	}
+}

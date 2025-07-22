@@ -35,6 +35,7 @@ public:
 	const ModelData& GetModelData()const { return modelData_; }
 	///Setter///
 	void SetColor(const Vector4& color) { materialData->color = color; }
+	void SetEnableLighting(bool enable);
 private:
 	//ModelBaseのポインタ
 	ModelBase* modelBase_;
@@ -48,5 +49,7 @@ private:
 	Material* materialData = nullptr;
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+	//ライト有効フラグ
+	bool enableLighting;
 };
 
