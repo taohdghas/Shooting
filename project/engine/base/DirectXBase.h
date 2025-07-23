@@ -52,7 +52,6 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>Getcommandlist(){ return commandList; }
 	//スワップチェーンリソースの数を取得
 	size_t GetSwapChainResourcesNum()const { return swapChainDesc.BufferCount; }
-
 private:
 	//デバイスの初期化
 	void DeviceInitialize();
