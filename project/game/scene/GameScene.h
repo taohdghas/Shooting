@@ -10,6 +10,7 @@
 #include "BaseScene.h"
 #include "Camera.h"
 #include "CollisionManager.h"
+#include "JsonManager.h"
 
 #include <vector>
 

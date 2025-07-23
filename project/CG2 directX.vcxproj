@@ -40,6 +40,7 @@
     <ClCompile Include="engine\base\Framework.cpp" />
     <ClCompile Include="game\scene\GameScene.cpp" />
     <ClCompile Include="engine\debug\Logger.cpp" />
+    <ClCompile Include="engine\manager\JsonManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\math\MyMath.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
@@ -82,6 +83,7 @@
     <ClInclude Include="game\skydome\Skydome.h" />
     <ClInclude Include="engine\base\Pso.h" />
     <ClInclude Include="game\skybox\Skybox.h" />
+    <ClInclude Include="engine\manager\JsonManager.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="game\scene\TitleScene.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -264,13 +266,13 @@
     <LibraryPath>$(ProjectDir)Lib;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)..\generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\generated\outputs\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)imgui;$(ProjectDir)externals\nlohmannjson\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(ProjectDir)Lib;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)..\generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\generated\outputs\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)imgui;$(ProjectDir)externals\nlohmannjson\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
