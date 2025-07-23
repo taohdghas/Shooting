@@ -15,7 +15,6 @@ void TitleScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("title.obj");
 	ModelManager::GetInstance()->LoadModel("pushspace.obj");
 	ModelManager::GetInstance()->LoadModel("player/player.obj");
-	ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 
 	//カメラ
 	camera = std::make_unique<Camera>();
