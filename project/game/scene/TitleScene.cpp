@@ -95,9 +95,9 @@ void TitleScene::Draw() {
 	//Skybox
 	skybox->Draw();
 	//タイトルオブジェクト
-	title->Draw();
+	//title->Draw();
 	//pushspaceオブジェクト
-	pushspace->Draw();
+	//pushspace->Draw();
 	//プレイヤーオブジェクト
 	playerobj->Draw();
 

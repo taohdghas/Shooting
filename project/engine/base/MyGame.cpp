@@ -33,6 +33,14 @@ void MyGame::Update() {
 	//RenderTextureの切り替え
 	if (ImGui::Begin("MyGame SetUp")) {
 		ImGui::Checkbox("Use RenderTexture", & useRenderTexture_);
+		//PostEffect切り替え
+		static int currentEffect = 0; 
+		const char* items[] = { "Grayscale", "Vignette", "BoxFilter","GaussianFilter"};
+		if (ImGui::Combo("PostEffect", &currentEffect, items, IM_ARRAYSIZE(items))) {
+			auto pso = DirectXBase::GetInstance()->GetPso();
+			pso->SetPostEffectType(static_cast<Pso::PostEffectType>(currentEffect));
+			pso->CreatePostEffectPipelineState();
+		}
 	}
 	ImGui::End();
 #endif

@@ -589,8 +589,24 @@ void Pso::CreatePostEffectPipelineState() {
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/GaussianFilter.ps.hlsl",
-		L"ps_6_0");
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob;
+	//Shader切り替え
+	switch (postEffectType_) {
+	case PostEffectType::Grayscale:
+		pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/Grayscale.ps.hlsl", L"ps_6_0");
+		break;
+	case PostEffectType::Vignette:
+		pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/Vignette.ps.hlsl", L"ps_6_0");
+		break;
+	case PostEffectType::BoxFilter:
+		pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/BoxFilter.ps.hlsl", L"ps_6_0");
+		break;
+	case PostEffectType::GaussianFilter:
+		pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/GaussianFilter.ps.hlsl", L"ps_6_0");
+		break;
+	default:
+		assert(false);
+	}
 	assert(pixelShaderBlob != nullptr);
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -630,6 +646,7 @@ void Pso::CreatePostEffectPipelineState() {
 		IID_PPV_ARGS(&postEffectGraphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }
+
 //SkyBox用RootSignature
 void Pso::CreateSkyBoxRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};

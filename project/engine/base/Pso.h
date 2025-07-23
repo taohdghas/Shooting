@@ -7,6 +7,13 @@ class DirectXBase;
 class Pso
 {
 public:
+	enum class PostEffectType {
+		Grayscale,
+		Vignette,
+		BoxFilter,
+		GaussianFilter,
+	};
+
 	//初期化
 	void Initialize(DirectXBase*directXBase);
 	//Object3D用RootSignature
@@ -47,6 +54,9 @@ public:
 	ID3D12RootSignature* GetSkyBoxRootSignature()const { return skyBoxRootSignature.Get(); }
 	ID3D12PipelineState* GetSkyBoxGraphicsPipelineState()const { return skyBoxGraphicsPipelineState.Get(); }
 
+	///Setter///
+	//PoseEffectのタイプ
+	void SetPostEffectType(PostEffectType type) { postEffectType_ = type; }
 private:
 	DirectXBase* directXBase_;
 	//Object3D用
@@ -64,6 +74,7 @@ private:
 	//Skybox用
 	Microsoft::WRL::ComPtr<ID3D12RootSignature>skyBoxRootSignature;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState>skyBoxGraphicsPipelineState;
-
+	//初期PostEffect
+	PostEffectType postEffectType_ = PostEffectType::Grayscale;
 };
 

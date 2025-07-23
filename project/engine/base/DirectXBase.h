@@ -74,6 +74,7 @@ public:
 	//DSV　GPUデスクリプタハンドル取得関数
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
+	Pso* GetPso()const { return pso_.get(); }
 private:
 	//コンストラクタ
 	DirectXBase() = default;
