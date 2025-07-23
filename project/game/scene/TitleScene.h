@@ -16,6 +16,7 @@
 #include "FadeManager.h"
 #include "Skybox.h"
 #include "TitleObject.h"
+#include "JsonManager.h"
 
 class TitleScene : public BaseScene
 {
@@ -45,6 +46,10 @@ private:
 	std::unique_ptr<Skybox>skybox;
 	//タイトルオブジェクト
 	std::unique_ptr<TitleObject>titleObject;
+	//JsonManager
+	std::unique_ptr<JsonManager>jsonManager;
+	//レベルデータ
+	LevelData* levelData;
 	//スタート演出
 	bool pushspaceMove = false;
 	bool fadeOutStarted = false;

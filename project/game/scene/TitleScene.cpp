@@ -15,6 +15,7 @@ void TitleScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("title.obj");
 	ModelManager::GetInstance()->LoadModel("pushspace.obj");
 	ModelManager::GetInstance()->LoadModel("player/player.obj");
+	ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 
 	//カメラ
 	camera = std::make_unique<Camera>();
@@ -34,6 +35,10 @@ void TitleScene::Initialize() {
 	//Skybox
 	skybox = std::make_unique<Skybox>();
 	skybox->Initialize("resources/rostock_laage_airport_4k.dds");
+	//JsonManager
+	jsonManager = std::make_unique<JsonManager>();
+	levelData = jsonManager->LoadJsonFile("untitled");
+
 }
 
 //終了
@@ -73,7 +78,7 @@ void TitleScene::Draw() {
 	//Skybox
 	skybox->Draw();
 	//タイトルオブジェクト
-	titleObject->Draw();
+	//titleObject->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
