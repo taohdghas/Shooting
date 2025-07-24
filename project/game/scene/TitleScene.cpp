@@ -75,14 +75,6 @@ void TitleScene::Update() {
 	//プレイヤーObj演出
 	PlayerObjEffect();
 
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		SceneManager::GetInstance()->ChangeScene("GAME");
-	}
-
-	//シーン遷移
-	//SceneChange();
-
-	//fadeManager->Update();
 
 	//デバック
 	Debug();
@@ -92,12 +84,7 @@ void TitleScene::Update() {
 void TitleScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
-	//Skybox
-	skybox->Draw();
-	//タイトルオブジェクト
-	//title->Draw();
-	//pushspaceオブジェクト
-	//pushspace->Draw();
+	
 	//プレイヤーオブジェクト
 	playerobj->Draw();
 
