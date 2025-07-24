@@ -19,7 +19,7 @@ void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
         for (const auto& bullet : playerBullets) {
             if (bullet->IsDead()) continue;
 
-            float length = Math::Length(enemy->GetPosition() - bullet->GetPosition());
+            float length = Math::Length(enemy->GetTranslate() - bullet->GetPosition());
             float combinedRadius = enemy->GetRadius() + bullet->GetRadius();
             if (length <= combinedRadius) {
                 enemy->TakeDamage(bullet->GetAttack());
@@ -33,7 +33,7 @@ void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
     }
 
     //敵弾とプレイヤー
-    Vector3 posPlayer = player->GetPosition();
+    Vector3 posPlayer = player->GetTranslate();
     for (const auto& bullet : enemyBullets) {
         if (bullet->IsDead()) continue;
 
@@ -46,7 +46,7 @@ void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
     }
 
     //プレイヤーと敵
-    float length = Math::Length(enemy->GetPosition() - posPlayer);
+    float length = Math::Length(enemy->GetTranslate() - posPlayer);
     float combinedRadius = player->GetRadius() + enemy->GetRadius();
     if (length <= combinedRadius) {
         player->OnCollision();

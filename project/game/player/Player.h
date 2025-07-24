@@ -50,7 +50,7 @@ public:
 	///Getter/// 
 
 	//位置取得
-	const Vector3& GetPosition()const { return transform_.translate; }
+	const Vector3& GetTranslate()const { return transform_.translate; }
 	//半径
 	float GetRadius()const { return radius_; }
 
@@ -58,10 +58,10 @@ public:
 	const std::list<std::unique_ptr<playerBullet>>& GetBullets() const { return bullets_; }
 
 	///Setter/// 
-	void SetPosition(const Vector3& position) { transform_.translate = position; }
+	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
+	void SetTranslate(const Vector3& translate) { transform_.translate =translate; }
 	
-
-
 private:
 	Object3dBase* object3dBase_;
 	Camera* camera_;

@@ -26,15 +26,6 @@ void GameScene::Initialize() {
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
-	//プレイヤー
-	player = std::make_unique<Player>();
-	player->Initialize(Object3dBase::GetInstance());
-
-	//敵
-	enemy = std::make_unique<Enemy>();
-	enemy->Initialize(Object3dBase::GetInstance());
-	enemy->SetPlayer(player.get());
-
 	//天球
 	skydome = std::make_unique<Skydome>();
 	skydome->Initialize(Object3dBase::GetInstance());
@@ -49,6 +40,24 @@ void GameScene::Initialize() {
 	//衝突マネージャー
 	collisionManager = std::make_unique<CollisionManager>();
 
+	jsonManager = std::make_unique<JsonManager>();
+	levelData = jsonManager->LoadJsonFile("untitled");
+    
+	for (auto& playerData : levelData->players) {
+		player = std::make_unique<Player>();
+		player->Initialize(Object3dBase::GetInstance());
+		Transform transform;
+	
+		transform.translate = playerData.translation;
+		
+		player->SetTranslate(transform.translate);
+	}
+
+	//敵
+	enemy = std::make_unique<Enemy>();
+	enemy->Initialize(Object3dBase::GetInstance());
+	enemy->SetPlayer(player.get());
+
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
 
@@ -56,7 +65,7 @@ void GameScene::Initialize() {
 
 //終了
 void GameScene::Finalize() {
-	//パーティクルグループの開放
+	//パーティクルグループの開放a
 	ParticleManager::GetInstance()->Clear();
 	//カメラマネージャ
 	CameraManager::GetInstance()->Finalize();
@@ -85,7 +94,7 @@ void GameScene::Update() {
 	if (enemy->IsDeathParticle()) {
 		auto emitter = std::make_unique<ParticleEmitter>();
 		emitter->Initialize("particle3");
-		emitter->SetPosition(enemy->GetPosition());
+		emitter->SetPosition(enemy->GetTranslate());
 		emitter->Emit(); // 即時発生
 		particleEmitter.push_back(std::move(emitter));
 

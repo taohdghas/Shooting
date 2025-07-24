@@ -30,13 +30,15 @@ public:
 public:
 	///Gettter///
 	//位置
-	const Vector3& GetPosition()const { return transform_.translate; }
+	const Vector3& GetTranslate()const { return transform_.translate; }
 	//半径
 	float GetRadius()const { return radius_; }
 	//弾リストを取得
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets()const { return bullets_; }
 
 	///Setter///
+	//位置
+	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 	//Playerのポインタをセット
 	void SetPlayer(Player* player) { player_ = player; }
 	//デスパーティクルフラグ

@@ -92,7 +92,7 @@ void Enemy::Laser() {
 
 	if (!player_)return;
 
-	Vector3 direction = Math::Subtract(player_->GetPosition(), transform_.translate);
+	Vector3 direction = Math::Subtract(player_->GetTranslate(), transform_.translate);
 	direction = Math::Normalize(direction);
 
 	auto bullet = std::make_unique<EnemyBullet>();

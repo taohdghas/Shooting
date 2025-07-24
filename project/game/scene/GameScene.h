@@ -45,5 +45,9 @@ private:
 	std::unique_ptr<CollisionManager>collisionManager;
 	//カメラ
 	std::unique_ptr<Camera>camera;
+	//JsonManager
+	std::unique_ptr<JsonManager>jsonManager;
+	//レベルデータ
+	LevelData* levelData;
 };
 
