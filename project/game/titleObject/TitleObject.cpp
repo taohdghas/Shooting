@@ -17,9 +17,10 @@ void TitleObject::Initialize() {
 	playerobj = std::make_unique<Object3d>();
 	playerobj->Initialize(Object3dBase::GetInstance());
 	playerobj->SetModel("player/player.obj");
+	playerobj->SetLight(true);
 	playerobjTransform.scale = { 0.5f,0.5f,0.5f };
 	playerobjTransform.rotate = { 0.0f,0.0f,0.0f };
-	playerobjTransform.translate = { 0.0f,0.0f,0.0f };
+	playerobjTransform.translate = { -1.5f,0.0f,0.0f };
 }
 //更新
 void TitleObject::Update() {
@@ -33,9 +34,9 @@ void TitleObject::Update() {
 //描画
 void TitleObject::Draw() {
 	//タイトルオブジェクト
-	title->Draw();
+	//title->Draw();
 	//pushspaceオブジェクト
-	pushspace->Draw();
+	//pushspace->Draw();
 	//プレイヤーオブジェクト
 	playerobj->Draw();
 }

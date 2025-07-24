@@ -57,9 +57,6 @@ void TitleScene::Update() {
 	//タイトルオブジェクト
 	titleObject->Update();
 
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		SceneManager::GetInstance()->ChangeScene("GAME");
-	}
 
 	//シーン遷移
 	//SceneChange();
@@ -77,7 +74,7 @@ void TitleScene::Draw() {
 	//Skybox
 	skybox->Draw();
 	//タイトルオブジェクト
-	//titleObject->Draw();
+	titleObject->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
