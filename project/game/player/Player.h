@@ -25,7 +25,7 @@ public:
 	//描画
 	void Draw();
 	//
-	void ReticleDraw();
+	//void ReticleDraw();
 	//移動
 	void Move();
 	//ジャンプ
