@@ -38,6 +38,6 @@ public:
 	void Draw()override;
 private:
 	//RenderTexture切り替え
-	bool useRenderTexture_ = false;
+	bool useRenderTexture_ =true;
 };
 
