@@ -60,7 +60,6 @@ void GameScene::Initialize() {
 
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
-
 }
 
 //終了
