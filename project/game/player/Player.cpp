@@ -23,7 +23,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	//レティクル
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize(SpriteBase::GetInstance(), "resources/white.png");
-	reticle_->SetSize({ 16,16 });
+	reticle_->SetSize({ 40,40 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
 
@@ -85,7 +85,7 @@ void Player::Update() {
 	object_->SetTranslate(transform_.translate);
 
 	//レティクル更新
-	//ReticleUpdate();
+	ReticleUpdate();
 
 	object_->Update();
 
@@ -111,7 +111,10 @@ void Player::Draw() {
 		bullet->Draw();
 	}
 }
-
+//レティクル描画
+void Player::ReticleDraw() {
+	reticle_->Draw();
+}
 //移動
 void Player::Move() {
 
@@ -237,8 +240,24 @@ void Player::Dodge() {
 
 //レティクル更新
 void Player::ReticleUpdate() {
-	
+	Vector2 reticlePosition = reticle_->GetPosition();
+
+	if (Input::GetInstance()->PushKey(DIK_UP)) {
+		reticlePosition.y -= reticleSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_DOWN)) {
+		reticlePosition.y += reticleSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+		reticlePosition.x -= reticleSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+		reticlePosition.x += reticleSpeed;
+	}
+
+	reticle_->Update();
 }
+
 
 //衝突時コールバック
 void Player::OnCollision() {

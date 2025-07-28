@@ -24,8 +24,8 @@ public:
 	void Update();
 	//描画
 	void Draw();
-	//
-	//void ReticleDraw();
+	//レティクル描画
+	void ReticleDraw();
 	//移動
 	void Move();
 	//ジャンプ
@@ -139,5 +139,7 @@ private:
 	float damageColorTimer_ = 0.0f;
 	//無敵タイマー
 	float invincibleTimer_ = 0.0f;
+	//レティクルのスピード
+	float reticleSpeed = 5.0f;
 };
 
