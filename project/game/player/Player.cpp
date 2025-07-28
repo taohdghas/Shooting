@@ -18,6 +18,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
 	object_->SetModel("player/player.obj");
+	object_->SetLight(false);
 	transform_.scale = { 0.25f,0.25f,0.25f };
 	transform_.translate = { 0.0f,-1.5f,0.0f };
 	//レティクル

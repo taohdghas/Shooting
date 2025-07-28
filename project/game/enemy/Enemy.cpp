@@ -9,6 +9,7 @@ void Enemy::Initialize(Object3dBase*object3dBase) {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dBase_);
 	object_->SetModel("enemy/enemy.obj");
+	object_->SetLight(false);
 	transform_.scale = { 0.5f,0.5f,0.5f };
 	transform_.translate = { 0.0f,3.0f,20.0f };
 }
