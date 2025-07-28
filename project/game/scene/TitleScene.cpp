@@ -33,7 +33,7 @@ void TitleScene::Initialize() {
 	fadeManager->FadeIn(1.0f);
 	//Skybox
 	skybox = std::make_unique<Skybox>();
-	skybox->Initialize("resources/rostock_laage_airport_4k.dds");
+	skybox->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
 	//JsonManager
 	jsonManager = std::make_unique<JsonManager>();
 	levelData = jsonManager->LoadJsonFile("untitled");
@@ -99,6 +99,14 @@ void TitleScene::Debug() {
 		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
 		ImGui::TreePop();
 	}
+	Transform& trans = skybox->GetTransform();
+	if (ImGui::TreeNode("SkyBox")) {
+		ImGui::DragFloat3("Scale", &trans.scale.x, 0.01f, 0.01f, 1000.0f);
+		ImGui::DragFloat3("Rotate", &trans.rotate.x, 0.1f, -360.0f, 360.0f);
+		ImGui::DragFloat3("Translate", &trans.translate.x, 0.1f, -1000.0f, 1000.0f);
+		ImGui::TreePop();
+	}
+
 	ImGui::End();
 #endif
 }

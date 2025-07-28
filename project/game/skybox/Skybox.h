@@ -20,6 +20,9 @@ public:
 	void CreateTransformation();
 	//頂点作成
 	void CreateVertex();
+public:
+	Transform& GetTransform() { return transform_; }
+
 private:
 	DirectXBase* directxBase_ = nullptr;
 	std::unique_ptr<Pso>pso_;

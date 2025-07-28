@@ -21,7 +21,8 @@ void Skybox::Initialize(std::string textureFilePath) {
 	CreateTransformation();
 	//グラフィックスパイプライン作成
 	pso_->CreateSkyBoxPipelineState();
-	transform_ = { {1000.0f,1000.0f,1000.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	transform_ = { {1000.0f,1000.0f,1000.0f},{5.0f,25.3f,0.0f},{0.0f,150.0f,0.0f} };
+	//transform_ = { {1000.0f,1000.0f,1000.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 }
 
 //更新
