@@ -25,12 +25,15 @@ public:
 	///Setter///
 	void SetPosition(const Vector3& position) { transform_.translate = position; }
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
+	void SetDirection(const Vector3 direction) { direction_ = direction; }
 private:
 	std::unique_ptr<Object3d>object_;
 	Object3dBase* object3dbase_;
 	Transform transform_;
 	//速度
 	Vector3 velocity_;
+	//向き
+	Vector3 direction_;
 	//寿命
 	static const uint32_t kLifeTime = 60 * 5;
 	//デスタイマー

@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "MyMath.h"
 #include "TextureManager.h"
+#include "CameraManager.h"
 #include "ImGuiManager.h"
 #include "WindowsAPI.h"
 #include <algorithm>
@@ -174,10 +175,26 @@ void Player::Attack() {
 	//弾を生成
 	auto newBullet = std::make_unique<playerBullet>();
 	newBullet->Initialize(object3dBase_);
-	newBullet->SetVelocity(velocity);
+	//newBullet->SetVelocity(velocity);
 	newBullet->SetPosition(transform_.translate);
+
+	Matrix4x4 viewMatrix = CameraManager::GetInstance()->GetActiveCamera()->GetViewMatrix();
+	Matrix4x4 projectionMatrix = CameraManager::GetInstance()->GetActiveCamera()->GetProjectionMatrix();
+	Matrix4x4 viewProjectionMatrix = Math::Multiply(viewMatrix, projectionMatrix);
+	Matrix4x4 viewPortMatrix = Math::MakeViewportMatrix(0.0f, 0.0f, WindowsAPI::kClientWidth, WindowsAPI::kClientHeight, 0.0f, 1.0f);
+	Matrix4x4 ViewPortProjectionMatrix = Math::Multiply(viewProjectionMatrix, viewPortMatrix);
+	Matrix4x4 inverse = Math::Inverse(ViewPortProjectionMatrix);
+	Vector3 Near = { reticle_->GetPosition().x,reticle_->GetPosition().y,0 };
+	Vector3 Far = { reticle_->GetPosition().x,reticle_->GetPosition().y,1 };
+	Near = Math::Transform(Near, inverse);
+	Far = Math::Transform(Far, inverse);
+	bulletDirection = Far - Near;
+	Math::Normalize(bulletDirection);
+	newBullet->SetDirection(bulletDirection);
+	newBullet->SetVelocity(bulletDirection * kBulletSpeed);
 	bullets_.push_back(std::move(newBullet));
 	attackCooldown_ = attackInterval_;
+
 }
 
 //三方向攻撃
@@ -255,6 +272,7 @@ void Player::ReticleUpdate() {
 		reticlePosition.x += reticleSpeed;
 	}
 
+	reticle_->SetPosition(reticlePosition);
 	reticle_->Update();
 }
 

@@ -45,5 +45,6 @@ private:
 	std::unique_ptr<CollisionManager>collisionManager;
 	//カメラ
 	std::unique_ptr<Camera>camera;
+	std::unique_ptr<Object3d>platform;
 };
 

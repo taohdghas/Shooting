@@ -18,7 +18,7 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
 	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
-
+	ModelManager::GetInstance()->LoadModel("platform.obj");
 	//カメラ
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0,0,-10 });
@@ -38,6 +38,10 @@ void GameScene::Initialize() {
 	//天球
 	skydome = std::make_unique<Skydome>();
 	skydome->Initialize(Object3dBase::GetInstance());
+
+	platform = std::make_unique<Object3d>();
+	platform->Initialize(Object3dBase::GetInstance());
+	platform->SetModel("platform.obj");
 
 	//パーティクル
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
@@ -77,6 +81,8 @@ void GameScene::Update() {
 
 	//天球
 	skydome->Update();
+
+	platform->Update();
 
 	//衝突チェック
 	collisionManager->CheckPECollisions(player.get(), enemy.get());
@@ -124,11 +130,14 @@ void GameScene::Draw() {
 	//敵
 	enemy->Draw();
 
+	platform->Draw();
 	//天球
 	//skydome->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
+
+	player->ReticleDraw();
 
 	//パーティクル
 	ParticleManager::GetInstance()->Draw();
@@ -152,7 +161,7 @@ void GameScene::Debug() {
 	player->Debug();
 	//敵Debug
 	enemy->Debug();
-
+	platform->DebugUpdate();
 	ImGui::End();
 #endif
 }

@@ -86,6 +86,12 @@ void Object3d::DebugUpdate() {
 		ImGui::DragFloat("SpotLightcosFalloffStart", &spotLight->cosFalloffStart, 0.01f);
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("Object")) {
+		ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
+		ImGui::DragFloat3("Rotate", &transform_.rotate.x, 0.1f);
+		ImGui::DragFloat3("Translate", &transform_.translate.x, 0.1f);
+		ImGui::TreePop();
+	}
 #endif 
 }
 //setter

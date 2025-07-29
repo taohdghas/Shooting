@@ -77,6 +77,8 @@ private:
 	Vector4 color_;
 	//回避方向
 	Vector3 dodgeDirection_{ 0.0f,0.0f,0.0f };
+	//弾発射方向
+	Vector3 bulletDirection;
 	//デスフラグ
 	bool isDead_ = false;
 	//回避状態
