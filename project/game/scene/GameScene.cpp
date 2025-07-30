@@ -125,10 +125,10 @@ void GameScene::Draw() {
 	Object3dBase::GetInstance()->DrawBaseSet();
 
 	//プレイヤー
-	player->Draw();
+	//player->Draw();
 
 	//敵
-	enemy->Draw();
+	//enemy->Draw();
 
 	platform->Draw();
 	//天球
