@@ -35,9 +35,9 @@ void GameScene::Initialize() {
 	enemy->Initialize(Object3dBase::GetInstance());
 	enemy->SetPlayer(player.get());
 
-	//天球
-	skydome = std::make_unique<Skydome>();
-	skydome->Initialize(Object3dBase::GetInstance());
+	//skybox
+	skybox = std::make_unique<Skybox>();
+	skybox->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
 
 	//パーティクル
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
@@ -75,8 +75,8 @@ void GameScene::Update() {
 	//敵
 	enemy->Update();
 
-	//天球
-	skydome->Update();
+	//skybox
+	skybox->Update();
 
 	//衝突チェック
 	collisionManager->CheckPECollisions(player.get(), enemy.get());
@@ -119,13 +119,13 @@ void GameScene::Draw() {
 	Object3dBase::GetInstance()->DrawBaseSet();
 
 	//プレイヤー
-	player->Draw();
+	//player->Draw();
 
 	//敵
-	enemy->Draw();
+//	enemy->Draw();
 
 	//天球
-	//skydome->Draw();
+	skybox->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

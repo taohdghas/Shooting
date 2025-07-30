@@ -16,7 +16,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
-#include "Skydome.h"
+#include "Skybox.h"
 
 class GameScene : public BaseScene
 {
@@ -37,8 +37,8 @@ private:
 	std::unique_ptr<Player>player;
 	//敵
 	std::unique_ptr<Enemy>enemy;
-	//天球
-	std::unique_ptr<Skydome>skydome;
+	//Skybox
+	std::unique_ptr<Skybox>skybox;
 	//パーティクルエミッター
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
 	//衝突マネージャー

@@ -1,0 +1,34 @@
+#include "Platform.h"
+#include "ImGuiManager.h"
+
+//初期化
+void Platform::Initialize(Object3dBase* object3dbase) {
+	object3dBase_ = object3dbase;
+	object_ = std::make_unique<Object3d>();
+	object_->Initialize(object3dBase_);
+	object_->SetModel("platform/platform.obj");
+	object_->SetLight(false);
+	//transform_.scale = { 0.25f,0.25f,0.25f };
+	transform_.translate = { 0.0f,0.0f,0.0f };
+}
+//更新
+void Platform::Update() {
+	object_->SetTranslate(transform_.translate);
+	object_->Update();
+}
+//描画
+void Platform::Draw() {
+	object_->Draw();
+}
+//デバック
+void Platform::Debug() {
+#ifdef USE_IMGUI
+	if (ImGui::TreeNode("Platform")) {
+		ImGui::DragFloat3("PlatformScale", &transform_.scale.x, 0.1f);
+		ImGui::DragFloat3("PlatformRotate", &transform_.rotate.x, 0.1f);
+		ImGui::DragFloat3("PlatformTranslate", &transform_.translate.x, 0.1f);
+
+		ImGui::TreePop();
+	}
+#endif
+}
