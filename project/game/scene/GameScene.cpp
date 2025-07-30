@@ -18,6 +18,7 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
 	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
+	ModelManager::GetInstance()->LoadModel("platform/platform.obj");
 
 	//カメラ
 	camera = std::make_unique<Camera>();
@@ -29,15 +30,16 @@ void GameScene::Initialize() {
 	//プレイヤー
 	player = std::make_unique<Player>();
 	player->Initialize(Object3dBase::GetInstance());
-
 	//敵
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(Object3dBase::GetInstance());
 	enemy->SetPlayer(player.get());
-
 	//skybox
 	skybox = std::make_unique<Skybox>();
 	skybox->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
+	//プラットフォーム
+	platform = std::make_unique<Platform>();
+	platform->Initialize(Object3dBase::GetInstance());
 
 	//パーティクル
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
@@ -68,16 +70,14 @@ void GameScene::Finalize() {
 void GameScene::Update() {
 	//カメラ
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
-
 	//プレイヤー
 	player->Update();
-
 	//敵
 	enemy->Update();
-
 	//skybox
 	skybox->Update();
-
+	//プラットフォーム
+	platform->Update();
 	//衝突チェック
 	collisionManager->CheckPECollisions(player.get(), enemy.get());
 
@@ -117,16 +117,14 @@ void GameScene::Update() {
 void GameScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
-
 	//プレイヤー
 	//player->Draw();
-
 	//敵
-//	enemy->Draw();
-
+    //enemy->Draw();
 	//天球
 	skybox->Draw();
-
+	//プラットフォーム
+	platform->Draw();
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
@@ -152,6 +150,8 @@ void GameScene::Debug() {
 	player->Debug();
 	//敵Debug
 	enemy->Debug();
+	//プラットフォームDebug
+	platform->Debug();
 
 	ImGui::End();
 #endif

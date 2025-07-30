@@ -8,11 +8,13 @@ void Platform::Initialize(Object3dBase* object3dbase) {
 	object_->Initialize(object3dBase_);
 	object_->SetModel("platform/platform.obj");
 	object_->SetLight(false);
-	//transform_.scale = { 0.25f,0.25f,0.25f };
+	transform_.scale = { 1.0f,1.0f,1.0f };
 	transform_.translate = { 0.0f,0.0f,0.0f };
 }
 //更新
 void Platform::Update() {
+	object_->SetScale(transform_.scale);
+	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
 }
