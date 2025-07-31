@@ -53,7 +53,7 @@ void TitleScene::Update() {
 	//カメラ
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
 	//Skybox
-	skybox->Update();
+	//skybox->Update();
 	//タイトルオブジェクト
 	titleObject->Update();
 
@@ -75,7 +75,7 @@ void TitleScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
 	//Skybox
-	skybox->Draw();
+	//skybox->Draw();
 	//タイトルオブジェクト
 	//titleObject->Draw();
 

@@ -53,10 +53,13 @@ void GameScene::Initialize() {
 		player->SetTranslate(transform.translate);
 	}
 
-	//敵
-	enemy = std::make_unique<Enemy>();
-	enemy->Initialize(Object3dBase::GetInstance());
-	enemy->SetPlayer(player.get());
+	for (auto& enemyData : levelData->enemies) {
+		auto newEnemy = std::make_unique<Enemy>();
+		newEnemy->Initialize(Object3dBase::GetInstance());
+		newEnemy->SetTranslate(enemyData.translation);
+		newEnemy->SetPlayer(player.get()); 
+		enemies.push_back(std::move(newEnemy));
+	}
 
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
@@ -81,25 +84,18 @@ void GameScene::Update() {
 	player->Update();
 
 	//敵
-	enemy->Update();
+	for (auto& enemy : enemies) {
+		enemy->Update();
+	}
 
 	//天球
 	skydome->Update();
 
 	//衝突チェック
-	collisionManager->CheckPECollisions(player.get(), enemy.get());
+	//collisionManager->CheckPECollisions(player.get(), enemy.get());
 
 	
-	if (enemy->IsDeathParticle()) {
-		auto emitter = std::make_unique<ParticleEmitter>();
-		emitter->Initialize("particle3");
-		emitter->SetPosition(enemy->GetTranslate());
-		emitter->Emit(); // 即時発生
-		particleEmitter.push_back(std::move(emitter));
-
-		// フラグをリセット
-		enemy->SetisDeathParticle(false);
-	}
+	
 	
 	//パーティクル
 	ParticleManager::GetInstance()->Update();
@@ -130,7 +126,9 @@ void GameScene::Draw() {
 	player->Draw();
 
 	//敵
-	enemy->Draw();
+	for (auto& enemy : enemies) {
+		enemy->Draw();
+	}
 
 	//天球
 	//skydome->Draw();
@@ -159,7 +157,7 @@ void GameScene::Debug() {
 	//プレイヤーDebug
 	player->Debug();
 	//敵Debug
-	enemy->Debug();
+	//enemy->Debug();
 
 	ImGui::End();
 #endif

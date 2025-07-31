@@ -63,7 +63,7 @@ void Object3d::Draw() {
 	//SpotLight
 	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(6, SpotLightResource->GetGPUVirtualAddress());
 	//環境マップ
-	object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSrvHandleGPU("resources/rostock_laage_airport_4k.dds"));
+	//object3dBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSrvHandleGPU("resources/rostock_laage_airport_4k.dds"));
 	//3Dモデルが割り当てられていたら描画する
 	if (model_) {
 		model_->Draw();

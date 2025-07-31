@@ -7,7 +7,7 @@
             "transform": {
                 "translation": [
                     0.0,
-                    0.0,
+                    -3.120877742767334,
                     0.0
                 ],
                 "rotation": [
@@ -22,6 +22,51 @@
                 ]
             },
             "file_name": "player"
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn",
+            "transform": {
+                "translation": [
+                    2.002225875854492,
+                    4.316005229949951,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "disabled_flag": true,
+            "file_name": "enemy"
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn.001",
+            "transform": {
+                "translation": [
+                    -1.9575414657592773,
+                    4.236237049102783,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "enemy"
         }
     ]
 }

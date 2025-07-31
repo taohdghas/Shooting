@@ -36,7 +36,7 @@ private:
 	//プレイヤー
 	std::unique_ptr<Player>player;
 	//敵
-	std::unique_ptr<Enemy>enemy;
+	std::vector<std::unique_ptr<Enemy>> enemies;
 	//天球
 	std::unique_ptr<Skydome>skydome;
 	//パーティクルエミッター
