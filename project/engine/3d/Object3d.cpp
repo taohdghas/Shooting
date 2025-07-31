@@ -81,6 +81,7 @@ void Object3d::DebugUpdate() {
 	}
 #endif 
 }
+
 //setter
 void Object3d::SetModel(const std::string& filePath) {
 	//モデルを検索してセットする
