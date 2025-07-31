@@ -108,7 +108,6 @@ void GameScene::Update() {
 	if (Input::GetInstance()->PushKey(DIK_C)) {
 		SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
-
 	//デバック
 	Debug();
 }
