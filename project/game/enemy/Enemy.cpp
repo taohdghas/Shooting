@@ -13,7 +13,6 @@ void Enemy::Initialize(Object3dBase*object3dBase) {
 	transform_.scale = { 0.5f,0.5f,0.5f };
 	transform_.translate = { 0.0f,3.0f,20.0f };
 }
-
 //更新
 void Enemy::Update() {
 
@@ -57,7 +56,6 @@ void Enemy::Update() {
 		bullet->Update();
 	}
 }
-
 //描画
 void Enemy::Draw() {
 	//デスフラグオンならスルー
@@ -71,7 +69,6 @@ void Enemy::Draw() {
 		bullet->Draw();
 	}
 }
-
 //攻撃(レーザー)
 void Enemy::Laser() {
 	//デスフラグオンならスルー
@@ -103,12 +100,10 @@ void Enemy::Laser() {
 
 	bullets_.emplace_back(std::move(bullet));
 }
-
 //衝突時コールバック
 void Enemy::onCollision() {
 	isDead_ = true;
 }
-
 //HP減少関数
 void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
@@ -120,7 +115,6 @@ void Enemy::TakeDamage(int damage) {
 	//色変える
 	damageColorTimer_ = DamageColorDuration;
 }
-
 //Debug
 void Enemy::Debug() {
 #ifdef USE_IMGUI

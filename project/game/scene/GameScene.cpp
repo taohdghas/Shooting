@@ -118,9 +118,9 @@ void GameScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
 	//プレイヤー
-	//player->Draw();
+	player->Draw();
 	//敵
-    //enemy->Draw();
+    enemy->Draw();
 	//天球
 	skybox->Draw();
 	//プラットフォーム
