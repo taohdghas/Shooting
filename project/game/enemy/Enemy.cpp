@@ -5,13 +5,15 @@
 
 //初期化
 void Enemy::Initialize(Object3dBase*object3dBase) {
-	object3dBase_ = object3dBase;
-	object_ = std::make_unique<Object3d>();
-	object_->Initialize(object3dBase_);
-	object_->SetModel("enemy/enemy.obj");
-	object_->SetLight(false);
-	transform_.scale = { 0.5f,0.5f,0.5f };
-	transform_.translate = { 0.0f,3.0f,20.0f };
+	this->object3dBase_ = object3dBase;
+	this->object_ = std::make_unique<Object3d>();
+	this->object_->Initialize(object3dBase);
+	this->object_->SetModel("enemy/enemy.obj");
+	this->object_->SetLight(false);
+	this->transform_.scale = { 0.5f, 0.5f, 0.5f };
+	this->transform_.translate = { 0.0f, 3.0f, 20.0f };
+	this->hp = 100;
+	this->radius = 1.0f;
 }
 //更新
 void Enemy::Update() {
@@ -40,7 +42,6 @@ void Enemy::Update() {
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
-
 	//色タイマー更新
 	if (damageColorTimer_ > 0.0f) {
 		damageColorTimer_ -= DeltaTime;
@@ -75,19 +76,16 @@ void Enemy::Laser() {
 	if (isDead_) {
 		return;
 	}
-
 	//発射タイマー
-
 	static int fireTimer = 0;
 	fireTimer++;
-
 	//インターバルよりも小さい場合スルー
 	if (fireTimer < kFireInterval) {
 		return;
 	}
-
+	//プレイヤーがない場合撃たない
 	if (!player_)return;
-
+	//プレイヤーへの距離
 	Vector3 toPlayer = Math::Subtract(player_->GetPosition(), transform_.translate);
 	float distance = Math::Length(toPlayer);
 
@@ -105,7 +103,6 @@ void Enemy::Laser() {
 	fireTimer = 0;
 
 	Vector3 direction = Math::Normalize(toPlayer);
-	//direction = Math::Normalize(direction);
 
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3dBase_);
@@ -120,9 +117,9 @@ void Enemy::onCollision() {
 }
 //HP減少関数
 void Enemy::TakeDamage(int damage) {
-	hp_ -= damage;
-	if (hp_ <= 0) {
-		hp_ = 0;
+	hp -= damage;
+	if (hp <= 0) {
+		hp = 0;
 		isDead_ = true;
 		isDeathParticle_ = true;
 	}
@@ -139,7 +136,7 @@ void Enemy::Debug(int id) {
 		std::string rotateLabel = "EnemyRotate##" + std::to_string(id);
 		std::string translateLabel = "EnemyTranslate##" + std::to_string(id);
 
-		ImGui::DragInt(hpLabel.c_str(), &hp_, 1);
+		ImGui::DragInt(hpLabel.c_str(), &hp, 1);
 		ImGui::DragFloat3(scaleLabel.c_str(), &transform_.scale.x, 0.1f);
 		ImGui::DragFloat3(rotateLabel.c_str(), &transform_.rotate.x, 0.1f);
 		ImGui::DragFloat3(translateLabel.c_str(), &transform_.translate.x, 0.1f);

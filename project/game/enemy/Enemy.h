@@ -1,71 +1,49 @@
 #pragma once
+#include "EnemyBase.h"
 #include "Object3d.h"
 #include "Object3dBase.h"
 #include "Transform.h"
 #include "EnemyBullet.h"
 
-class Player;
-class Enemy
+class Enemy : public EnemyBase
 {
 public:
 	//初期化
-	void Initialize(Object3dBase*object3dBase);
+	void Initialize(Object3dBase*object3dBase)override;
 	//更新 
-	void Update();
+	void Update() override;
 	//描画
-	void Draw();
+	void Draw()override;
 	//攻撃(レーザー)
 	void Laser();
 	//衝突時コールバック
 	void onCollision();
 	//HP減少
-	void TakeDamage(int damege);
+	void TakeDamage(int damege)override;
 	//Debug
 	void Debug(int id);
 	//デスフラグが立ったか
-	bool IsDead()const { return isDead_; }
+	bool IsDead()const override{ return isDead_; }
 	//デスパーティクル発生フラグが立ったか
 	bool IsDeathParticle()const { return isDeathParticle_; }
 
 public:
 	///Gettter///
-	//位置
-	const Vector3& GetPosition()const { return transform_.translate; }
-	//半径
-	float GetRadius()const { return radius_; }
 	//弾リストを取得
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets()const { return bullets_; }
 
 	///Setter///
-	void SetPosition(const Vector3& position) { transform_.translate = position; }
-	//Playerのポインタをセット
-	void SetPlayer(Player* player) { player_ = player; }
 	//デスパーティクルフラグ
 	void SetisDeathParticle(bool flag) { isDeathParticle_ = flag; }
 private:
-	Object3dBase* object3dBase_;
-	std::unique_ptr<Object3d>object_;
-	Transform transform_;
-	//プレイヤー
-	Player*player_;
 	//弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>>bullets_;
 	//移動速度
 	Vector3 velocity_ = { 0.0,0 };
-	//色
-	Vector4 color_;
-	//デスフラグ
-	bool isDead_ = false;
 	//デスパーティクル発生フラグ
 	bool isDeathParticle_ = false;
-	//HP
-	int hp_ = 100;
 	//レーザー発射カウントタイマー
 	int fireTimerCount_ = 0;
-	//発射タイマー
-	int fireTimer_ = 0;
-	//半径
-	float radius_ = 1.0f;
 	//発射間隔
 	static const int kFireInterval = 30;
 	//発射距離
@@ -74,9 +52,5 @@ private:
 	const float attackStopDisntanceZ = 6;
 	//Δtを定義
 	const float DeltaTime = 1.0f / 60.0f;
-	//色変化時間
-	const float damageColorDuration = 0.1f;
-	//ダメージ色変化タイマー
-	float damageColorTimer_ = 0.0f;
 };
 
