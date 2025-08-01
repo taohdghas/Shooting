@@ -105,7 +105,6 @@ void Enemy::Laser() {
 	fireTimer = 0;
 
 	Vector3 direction = Math::Normalize(toPlayer);
-	//direction = Math::Normalize(direction);
 
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3dBase_);
@@ -117,17 +116,18 @@ void Enemy::Laser() {
 //衝突時コールバック
 void Enemy::onCollision() {
 	isDead_ = true;
+	isDeathParticle_ = true;
 }
 //HP減少関数
 void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
-	if (hp_ <= 0) {
-		hp_ = 0;
-		isDead_ = true;
-		isDeathParticle_ = true;
-	}
 	//色変える
 	damageColorTimer_ = damageColorDuration;
+
+	if (hp_ <= 0) {
+		hp_ = 0;
+		onCollision();
+	}
 }
 //Debug
 void Enemy::Debug(int id) {
