@@ -86,12 +86,21 @@ void Enemy::Laser() {
 		return;
 	}
 
-	fireTimer = 0;
-
 	if (!player_)return;
 
-	Vector3 direction = Math::Subtract(player_->GetPosition(), transform_.translate);
-	direction = Math::Normalize(direction);
+	Vector3 toPlayer = Math::Subtract(player_->GetPosition(), transform_.translate);
+	float distance = Math::Length(toPlayer);
+
+	//距離が定数の値以上なら撃たない
+	if (distance > FireDistance) {
+		return;
+	}
+
+	//発射タイマー0に
+	fireTimer = 0;
+
+	Vector3 direction = Math::Normalize(toPlayer);
+	//direction = Math::Normalize(direction);
 
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3dBase_);

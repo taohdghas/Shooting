@@ -67,6 +67,8 @@ private:
 	float radius_ = 1.0f;
 	//発射間隔
 	static const int kFireInterval = 30;
+	//発射距離
+	const float FireDistance = 25.0f;
 	//Δtを定義
 	const float DeltaTime = 1.0f / 60.0f;
 	//色変化時間
