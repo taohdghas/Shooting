@@ -67,7 +67,7 @@ private:
 	//半径
 	float radius_ = 1.0f;
 	//発射間隔
-	static const int kFireInterval = 30;
+	static const int kFireInterval = 80;
 	//発射距離
 	const float fireDistance = 25.0f;
 	//攻撃停止距離Z
