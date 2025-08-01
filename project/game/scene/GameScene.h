@@ -37,7 +37,7 @@ private:
 	//プレイヤー
 	std::unique_ptr<Player>player;
 	//敵
-	std::unique_ptr<Enemy>enemy;
+	std::vector<std::unique_ptr<Enemy>>enemies;
 	//Skybox
 	std::unique_ptr<Skybox>skybox;
 	//プラットフォーム
@@ -48,5 +48,9 @@ private:
 	std::unique_ptr<CollisionManager>collisionManager;
 	//カメラ
 	std::unique_ptr<Camera>camera;
+	//JsonManager
+	std::unique_ptr<JsonManager>jsonManager;
+	//レベルデータ
+	LevelData* levelData;
 };
 

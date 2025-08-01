@@ -21,7 +21,7 @@ public:
 	//HP減少
 	void TakeDamage(int damege);
 	//Debug
-	void Debug();
+	void Debug(int id);
 	//デスフラグが立ったか
 	bool IsDead()const { return isDead_; }
 	//デスパーティクル発生フラグが立ったか
@@ -37,6 +37,7 @@ public:
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets()const { return bullets_; }
 
 	///Setter///
+	void SetPosition(const Vector3& position) { transform_.translate = position; }
 	//Playerのポインタをセット
 	void SetPlayer(Player* player) { player_ = player; }
 	//デスパーティクルフラグ
@@ -68,11 +69,13 @@ private:
 	//発射間隔
 	static const int kFireInterval = 30;
 	//発射距離
-	const float FireDistance = 25.0f;
+	const float fireDistance = 25.0f;
+	//攻撃停止距離Z
+	const float attackStopDisntanceZ = 6;
 	//Δtを定義
 	const float DeltaTime = 1.0f / 60.0f;
 	//色変化時間
-	const float DamageColorDuration = 0.1f;
+	const float damageColorDuration = 0.1f;
 	//ダメージ色変化タイマー
 	float damageColorTimer_ = 0.0f;
 };

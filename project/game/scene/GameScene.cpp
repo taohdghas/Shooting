@@ -20,27 +20,6 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 	ModelManager::GetInstance()->LoadModel("platform/platform.obj");
 
-	//カメラ
-	camera = std::make_unique<Camera>();
-	camera->SetTranslate({ 0,0,-10 });
-	CameraManager::GetInstance()->AddCamera("Main", camera.get());
-	CameraManager::GetInstance()->SetActiveCamera("Main");
-	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
-
-	//プレイヤー
-	player = std::make_unique<Player>();
-	player->Initialize(Object3dBase::GetInstance());
-	//敵
-	enemy = std::make_unique<Enemy>();
-	enemy->Initialize(Object3dBase::GetInstance());
-	enemy->SetPlayer(player.get());
-	//skybox
-	skybox = std::make_unique<Skybox>();
-	skybox->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
-	//プラットフォーム
-	platform = std::make_unique<Platform>();
-	platform->Initialize(Object3dBase::GetInstance());
-
 	//パーティクル
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/circle2.png", ParticleType::Normal);
@@ -48,8 +27,44 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->CreateparticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
 
+	//カメラ
+	camera = std::make_unique<Camera>();
+	camera->SetTranslate({ 0,0,-10 });
+	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->SetActiveCamera("Main");
+	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+
+	//skybox
+	skybox = std::make_unique<Skybox>();
+	skybox->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
+	//プラットフォーム
+	platform = std::make_unique<Platform>();
+	platform->Initialize(Object3dBase::GetInstance());
+
 	//衝突マネージャー
 	collisionManager = std::make_unique<CollisionManager>();
+
+	//JsonManager
+	jsonManager = std::make_unique<JsonManager>();
+	levelData = jsonManager->LoadJsonFile("untitled");
+
+	for (auto& playerData : levelData->players) {
+		player = std::make_unique<Player>();
+		player->Initialize(Object3dBase::GetInstance());
+		Transform transform;
+
+		transform.translate = playerData.translation;
+
+		player->SetPosition(transform.translate);
+	}
+
+	for (auto& enemyData : levelData->enemies) {
+		auto newEnemy = std::make_unique<Enemy>();
+		newEnemy->Initialize(Object3dBase::GetInstance());
+		newEnemy->SetPosition(enemyData.translation);
+		newEnemy->SetPlayer(player.get());
+		enemies.push_back(std::move(newEnemy));
+	}
 
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
@@ -73,25 +88,29 @@ void GameScene::Update() {
 	//プレイヤー
 	player->Update();
 	//敵
-	enemy->Update();
+	for (auto& enemy : enemies) {
+		enemy->Update();
+	}
 	//skybox
 	skybox->Update();
 	//プラットフォーム
 	platform->Update();
 	//衝突チェック
-	collisionManager->CheckPECollisions(player.get(), enemy.get());
+	for (auto& enemy : enemies) {
+		collisionManager->CheckPECollisions(player.get(), enemy.get());
 
-	
-	if (enemy->IsDeathParticle()) {
-		auto emitter = std::make_unique<ParticleEmitter>();
-		emitter->Initialize("particle3");
-		emitter->SetPosition(enemy->GetPosition());
-		emitter->Emit(); // 即時発生
-		particleEmitter.push_back(std::move(emitter));
+		if (enemy->IsDeathParticle()) {
+			auto emitter = std::make_unique<ParticleEmitter>();
+			emitter->Initialize("particle3");
+			emitter->SetPosition(enemy->GetPosition());
+			emitter->Emit(); // 即時発生
+			particleEmitter.push_back(std::move(emitter));
 
-		// フラグをリセット
-		enemy->SetisDeathParticle(false);
+			// フラグをリセット
+			enemy->SetisDeathParticle(false);
+		}
 	}
+
 	
 	//パーティクル
 	ParticleManager::GetInstance()->Update();
@@ -120,7 +139,9 @@ void GameScene::Draw() {
 	//プレイヤー
 	player->Draw();
 	//敵
-    enemy->Draw();
+	for (auto& enemy : enemies) {
+		enemy->Draw();
+	}
 	//天球
 	skybox->Draw();
 	//プラットフォーム
@@ -149,7 +170,9 @@ void GameScene::Debug() {
 	//プレイヤーDebug
 	player->Debug();
 	//敵Debug
-	enemy->Debug();
+	for (int i = 0; i < enemies.size(); ++i) {
+		enemies[i]->Debug(i);
+	}
 	//プラットフォームDebug
 	platform->Debug();
 

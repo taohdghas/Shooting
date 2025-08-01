@@ -92,7 +92,12 @@ void Enemy::Laser() {
 	float distance = Math::Length(toPlayer);
 
 	//距離が定数の値以上なら撃たない
-	if (distance > FireDistance) {
+	if (distance > fireDistance) {
+		return;
+	}
+
+	//プレイヤーのZ座標+定数の値以上なら撃たない
+	if (transform_.translate.z < player_->GetPosition().z + attackStopDisntanceZ) {
 		return;
 	}
 
@@ -122,16 +127,22 @@ void Enemy::TakeDamage(int damage) {
 		isDeathParticle_ = true;
 	}
 	//色変える
-	damageColorTimer_ = DamageColorDuration;
+	damageColorTimer_ = damageColorDuration;
 }
 //Debug
-void Enemy::Debug() {
+void Enemy::Debug(int id) {
 #ifdef USE_IMGUI
-	if (ImGui::TreeNode("Enemy")) {
-		ImGui::DragInt("EnemyHp", &hp_, 1);
-		ImGui::DragFloat3("EnemyScale", &transform_.scale.x, 0.1f);
-		ImGui::DragFloat3("EnemyRotate", &transform_.rotate.x, 0.1f);
-		ImGui::DragFloat3("EnemyTranslate", &transform_.translate.x, 0.1f);
+	std::string treeLabel = "Enemy##" + std::to_string(id);
+	if (ImGui::TreeNode(treeLabel.c_str())) {
+		std::string hpLabel = "EnemyHp##" + std::to_string(id);
+		std::string scaleLabel = "EnemyScale##" + std::to_string(id);
+		std::string rotateLabel = "EnemyRotate##" + std::to_string(id);
+		std::string translateLabel = "EnemyTranslate##" + std::to_string(id);
+
+		ImGui::DragInt(hpLabel.c_str(), &hp_, 1);
+		ImGui::DragFloat3(scaleLabel.c_str(), &transform_.scale.x, 0.1f);
+		ImGui::DragFloat3(rotateLabel.c_str(), &transform_.rotate.x, 0.1f);
+		ImGui::DragFloat3(translateLabel.c_str(), &transform_.translate.x, 0.1f);
 
 		ImGui::TreePop();
 	}
