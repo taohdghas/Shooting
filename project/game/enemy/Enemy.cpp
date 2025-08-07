@@ -123,7 +123,7 @@ void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
 	//色変える
 	damageColorTimer_ = damageColorDuration;
-
+	object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
 	if (hp_ <= 0) {
 		hp_ = 0;
 		onCollision();
