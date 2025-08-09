@@ -105,8 +105,6 @@ void Player::Draw() {
 	}
 	//プレイヤーの描画
 	object_->Draw();
-	//レティクルの描画
-	//reticle_->Draw();
 	//プレイヤー弾の描画
 	for (const auto& bullet : bullets_) {
 		bullet->Draw();

@@ -74,6 +74,19 @@ namespace Math {
 		result.z = v1.x * v2.y - v1.y * v2.x;
 		return result;
 	}
+	//座標ベクトル変換
+	Vector4 Math::Transform(const Vector4& vector, const Matrix4x4& matrix) {
+		Vector4 result;
+		result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
+		result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
+		result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
+		float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
+		assert(w != 0.0f);
+		result.x /= w;
+		result.y /= w;
+		result.z /= w;
+		return result;
+	}
 	//単位行列
 	Matrix4x4 Math::MakeIdentity4x4() {
 		Matrix4x4 result;
