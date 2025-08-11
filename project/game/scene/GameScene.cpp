@@ -103,10 +103,10 @@ void GameScene::Update() {
 			auto emitter = std::make_unique<ParticleEmitter>();
 			emitter->Initialize("particle3");
 			emitter->SetPosition(enemy->GetPosition());
-			emitter->Emit(); // 即時発生
+			emitter->Emit();
 			particleEmitter.push_back(std::move(emitter));
 
-			// フラグをリセット
+			//フラグをリセット
 			enemy->SetisDeathParticle(false);
 		}
 	}
@@ -175,7 +175,14 @@ void GameScene::Debug() {
 	}
 	//プラットフォームDebug
 	platform->Debug();
-
+	//skyboxDebug
+	Transform& trans = skybox->GetTransform();
+	if (ImGui::TreeNode("SkyBox")) {
+		ImGui::DragFloat3("Scale", &trans.scale.x, 0.01f, 0.01f, 5000.0f);
+		ImGui::DragFloat3("Rotate", &trans.rotate.x, 0.1f, -360.0f, 360.0f);
+		ImGui::DragFloat3("Translate", &trans.translate.x, 0.1f, -1000.0f, 1000.0f);
+		ImGui::TreePop();
+	}
 	ImGui::End();
 #endif
 }
