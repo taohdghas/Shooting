@@ -85,16 +85,6 @@ void GameScene::Finalize() {
 void GameScene::Update() {
 	//カメラ
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
-	//プレイヤー
-	player->Update();
-	//敵
-	for (auto& enemy : enemies) {
-		enemy->Update();
-	}
-	//skybox
-	skybox->Update();
-	//プラットフォーム
-	platform->Update();
 	//衝突チェック
 	for (auto& enemy : enemies) {
 		collisionManager->CheckPECollisions(player.get(), enemy.get());
@@ -110,7 +100,16 @@ void GameScene::Update() {
 			enemy->SetisDeathParticle(false);
 		}
 	}
-
+	//プレイヤー
+	player->Update();
+	//敵
+	for (auto& enemy : enemies) {
+		enemy->Update();
+	}
+	//skybox
+	skybox->Update();
+	//プラットフォーム
+	platform->Update();
 	
 	//パーティクル
 	ParticleManager::GetInstance()->Update();

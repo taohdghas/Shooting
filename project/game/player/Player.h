@@ -44,6 +44,8 @@ public:
 	void TakeDamage(int damage);
     //デバック表示
 	void Debug();
+	//OBB取得
+	OBB GetOBB()const;
 	//デスフラグが立ったか
 	bool IsDead()const { return isDead_; }
 public:
@@ -58,6 +60,8 @@ public:
 	const std::list<std::unique_ptr<playerBullet>>& GetBullets() const { return bullets_; }
 
 	///Setter/// 
+	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 	void SetPosition(const Vector3& position) { transform_.translate = position; }
 	
 
@@ -85,6 +89,8 @@ private:
 	bool isJumping_ = false;
 	//無敵フラグ(デバック)
 	bool isInvincible = false;
+	//モデルの寸法
+	float dimensions = 2.0f;
 	//プレイヤーの移動速度
 	float speed = 0.1f;
 	//プレイヤーの半径

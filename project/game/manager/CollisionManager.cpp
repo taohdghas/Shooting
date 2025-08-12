@@ -10,6 +10,51 @@
 void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
     if (!player || !enemy) return;
 
+    // プレイヤーと敵の弾の取得
+    const std::list<std::unique_ptr<playerBullet>>& playerBullets = player->GetBullets();
+    const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
+
+    // プレイヤー弾と敵
+    if (!enemy->IsDead()) {
+        for (const auto& bullet : playerBullets) {
+            if (bullet->IsDead()) continue;
+
+            // OBB同士の衝突判定
+            OBB bulletOBB = bullet->GetOBB();
+            OBB enemyOBB = enemy->GetOBB();
+
+            if (Math::IsCollisionOBB(bulletOBB, enemyOBB)) {
+                enemy->TakeDamage(bullet->GetAttack());
+                bullet->OnCollision();
+
+                if (enemy->IsDead()) {
+                    enemy->SetisDeathParticle(true);
+                }
+            }
+        }
+    }
+
+    // 敵弾とプレイヤー
+    OBB playerOBB = player->GetOBB();
+    for (const auto& bullet : enemyBullets) {
+        if (bullet->IsDead()) continue;
+
+        OBB bulletOBB = bullet->GetOBB();
+        if (Math::IsCollisionOBB(bulletOBB, playerOBB)) {
+            player->TakeDamage(bullet->GetAttack());
+            bullet->OnCollision();
+        }
+    }
+
+    // プレイヤーと敵
+    OBB enemyOBB = enemy->GetOBB(); // 再利用でもOK
+    if (Math::IsCollisionOBB(playerOBB, enemyOBB)) {
+        player->OnCollision();
+        enemy->onCollision();
+    }
+    /*
+    if (!player || !enemy) return;
+    
     //プレイヤーと敵の弾の取得
     const std::list<std::unique_ptr<playerBullet>>& playerBullets = player->GetBullets();
     const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
@@ -52,4 +97,5 @@ void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
         player->OnCollision();
         enemy->onCollision();
     }
+    */
 }

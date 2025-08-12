@@ -14,7 +14,8 @@ public:
 	void Draw();
 	//衝突時コールバック
 	void OnCollision();
-
+	//OBB取得関数
+	OBB GetOBB()const;
 	//デスフラグが立ったか
 	bool IsDead()const { return isDead_; }
 public:
@@ -36,6 +37,8 @@ private:
 	Vector3 velocity_;
 	//半径
 	float radius_ = 0.1f;
+	//モデルの寸法
+	float dimensions = 0.2f;
 	//攻撃力
 	uint32_t attack_ = 5;
 	//デスフラグ
