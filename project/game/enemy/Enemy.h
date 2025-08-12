@@ -22,6 +22,8 @@ public:
 	void TakeDamage(int damege);
 	//Debug
 	void Debug(int id);
+	//OBB取得関数
+	OBB GetOBB()const;
 	//デスフラグが立ったか
 	bool IsDead()const { return isDead_; }
 	//デスパーティクル発生フラグが立ったか
@@ -37,6 +39,8 @@ public:
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets()const { return bullets_; }
 
 	///Setter///
+	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 	void SetPosition(const Vector3& position) { transform_.translate = position; }
 	//Playerのポインタをセット
 	void SetPlayer(Player* player) { player_ = player; }
@@ -66,6 +70,8 @@ private:
 	int fireTimer_ = 0;
 	//半径
 	float radius_ = 1.0f;
+	//モデルの寸法
+	float dimensions = 2.0f;
 	//発射間隔
 	static const int kFireInterval = 80;
 	//発射距離

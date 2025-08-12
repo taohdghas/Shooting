@@ -14,7 +14,8 @@ public:
 	void Draw();
 	//衝突時コールバック関数
 	void OnCollision();
-
+	//OBB取得関数
+	OBB GetOBB()const;
 	//デスフラグが立ったか
 	bool IsDead()const { return isDead_; }
 public:
@@ -38,6 +39,8 @@ private:
 	//デスフラグ
 	bool isDead_ = false;
 	float radius_ = 0.1f;
+	//モデルの寸法
+	float dimensions = 0.2f;
 	uint32_t attack = 5;
 
 };

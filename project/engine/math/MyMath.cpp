@@ -379,36 +379,96 @@ namespace Math {
 		orthoMatrix.m[3][3] = 1;
 		return orthoMatrix;
 	}
-}
-//ビューポート行列
-Matrix4x4 Math::MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
-	Matrix4x4 viewportMatrix;
-	viewportMatrix.m[0][0] = width / 2.0f;
-	viewportMatrix.m[0][1] = 0;
-	viewportMatrix.m[0][2] = 0;
-	viewportMatrix.m[0][3] = 0;
-	viewportMatrix.m[1][0] = 0;
-	viewportMatrix.m[1][1] = -height / 2.0f;
-	viewportMatrix.m[1][2] = 0;
-	viewportMatrix.m[1][3] = 0;
-	viewportMatrix.m[2][0] = 0;
-	viewportMatrix.m[2][1] = 0;
-	viewportMatrix.m[2][2] = maxDepth - minDepth;
-	viewportMatrix.m[2][3] = 0;
-	viewportMatrix.m[3][0] = left + width / 2.0f;
-	viewportMatrix.m[3][1] = top + height / 2.0f;
-	viewportMatrix.m[3][2] = minDepth;
-	viewportMatrix.m[3][3] = 1;
-	return viewportMatrix;
-}
-//転置行列
-Matrix4x4 Math::Transpose(const Matrix4x4& m) {
-	Matrix4x4 result;
-	for (int i = 0; i < 4; ++i) {
-		for (int j = 0; j < 4; ++j) {
-			result.m[i][j] = m.m[j][i];
-		}
+	//ビューポート行列
+	Matrix4x4 Math::MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
+		Matrix4x4 viewportMatrix;
+		viewportMatrix.m[0][0] = width / 2.0f;
+		viewportMatrix.m[0][1] = 0;
+		viewportMatrix.m[0][2] = 0;
+		viewportMatrix.m[0][3] = 0;
+		viewportMatrix.m[1][0] = 0;
+		viewportMatrix.m[1][1] = -height / 2.0f;
+		viewportMatrix.m[1][2] = 0;
+		viewportMatrix.m[1][3] = 0;
+		viewportMatrix.m[2][0] = 0;
+		viewportMatrix.m[2][1] = 0;
+		viewportMatrix.m[2][2] = maxDepth - minDepth;
+		viewportMatrix.m[2][3] = 0;
+		viewportMatrix.m[3][0] = left + width / 2.0f;
+		viewportMatrix.m[3][1] = top + height / 2.0f;
+		viewportMatrix.m[3][2] = minDepth;
+		viewportMatrix.m[3][3] = 1;
+		return viewportMatrix;
 	}
-	return result;
+	//転置行列
+	Matrix4x4 Math::Transpose(const Matrix4x4& m) {
+		Matrix4x4 result;
+		for (int i = 0; i < 4; ++i) {
+			for (int j = 0; j < 4; ++j) {
+				result.m[i][j] = m.m[j][i];
+			}
+		}
+		return result;
+	}
+	//OBB同士の衝突判定
+	bool IsCollisionOBB(const OBB& obb1, const OBB& obb2) {
+		const float EPSILON = 1e-6f;
+
+		const Vector3& C1 = obb1.center;
+		const Vector3& C2 = obb2.center;
+		const Vector3* A = obb1.orientations;
+		const Vector3* B = obb2.orientations;
+		const Vector3& aExt = obb1.size;
+		const Vector3& bExt = obb2.size;
+
+		//中心差ベクトル
+		Vector3 t = Subtract(C2, C1);
+		//obb1のローカル空間に変換
+		t = { Dot(t, A[0]), Dot(t, A[1]), Dot(t, A[2]) };
+
+		//回転行列 R[i][j] = Ai・Bj
+		float R[3][3], AbsR[3][3];
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				R[i][j] = Dot(A[i], B[j]);
+				AbsR[i][j] = abs(R[i][j]) + EPSILON;
+			}
+		}
+
+		float ra, rb;
+		auto GetExt = [](const Vector3& v, int idx) -> float {
+			return (idx == 0) ? v.x : (idx == 1 ? v.y : v.z);
+			};
+
+		//obb1の軸
+		for (int i = 0; i < 3; i++) {
+			ra = GetExt(aExt, i);
+			rb = bExt.x * AbsR[i][0] + bExt.y * AbsR[i][1] + bExt.z * AbsR[i][2];
+			if (fabs(GetExt(t, i)) > ra + rb) return false;
+		}
+		//obb2の軸
+		for (int j = 0; j < 3; j++) {
+			ra = aExt.x * AbsR[0][j] + aExt.y * AbsR[1][j] + aExt.z * AbsR[2][j];
+			rb = GetExt(bExt, j);
+			if (fabs(t.x * R[0][j] + t.y * R[1][j] + t.z * R[2][j]) > ra + rb) return false;
+		}
+		//外積軸
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				ra = GetExt(aExt, (i + 1) % 3) * AbsR[(i + 2) % 3][j] +
+					GetExt(aExt, (i + 2) % 3) * AbsR[(i + 1) % 3][j];
+				rb = GetExt(bExt, (j + 1) % 3) * AbsR[i][(j + 2) % 3] +
+					GetExt(bExt, (j + 2) % 3) * AbsR[i][(j + 1) % 3];
+				float tval = (float)fabs(
+					GetExt(t, (i + 2) % 3) * R[(i + 1) % 3][j] -
+					GetExt(t, (i + 1) % 3) * R[(i + 2) % 3][j]
+				);
+				if (tval > ra + rb) return false;
+			}
+		}
+
+		return true;
+	}
 }
-//OBB同士の衝突判定
+
+
