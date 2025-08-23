@@ -66,8 +66,6 @@ private:
 	Object3dBase* object3dBase_;
 	Camera* camera_;
 	Transform transform_;
-	//レティクル用
-	Transform reticleTransform_;
 	std::unique_ptr<Object3d>object_;
 	//弾のリスト
 	std::list<std::unique_ptr<playerBullet>>bullets_;
@@ -79,6 +77,10 @@ private:
 	Vector3 dodgeDirection_{ 0.0f,0.0f,0.0f };
 	//弾発射方向
 	Vector3 bulletDirection;
+	//レティクル座標
+	Vector2 reticlePos_ = { 640.0f, 360.0f };
+	Vector3 worldReticlePos_;   // 3Dレティクルのワールド座標
+	Vector2 reticleInputOffset_;
 	//デスフラグ
 	bool isDead_ = false;
 	//回避状態

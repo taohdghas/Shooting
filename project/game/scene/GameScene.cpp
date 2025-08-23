@@ -131,8 +131,6 @@ void GameScene::Draw() {
 	enemy->Draw();
 
 	platform->Draw();
-	//天球
-	//skydome->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();

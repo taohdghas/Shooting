@@ -74,6 +74,7 @@ namespace Math {
 		result.z = v1.x * v2.y - v1.y * v2.x;
 		return result;
 	}
+	/*
 	//座標ベクトル変換
 	Vector4 Math::Transform(const Vector4& vector, const Matrix4x4& matrix) {
 		Vector4 result;
@@ -87,6 +88,7 @@ namespace Math {
 		result.z /= w;
 		return result;
 	}
+	*/
 	//単位行列
 	Matrix4x4 Math::MakeIdentity4x4() {
 		Matrix4x4 result;

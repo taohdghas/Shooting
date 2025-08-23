@@ -306,7 +306,7 @@ void Pso::CreateSpritePipelineState() {
 
 	// DepthStencilStateの設定
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	// Depthの昨日を有効化にする
+	// Depthの機能を有効化にする
 	depthStencilDesc.DepthEnable = true;
 	// 書き込みします
 	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;

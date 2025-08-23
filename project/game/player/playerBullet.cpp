@@ -20,8 +20,8 @@ void playerBullet::Update() {
 		return;
 	}
 	//移動
-	transform_.translate +=  direction_ * velocity_;
-//	transform_.translate = Math::Add(transform_.translate, velocity_);
+	//transform_.translate +=  direction_ * velocity_;
+	transform_.translate = Math::Add(transform_.translate, velocity_);
 	//時間経過で消える
 	if (--deathTimer <= 0) {
 		isDead_ = true;

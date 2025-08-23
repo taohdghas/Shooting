@@ -11,10 +11,11 @@ void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath) {
 	IndexCreate();
 	MaterialCreate();
 	TransformationCreate();
-	AdjustTextureSize();
 
 	TextureManager::GetInstance()->LoadTexture(textureFilePath);
 	filePath = textureFilePath;
+
+	AdjustTextureSize();
 }
 //更新
 void Sprite::Update() {
@@ -63,7 +64,6 @@ void Sprite::Update() {
 	Matrix4x4 viewMatrix = Math::MakeIdentity4x4();
 	//ProjectionMatrixを作って平行投影行列を書き込む
 	Matrix4x4 projectionMatrix = Math::MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsAPI::kClientWidth), float(WindowsAPI::kClientHeight), 0.0f, 100.0f);
-	//	Matrix4x4 worldViewProjectionMatrixSprite = Math::Multiply(worldMatrix, Math::Multiply(viewMatrix, projectionMatrix));
 	transformationMatrixData->WVP = Math::Multiply(worldMatrix, Math::Multiply(viewMatrix, projectionMatrix));
 	transformationMatrixData->World = worldMatrix;
 }

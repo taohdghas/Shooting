@@ -23,7 +23,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	transform_.translate = { 0.0f,-1.5f,0.0f };
 	//レティクル
 	reticle_ = std::make_unique<Sprite>();
-	reticle_->Initialize(SpriteBase::GetInstance(), "resources/white.png");
+	reticle_->Initialize(SpriteBase::GetInstance(), "resources/re.png");
 	reticle_->SetSize({ 40,40 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
@@ -166,33 +166,45 @@ void Player::Attack() {
 	if (attackCooldown_ > 0) {
 		return;
 	}
-	//弾の速度
-	const float kBulletSpeed = 1.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
 
-	//弾を生成
+
+	Matrix4x4 viewport = Math::MakeViewportMatrix(0, 0, 1280, 720, 0.0f, 1.0f);
+
+	//ViewProjection
+	Matrix4x4 viewProj = CameraManager::GetInstance()->GetActiveCamera()->GetViewProjectionMatrix();
+
+	//逆行列
+	Matrix4x4 vpv = Math::Multiply(viewProj, viewport);
+	Matrix4x4 invVpv = Math::Inverse(vpv);
+
+	Vector3 screenVec = { reticlePos_.x, reticlePos_.y, 1.0f };
+
+	//ワールド座標に変換
+	Vector3 worldReticlePos = Math::Transform(screenVec, invVpv);
+	Vector3 dir = Math::Subtract(worldReticlePos, transform_.translate);
+	dir = Math::Normalize(dir);
+
+	// 弾生成
 	auto newBullet = std::make_unique<playerBullet>();
 	newBullet->Initialize(object3dBase_);
-	//newBullet->SetVelocity(velocity);
 	newBullet->SetPosition(transform_.translate);
+	newBullet->SetVelocity(Math::Multiply(dir, kBulletSpeed));
 
-	Matrix4x4 viewMatrix = CameraManager::GetInstance()->GetActiveCamera()->GetViewMatrix();
-	Matrix4x4 projectionMatrix = CameraManager::GetInstance()->GetActiveCamera()->GetProjectionMatrix();
-	Matrix4x4 viewProjectionMatrix = Math::Multiply(viewMatrix, projectionMatrix);
-	Matrix4x4 viewPortMatrix = Math::MakeViewportMatrix(0.0f, 0.0f, WindowsAPI::kClientWidth, WindowsAPI::kClientHeight, 0.0f, 1.0f);
-	Matrix4x4 ViewPortProjectionMatrix = Math::Multiply(viewProjectionMatrix, viewPortMatrix);
-	Matrix4x4 inverse = Math::Inverse(ViewPortProjectionMatrix);
-	Vector3 Near = { reticle_->GetPosition().x,reticle_->GetPosition().y,0 };
-	Vector3 Far = { reticle_->GetPosition().x,reticle_->GetPosition().y,1 };
-	Near = Math::Transform(Near, inverse);
-	Far = Math::Transform(Far, inverse);
-	bulletDirection = Far - Near;
-	Math::Normalize(bulletDirection);
-	newBullet->SetDirection(bulletDirection);
-	newBullet->SetVelocity(bulletDirection * kBulletSpeed);
 	bullets_.push_back(std::move(newBullet));
 	attackCooldown_ = attackInterval_;
+	/*
+	   if (attackCooldown_ > 0) { return; }
 
+    Vector3 dir = Math::Normalize(worldReticlePos_ - transform_.translate);
+
+    auto newBullet = std::make_unique<playerBullet>();
+    newBullet->Initialize(object3dBase_);
+    newBullet->SetPosition(transform_.translate);
+    newBullet->SetVelocity(Math::Multiply(dir, kBulletSpeed));
+    bullets_.push_back(std::move(newBullet));
+
+    attackCooldown_ = attackInterval_;
+	*/
 }
 
 //三方向攻撃
@@ -258,20 +270,64 @@ void Player::ReticleUpdate() {
 	Vector2 reticlePosition = reticle_->GetPosition();
 
 	if (Input::GetInstance()->PushKey(DIK_UP)) {
-		reticlePosition.y -= reticleSpeed;
+	    reticlePos_.y -= reticleSpeed;
 	}
 	if (Input::GetInstance()->PushKey(DIK_DOWN)) {
-		reticlePosition.y += reticleSpeed;
+		reticlePos_.y += reticleSpeed;
 	}
 	if (Input::GetInstance()->PushKey(DIK_LEFT)) {
-		reticlePosition.x -= reticleSpeed;
+		reticlePos_.x -= reticleSpeed;
 	}
 	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
-		reticlePosition.x += reticleSpeed;
+		reticlePos_.x += reticleSpeed;
 	}
 
-	reticle_->SetPosition(reticlePosition);
+	reticle_->SetPosition(reticlePos_);
 	reticle_->Update();
+	/*
+    if (Input::GetInstance()->PushKey(DIK_UP)) {
+        reticleInputOffset_.y -= reticleSpeed;
+    }
+    if (Input::GetInstance()->PushKey(DIK_DOWN)) {
+        reticleInputOffset_.y += reticleSpeed;
+    }
+    if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+        reticleInputOffset_.x -= reticleSpeed;
+    }
+    if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+        reticleInputOffset_.x += reticleSpeed;
+    }
+
+    //3Dレティクル
+    const float kDistancePlayerTo3DReticle = 25.0f;
+    Vector3 offset = {0, 0, 1.0f}; 
+    offset = Math::Normalize(offset) * kDistancePlayerTo3DReticle;
+    worldReticlePos_ = transform_.translate + offset;
+
+    Matrix4x4 viewProj = CameraManager::GetInstance()->GetActiveCamera()->GetViewProjectionMatrix();
+    Matrix4x4 viewport = Math::MakeViewportMatrix(0, 0, 1280, 720, 0.0f, 1.0f);
+    Matrix4x4 matVPV = Math::Multiply(viewProj, viewport);
+    Vector3 screenPos = Math::Transform(worldReticlePos_, matVPV);
+
+    //オフセットを反映
+    screenPos.x += reticleInputOffset_.x;
+    screenPos.y += reticleInputOffset_.y;
+
+    //2Dレティクル位置をセッ
+    reticle_->SetPosition({screenPos.x, screenPos.y});
+    reticle_->Update();
+
+    //スクリーン位置を逆変換
+    float ndcX = (screenPos.x / 1280.0f) * 2.0f - 1.0f;
+    float ndcY = (screenPos.y / 720.0f) * -2.0f + 1.0f;
+    Vector3 nearPoint = { ndcX, ndcY, 0.0f };
+    Vector3 farPoint  = { ndcX, ndcY, 1.0f };
+
+    Matrix4x4 invViewProj = Math::Inverse(viewProj);
+    Vector3 worldNear = Math::Transform(nearPoint, invViewProj);
+    Vector3 worldFar  = Math::Transform(farPoint,  invViewProj);
+    worldReticlePos_ = worldNear + Math::Normalize(worldFar - worldNear) * kDistancePlayerTo3DReticle;
+	*/
 }
 
 
