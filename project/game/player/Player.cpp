@@ -116,7 +116,6 @@ void Player::ReticleDraw() {
 }
 //移動
 void Player::Move() {
-
 	Vector3 newPos = transform_.translate;
 
 	//左右移動
