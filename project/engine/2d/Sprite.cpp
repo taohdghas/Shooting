@@ -11,10 +11,11 @@ void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath) {
 	IndexCreate();
 	MaterialCreate();
 	TransformationCreate();
-	AdjustTextureSize();
 
 	TextureManager::GetInstance()->LoadTexture(textureFilePath);
 	filePath = textureFilePath;
+
+	AdjustTextureSize();
 }
 //更新
 void Sprite::Update() {
