@@ -28,9 +28,15 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->CreateparticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
 
 	//カメラ
+
+	railCam = std::make_unique<RailCamera>();
+	railCam->Initialize();
+	railCam->SetPlayerOffset({ 0.0f, -1.5f, 10.0f });
+	railCam->SetSpeed(0.1f);
+
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0,0,-10 });
-	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->AddCamera("Main", railCam->GetCamera());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
@@ -40,7 +46,8 @@ void GameScene::Initialize() {
 	//プラットフォーム
 	platform = std::make_unique<Platform>();
 	platform->Initialize(Object3dBase::GetInstance());
-
+	railCam->SetPlatform(platform.get());
+	railCam->SetPlatformOffset({ 0.0f, -1.9f, 10.0f });
 	//衝突マネージャー
 	collisionManager = std::make_unique<CollisionManager>();
 
@@ -56,6 +63,7 @@ void GameScene::Initialize() {
 		transform.translate = playerData.translation;
 
 		player->SetPosition(transform.translate);
+		railCam->SetPlayer(player.get());
 	}
 
 	for (auto& enemyData : levelData->enemies) {
@@ -85,6 +93,7 @@ void GameScene::Finalize() {
 void GameScene::Update() {
 	//カメラ
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	railCam->Update();
 	//衝突チェック
 	for (auto& enemy : enemies) {
 		collisionManager->CheckPECollisions(player.get(), enemy.get());

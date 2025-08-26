@@ -9,6 +9,7 @@
 #include "ParticleEmitter.h"
 #include "BaseScene.h"
 #include "Camera.h"
+#include "RailCamera.h"
 #include "CollisionManager.h"
 #include "JsonManager.h"
 
@@ -48,6 +49,7 @@ private:
 	std::unique_ptr<CollisionManager>collisionManager;
 	//カメラ
 	std::unique_ptr<Camera>camera;
+	std::unique_ptr<RailCamera>railCam;
 	//JsonManager
 	std::unique_ptr<JsonManager>jsonManager;
 	//レベルデータ

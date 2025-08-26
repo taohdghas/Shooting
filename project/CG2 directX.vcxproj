@@ -62,6 +62,7 @@
     <ClCompile Include="game\skybox\Skybox.cpp" />
     <ClCompile Include="game\titleObject\TitleObject.cpp" />
     <ClCompile Include="game\platform\Platform.cpp" />
+    <ClCompile Include="RailCamera.cpp" />
     <ClCompile Include="Ui.cpp" />
     <ClCompile Include="engine\math\WorldTransform.cpp" />
   </ItemGroup>
@@ -88,6 +89,7 @@
     <ClInclude Include="game\skybox\Skybox.h" />
     <ClInclude Include="engine\manager\JsonManager.h" />
     <ClInclude Include="game\platform\Platform.h" />
+    <ClInclude Include="RailCamera.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="game\scene\TitleScene.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />

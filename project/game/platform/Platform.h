@@ -14,6 +14,8 @@ public:
 	void Draw();
 	//デバック
 	void Debug();
+public:
+	void SetPosition(const Vector3& position) { transform_.translate = position; }
 private:
 	Object3dBase* object3dBase_;
 	Transform transform_;
