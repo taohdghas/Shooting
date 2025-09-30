@@ -77,7 +77,7 @@ void TitleScene::Draw() {
 	//Skybox
 	skybox->Draw();
 	//タイトルオブジェクト
-	//titleObject->Draw();
+	titleObject->Draw();
 
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
