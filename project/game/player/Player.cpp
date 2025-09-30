@@ -48,14 +48,7 @@ void Player::Update() {
 	if (invincibleTimer_ > 0.0f) {
 		invincibleTimer_ -= DeltaTime;
 	}
-	//色タイマー更新
-	if (damageColorTimer_ > 0.0f) {
-		damageColorTimer_ -= DeltaTime;
-		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
-	} else {
-		//元の色
-		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-	}
+	
 	//デスフラグが立った弾を削除
 	bullets_.remove_if([](const std::unique_ptr<playerBullet>& bullet) {
 		return bullet->IsDead();

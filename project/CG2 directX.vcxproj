@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\scene\BaseScene.cpp" />
+    <ClCompile Include="Fade.cpp" />
     <ClCompile Include="game\scene\GameSelectScene.cpp" />
     <ClCompile Include="game\scene\GameClearScene.cpp" />
     <ClCompile Include="game\manager\CollisionManager.cpp" />
@@ -68,6 +69,7 @@
   <ItemGroup>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
+    <ClInclude Include="Fade.h" />
     <ClInclude Include="game\scene\GameSelectScene.h" />
     <ClInclude Include="game\scene\GameClearScene.h" />
     <ClInclude Include="game\manager\CollisionManager.h" />

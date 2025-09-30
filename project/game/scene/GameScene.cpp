@@ -66,6 +66,11 @@ void GameScene::Initialize() {
 		enemies.push_back(std::move(newEnemy));
 	}
 
+	//フェード
+	fade = std::make_unique<Fade>();
+	fade->Initialize();
+	fade->FadeStart(Fade::State::FadeIn, 0.5f);
+
 	//最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
 
@@ -127,6 +132,8 @@ void GameScene::Update() {
 		SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
 
+	fade->Update();
+
 	//デバック
 	Debug();
 }
@@ -148,8 +155,12 @@ void GameScene::Draw() {
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
+	//フェード
+	fade->Draw();
+
 	//パーティクル
 	ParticleManager::GetInstance()->Draw();
+
 }
 
 //デバック
