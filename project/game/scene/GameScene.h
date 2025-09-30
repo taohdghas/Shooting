@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "CollisionManager.h"
 #include "JsonManager.h"
+#include "Fade.h"
 
 #include <vector>
 
@@ -50,6 +51,8 @@ private:
 	std::unique_ptr<Camera>camera;
 	//JsonManager
 	std::unique_ptr<JsonManager>jsonManager;
+	//フェード
+	std::unique_ptr<Fade>fade;
 	//レベルデータ
 	LevelData* levelData;
 };

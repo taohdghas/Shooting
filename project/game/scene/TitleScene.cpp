@@ -27,10 +27,11 @@ void TitleScene::Initialize() {
 	titleObject = std::make_unique<TitleObject>();
 	titleObject->Initialize();
 
-	//フェードマネージャー
-	fadeManager = std::make_unique<FadeManager>();
-	fadeManager->Initialize();
-	fadeManager->FadeIn(1.0f);
+	//フェード
+	fade = std::make_unique<Fade>();
+	fade->Initialize();
+	fade->FadeStart(Fade::State::FadeIn, 0.5f);
+
 	//Skybox
 	skybox = std::make_unique<Skybox>();
 	skybox->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
@@ -57,14 +58,8 @@ void TitleScene::Update() {
 	//タイトルオブジェクト
 	titleObject->Update();
 
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		SceneManager::GetInstance()->ChangeScene("GAME");
-	}
-
 	//シーン遷移
-	//SceneChange();
-
-	//fadeManager->Update();
+	SceneChange();
 
 	//デバック
 	Debug();
@@ -82,8 +77,8 @@ void TitleScene::Draw() {
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
-	//フェードマネージャ
-	//fadeManager->Draw();
+	//フェード
+	fade->Draw();
 }
 
 //デバック
@@ -113,27 +108,20 @@ void TitleScene::Debug() {
 
 //シーン遷移
 void TitleScene::SceneChange() {
-	/*
-	//エンターキーを押したらゲームシーンへ
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		pushspaceMove = true;
+	// フェード更新
+	fade->Update();
+
+	//FadeInが終わったらNone
+	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
+		fade->End();
 	}
-
-	if (pushspaceMove) {
-		Vector3 pushspaceTranslate = pushspace->GetTranslate();
-		Vector3 titleTranslate = title->GetTranslate();
-		pushspaceTranslate.z -= 3.0f;
-		titleTranslate.z -= 3.0f;
-		pushspace->SetTranslate(pushspaceTranslate);
-		title->SetTranslate(titleTranslate);
-
-		if (!fadeManager->IsFade() && pushspaceTranslate.z <= -300.0f) {
-			fadeManager->FadeOut(1.0f);
-		}
+	//フェードアウト開始
+	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_SPACE)) {
+		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
-
-	if (fadeManager->IsFadeOutEnd()) {
+	// フェードアウト終了後にシーン変更
+	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
 		SceneManager::GetInstance()->ChangeScene("GAME");
+		fade->End();
 	}
-	*/
 }

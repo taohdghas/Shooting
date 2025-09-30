@@ -13,7 +13,7 @@
 #include "ParticleEmitter.h"
 #include "Camera.h"
 #include "Struct.h"
-#include "FadeManager.h"
+#include "Fade.h"
 #include "Skybox.h"
 #include "TitleObject.h"
 #include "JsonManager.h"
@@ -40,8 +40,8 @@ private:
 	std::unique_ptr<Camera>camera;
 	//ライト
 	std::unique_ptr<DirectionalLight>directionallight;
-	//フェードマネージャー
-	std::unique_ptr<FadeManager>fadeManager;
+	//フェード
+	std::unique_ptr<Fade>fade;
 	//Skybox
 	std::unique_ptr<Skybox>skybox;
 	//タイトルオブジェクト
