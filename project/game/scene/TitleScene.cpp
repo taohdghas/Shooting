@@ -115,13 +115,14 @@ void TitleScene::SceneChange() {
 	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
 		fade->End();
 	}
+
 	//フェードアウト開始
 	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
+
 	// フェードアウト終了後にシーン変更
 	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
 		SceneManager::GetInstance()->ChangeScene("GAME");
-		fade->End();
 	}
 }
