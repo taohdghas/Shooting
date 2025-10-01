@@ -27,12 +27,10 @@ void TitleObject::Initialize() {
 void TitleObject::Update() {
 	//タイトルオブジェクト
 	title->Update();
-
 	//pushSpaceの点滅
 	alphaTimer_ += DeltaTime;
 	alpha_ = (sinf(alphaTimer_ * 3.0f) * 0.5f) + 0.5f;
 	pushspace->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
-
 	//pushSpaceのオブジェクト
 	pushspace->Update();
 	//プレイヤーオブジェクトの演出
