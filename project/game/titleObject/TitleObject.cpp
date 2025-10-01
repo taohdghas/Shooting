@@ -8,25 +8,20 @@ void TitleObject::Initialize() {
 	title->Initialize(Object3dBase::GetInstance());
 	title->SetModel("title.obj");
 	title->SetScale({ 1.2f,1.2f,1.2f });
-	title->SetTranslate({ 1.2f,1.2f,1.0f });
+	title->SetTranslate({ 1.2f,0.8f,1.0f });
 	//pushspaceのオブジェクト
 	pushspace = std::make_unique<Object3d>();
 	pushspace->Initialize(Object3dBase::GetInstance());
 	pushspace->SetModel("pushspace.obj");
 	pushspace->SetScale({ 0.5f,0.5f,0.5f });
-	pushspace->SetTranslate({ 1.1f,-1.0f,1.0f });
+	pushspace->SetTranslate({ 1.1f,-1.5f,1.0f });
 	//プレイヤーオブジェクト(外見のみ)
 	playerobj = std::make_unique<Object3d>();
 	playerobj->Initialize(Object3dBase::GetInstance());
 	playerobj->SetModel("player/player.obj");
-	/*
-	playerobjTransform.scale = { 0.5f,0.5f,0.5f };
-	playerobjTransform.rotate = { 0.0f,0.0f,0.0f };
-	playerobjTransform.translate = { 0.0f,0.0f,0.0f };
-	*/
 	playerobjTransform.scale = { 0.5f,0.5f,0.5f };
 	playerobjTransform.rotate = { 0.0f,-0.5f,0.0f };
-	playerobjTransform.translate = { -1.3f,-0.25f,-4.8f };
+	playerobjTransform.translate = { -1.3f,-0.5f,-4.8f };
 }
 //更新
 void TitleObject::Update() {
@@ -63,19 +58,32 @@ void TitleObject::PlayerObjDirection() {
 	if (!isJumping_ && jumpTimer_ >= jumpInterval_) {
 		jumpVelocity_ = jumpPower_;
 		isJumping_ = true;
+		jumpCount_ = 1;
 		jumpTimer_ = 0.0f;
 	}
 
-	//ジャンプ中
 	if (isJumping_) {
 		playerobjTransform.translate.y += jumpVelocity_;
 		jumpVelocity_ += gravity_;
+
+		//2段目ジャンプ
+		if (jumpCount_ == 1 && jumpVelocity_ < 0.0f) {
+			jumpVelocity_ = jumpPower_ * 1.2f; 
+			jumpCount_ = 2; 
+		}
+
+		//二段目ジャンプ時回転
+		if (jumpCount_ == 2) {
+			playerobjTransform.rotate.x += jumpRotateSpeed_ * DeltaTime;
+		}
 
 		//着地
 		if (playerobjTransform.translate.y <= groundY_) {
 			playerobjTransform.translate.y = groundY_;
 			jumpVelocity_ = 0.0f;
 			isJumping_ = false;
+			jumpCount_ = 0;
+			playerobjTransform.rotate.x = 0.0f; 
 		}
 	}
 
@@ -92,7 +100,7 @@ void TitleObject::Debug() {
 	//title
 	static float titleScale[3] = { 1.2f,1.2f,1.2f };
 	static float titleRotate[3] = { 0.0f, 0.0f, 0.0f };
-	static float titleTranslate[3] = { 1.2f, 1.2f, 1.0f };
+	static float titleTranslate[3] = { 1.2f, 0.8f, 1.0f };
 
 	ImGui::Text("Title");
 	if (ImGui::DragFloat3("Title Scale", titleScale, 0.01f)) {
@@ -110,7 +118,7 @@ void TitleObject::Debug() {
 	//pushspace
 	static float pushScale[3] = { 0.5f, 0.5f, 0.5f };
 	static float pushRotate[3] = { 0.0f, 0.0f, 0.0f };
-	static float pushTranslate[3] = { 1.1f, -1.0f, 1.0f };
+	static float pushTranslate[3] = { 1.1f, -1.5f, 1.0f };
 
 	ImGui::Text("PushSpace");
 	if (ImGui::DragFloat3("Push Scale", pushScale, 0.01f)) {
