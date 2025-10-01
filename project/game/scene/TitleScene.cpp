@@ -103,6 +103,8 @@ void TitleScene::Debug() {
 	}
 
 	ImGui::End();
+	//タイトルオブジェクト
+	titleObject->Debug();
 #endif
 }
 
