@@ -15,43 +15,54 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTex", "externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj", "{371B9FA9-4C90-4AC6-A123-ACED756D6C77}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "externals", "externals", "{F6A64A95-B276-4A84-9FF9-05F323F70292}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "imgui", "imgui", "{5CE998D4-1491-48CB-805F-49F522CB3969}"
+	ProjectSection(SolutionItems) = preProject
+		externals\imgui\imconfig.h = externals\imgui\imconfig.h
+		externals\imgui\imgui.cpp = externals\imgui\imgui.cpp
+		externals\imgui\imgui.h = externals\imgui\imgui.h
+		externals\imgui\imgui_demo.cpp = externals\imgui\imgui_demo.cpp
+		externals\imgui\imgui_draw.cpp = externals\imgui\imgui_draw.cpp
+		externals\imgui\imgui_impl_dx12.cpp = externals\imgui\imgui_impl_dx12.cpp
+		externals\imgui\imgui_impl_dx12.h = externals\imgui\imgui_impl_dx12.h
+		externals\imgui\imgui_impl_win32.cpp = externals\imgui\imgui_impl_win32.cpp
+		externals\imgui\imgui_impl_win32.h = externals\imgui\imgui_impl_win32.h
+		externals\imgui\imgui_internal.h = externals\imgui\imgui_internal.h
+		externals\imgui\imgui_tables.cpp = externals\imgui\imgui_tables.cpp
+		externals\imgui\imgui_widgets.cpp = externals\imgui\imgui_widgets.cpp
+		externals\imgui\imstb_rectpack.h = externals\imgui\imstb_rectpack.h
+		externals\imgui\imstb_textedit.h = externals\imgui\imstb_textedit.h
+		externals\imgui\imstb_truetype.h = externals\imgui\imstb_truetype.h
+		externals\imgui\LICENSE.txt = externals\imgui\LICENSE.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Profile|x64 = Profile|x64
-		Profile|x86 = Profile|x86
 		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Debug|x64.ActiveCfg = Debug|x64
 		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Debug|x64.Build.0 = Debug|x64
-		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Debug|x86.ActiveCfg = Debug|x64
-		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Debug|x86.Build.0 = Debug|x64
 		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Profile|x64.ActiveCfg = Release|x64
 		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Profile|x64.Build.0 = Release|x64
-		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Profile|x86.ActiveCfg = Release|x64
-		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Profile|x86.Build.0 = Release|x64
 		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Release|x64.ActiveCfg = Release|x64
 		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Release|x64.Build.0 = Release|x64
-		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Release|x86.ActiveCfg = Release|x64
-		{16AB4325-BC09-49D2-BAD9-B06FA7FA2717}.Release|x86.Build.0 = Release|x64
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Debug|x64.ActiveCfg = Debug|x64
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Debug|x64.Build.0 = Debug|x64
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Debug|x86.ActiveCfg = Debug|Win32
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Debug|x86.Build.0 = Debug|Win32
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Profile|x64.ActiveCfg = Profile|x64
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Profile|x64.Build.0 = Profile|x64
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Profile|x86.ActiveCfg = Profile|Win32
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Profile|x86.Build.0 = Profile|Win32
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x64.ActiveCfg = Release|x64
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x64.Build.0 = Release|x64
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x86.ActiveCfg = Release|Win32
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{371B9FA9-4C90-4AC6-A123-ACED756D6C77} = {F6A64A95-B276-4A84-9FF9-05F323F70292}
+		{5CE998D4-1491-48CB-805F-49F522CB3969} = {F6A64A95-B276-4A84-9FF9-05F323F70292}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D02400EC-5AE9-4DFF-9AA2-EF077B210A55}

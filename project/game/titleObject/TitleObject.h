@@ -16,6 +16,8 @@ public:
 	void Draw();
 	//プレイヤーオブジェクトの演出
 	void PlayerObjDirection();
+	//デバック
+	void Debug();
 private:
 	//タイトルのオブジェクト
 	std::unique_ptr<Object3d>title;
@@ -26,8 +28,34 @@ private:
 	//プレイヤーオブジェクトTransform
 	Transform playerobjTransform;
 	//Δtを定義
-	const float kDeltaTime = 1.0f / 60.0f;
+	const float DeltaTime = 1.0f / 60.0f;
 	//playerObj回転速度
 	const float RotateSpeed = 0.5f;
+    //ジャンプの速度
+	float jumpVelocity_ = 0.0f;
+	//ジャンプの力
+	float jumpPower_ = 0.12f;
+	//最大ジャンプ数
+	const int maxJumpCount_ = 2;
+	//重力
+	float gravity_ = -0.01f;
+	//地面
+	float groundY_ = -0.5f;  
+	//ジャンプ間隔
+	float jumpInterval_ = 300.0f; 
+	//ジャンプタイマー
+	float jumpTimer_ = 0.0f;
+	//二段ジャンプ時回転速度
+	float jumpRotateSpeed_ = 180.0f;
+	//ジャンプカウント
+	int jumpCount_ = 0;
+
+	//ジャンプ中か
+	bool isJumping_ = false;
+	//α値
+	float alpha_ = 1.0f;
+	//α値タイマー
+	float alphaTimer_ = 0.0f;
+
 };
 

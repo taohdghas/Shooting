@@ -12,7 +12,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\scene\BaseScene.cpp" />
-    <ClCompile Include="Fade.cpp" />
+    <ClCompile Include="externals\imgui\imgui.cpp" />
+    <ClCompile Include="game\fade\Fade.cpp" />
     <ClCompile Include="game\scene\GameSelectScene.cpp" />
     <ClCompile Include="game\scene\GameClearScene.cpp" />
     <ClCompile Include="game\manager\CollisionManager.cpp" />
@@ -30,7 +31,6 @@
     <ClCompile Include="engine\manager\SceneManager.cpp" />
     <ClCompile Include="game\skydome\Skydome.cpp" />
     <ClCompile Include="game\scene\TitleScene.cpp" />
-    <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
     <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp" />
@@ -63,13 +63,12 @@
     <ClCompile Include="game\skybox\Skybox.cpp" />
     <ClCompile Include="game\titleObject\TitleObject.cpp" />
     <ClCompile Include="game\platform\Platform.cpp" />
-    <ClCompile Include="Ui.cpp" />
     <ClCompile Include="engine\math\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
-    <ClInclude Include="Fade.h" />
+    <ClInclude Include="game\fade\Fade.h" />
     <ClInclude Include="game\scene\GameSelectScene.h" />
     <ClInclude Include="game\scene\GameClearScene.h" />
     <ClInclude Include="game\manager\CollisionManager.h" />
@@ -90,9 +89,8 @@
     <ClInclude Include="game\skybox\Skybox.h" />
     <ClInclude Include="engine\manager\JsonManager.h" />
     <ClInclude Include="game\platform\Platform.h" />
-    <ClInclude Include="Struct.h" />
+    <ClInclude Include="engine\math\Struct.h" />
     <ClInclude Include="game\scene\TitleScene.h" />
-    <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
     <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
@@ -126,7 +124,6 @@
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\base\WindowsAPI.h" />
     <ClInclude Include="game\titleObject\TitleObject.h" />
-    <ClInclude Include="Ui.h" />
     <ClInclude Include="engine\math\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
@@ -291,7 +288,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -318,7 +315,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox\;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox\;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
