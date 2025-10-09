@@ -3,6 +3,7 @@
 #include "Object3d.h"
 #include "Transform.h"
 
+//敵の弾
 class EnemyBullet
 {
 public:

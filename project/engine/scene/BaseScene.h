@@ -1,6 +1,8 @@
 #pragma once
 
+//シーンマネージャー前方宣言
 class SceneManager;
+//シーンの基底クラス
 class BaseScene
 {
 public:

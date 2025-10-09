@@ -5,7 +5,9 @@
 #include "externals/DirectXTex/d3dx12.h"
 #include "camera.h"
 
+//モデルクラス前方宣言
 class Model;
+//オブジェクト共通部前方宣言
 class Object3dBase;
 //3Dオブジェクト
 class Object3d

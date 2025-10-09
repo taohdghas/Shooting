@@ -40,6 +40,7 @@ struct SoundData
 	unsigned int bufferSize;
 };
 
+//オーディオ
 class Audio
 {
 public:

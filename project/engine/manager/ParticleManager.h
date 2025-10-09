@@ -18,6 +18,7 @@ enum class ParticleType {
 	Explosive,//爆発
 };
 
+//パーティクル管理クラス
 class ParticleManager
 {
 public:
@@ -30,15 +31,18 @@ public:
 		float lifeTime;
 		float currentTime;
 	};
+	//パーティクルの情報をGPUに送る
 	struct ParticleForGPU {
 		Matrix4x4 WVP;
 		Matrix4x4 World;
 		Vector4 color;
 	};
+	//フィールド
 	struct AccelerationField {
 		Vector3 acceleration;//加速度
 		AABB area;//範囲
 	};
+	//パーティクルグループ
 	struct ParticleGroup {
 		MaterialData materialData;//マテリアルデータ
 		std::list<Particle>particles;//パーティクルリスト

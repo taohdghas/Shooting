@@ -25,6 +25,7 @@ using namespace Math;
 #pragma comment(lib,"dxcompiler.lib")
 #pragma comment(lib,"dinput8.lib")
 
+//ゲーム全体を司るクラス
 class MyGame:public Framework
 {
 public:

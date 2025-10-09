@@ -2,7 +2,7 @@
 #include "DirectXBase.h"
 #include "Pso.h"
 
-
+//スプライト共通部クラス
 class SpriteBase
 {
 public:

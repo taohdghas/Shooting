@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseScene.h"
 
+//ゲームクリアシーン
 class GameClearScene : public BaseScene
 {
 public:

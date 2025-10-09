@@ -12,11 +12,12 @@
 #include <chrono>
 #include "externals/DirectXTex/DirectXTex.h"
 
+//レンダーテクスチャ状態
 enum class RenderTextureState {
 	RenderTarget,
 	PixelShaderResource
 };
-
+//DirectX基盤クラス
 class DirectXBase
 {
 public:

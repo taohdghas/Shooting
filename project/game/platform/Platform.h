@@ -3,6 +3,7 @@
 #include "Object3dBase.h"
 #include "Struct.h"
 
+//地面のクラス
 class Platform
 {
 public:

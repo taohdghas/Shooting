@@ -2,10 +2,11 @@
 #include "Sprite.h"
 #include "Struct.h"
 
+//フェードを管理するクラス
 class Fade
 {
 public:
-	//状態
+	//フェードの状態
 	enum class State {
 		None,
 		FadeIn,

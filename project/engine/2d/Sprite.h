@@ -3,7 +3,9 @@
 #include "Struct.h"
 #include "externals/DirectXTex/d3dx12.h"
 
+//スプライト基盤クラス前方宣言
 class SpriteBase;
+//スプライト
 class Sprite
 {
 public:

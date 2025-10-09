@@ -1,3 +1,4 @@
+/*
 #include "FadeManager.h"
 #include "SpriteBase.h"
 #include <algorithm>
@@ -61,3 +62,4 @@ void FadeManager::FadeOut(float duration) {
 	fadeDuration_ = duration;
 	sprite_->SetColor(Vector4{ 0,0,0,0 });
 }
+*/

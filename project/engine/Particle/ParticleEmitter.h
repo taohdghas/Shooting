@@ -2,9 +2,11 @@
 #include "ParticleManager.h"
 #include "Transform.h"
 
+//パーティクルエミッタークラス
 class ParticleEmitter
 {
 public:
+	//エミッターの情報を保持
 	struct Emitter {
 		Transform transform;
 		uint32_t count;//発生数

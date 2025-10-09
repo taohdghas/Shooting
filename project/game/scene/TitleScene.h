@@ -18,6 +18,7 @@
 #include "TitleObject.h"
 #include "JsonManager.h"
 
+//タイトルシーン
 class TitleScene : public BaseScene
 {
 public:

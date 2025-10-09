@@ -20,6 +20,7 @@
 #include "Skybox.h"
 #include "Platform.h"
 
+//ゲームシーン
 class GameScene : public BaseScene
 {
 public:

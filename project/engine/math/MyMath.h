@@ -10,7 +10,7 @@ inline Vector3 operator+(const Vector3& v1, const Vector3& v2) {
 	result.z = v1.z + v2.z;
 	return result;
 }
-
+//Vector3の足し算
 inline Vector3& operator+=(Vector3& v1, const Vector3& v2) {
 	v1.x += v2.x;
 	v1.y += v2.x;
@@ -26,7 +26,7 @@ inline Vector3 operator-(const Vector3& v1, const Vector3& v2) {
 	result.z = v1.z - v2.z;
 	return result;
 }
-
+//Vector3の引き算
 inline Vector3 operator-=(Vector3& v1, const Vector3& v2) {
 	v1.x -= v2.x;
 	v1.y -= v2.y;
@@ -42,7 +42,7 @@ inline Vector3 operator*(const Vector3& v, float s) {
 	result.z = v.z * s;
 	return result;
 }
-
+//Vector3の掛け算(スカラー)
 inline Vector3& operator*=(Vector3& v, float s) {
 	v.x *= s;
 	v.y *= s;
@@ -58,6 +58,7 @@ inline Vector3 operator*(const Vector3& v1, const Vector3& v2) {
 	result.z = v1.z * v2.z;
 	return result;
 }
+//Vector3同士の掛け算
 inline Vector3& operator*=(Vector3& v1, const Vector3& v2) {
 	v1.x *= v2.x;
 	v1.y *= v2.y;

@@ -5,6 +5,7 @@
 #include "Object3dBase.h"
 #include <vector>
 
+//タイトルオブジェクト
 class TitleObject
 {
 public:

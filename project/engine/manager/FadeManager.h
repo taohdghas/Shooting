@@ -1,4 +1,5 @@
 #pragma once
+/*
 #include "Sprite.h"
 #include "Struct.h"
 
@@ -40,3 +41,4 @@ private:
 	const float kDeltaTime = 1.0f / 60.0f;
 };
 
+*/

@@ -3,6 +3,7 @@
 #include "Object3dBase.h"
 #include "Transform.h"
 
+//天球クラス
 class Skydome
 {
 public:

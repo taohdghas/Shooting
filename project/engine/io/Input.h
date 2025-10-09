@@ -4,6 +4,8 @@
 #include <dinput.h>
 #include <wrl.h>
 #include "WindowsAPI.h"
+
+//入力関連クラス
 class Input
 {
 public:

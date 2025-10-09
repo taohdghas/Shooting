@@ -4,7 +4,9 @@
 #include "Transform.h"
 #include "EnemyBullet.h"
 
+//プレイヤークラス前方宣言
 class Player;
+//敵の処理を書いたクラス
 class Enemy
 {
 public:

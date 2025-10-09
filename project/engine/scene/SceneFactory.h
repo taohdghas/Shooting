@@ -1,6 +1,7 @@
 #pragma once
 #include "AbstractSceneFactory.h"
 
+//シーンファクトリークラス
 class SceneFactory:public AbstractSceneFactory
 {
 public:

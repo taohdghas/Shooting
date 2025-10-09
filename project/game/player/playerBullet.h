@@ -4,6 +4,7 @@
 #include "Struct.h"
 #include <memory>
 
+//プレイヤーの弾のクラス
 class playerBullet
 {
 public:

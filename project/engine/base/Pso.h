@@ -2,8 +2,9 @@
 #include <d3d12.h>
 #include <wrl.h>
 
+//DirectX基盤クラス前方宣言
 class DirectXBase;
-
+//パイプラインステートを管理するクラス
 class Pso
 {
 public:

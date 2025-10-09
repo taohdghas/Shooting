@@ -3,6 +3,7 @@
 #include "AbstractSceneFactory.h"
 #include <memory>
 
+//シーンを管理するクラス
 class SceneManager
 {
 public:

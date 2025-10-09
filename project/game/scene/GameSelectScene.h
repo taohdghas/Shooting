@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseScene.h"
 
+//ゲームセレクトシーン
 class GameSelectScene : public BaseScene
 {
 public:

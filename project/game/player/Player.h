@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 
+//プレイヤー
 class Player
 {
 public:

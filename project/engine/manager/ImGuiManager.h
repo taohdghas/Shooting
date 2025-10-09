@@ -9,6 +9,7 @@
 #include "externals/imgui/imgui_impl_win32.h"
 #endif
 
+//ImGui管理するクラス
 class ImGuiManager
 {
 public:

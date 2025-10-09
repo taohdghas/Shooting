@@ -3,6 +3,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 
+//ワールドトランスフォームのクラス
 class WorldTransform
 {
 public:

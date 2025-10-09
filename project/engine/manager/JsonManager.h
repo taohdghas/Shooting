@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+//jsonoに関連するカラス
 class JsonManager
 {
 

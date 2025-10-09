@@ -7,6 +7,7 @@
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
 
+//テクスチャ管理クラス
 class TextureManager
 {
 public:

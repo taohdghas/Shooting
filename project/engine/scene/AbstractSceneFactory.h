@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 
+//シーンを作る
 class AbstractSceneFactory
 {
 public:

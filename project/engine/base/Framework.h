@@ -14,6 +14,7 @@
 #include "SceneManager.h"
 #include "AbstractSceneFactory.h"
 
+//アプリケーション全体の実行を管理する基底クラス
 class Framework
 {
 public:

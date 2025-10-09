@@ -3,6 +3,7 @@
 #include "Pso.h"
 #include "Struct.h"
 
+//SkyBoxのクラス
 class Skybox
 {
 public:

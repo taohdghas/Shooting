@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include <cstdint>
+
+//WindowsAPI関連のクラス
 class WindowsAPI
 {
 public:
