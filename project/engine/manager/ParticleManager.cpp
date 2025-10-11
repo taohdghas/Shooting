@@ -202,7 +202,7 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 		newParticle.instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	//SRV生成
-	newParticle.SRVIndex = srvManager_->Allccate();
+	newParticle.SRVIndex = srvManager_->Allcate();
 	srvManager_->CreateSRVforStructuredBuffer(newParticle.SRVIndex, newParticle.
 		instancingResource.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
 

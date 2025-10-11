@@ -90,7 +90,7 @@ bool SrvManager::Securedcheck() {
 	}
 	return false;
 }
-uint32_t SrvManager::Allccate() {
+uint32_t SrvManager::Allcate() {
 	//上限に達していないかチェック
 	assert(useIndex < kMaxCount);
 

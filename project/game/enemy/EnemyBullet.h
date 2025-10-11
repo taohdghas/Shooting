@@ -21,14 +21,19 @@ public:
 	bool IsDead()const { return isDead_; }
 public:
 ///Getter///
-//位置
-const Vector3& GetPosition()const { return transform_.translate; }
-//半径
+
+//座標取得
+const Vector3& GetTranslate()const { return transform_.translate; }
+//半径取得
 float GetRadius()const { return radius_; }
-//攻撃力
+//攻撃力取得
 int GetAttack()const { return attack_; }
+
 ///Setter///
-void SetPosition(const Vector3& position) { transform_.translate = position; }
+
+//座標をセット
+void GetTranslate(const Vector3& position) { transform_.translate = position; }
+//速度をセット
 void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 private:
 	Object3dBase* object3dBase_;

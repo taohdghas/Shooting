@@ -41,9 +41,13 @@ public:
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets()const { return bullets_; }
 
 	///Setter///
+
+	//スケールセット
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+	//回転セット
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-	void SetPosition(const Vector3& position) { transform_.translate = position; }
+	//座標セット
+	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 	//Playerのポインタをセット
 	void SetPlayer(Player* player) { player_ = player; }
 	//デスパーティクルフラグ

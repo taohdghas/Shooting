@@ -14,11 +14,15 @@ public:
 		float frequencyTime;//頻度用時刻
 	};
 public:
+	//初期化
 	void Initialize(std::string name);
+	//更新
 	void Update();
 	//パーティクルの発生
 	void Emit();
 public:
+
+	//座標をセット
 	void SetPosition(const Vector3& pos) { emitter_.transform.translate = pos; }
 private:
 	Emitter emitter_;

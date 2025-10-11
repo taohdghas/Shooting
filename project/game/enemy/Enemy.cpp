@@ -88,7 +88,7 @@ void Enemy::Laser() {
 
 	if (!player_)return;
 
-	Vector3 toPlayer = Math::Subtract(player_->GetPosition(), transform_.translate);
+	Vector3 toPlayer = Math::Subtract(player_->GetTranslate(), transform_.translate);
 	float distance = Math::Length(toPlayer);
 
 	//距離が定数の値以上なら撃たない
@@ -97,7 +97,7 @@ void Enemy::Laser() {
 	}
 
 	//プレイヤーのZ座標+定数の値以上なら撃たない
-	if (transform_.translate.z < player_->GetPosition().z + attackStopDisntanceZ) {
+	if (transform_.translate.z < player_->GetTranslate().z + attackStopDisntanceZ) {
 		return;
 	}
 
@@ -108,7 +108,7 @@ void Enemy::Laser() {
 
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3dBase_);
-	bullet->SetPosition(transform_.translate);
+	bullet->GetTranslate(transform_.translate);
 	bullet->SetVelocity(Math::Multiply(direction, 0.2f));
 
 	bullets_.emplace_back(std::move(bullet));

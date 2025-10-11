@@ -49,7 +49,7 @@ public:
 	static Audio* GetInstance();
 	//終了
 	void Finalize();
-
+	//初期化
 	void Initialize();
 	//音声データ読み込み
 	SoundData SoundLoadWave(const char* filename);

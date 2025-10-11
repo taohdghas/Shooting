@@ -23,7 +23,8 @@ public:
 	void SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex);
 	//確保可能かチェック
 	bool Securedcheck();
-	uint32_t Allccate();
+	//SRVを割り当てる
+	uint32_t Allcate();
 	//CPUハンドル計算
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
 	//GPUハンドル計算

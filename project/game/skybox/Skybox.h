@@ -22,6 +22,7 @@ public:
 	//頂点作成
 	void CreateVertex();
 public:
+	//座標取得
 	Transform& GetTransform() { return transform_; }
 
 private:

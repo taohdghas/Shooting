@@ -32,9 +32,12 @@ private:
 	Node ReadNode(aiNode* node);
 public:
 	///Getter///
+	//モデルデータの取得
 	const ModelData& GetModelData()const { return modelData_; }
 	///Setter///
-	void SetColor(const Vector4& color) { materialData->color = color; }//色
+	//色をセット
+	void SetColor(const Vector4& color) { materialData->color = color; }
+	//ライトの有無をセット
 	void SetEnableLighting(bool enable) { materialData->enableLighting = enable; }//Lighting
 private:
 	//ModelBaseのポインタ

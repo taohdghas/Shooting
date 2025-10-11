@@ -9,6 +9,7 @@ public:
 	void Initialize(DirectXBase* directxBase);
 
 	///getter///
+	//DirectXBase取得
 	DirectXBase* GetDxBase()const { return directxBase_; }
 private:
 	DirectXBase* directxBase_;

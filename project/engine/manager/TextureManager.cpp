@@ -69,7 +69,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
     //テクスチャデータの要素数番号をSRVのインデックスとする
 	uint32_t srvIndex = static_cast<uint32_t>(textureDatas.size() - 1) + kSRVIndexTop;
 
-	textureData.srvIndex = srvManager_->Allccate();
+	textureData.srvIndex = srvManager_->Allcate();
 	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
 	textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
 	

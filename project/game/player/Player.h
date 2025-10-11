@@ -25,7 +25,7 @@ public:
 	void Update();
 	//描画
 	void Draw();
-	//
+	//レティクルの描画
 	//void ReticleDraw();
 	//移動
 	void Move();
@@ -53,17 +53,19 @@ public:
 	///Getter/// 
 
 	//位置取得
-	const Vector3& GetPosition()const { return transform_.translate; }
-	//半径
+	const Vector3& GetTranslate()const { return transform_.translate; }
+	//半径取得
 	float GetRadius()const { return radius_; }
-
 	//弾リスト取得
 	const std::list<std::unique_ptr<playerBullet>>& GetBullets() const { return bullets_; }
 
 	///Setter/// 
+	//スケールセット
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+	//回転セット
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-	void SetPosition(const Vector3& position) { transform_.translate = position; }
+	//座標セット
+	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 	
 
 

@@ -32,20 +32,35 @@ public:
 	void CreateSkyBoxPipelineState();
 public:
 	///Getter///
-	//Object3D用
+
+	///---Object3D---///
+	//ルートシグネチャ取得
 	ID3D12RootSignature* GetRootSignature()const { return rootSignature.Get(); }
+	//パイプラインステート取得
 	ID3D12PipelineState* GetGraphicsPipelineState()const { return graphicsPipelineState.Get(); }
-	//Sprite用
+
+	///---Sprite---///
+	//ルートシグネチャ取得
 	ID3D12RootSignature* GetSpriteRootSignature()const { return spriteRootSignature.Get(); }
+	//パイプラインステート取得
 	ID3D12PipelineState* GetSpriteGraphicsPipelineState()const { return spriteGraphicsPipelineState.Get(); }
-	//Particle用
+
+	///---Particle---///
+	//ルートシグネチャ取得
 	ID3D12RootSignature* GetParticleRootSignature()const { return particleRootSignature.Get(); }
+	//パイプラインステート取得
 	ID3D12PipelineState* GetParticleGraphicsPipelineState()const { return particleGraphicsPipelineState.Get(); }
-	//PostEffect用
+	
+    ///---PostEffect---///
+	//ルートシグネチャ取得
 	ID3D12RootSignature* GetPostEffectRootSignature()const { return postEffectRootSignature.Get(); }
+	//パイプラインステート取得
 	ID3D12PipelineState* GetPostEffectGraphicsPipelineState()const { return postEffectGraphicsPipelineState.Get(); }
-	//SkyBox用
+	
+	///---SkyBox---///
+	//ルートシグネチャ取得
 	ID3D12RootSignature* GetSkyBoxRootSignature()const { return skyBoxRootSignature.Get(); }
+	//パイプラインステート取得
 	ID3D12PipelineState* GetSkyBoxGraphicsPipelineState()const { return skyBoxGraphicsPipelineState.Get(); }
 
 private:

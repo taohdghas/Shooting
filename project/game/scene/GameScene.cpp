@@ -55,13 +55,13 @@ void GameScene::Initialize() {
 
 		transform.translate = playerData.translation;
 
-		player->SetPosition(transform.translate);
+		player->SetTranslate(transform.translate);
 	}
 
 	for (auto& enemyData : levelData->enemies) {
 		auto newEnemy = std::make_unique<Enemy>();
 		newEnemy->Initialize(Object3dBase::GetInstance());
-		newEnemy->SetPosition(enemyData.translation);
+		newEnemy->SetTranslate(enemyData.translation);
 		newEnemy->SetPlayer(player.get());
 		enemies.push_back(std::move(newEnemy));
 	}

@@ -18,13 +18,20 @@ public:
 public:
 
 	///setter///
+
+	//デフォルトのカメラをセットする
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera = camera; }
 	///getter///
+
+	//DirectXBaseを取得
 	DirectXBase* GetDxBase()const { return directxBase_; }
+	//デフォルトカメラ取得
 	Camera* GetDefaultCamera()const { return defaultCamera; }
+	//ルートシグネチャ取得
 	ID3D12RootSignature* GetRootSignature() const {
 		return pso_->GetRootSignature();
 	}
+	//パイプラインステート取得
 	ID3D12PipelineState* GetGraphicsPipelineState() const {
 		return pso_->GetGraphicsPipelineState();
 	}

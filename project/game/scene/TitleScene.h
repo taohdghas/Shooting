@@ -51,8 +51,5 @@ private:
 	std::unique_ptr<JsonManager>jsonManager;
 	//レベルデータ
 	LevelData* levelData;
-	//スタート演出
-	bool pushspaceMove = false;
-	bool fadeOutStarted = false;
 };
 

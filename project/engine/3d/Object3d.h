@@ -23,19 +23,34 @@ public:
 	void DebugUpdate();
 
 	///setter///
+
+	//モデルセット
 	void SetModel(const std::string& filePath);
+	//スケールセット
 	void SetScale(const Vector3& scale) { this->transform_.scale = scale; }
+	//回転セット
 	void SetRotate(const Vector3& rotate) { this->transform_.rotate = rotate; }
+	//座標セット
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
+	//カメラをセット
 	void SetCamera(Camera* camera) { this->camera = camera; }
+	//色セット
 	void SetColor(const Vector4& color);
+	//ライトの有無セット
 	void SetLight(bool enable) { enableLighting = enable; }
+	//DirectionalLightの有無セット
 	void SetDirectionalLightEnable(int enable) { directionalLight->enable = enable ? 1 : 0; }
+	//PointLightの有無セット
 	void SetPointLightEnable(int enable) { pointLight->enable = enable ? 1 : 0; }
+	//SpotLightの有無セット
 	void SetSpotLightEnable(int enable) { spotLight->enable = enable ? 1 : 0; }
 	///getter///
+
+	//スケールの取得
 	const Vector3& GetScale()const { return transform_.scale; }
+	//回転取得
 	const Vector3& GetRotate()const { return transform_.rotate; }
+	//座標取得
 	const Vector3& GetTranslate()const { return transform_.translate; }
 private:
 	//座標変換行列データ作成

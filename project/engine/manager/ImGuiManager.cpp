@@ -28,7 +28,7 @@ void ImGuiManager::Initialize([[maybe_unused]]WindowsAPI* windowsAPI,DirectXBase
 	directxbase_ = directxBase;
 	srvmanager_ = srvmanager;
     
-	index = srvmanager_->Allccate();
+	index = srvmanager_->Allcate();
 
 	//ImGuiのコンテキストを生成
 	ImGui::CreateContext();

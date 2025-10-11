@@ -5,5 +5,6 @@
 //ログ出力
 namespace Logger
 {
+	//ログを出力
 	void Log(const std::string& message);
 }

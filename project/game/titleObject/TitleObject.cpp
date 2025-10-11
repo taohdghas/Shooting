@@ -8,7 +8,7 @@ void TitleObject::Initialize() {
 	title->Initialize(Object3dBase::GetInstance());
 	title->SetModel("title.obj");
 	title->SetScale({ 1.2f,1.2f,1.2f });
-	title->SetTranslate({ 1.2f,0.8f,1.0f });
+	title->SetTranslate({ -1.2f,0.8f,1.0f });
 	//pushspaceのオブジェクト
 	pushspace = std::make_unique<Object3d>();
 	pushspace->Initialize(Object3dBase::GetInstance());
@@ -98,7 +98,7 @@ void TitleObject::Debug() {
 	//title
 	static float titleScale[3] = { 1.2f,1.2f,1.2f };
 	static float titleRotate[3] = { 0.0f, 0.0f, 0.0f };
-	static float titleTranslate[3] = { 1.2f, 0.8f, 1.0f };
+	static float titleTranslate[3] = { -1.2f, 0.8f, 1.0f };
 
 	ImGui::Text("Title");
 	if (ImGui::DragFloat3("Title Scale", titleScale, 0.01f)) {
