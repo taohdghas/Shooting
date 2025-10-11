@@ -2,6 +2,11 @@
 #include "SpriteBase.h"
 #include <algorithm>
 
+float EaseInQuad(float x)
+{
+    return x * x;
+}
+
 //初期化
 void Fade::Initialize() {
     sprite_ = std::make_unique<Sprite>();
@@ -13,37 +18,38 @@ void Fade::Initialize() {
 
 //更新
 void Fade::Update() {
+    if (state_ == State::None) {
+        return;
+    }
 
-	switch (state_) {
-	case Fade::State::None:
-		break;
-	case Fade::State::FadeIn:
-		count_ += DeltaTime;
+    //経過時間を進める
+    count_ += DeltaTime;
+    if (count_ > duration_) {
+        count_ = duration_;
+    }
 
-		if (count_ >= duration_) {
-			count_ = duration_;
-		}
+    float t = std::clamp(count_ / duration_, 0.0f, 1.0f);
 
-		sprite_->SetColor(Vector4(0.0f, 0.0f, 0.0f, std::clamp(1.0f - (count_ / duration_), 0.0f, 1.0f)));
+    //イージングを適用
+    float eased = EaseInQuad(t);
 
-		break;
-	case Fade::State::FadeOut:
+    float alpha = 1.0f;
 
-		count_ += DeltaTime;
-	
-		if (count_ >= duration_) {
-			count_ = duration_;
-		}
+    switch (state_) {
+    case State::FadeIn:
+        alpha = 1.0f - eased;
+        break;
 
-		sprite_->SetColor(Vector4(0.0f, 0.0f, 0.0f, std::clamp(count_ / duration_, 0.0f, 1.0f)));
+    case State::FadeOut:
+        alpha = eased;
+        break;
 
-		break;
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	sprite_ ->Update();
-
+    sprite_->SetColor(Vector4(0.0f, 0.0f, 0.0f, alpha));
+    sprite_->Update();
 }
 //描画
 void Fade::Draw() {
