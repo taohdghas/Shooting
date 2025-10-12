@@ -2,11 +2,9 @@
 #include "SpriteBase.h"
 #include <algorithm>
 
-float EaseInQuad(float x)
-{
-    return x * x;
+double easeOutQuad(double x) {
+    return 1.0 - (1.0 - x) * (1.0 - x);
 }
-
 //初期化
 void Fade::Initialize() {
     sprite_ = std::make_unique<Sprite>();
@@ -31,7 +29,7 @@ void Fade::Update() {
     float t = std::clamp(count_ / duration_, 0.0f, 1.0f);
 
     //イージングを適用
-    float eased = EaseInQuad(t);
+    float eased = float(easeOutQuad(t));
 
     float alpha = 1.0f;
 
