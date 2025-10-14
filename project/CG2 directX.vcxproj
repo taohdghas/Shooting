@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
+    <ClCompile Include="game\scene\GameOverScene.cpp" />
     <ClCompile Include="game\fade\Fade.cpp" />
     <ClCompile Include="game\scene\GameSelectScene.cpp" />
     <ClCompile Include="game\scene\GameClearScene.cpp" />
@@ -69,6 +70,7 @@
   <ItemGroup>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
+    <ClInclude Include="game\scene\GameOverScene.h" />
     <ClInclude Include="game\fade\Fade.h" />
     <ClInclude Include="game\scene\GameSelectScene.h" />
     <ClInclude Include="game\scene\GameClearScene.h" />
