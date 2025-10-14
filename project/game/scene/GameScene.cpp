@@ -35,8 +35,8 @@ void GameScene::Initialize() {
 	//カメラ
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0,0,-10 });
-	//CameraManager::GetInstance()->AddCamera("Main", camera.get());
-	CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera());
+	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	//CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
@@ -46,8 +46,8 @@ void GameScene::Initialize() {
 	//プラットフォーム
 	platform = std::make_unique<Platform>();
 	platform->Initialize(Object3dBase::GetInstance());
-	railCamera->SetPlatform(platform.get());
-	railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
+	//railCamera->SetPlatform(platform.get());
+	//railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
 
 	//衝突マネージャー
 	collisionManager = std::make_unique<CollisionManager>();
@@ -64,7 +64,7 @@ void GameScene::Initialize() {
 		transform.translate = playerData.translation;
 
 		player->SetTranslate(transform.translate);
-		railCamera->SetPlayer(player.get());
+		//railCamera->SetPlayer(player.get());
 	}
 
 	for (auto& enemyData : levelData->enemies) {
