@@ -27,10 +27,16 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->CreateparticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
 
+	//レールカメラ
+	railCamera = std::make_unique<RailCamera>();
+	railCamera->Initialize();
+	railCamera->SetPlayerOffset({ 0.0f,-1.5f,10.0f });
+	railCamera->SetSpeed(0.1f);
 	//カメラ
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0,0,-10 });
-	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	//CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
@@ -40,6 +46,8 @@ void GameScene::Initialize() {
 	//プラットフォーム
 	platform = std::make_unique<Platform>();
 	platform->Initialize(Object3dBase::GetInstance());
+	railCamera->SetPlatform(platform.get());
+	railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
 
 	//衝突マネージャー
 	collisionManager = std::make_unique<CollisionManager>();
@@ -56,6 +64,7 @@ void GameScene::Initialize() {
 		transform.translate = playerData.translation;
 
 		player->SetTranslate(transform.translate);
+		railCamera->SetPlayer(player.get());
 	}
 
 	for (auto& enemyData : levelData->enemies) {
@@ -90,6 +99,9 @@ void GameScene::Finalize() {
 void GameScene::Update() {
 	//カメラ
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	//レールカメラ
+	railCamera->Update();
+
 	//衝突チェック
 	for (auto& enemy : enemies) {
 		collisionManager->CheckPECollisions(player.get(), enemy.get());
