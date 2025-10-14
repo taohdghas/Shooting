@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "MyMath.h"
 #include "ImGuiManager.h"
-#include "WindowsAPI.h"
+#include "CameraManager.h"
 #include <algorithm>
 
 Player::Player() {}
@@ -65,10 +65,6 @@ void Player::Update() {
 	//攻撃
 	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Attack();
-	}
-	//3方向攻撃
-	if (Input::GetInstance()->PushKey(DIK_R)) {
-		ThreeAttack();
 	}
 	//回避
 	Dodge();
@@ -172,34 +168,6 @@ void Player::Attack() {
 	attackCooldown_ = attackInterval_;
 }
 
-//三方向攻撃
-void Player::ThreeAttack() {
-	//クールタイムが0より大きければスキップ
-	if (attackCooldown_ > 0) {
-		return;
-	}
-
-	//発射方向
-	std::vector<Vector3> directions = {
-		Vector3(-1, 0, 1),
-		Vector3(0, 0, 1),
-		Vector3(1, 0, 1)
-	};
-
-	for (const auto& dir : directions) {
-		Vector3 velocity = Math::Normalize(dir);
-		velocity = Math::Multiply(velocity, BulletSpeed);
-
-		auto newBullet = std::make_unique<playerBullet>();
-		newBullet->Initialize(object3dBase_);
-		newBullet->SetVelocity(velocity);
-		newBullet->SetPosition(transform_.translate);
-		bullets_.push_back(std::move(newBullet));
-	}
-
-	attackCooldown_ = attackInterval_;
-}
-
 //回避
 void Player::Dodge() {
 
@@ -232,8 +200,38 @@ void Player::Dodge() {
 
 //レティクル更新
 void Player::ReticleUpdate() {
+	Camera* camera = CameraManager::GetInstance()->GetActiveCamera();
+	if (!camera) return;
 
+	//3Dターゲット位置
+	Vector3 targetWorldPos = transform_.translate;
+	targetWorldPos.z += 5.0f; // プレイヤーの前方5mにターゲット
+
+	const Matrix4x4& viewProj = camera->GetViewProjectionMatrix();
+
+	Vector4 clipPos;
+	clipPos.x = targetWorldPos.x * viewProj.m[0][0] + targetWorldPos.y * viewProj.m[1][0] + targetWorldPos.z * viewProj.m[2][0] + viewProj.m[3][0];
+	clipPos.y = targetWorldPos.x * viewProj.m[0][1] + targetWorldPos.y * viewProj.m[1][1] + targetWorldPos.z * viewProj.m[2][1] + viewProj.m[3][1];
+	clipPos.z = targetWorldPos.x * viewProj.m[0][2] + targetWorldPos.y * viewProj.m[1][2] + targetWorldPos.z * viewProj.m[2][2] + viewProj.m[3][2];
+	clipPos.w = targetWorldPos.x * viewProj.m[0][3] + targetWorldPos.y * viewProj.m[1][3] + targetWorldPos.z * viewProj.m[2][3] + viewProj.m[3][3];
+
+	if (clipPos.w != 0.0f) {
+		clipPos.x /= clipPos.w;
+		clipPos.y /= clipPos.w;
+		clipPos.z /= clipPos.w;
+	}
+
+	const float screenWidth = 1280.0f;
+	const float screenHeight = 720.0f;
+	Vector2 screenPos;
+	screenPos.x = (clipPos.x * 0.5f + 0.5f) * screenWidth;
+	screenPos.y = (-clipPos.y * 0.5f + 0.5f) * screenHeight;
+
+	//スプライト反映
+	reticle_->SetPosition(screenPos);
+	reticle_->Update();
 }
+
 
 //衝突時コールバック
 void Player::OnCollision() {

@@ -33,8 +33,6 @@ public:
 	void Jump();
 	//攻撃
 	void Attack();
-	//三方向攻撃
-	void ThreeAttack();
 	//回避
 	void Dodge();
 	//レティクル更新
@@ -100,6 +98,7 @@ private:
 	float radius_ = 1.0f;
 	//ジャンプ速度
 	float jumpVelocity_ = 0.0f;
+	
 	//HP
 	int hp_ = 100;
 	//ジャンプ回数
@@ -107,7 +106,7 @@ private:
 	//最大ジャンプ可能回数
 	const int maxJumpCount_ = 2;
 	//弾の速度
-	const float BulletSpeed = 1.0f;
+	const float bulletSpeed = 1.0f;
 	//Δtを定義
 	const float DeltaTime = 1.0f / 60.0f;
 	//回避速度
