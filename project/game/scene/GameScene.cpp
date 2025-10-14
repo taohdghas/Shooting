@@ -134,14 +134,13 @@ void GameScene::Update() {
 		particle->Update();
 	}
 
-	//タイトルシーンへ
-	if (player->IsDead()) {
-		SceneManager::GetInstance()->ChangeScene("TITLE");
-	}
-
 	//クリアシーンへ
 	if (Input::GetInstance()->PushKey(DIK_C)) {
 		SceneManager::GetInstance()->ChangeScene("CLEAR");
+	}
+	//プレイヤーが撃破されたらゲームオーバーへ
+	if (player->IsDead()) {
+		ToGameOver();
 	}
 
 	fade->Update();
@@ -207,4 +206,34 @@ void GameScene::Debug() {
 	}
 	ImGui::End();
 #endif
+}
+//ゲームクリアへ
+void GameScene::ToGameClear() {
+	//FadeInが終わっているなら状態をNoneに
+	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
+		fade->End();
+	}
+	//フェードアウト開始
+	if (fade->GetState() == Fade::State::None) {
+		fade->FadeStart(Fade::State::FadeOut, 0.5f);
+	}
+	//フェードアウト終了後シーン移行
+	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
+		SceneManager::GetInstance()->ChangeScene("CLEAR");
+	}
+}
+//ゲームオーバーへ
+void GameScene::ToGameOver() {
+	//FadeInが終わっているなら状態をNoneに
+	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
+		fade->End();
+	}
+	//フェードアウト開始
+	if (fade->GetState() == Fade::State::None) {
+		fade->FadeStart(Fade::State::FadeOut, 0.5f);
+	}
+	//フェードアウト終了後シーン移行
+	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
+		SceneManager::GetInstance()->ChangeScene("OVER");
+	}
 }

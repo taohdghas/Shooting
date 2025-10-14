@@ -35,7 +35,11 @@ public:
 	void Draw()override;
 	//デバック
 	void Debug()override;
-
+public:
+	//ゲームクリアへ
+	void ToGameClear();
+	//ゲームオーバーへ
+	void ToGameOver();
 private:
 	//プレイヤー
 	std::unique_ptr<Player>player;

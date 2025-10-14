@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+#include "Fade.h"
 
 //ゲームクリアシーン
 class GameClearScene : public BaseScene
@@ -16,6 +17,7 @@ public:
 	//デバック
 	void Debug()override;
 private:
-
+	//フェード
+	std::unique_ptr<Fade>fade;
 };
 
