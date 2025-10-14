@@ -20,7 +20,7 @@ public:
 
 private:
     Camera camera_;         
-    float speed_ = 0.1f;    
+    float speed_ = 3.0f;    
     Player* player_ = nullptr;
     Vector3 playerOffset_;
     Platform* platform_ = nullptr;      
