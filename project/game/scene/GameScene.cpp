@@ -154,10 +154,9 @@ void GameScene::Draw() {
 	platform->Draw();
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
-
+	player->ReticleDraw();
 	//フェード
 	fade->Draw();
-
 	//パーティクル
 	ParticleManager::GetInstance()->Draw();
 

@@ -78,7 +78,7 @@ void Player::Update() {
 	object_->SetTranslate(transform_.translate);
 
 	//レティクル更新
-	//ReticleUpdate();
+	ReticleUpdate();
 
 	object_->Update();
 
@@ -97,12 +97,14 @@ void Player::Draw() {
 	}
 	//プレイヤーの描画
 	object_->Draw();
-	//レティクルの描画
-	//reticle_->Draw();
 	//プレイヤー弾の描画
 	for (const auto& bullet : bullets_) {
 		bullet->Draw();
 	}
+}
+//レティクル描画
+void Player::ReticleDraw() {
+	reticle_->Draw();
 }
 
 //移動
@@ -186,7 +188,7 @@ void Player::ThreeAttack() {
 
 	for (const auto& dir : directions) {
 		Vector3 velocity = Math::Normalize(dir);
-		velocity = Math::Multiply(velocity, kBulletSpeed);
+		velocity = Math::Multiply(velocity, BulletSpeed);
 
 		auto newBullet = std::make_unique<playerBullet>();
 		newBullet->Initialize(object3dBase_);

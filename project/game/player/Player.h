@@ -26,7 +26,7 @@ public:
 	//描画
 	void Draw();
 	//レティクルの描画
-	//void ReticleDraw();
+	void ReticleDraw();
 	//移動
 	void Move();
 	//ジャンプ
@@ -107,7 +107,7 @@ private:
 	//最大ジャンプ可能回数
 	const int maxJumpCount_ = 2;
 	//弾の速度
-	const float kBulletSpeed = 1.0f;
+	const float BulletSpeed = 1.0f;
 	//Δtを定義
 	const float DeltaTime = 1.0f / 60.0f;
 	//回避速度
