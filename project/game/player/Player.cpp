@@ -25,6 +25,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	reticle_->Initialize(SpriteBase::GetInstance(), "resources/white.png");
 	reticle_->SetSize({ 16,16 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
+	reticleTransform_.translate = transform_.translate + reticleOffset_;
 }
 
 //更新
@@ -151,20 +152,23 @@ void Player::Jump() {
 
 //攻撃
 void Player::Attack() {
-	//クールタイムが0より大きければスキップ
-	if (attackCooldown_ > 0) {
-		return;
-	}
-	//弾の速度
-	const float kBulletSpeed = 1.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
+	if (attackCooldown_ > 0.0f) return;
 
-	//弾を生成
+	Vector3 playerPos = transform_.translate;
+	Vector3 targetPos = reticleTransform_.translate;
+
+	Vector3 dir = targetPos - playerPos;
+	dir = Math::Normalize(dir);
+
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity = dir * kBulletSpeed;
+
 	auto newBullet = std::make_unique<playerBullet>();
 	newBullet->Initialize(object3dBase_);
 	newBullet->SetVelocity(velocity);
-	newBullet->SetPosition(transform_.translate);
+	newBullet->SetPosition(playerPos);
 	bullets_.push_back(std::move(newBullet));
+
 	attackCooldown_ = attackInterval_;
 }
 
@@ -197,41 +201,51 @@ void Player::Dodge() {
 		dodgeCooldown_ = dodgeInterval_;
 	}
 }
-
 //レティクル更新
 void Player::ReticleUpdate() {
+	Vector3 forward = {
+		   sinf(transform_.rotate.y),
+		   0.0f,
+		   cosf(transform_.rotate.y)
+	};
+	forward = Math::Normalize(forward);
+
+	//プレイヤ＋前方方向オフセット
+	reticleTransform_.translate = transform_.translate + forward * reticleOffset_.z;
+
+	//スクリーン座標更新
+	UpdateReticleScreenPos();
+
+	reticle_->SetPosition(reticleScreenPos_);
+	reticle_->Update();
+}
+//スクリーン変換更新
+void Player::UpdateReticleScreenPos() {
 	Camera* camera = CameraManager::GetInstance()->GetActiveCamera();
 	if (!camera) return;
 
-	//3Dターゲット位置
-	Vector3 targetWorldPos = transform_.translate;
-	targetWorldPos.z += 5.0f; // プレイヤーの前方5mにターゲット
-
 	const Matrix4x4& viewProj = camera->GetViewProjectionMatrix();
+	Vector3 worldPos = reticleTransform_.translate;
 
+	//ワールドからクリップ座標変換
 	Vector4 clipPos;
-	clipPos.x = targetWorldPos.x * viewProj.m[0][0] + targetWorldPos.y * viewProj.m[1][0] + targetWorldPos.z * viewProj.m[2][0] + viewProj.m[3][0];
-	clipPos.y = targetWorldPos.x * viewProj.m[0][1] + targetWorldPos.y * viewProj.m[1][1] + targetWorldPos.z * viewProj.m[2][1] + viewProj.m[3][1];
-	clipPos.z = targetWorldPos.x * viewProj.m[0][2] + targetWorldPos.y * viewProj.m[1][2] + targetWorldPos.z * viewProj.m[2][2] + viewProj.m[3][2];
-	clipPos.w = targetWorldPos.x * viewProj.m[0][3] + targetWorldPos.y * viewProj.m[1][3] + targetWorldPos.z * viewProj.m[2][3] + viewProj.m[3][3];
+	clipPos.x = worldPos.x * viewProj.m[0][0] + worldPos.y * viewProj.m[1][0] + worldPos.z * viewProj.m[2][0] + viewProj.m[3][0];
+	clipPos.y = worldPos.x * viewProj.m[0][1] + worldPos.y * viewProj.m[1][1] + worldPos.z * viewProj.m[2][1] + viewProj.m[3][1];
+	clipPos.z = worldPos.x * viewProj.m[0][2] + worldPos.y * viewProj.m[1][2] + worldPos.z * viewProj.m[2][2] + viewProj.m[3][2];
+	clipPos.w = worldPos.x * viewProj.m[0][3] + worldPos.y * viewProj.m[1][3] + worldPos.z * viewProj.m[2][3] + viewProj.m[3][3];
 
 	if (clipPos.w != 0.0f) {
 		clipPos.x /= clipPos.w;
 		clipPos.y /= clipPos.w;
-		clipPos.z /= clipPos.w;
 	}
 
+	//NDCからスクリーン座標へ変換
 	const float screenWidth = 1280.0f;
 	const float screenHeight = 720.0f;
-	Vector2 screenPos;
-	screenPos.x = (clipPos.x * 0.5f + 0.5f) * screenWidth;
-	screenPos.y = (-clipPos.y * 0.5f + 0.5f) * screenHeight;
 
-	//スプライト反映
-	reticle_->SetPosition(screenPos);
-	reticle_->Update();
+	reticleScreenPos_.x = (clipPos.x * 0.5f + 0.5f) * screenWidth;
+	reticleScreenPos_.y = (-clipPos.y * 0.5f + 0.5f) * screenHeight;
 }
-
 
 //衝突時コールバック
 void Player::OnCollision() {

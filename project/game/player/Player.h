@@ -37,6 +37,8 @@ public:
 	void Dodge();
 	//レティクル更新
 	void ReticleUpdate();
+	//スクリーン変換更新
+	void UpdateReticleScreenPos();
 	//衝突時コールバック
 	void OnCollision();
 	//HP減少関数
@@ -65,8 +67,6 @@ public:
 	//座標セット
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 	
-
-
 private:
 	Object3dBase* object3dBase_;
 	Camera* camera_;
@@ -78,6 +78,10 @@ private:
 	std::list<std::unique_ptr<playerBullet>>bullets_;
 	//レティクル
 	std::unique_ptr<Sprite>reticle_;
+	//画面上の位置
+	Vector2 reticleScreenPos_{ 640.0f, 360.0f }; 
+	//レティクルのオフセット
+	Vector3 reticleOffset_{ 0.0f, 0.0f, 10.0f };
 	//色
 	Vector4 color_;
 	//回避方向
