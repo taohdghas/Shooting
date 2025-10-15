@@ -16,6 +16,9 @@ public:
 	void Draw()override;
 	//デバック
 	void Debug()override;
+public:
+	//シーン遷移
+	void SceneChange();
 private:
 	//フェード
 	std::unique_ptr<Fade>fade;
