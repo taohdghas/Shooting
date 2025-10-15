@@ -22,4 +22,8 @@ public:
 private:
 	//フェード
 	std::unique_ptr<Fade>fade;
+	//タイトルシーンへの移行フラグ
+	bool isToTitle = false;
+	//ゲームシーンへの移行フラグ
+	bool isToGame = false;
 };

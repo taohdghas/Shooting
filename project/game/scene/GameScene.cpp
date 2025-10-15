@@ -127,7 +127,7 @@ void GameScene::Update() {
 	skybox->Update();
 	//プラットフォーム
 	platform->Update();
-	
+
 	//パーティクル
 	ParticleManager::GetInstance()->Update();
 	for (auto& particle : particleEmitter) {
@@ -135,9 +135,8 @@ void GameScene::Update() {
 	}
 
 	//クリアシーンへ
+	ToGameClear();
 
-		ToGameClear();
-	
 	//プレイヤーが撃破されたらゲームオーバーへ
 	if (player->IsDead()) {
 		ToGameOver();
@@ -214,7 +213,7 @@ void GameScene::ToGameClear() {
 		fade->End();
 	}
 	//フェードアウト開始
-	if (fade->GetState() == Fade::State::None&&Input::GetInstance()->PushKey(DIK_C)) {
+	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_C)) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 	//フェードアウト終了後シーン移行

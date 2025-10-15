@@ -10,6 +10,8 @@ void GameOverScene::Initialize() {
 	fade = std::make_unique<Fade>();
 	fade->Initialize();
 	fade->FadeStart(Fade::State::FadeIn, 0.5f);
+
+	
 }
 //終了
 void GameOverScene::Finalize() {
@@ -46,9 +48,19 @@ void GameOverScene::SceneChange() {
 	//タイトルへのフェードアウト開始
 	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
+		isToTitle = true;
 	}
-	//フェードアウト後シーン移行
-	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
+	//ゲームシーンへのフェードアウト(リトライ)
+	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_R)) {
+		fade->FadeStart(Fade::State::FadeOut, 0.5f);
+		isToGame = true;
+	}
+	//タイトルシーン移行
+	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()&&isToTitle) {
 		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+	//ゲームシーン移行
+	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished() && isToGame) {
+		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 }
