@@ -80,8 +80,11 @@ private:
 	std::unique_ptr<Sprite>reticle_;
 	//画面上の位置
 	Vector2 reticleScreenPos_{ 640.0f, 360.0f }; 
+	Vector2 reticlePos_ = { 640.0f, 360.0f };
 	//レティクルのオフセット
 	Vector3 reticleOffset_{ 0.0f, 0.0f, 10.0f };
+	Vector3 reticleLocalOffset_ = { 0.0f, 0.0f, 5.0f }; // プレイヤー前方距離
+	float reticleMoveSpeed_ = 0.1f; // 矢印キーで動く速さ
 	//色
 	Vector4 color_;
 	//回避方向

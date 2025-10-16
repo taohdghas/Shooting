@@ -158,7 +158,7 @@ void GameScene::Draw() {
 	//フェード
 	fade->Draw();
 	//パーティクル
-	ParticleManager::GetInstance()->Draw();
+	//ParticleManager::GetInstance()->Draw();
 
 }
 

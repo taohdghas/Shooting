@@ -88,6 +88,8 @@ namespace Math {
 	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 	//外積
 	Vector3 Cross(const Vector3& v1, const Vector3& v2);
+	//座標ベクトル変換
+	Vector4 Transform(const Vector4& v, const Matrix4x4& m);
 	//単位行列
 	Matrix4x4 MakeIdentity4x4();
 	//積
