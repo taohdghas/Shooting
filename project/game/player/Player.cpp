@@ -22,10 +22,9 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	transform_.translate = { 0.0f,-1.5f,0.0f };
 	//レティクル
 	reticle_ = std::make_unique<Sprite>();
-	reticle_->Initialize(SpriteBase::GetInstance(), "resources/white.png");
+	reticle_->Initialize(SpriteBase::GetInstance(), "resources/black.png");
 	reticle_->SetSize({ 16,16 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
-	reticleTransform_.translate = transform_.translate + reticleOffset_;
 }
 
 //更新
@@ -154,23 +153,64 @@ void Player::Jump() {
 void Player::Attack() {
 	if (attackCooldown_ > 0.0f) return;
 
-	Vector3 playerPos = transform_.translate;
-	Vector3 targetPos = reticleTransform_.translate;
+	Camera* camera = CameraManager::GetInstance()->GetActiveCamera();
+	if (!camera) return;
 
-	Vector3 dir = targetPos - playerPos;
-	dir = Math::Normalize(dir);
+	const float screenWidth = 1280.0f;
+	const float screenHeight = 720.0f;
 
+	//スクリーンからNDC
+	float ndcX = (2.0f * reticleScreenPos_.x) / screenWidth - 1.0f;
+	float ndcY = 1.0f - (2.0f * reticleScreenPos_.y) / screenHeight;
+
+	//ニアクリップ・ファークリップ
+	Vector4 nearClip = { ndcX, ndcY, 0.0f, 1.0f };
+	Vector4 farClip = { ndcX, ndcY, 1.0f, 1.0f };
+
+	//ワールド座標変換
+	Matrix4x4 invViewProj = Math::Inverse(camera->GetViewProjectionMatrix());
+	Vector4 nearWorld = Math::Transform(nearClip, invViewProj);
+	Vector4 farWorld = Math::Transform(farClip, invViewProj);
+
+	//同次座標を正規化
+	nearWorld.x /= nearWorld.w; nearWorld.y /= nearWorld.w; nearWorld.z /= nearWorld.w; nearWorld.w = 1.0f;
+	farWorld.x /= farWorld.w;  farWorld.y /= farWorld.w;  farWorld.z /= farWorld.w;  farWorld.w = 1.0f;
+
+	//カメラ位置
+	Vector3 cameraPos = camera->GetTranslate();
+
+	//カメラの逆行列からベクトルを取得
+	Matrix4x4 invView = Math::Inverse(camera->GetViewMatrix());
+	Vector3 cameraForward = Vector3(-invView.m[2][0], -invView.m[2][1], -invView.m[2][2]); // 前方向
+	Vector3 cameraRight = Vector3(invView.m[0][0], invView.m[0][1], invView.m[0][2]);  // 右方向
+	Vector3 cameraUp = Vector3(invView.m[1][0], invView.m[1][1], invView.m[1][2]);  // 上方向
+
+	//オフセット距離
+	float offsetForward = -1.0f; //前後
+	float offsetRight = 0.0f; //左右
+	float offsetUp = -0.5f; //上下
+
+	//オフセットを適用
+	Vector3 rayOrigin = cameraPos
+		+ cameraForward * offsetForward
+		+ cameraRight * offsetRight
+		+ cameraUp * offsetUp;
+
+	Vector3 rayDir = Math::Normalize(Vector3(farWorld.x, farWorld.y, farWorld.z) - rayOrigin);
+
+	//弾速度
 	const float kBulletSpeed = 1.0f;
-	Vector3 velocity = dir * kBulletSpeed;
+	Vector3 velocity = rayDir * kBulletSpeed;
 
 	auto newBullet = std::make_unique<playerBullet>();
 	newBullet->Initialize(object3dBase_);
 	newBullet->SetVelocity(velocity);
-	newBullet->SetPosition(playerPos);
+	newBullet->SetPosition(rayOrigin);
 	bullets_.push_back(std::move(newBullet));
 
 	attackCooldown_ = attackInterval_;
 }
+
 
 //回避
 void Player::Dodge() {
@@ -203,50 +243,19 @@ void Player::Dodge() {
 }
 //レティクル更新
 void Player::ReticleUpdate() {
-	Vector3 forward = {
-		   sinf(transform_.rotate.y),
-		   0.0f,
-		   cosf(transform_.rotate.y)
-	};
-	forward = Math::Normalize(forward);
+	const float moveSpeed = 10.0f;
+	if (Input::GetInstance()->PushKey(DIK_LEFT))  reticleScreenPos_.x -= moveSpeed;
+	if (Input::GetInstance()->PushKey(DIK_RIGHT)) reticleScreenPos_.x += moveSpeed;
+	if (Input::GetInstance()->PushKey(DIK_UP))    reticleScreenPos_.y -= moveSpeed;
+	if (Input::GetInstance()->PushKey(DIK_DOWN))  reticleScreenPos_.y += moveSpeed;
 
-	//プレイヤ＋前方方向オフセット
-	reticleTransform_.translate = transform_.translate + forward * reticleOffset_.z;
-
-	//スクリーン座標更新
-	UpdateReticleScreenPos();
+	//画面端制限
+	reticleScreenPos_.x = std::clamp(reticleScreenPos_.x, 0.0f, 1280.0f);
+	reticleScreenPos_.y = std::clamp(reticleScreenPos_.y, 0.0f, 720.0f);
 
 	reticle_->SetPosition(reticleScreenPos_);
 	reticle_->Update();
 }
-//スクリーン変換更新
-void Player::UpdateReticleScreenPos() {
-	Camera* camera = CameraManager::GetInstance()->GetActiveCamera();
-	if (!camera) return;
-
-	const Matrix4x4& viewProj = camera->GetViewProjectionMatrix();
-	Vector3 worldPos = reticleTransform_.translate;
-
-	//ワールドからクリップ座標変換
-	Vector4 clipPos;
-	clipPos.x = worldPos.x * viewProj.m[0][0] + worldPos.y * viewProj.m[1][0] + worldPos.z * viewProj.m[2][0] + viewProj.m[3][0];
-	clipPos.y = worldPos.x * viewProj.m[0][1] + worldPos.y * viewProj.m[1][1] + worldPos.z * viewProj.m[2][1] + viewProj.m[3][1];
-	clipPos.z = worldPos.x * viewProj.m[0][2] + worldPos.y * viewProj.m[1][2] + worldPos.z * viewProj.m[2][2] + viewProj.m[3][2];
-	clipPos.w = worldPos.x * viewProj.m[0][3] + worldPos.y * viewProj.m[1][3] + worldPos.z * viewProj.m[2][3] + viewProj.m[3][3];
-
-	if (clipPos.w != 0.0f) {
-		clipPos.x /= clipPos.w;
-		clipPos.y /= clipPos.w;
-	}
-
-	//NDCからスクリーン座標へ変換
-	const float screenWidth = 1280.0f;
-	const float screenHeight = 720.0f;
-
-	reticleScreenPos_.x = (clipPos.x * 0.5f + 0.5f) * screenWidth;
-	reticleScreenPos_.y = (-clipPos.y * 0.5f + 0.5f) * screenHeight;
-}
-
 //衝突時コールバック
 void Player::OnCollision() {
 	isDead_ = true;
