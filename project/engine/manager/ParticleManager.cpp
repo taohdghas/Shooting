@@ -141,6 +141,10 @@ void ParticleManager::Draw() {
 	directxBase_->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//パーティクルについて処理
 	for (auto& [name, ParticleGroup] : particleGroups) {
+		//インスタンス数が 0 の場合はスキップ
+		if (ParticleGroup.kNumInstance == 0) {
+			continue;
+		}
 		//頂点バッファ切り替え
 		directxBase_->Getcommandlist()->IASetVertexBuffers(0, 1, &ParticleGroup.vertexBufferView);
 
