@@ -164,14 +164,13 @@ void GameScene::Draw() {
 	skybox->Draw();
 	//プラットフォーム
 	platform->Draw();
+	//パーティクル
+	ParticleManager::GetInstance()->Draw();
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
 	//フェード
 	fade->Draw();
-
-	//パーティクル
-	ParticleManager::GetInstance()->Draw();
 
 }
 
