@@ -22,8 +22,8 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	transform_.translate = { 0.0f,-1.5f,0.0f };
 	//レティクル
 	reticle_ = std::make_unique<Sprite>();
-	reticle_->Initialize(SpriteBase::GetInstance(), "resources/black.png");
-	reticle_->SetSize({ 16,16 });
+	reticle_->Initialize(SpriteBase::GetInstance(), "resources/re.png");
+	reticle_->SetSize({ 32,32 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
 
