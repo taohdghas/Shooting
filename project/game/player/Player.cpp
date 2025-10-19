@@ -172,7 +172,7 @@ void Player::Attack() {
 	Vector4 nearWorld = Math::Transform(nearClip, invViewProj);
 	Vector4 farWorld = Math::Transform(farClip, invViewProj);
 
-	//同次座標を正規化
+	//同次座標正規化
 	nearWorld.x /= nearWorld.w; nearWorld.y /= nearWorld.w; nearWorld.z /= nearWorld.w; nearWorld.w = 1.0f;
 	farWorld.x /= farWorld.w;  farWorld.y /= farWorld.w;  farWorld.z /= farWorld.w;  farWorld.w = 1.0f;
 
