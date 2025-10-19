@@ -26,19 +26,19 @@ public:
 	//描画
 	void Draw();
 	//レティクルの描画
-	//void ReticleDraw();
+	void ReticleDraw();
 	//移動
 	void Move();
 	//ジャンプ
 	void Jump();
 	//攻撃
 	void Attack();
-	//三方向攻撃
-	void ThreeAttack();
 	//回避
 	void Dodge();
 	//レティクル更新
 	void ReticleUpdate();
+	//スクリーン変換更新
+	void UpdateReticleScreenPos();
 	//衝突時コールバック
 	void OnCollision();
 	//HP減少関数
@@ -67,8 +67,6 @@ public:
 	//座標セット
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 	
-
-
 private:
 	Object3dBase* object3dBase_;
 	Camera* camera_;
@@ -80,6 +78,11 @@ private:
 	std::list<std::unique_ptr<playerBullet>>bullets_;
 	//レティクル
 	std::unique_ptr<Sprite>reticle_;
+	//画面上の位置
+	Vector2 reticleScreenPos_{ 640.0f, 360.0f }; 
+	Vector2 reticlePos_ = { 640.0f, 360.0f };
+	//レティクルのオフセット
+	Vector3 reticleOffset_{ 0.0f, 0.0f, 10.0f };
 	//色
 	Vector4 color_;
 	//回避方向
@@ -100,6 +103,7 @@ private:
 	float radius_ = 1.0f;
 	//ジャンプ速度
 	float jumpVelocity_ = 0.0f;
+	
 	//HP
 	int hp_ = 100;
 	//ジャンプ回数
@@ -107,7 +111,7 @@ private:
 	//最大ジャンプ可能回数
 	const int maxJumpCount_ = 2;
 	//弾の速度
-	const float kBulletSpeed = 1.0f;
+	const float bulletSpeed = 1.0f;
 	//Δtを定義
 	const float DeltaTime = 1.0f / 60.0f;
 	//回避速度

@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "MyMath.h"
 #include "ImGuiManager.h"
-#include "WindowsAPI.h"
+#include "CameraManager.h"
 #include <algorithm>
 
 Player::Player() {}
@@ -22,7 +22,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	transform_.translate = { 0.0f,-1.5f,0.0f };
 	//レティクル
 	reticle_ = std::make_unique<Sprite>();
-	reticle_->Initialize(SpriteBase::GetInstance(), "resources/white.png");
+	reticle_->Initialize(SpriteBase::GetInstance(), "resources/black.png");
 	reticle_->SetSize({ 16,16 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
@@ -66,10 +66,6 @@ void Player::Update() {
 	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Attack();
 	}
-	//3方向攻撃
-	if (Input::GetInstance()->PushKey(DIK_R)) {
-		ThreeAttack();
-	}
 	//回避
 	Dodge();
 	//各Transformをobjectに反映
@@ -78,7 +74,7 @@ void Player::Update() {
 	object_->SetTranslate(transform_.translate);
 
 	//レティクル更新
-	//ReticleUpdate();
+	ReticleUpdate();
 
 	object_->Update();
 
@@ -97,12 +93,14 @@ void Player::Draw() {
 	}
 	//プレイヤーの描画
 	object_->Draw();
-	//レティクルの描画
-	//reticle_->Draw();
 	//プレイヤー弾の描画
 	for (const auto& bullet : bullets_) {
 		bullet->Draw();
 	}
+}
+//レティクル描画
+void Player::ReticleDraw() {
+	reticle_->Draw();
 }
 
 //移動
@@ -153,50 +151,66 @@ void Player::Jump() {
 
 //攻撃
 void Player::Attack() {
-	//クールタイムが0より大きければスキップ
-	if (attackCooldown_ > 0) {
-		return;
-	}
-	//弾の速度
-	const float kBulletSpeed = 1.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
+	if (attackCooldown_ > 0.0f) return;
 
-	//弾を生成
+	Camera* camera = CameraManager::GetInstance()->GetActiveCamera();
+	if (!camera) return;
+
+	const float screenWidth = 1280.0f;
+	const float screenHeight = 720.0f;
+
+	//スクリーンからNDC
+	float ndcX = (2.0f * reticleScreenPos_.x) / screenWidth - 1.0f;
+	float ndcY = 1.0f - (2.0f * reticleScreenPos_.y) / screenHeight;
+
+	//ニアクリップ・ファークリップ
+	Vector4 nearClip = { ndcX, ndcY, 0.0f, 1.0f };
+	Vector4 farClip = { ndcX, ndcY, 1.0f, 1.0f };
+
+	//ワールド座標変換
+	Matrix4x4 invViewProj = Math::Inverse(camera->GetViewProjectionMatrix());
+	Vector4 nearWorld = Math::Transform(nearClip, invViewProj);
+	Vector4 farWorld = Math::Transform(farClip, invViewProj);
+
+	//同次座標正規化
+	nearWorld.x /= nearWorld.w; nearWorld.y /= nearWorld.w; nearWorld.z /= nearWorld.w; nearWorld.w = 1.0f;
+	farWorld.x /= farWorld.w;  farWorld.y /= farWorld.w;  farWorld.z /= farWorld.w;  farWorld.w = 1.0f;
+
+	//カメラ位置
+	Vector3 cameraPos = camera->GetTranslate();
+
+	//カメラの逆行列からベクトルを取得
+	Matrix4x4 invView = Math::Inverse(camera->GetViewMatrix());
+	Vector3 cameraForward = Vector3(-invView.m[2][0], -invView.m[2][1], -invView.m[2][2]); // 前方向
+	Vector3 cameraRight = Vector3(invView.m[0][0], invView.m[0][1], invView.m[0][2]);  // 右方向
+	Vector3 cameraUp = Vector3(invView.m[1][0], invView.m[1][1], invView.m[1][2]);  // 上方向
+
+	//オフセット距離
+	float offsetForward = -1.0f; //前後
+	float offsetRight = 0.0f; //左右
+	float offsetUp = -0.5f; //上下
+
+	//オフセットを適用
+	Vector3 rayOrigin = cameraPos
+		+ cameraForward * offsetForward
+		+ cameraRight * offsetRight
+		+ cameraUp * offsetUp;
+
+	Vector3 rayDir = Math::Normalize(Vector3(farWorld.x, farWorld.y, farWorld.z) - rayOrigin);
+
+	//弾速度
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity = rayDir * kBulletSpeed;
+
 	auto newBullet = std::make_unique<playerBullet>();
 	newBullet->Initialize(object3dBase_);
 	newBullet->SetVelocity(velocity);
-	newBullet->SetPosition(transform_.translate);
+	newBullet->SetPosition(rayOrigin);
 	bullets_.push_back(std::move(newBullet));
-	attackCooldown_ = attackInterval_;
-}
-
-//三方向攻撃
-void Player::ThreeAttack() {
-	//クールタイムが0より大きければスキップ
-	if (attackCooldown_ > 0) {
-		return;
-	}
-
-	//発射方向
-	std::vector<Vector3> directions = {
-		Vector3(-1, 0, 1),
-		Vector3(0, 0, 1),
-		Vector3(1, 0, 1)
-	};
-
-	for (const auto& dir : directions) {
-		Vector3 velocity = Math::Normalize(dir);
-		velocity = Math::Multiply(velocity, kBulletSpeed);
-
-		auto newBullet = std::make_unique<playerBullet>();
-		newBullet->Initialize(object3dBase_);
-		newBullet->SetVelocity(velocity);
-		newBullet->SetPosition(transform_.translate);
-		bullets_.push_back(std::move(newBullet));
-	}
 
 	attackCooldown_ = attackInterval_;
 }
+
 
 //回避
 void Player::Dodge() {
@@ -227,12 +241,21 @@ void Player::Dodge() {
 		dodgeCooldown_ = dodgeInterval_;
 	}
 }
-
 //レティクル更新
 void Player::ReticleUpdate() {
+	const float moveSpeed = 10.0f;
+	if (Input::GetInstance()->PushKey(DIK_LEFT))  reticleScreenPos_.x -= moveSpeed;
+	if (Input::GetInstance()->PushKey(DIK_RIGHT)) reticleScreenPos_.x += moveSpeed;
+	if (Input::GetInstance()->PushKey(DIK_UP))    reticleScreenPos_.y -= moveSpeed;
+	if (Input::GetInstance()->PushKey(DIK_DOWN))  reticleScreenPos_.y += moveSpeed;
 
+	//画面端制限
+	reticleScreenPos_.x = std::clamp(reticleScreenPos_.x, 0.0f, 1280.0f);
+	reticleScreenPos_.y = std::clamp(reticleScreenPos_.y, 0.0f, 720.0f);
+
+	reticle_->SetPosition(reticleScreenPos_);
+	reticle_->Update();
 }
-
 //衝突時コールバック
 void Player::OnCollision() {
 	isDead_ = true;
