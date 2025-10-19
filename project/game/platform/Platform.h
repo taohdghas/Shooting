@@ -15,6 +15,8 @@ public:
 	void Draw();
 	//デバック
 	void Debug();
+public:
+	void SetTransform(const Vector3& translate) { transform_.translate = translate; }
 private:
 	Object3dBase* object3dBase_;
 	Transform transform_;

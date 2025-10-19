@@ -12,6 +12,7 @@
 #include "CollisionManager.h"
 #include "JsonManager.h"
 #include "Fade.h"
+#include "RailCamera.h"
 
 #include <vector>
 
@@ -48,6 +49,8 @@ private:
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
 	//衝突マネージャー
 	std::unique_ptr<CollisionManager>collisionManager;
+	//レールカメラ
+	std::unique_ptr<RailCamera>railCamera;
 	//カメラ
 	std::unique_ptr<Camera>camera;
 	//JsonManager
