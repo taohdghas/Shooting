@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "CameraManager.h"
 #include "ImGuiManager.h"
-
+#include "MyMath.h"
 
 //初期化
 void GameScene::Initialize() {
@@ -34,7 +34,8 @@ void GameScene::Initialize() {
 	railCamera->SetSpeed(0.1f);
 	//カメラ
 	camera = std::make_unique<Camera>();
-	camera->SetTranslate({ 0,0,-10 });
+	camera->SetRotate({ 0.13f,3.1f,0.0f });
+	camera->SetTranslate({ 0.0f,1.0f,14.6f });
 	CameraManager::GetInstance()->AddCamera("Main", camera.get());
 	//CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
@@ -99,6 +100,43 @@ void GameScene::Finalize() {
 void GameScene::Update() {
 	//カメラ
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	
+	if (isStartAnimation) {
+		//回転時間更新
+		cameraRotateTimer += 1.0f / 60.0f;
+
+		//回転スピード
+		float rotationSpeed = 0.5f;
+
+		//回転角度
+		float angle = rotationSpeed * cameraRotateTimer;
+
+		//プレイヤーを中心にカメラ回転
+		Vector3 playerPos = player->GetTranslate();
+		float radius = 20.0f;  //プレイヤーとの距離
+		float height = 2.0f;   //カメラ高さ
+
+		Vector3 camPos;
+		camPos.x = playerPos.x + std::sin(angle) * radius;
+		camPos.y = playerPos.y + height;
+		camPos.z = playerPos.z + std::cos(angle) * radius;
+
+		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+		cam->SetTranslate(camPos);
+
+		//プレイヤーを常に向いて回転
+		Vector3 dir = playerPos - camPos;
+		float yaw = std::atan2(dir.x, dir.z);
+		float pitch = -std::atan2(dir.y, std::sqrt(dir.x * dir.x + dir.z * dir.z));
+		cam->SetRotate({ pitch, yaw, 0.0f });
+		//1回転したらアニメーション終了
+		float oneRotation = 2.0f * static_cast<float>(3.14);
+		if (angle >= oneRotation) {
+			isStartAnimation = false;
+			cameraRotateTimer = 0.0f; 
+		}
+	}
+	
 	//レールカメラ
 	railCamera->Update();
 

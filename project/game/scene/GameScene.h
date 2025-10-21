@@ -59,5 +59,9 @@ private:
 	std::unique_ptr<Fade>fade;
 	//レベルデータ
 	LevelData* levelData;
+	//カメラ回転アニメーションフラグ
+	bool isStartAnimation = true;
+	//回転タイマー
+	float cameraRotateTimer = 0.0f;
 };
 

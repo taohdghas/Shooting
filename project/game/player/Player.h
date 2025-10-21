@@ -52,6 +52,10 @@ public:
 public:
 	///Getter/// 
 
+	//スケール取得
+	const Vector3& GetScale()const { return transform_.scale; }
+	//回転取得
+	const Vector3& GetRotate()const { return transform_.rotate; }
 	//位置取得
 	const Vector3& GetTranslate()const { return transform_.translate; }
 	//半径取得
