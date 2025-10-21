@@ -34,12 +34,16 @@ void GameScene::Initialize() {
 	railCamera->SetSpeed(0.1f);
 	//カメラ
 	camera = std::make_unique<Camera>();
-	camera->SetRotate({ 0.13f,3.1f,0.0f });
-	camera->SetTranslate({ 0.0f,1.0f,14.6f });
+	camera->SetRotate({ 0.0f,0.0f,0.0f });
+	camera->SetTranslate({ 0,0,-11 });
 	CameraManager::GetInstance()->AddCamera("Main", camera.get());
 	//CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+
+	//初期位置・回転を保存
+	cameraStartPos = camera->GetTranslate();
+	cameraStartRot = camera->GetRotate();
 
 	//skybox
 	skybox = std::make_unique<Skybox>();
@@ -100,47 +104,15 @@ void GameScene::Finalize() {
 void GameScene::Update() {
 	//カメラ
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
-	
-	if (isStartAnimation) {
-		//回転時間更新
-		cameraRotateTimer += 1.0f / 60.0f;
 
-		//回転スピード
-		float rotationSpeed = 0.5f;
+	//スタート演出
+	StartAnimation();
 
-		//回転角度
-		float angle = rotationSpeed * cameraRotateTimer;
-
-		//プレイヤーを中心にカメラ回転
-		Vector3 playerPos = player->GetTranslate();
-		float radius = 20.0f;  //プレイヤーとの距離
-		float height = 2.0f;   //カメラ高さ
-
-		Vector3 camPos;
-		camPos.x = playerPos.x + std::sin(angle) * radius;
-		camPos.y = playerPos.y + height;
-		camPos.z = playerPos.z + std::cos(angle) * radius;
-
-		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
-		cam->SetTranslate(camPos);
-
-		//プレイヤーを常に向いて回転
-		Vector3 dir = playerPos - camPos;
-		float yaw = std::atan2(dir.x, dir.z);
-		float pitch = -std::atan2(dir.y, std::sqrt(dir.x * dir.x + dir.z * dir.z));
-		cam->SetRotate({ pitch, yaw, 0.0f });
-		//1回転したらアニメーション終了
-		float oneRotation = 2.0f * static_cast<float>(3.14);
-		if (angle >= oneRotation) {
-			isStartAnimation = false;
-			cameraRotateTimer = 0.0f; 
-		}
-	}
-	
 	//レールカメラ
 	railCamera->Update();
 
 	//衝突チェック
+	/*
 	for (auto& enemy : enemies) {
 		collisionManager->CheckPECollisions(player.get(), enemy.get());
 
@@ -155,6 +127,8 @@ void GameScene::Update() {
 			enemy->SetisDeathParticle(false);
 		}
 	}
+	*/
+
 	//プレイヤー
 	player->Update();
 	//敵
@@ -165,7 +139,7 @@ void GameScene::Update() {
 	skybox->Update();
 	//プラットフォーム
 	platform->Update();
-	
+
 	//パーティクル
 	ParticleManager::GetInstance()->Update();
 	for (auto& particle : particleEmitter) {
@@ -178,10 +152,11 @@ void GameScene::Update() {
 	}
 
 	//クリアシーンへ
+	/*
 	if (Input::GetInstance()->PushKey(DIK_C)) {
 		SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
-
+	*/
 	fade->Update();
 
 	//デバック
@@ -195,8 +170,10 @@ void GameScene::Draw() {
 	//プレイヤー
 	player->Draw();
 	//敵
-	for (auto& enemy : enemies) {
-		enemy->Draw();
+	if (!isStartAnimation) {
+		for (auto& enemy : enemies) {
+			enemy->Draw();
+		}
 	}
 	//天球
 	skybox->Draw();
@@ -206,7 +183,9 @@ void GameScene::Draw() {
 	ParticleManager::GetInstance()->Draw();
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
-	player->ReticleDraw();
+	if (!isStartAnimation) {
+		player->ReticleDraw();
+	}
 	//フェード
 	fade->Draw();
 
@@ -217,11 +196,11 @@ void GameScene::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Begin("SetUp");
 	//カメラ
-	if (ImGui::TreeNode("Camera")) {
+	if (ImGui::TreeNodeEx("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
 		Vector3 cameraPos = camera->GetTranslate();
 		Vector3 cameraRot = camera->GetRotate();
-		ImGui::DragFloat3("CameraTranslate", &cameraPos.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRot.x, 0.01f);
+		ImGui::DragFloat3("CameraTranslate", &cameraPos.x, 0.01f);
 		camera->SetTranslate({ cameraPos.x,cameraPos.y,cameraPos.z });
 		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
 		ImGui::TreePop();
@@ -244,4 +223,66 @@ void GameScene::Debug() {
 	}
 	ImGui::End();
 #endif
+}
+//スタート演出
+void GameScene::StartAnimation() {
+	
+	if (!isStartAnimation && Input::GetInstance()->PushKey(DIK_H)) {
+		SceneManager::GetInstance()->ChangeScene("GAME");
+	}
+
+	// Update内
+	if (isStartAnimation) {
+		cameraRotateTimer += 1.0f / 60.0f;
+		float t = std::min(cameraRotateTimer / totalRotationTime, 1.0f);
+
+		//イージング適用
+		float easedT = static_cast<float>(easeInOutQuad(t));
+
+		//イージングを反映後角度
+		float angle = easedT * oneRotation * rotationSpeed;
+
+		//初期カメラ位置
+		Vector3 camPos;
+		camPos.x = cameraStartPos.x * std::cos(angle) - cameraStartPos.z * std::sin(angle);
+		camPos.y = cameraStartPos.y; // 高さはそのまま
+		camPos.z = cameraStartPos.x * std::sin(angle) + cameraStartPos.z * std::cos(angle);
+
+		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+		cam->SetTranslate(camPos);
+
+		//プレイヤー方向を向く
+		Vector3 dir = player->GetTranslate() - camPos;
+		float yaw = std::atan2(dir.x, dir.z);
+		float pitch = -std::atan2(dir.y, std::sqrt(dir.x * dir.x + dir.z * dir.z));
+
+		cam->SetRotate({ cameraStartRot.x + pitch, cameraStartRot.y + yaw, cameraStartRot.z });
+		if (t >= 1.0f) {
+			isStartAnimation = false;
+			isReturning = true;
+			cameraRotateTimer = 0.0f;
+		}
+	} else if (isReturning) {
+		//回転終了後角度を初期値に戻す
+		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+		Vector3 currentRot = cam->GetRotate();
+		Vector3 targetRot = { 0.0f, 0.0f, 0.0f };
+
+		//イージングタイマーを更新
+		cameraRotateTimer += 1.0f / 60.0f;
+		float t = std::min(cameraRotateTimer / 2.0f, 1.0f);
+		float easedT = static_cast<float>(easeInOutQuad(t));
+
+		Vector3 newRot;
+		newRot.x = currentRot.x + (targetRot.x - currentRot.x) * easedT * 0.1f;
+		newRot.y = currentRot.y + (targetRot.y - currentRot.y) * easedT * 0.1f;
+		newRot.z = currentRot.z + (targetRot.z - currentRot.z) * easedT * 0.1f;
+
+		cam->SetRotate(newRot);
+		//収束終了
+		if (t >= 1.0f) {
+			isReturning = false;
+			cameraRotateTimer = 0.0f;
+		}
+	}
 }

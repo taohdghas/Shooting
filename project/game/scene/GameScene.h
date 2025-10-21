@@ -35,7 +35,9 @@ public:
 	void Draw()override;
 	//デバック
 	void Debug()override;
-
+public:
+	//スタート演出
+	void StartAnimation();
 private:
 	//プレイヤー
 	std::unique_ptr<Player>player;
@@ -59,9 +61,21 @@ private:
 	std::unique_ptr<Fade>fade;
 	//レベルデータ
 	LevelData* levelData;
+	//1回転にかかる時間
+	const float totalRotationTime = 5.0f;
+	//角速度
+	const float rotationSpeed = 1.0f;    
+	//収束に書ける時間
+	const float oneRotation = 2.0f * 3.14159f;
 	//カメラ回転アニメーションフラグ
 	bool isStartAnimation = true;
+	//カメラ収束フラグ
+	bool isReturning = false;
 	//回転タイマー
 	float cameraRotateTimer = 0.0f;
+	//回転開始時のカメラ位置
+	Vector3 cameraStartPos;
+	//回転開始時のカメラ回転
+	Vector3 cameraStartRot;
 };
 

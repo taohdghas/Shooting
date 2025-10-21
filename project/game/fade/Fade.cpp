@@ -1,10 +1,8 @@
 #include "Fade.h"
 #include "SpriteBase.h"
 #include <algorithm>
+#include "MyMath.h"
 
-double easeOutQuad(double x) {
-    return 1.0 - (1.0 - x) * (1.0 - x);
-}
 //初期化
 void Fade::Initialize() {
     sprite_ = std::make_unique<Sprite>();

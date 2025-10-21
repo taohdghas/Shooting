@@ -2,6 +2,15 @@
 #include "MyMath.h"
 #include <cassert>
 
+double easeOutQuad(double x) {
+	return 1.0 - (1.0 - x) * (1.0 - x);
+}
+double easeInOutQuad(double x) {
+	if (x < 0.5)
+		return 2 * x * x;
+	else
+		return 1 - pow(-2 * x + 2, 2) / 2;
+}
 namespace Math {
 	//長さ
 	float Math::Length(const Vector3& v) {
