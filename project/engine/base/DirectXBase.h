@@ -21,64 +21,164 @@ enum class RenderTextureState {
 class DirectXBase
 {
 public:
-	//シングルトンインスタンス
+	/// <summary>
+	/// シングルトンインスタンスを取得する。
+	/// 必要に応じて内部で単一インスタンスを生成して返す想定。
+	/// </summary>
 	static DirectXBase* GetInstance();
-	//初期化
+	/// <summary>
+	/// 初期化を行う。
+	/// WindowsAPI の情報を受け取り、DirectX デバイスやスワップチェイン等の初期化を行う。
+	/// </summary>
+	/// <param name="windowsAPI">ウィンドウ関連情報を提供する WindowsAPI のポインタ。</param>
 	void Initialize(WindowsAPI* windowsAPI);
-	//終了
+	/// <summary>
+	/// 終了処理を行う。
+	/// 確保したリソースやデバイス、デスクリプタヒープなどを解放する。
+	/// </summary>
 	void Finalize();
-	//描画前処理
+	/// <summary>
+	/// 描画開始前の共通処理を行う。
+	/// - コマンドリストの準備、レンダーターゲットの遷移などを行う。
+	/// </summary>
 	void PreDraw();
-	//描画後処理
+	/// <summary>
+	/// 描画終了後の共通処理を行う。
+	/// - コマンドリストのクローズ、キューへの送信、フレーム同期などを行う。
+	/// </summary>
 	void PostDraw();
-	//RenderTexture描画前処理
+	/// <summary>
+	/// レンダーテクスチャへ描画する際の前処理を行う。
+	/// - レンダーターゲットの切り替えやクリアなどを行う。
+	/// </summary>
 	void PreDrawRenderTexture();
-	//swapchainに描画
+	/// <summary>
+	/// レンダーテクスチャの内容をスワップチェインに描画する処理を行う。
+	/// - フルスクリーン合成やシェーダリソースからの描画を想定。
+	/// </summary>
 	void DrawRenderTextureToScreen();
-	//RenderTextureをSRV用に切り替え
+	/// <summary>
+	/// レンダーテクスチャのリソースを SRV（ピクセルシェーダで参照可能）へ遷移する。
+	/// </summary>
 	void TransitionRenderTextureToSRV();
-	//テクスチャデータの転送
+	/// <summary>
+	/// テクスチャデータを GPU に転送するユーティリティ。
+	/// - 提供された ScratchImage のミップデータを指定テクスチャリソースへアップロードする。
+	/// </summary>
+	/// <param name="texture">アップロード先のテクスチャリソース（ComPtr）。</param>
+	/// <param name="mipImages">アップロードするイメージデータ。</param>
+	/// <returns>アップロード済みのテクスチャリソース（ComPtr）。</returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
-	//デスクリプタヒープを生成
+	/// <summary>
+	/// デスクリプタヒープを生成する。
+	/// </summary>
+	/// <param name="heapType">ヒープの種類（SRV/RTV/DSV/etc）。</param>
+	/// <param name="numDescriptors">要素数。</param>
+	/// <param name="shaderVisivle">シェーダから見えるヒープにするか。</param>
+	/// <returns>生成したデスクリプタヒープ（ComPtr）。</returns>
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisivle);
+	/// <summary>
+	/// 深度ステンシル用テクスチャリソースを生成する。
+	/// </summary>
+	/// <param name="device">使用する D3D12Device。</param>
+	/// <param name="width">幅。</param>
+	/// <param name="height">高さ。</param>
+	/// <returns>生成した深度ステンシルリソース（ComPtr）。</returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
-	//シェーダーのコンパイル
+	/// <summary>
+	/// シェーダーファイルをコンパイルする。
+	/// </summary>
+	/// <param name="filePath">コンパイルするシェーダファイルのパス（ワイド文字列）。</param>
+	/// <param name="profile">ターゲットプロファイル（例: L&quot;ps_6_0&quot;）。</param>
+	/// <returns>コンパイル済みバイナリを保持する IDxcBlob（ComPtr）。</returns>
 	Microsoft::WRL::ComPtr<IDxcBlob>CompileShader(const std::wstring& filePath, const wchar_t* profile);
-	//バッファリソースの生成
+	/// <summary>
+	/// 汎用バッファリソースを生成する。
+	/// </summary>
+	/// <param name="sizeInBytes">バッファサイズ（バイト）。</param>
+	/// <returns>生成したバッファリソース（ComPtr）。</returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateBufferResource(size_t sizeInBytes);
-	//テクスチャリソースの生成
+	/// <summary>
+	/// テクスチャリソースを生成する。
+	/// </summary>
+	/// <param name="metadata">テクスチャのメタデータ（DirectXTex の TexMetadata）。</param>
+	/// <returns>生成したテクスチャリソース（ComPtr）。</returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateTextureResource( const DirectX::TexMetadata& metadata);
-	//レンダーテクスチャの生成
+	/// <summary>
+	/// レンダーテクスチャ用のリソースを生成する。
+	/// </summary>
+	/// <param name="device">使用する D3D12Device。</param>
+	/// <param name="width">幅。</param>
+	/// <param name="height">高さ。</param>
+	/// <param name="format">ピクセルフォーマット。</param>
+	/// <param name="clearColor">クリアカラー（必要に応じて格納）。</param>
+	/// <returns>生成したレンダーテクスチャリソース（ComPtr）。</returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device,
 		uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
-	//テクスチャファイル読み込み
+	/// <summary>
+	/// テクスチャファイルを読み込んで ScratchImage として返すユーティリティ。
+	/// </summary>
+	/// <param name="filePath">読み込むテクスチャファイルのパス。</param>
+	/// <returns>読み込んだイメージデータを格納した DirectX::ScratchImage。</returns>
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
 
 public:
-	//デバイスの取得
+	/// <summary>
+	/// デバイスを取得する。
+	/// </summary>
+	/// <returns>ID3D12Device の ComPtr。</returns>
 	Microsoft::WRL::ComPtr<ID3D12Device>Getdevice() { return device; }
-	//コマンドリストの取得
+	/// <summary>
+	/// コマンドリストを取得する。
+	/// </summary>
+	/// <returns>ID3D12GraphicsCommandList の ComPtr。</returns>
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>Getcommandlist(){ return commandList; }
-	//リソース取得
+	/// <summary>
+	/// レンダーテクスチャのリソースポインタを取得する。
+	/// </summary>
+	/// <returns>レンダーテクスチャの生ポインタ（nullptr 可）。</returns>
 	ID3D12Resource* GetRenderTextureResource()const { return renderTextureResource.Get(); }
-	//スワップチェーンリソースの数を取得
+	/// <summary>
+	/// スワップチェインのバッファ数を取得する。
+	/// </summary>
+	/// <returns>スワップチェインのバッファ数。</returns>
 	size_t GetSwapChainResourcesNum()const { return swapChainDesc.BufferCount; }
-	//CPUデスクリプタハンドル取得関数
+	/// <summary>
+	/// 指定デスクリプタヒープの CPU デスクリプタハンドルを取得する。
+	/// </summary>
+	/// <param name="descriptorHeap">対象のデスクリプタヒープ。</param>
+	/// <param name="descriptorSize">デスクリプタのサイズ（デバイスから取得する値）。</param>
+	/// <param name="index">インデックス。</param>
+	/// <returns>指定要素の CPU デスクリプタハンドル。</returns>
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
 		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-	//GPUデスクリプタハンドル取得関数
+	/// <summary>
+	/// 指定デスクリプタヒープの GPU デスクリプタハンドルを取得する。
+	/// </summary>
+	/// <param name="descriptorHeap">対象のデスクリプタヒープ。</param>
+	/// <param name="descriptorSize">デスクリプタのサイズ（デバイスから取得する値）。</param>
+	/// <param name="index">インデックス。</param>
+	/// <returns>指定要素の GPU デスクリプタハンドル。</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>
 		& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-	//DSV　CPUデスクリプタハンドル取得関数
+	/// <summary>
+	/// DSV 用の CPU デスクリプタハンドルを取得する。
+	/// </summary>
+	/// <param name="index">インデックス。</param>
+	/// <returns>DSV の CPU デスクリプタハンドル。</returns>
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
-	//DSV　GPUデスクリプタハンドル取得関数
+	/// <summary>
+	/// DSV 用の GPU デスクリプタハンドルを取得する。
+	/// </summary>
+	/// <param name="index">インデックス。</param>
+	/// <returns>DSV の GPU デスクリプタハンドル。</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
 private:
-	//コンストラクタ
+	/// <summary>コンストラクタ（プライベート：シングルトン）。</summary>
 	DirectXBase() = default;
-	//デストラクタ
+	/// <summary>デストラクタ（プライベート）。</summary>
 	~DirectXBase() = default;
 	//デバイスの初期化
 	void DeviceInitialize();
