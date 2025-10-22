@@ -30,7 +30,6 @@
     <ClCompile Include="game\player\playerBullet.cpp" />
     <ClCompile Include="engine\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\manager\SceneManager.cpp" />
-    <ClCompile Include="game\skydome\Skydome.cpp" />
     <ClCompile Include="game\scene\TitleScene.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -87,7 +86,6 @@
     <ClInclude Include="game\player\playerBullet.h" />
     <ClInclude Include="engine\scene\SceneFactory.h" />
     <ClInclude Include="engine\manager\SceneManager.h" />
-    <ClInclude Include="game\skydome\Skydome.h" />
     <ClInclude Include="engine\base\Pso.h" />
     <ClInclude Include="game\skybox\Skybox.h" />
     <ClInclude Include="engine\manager\JsonManager.h" />

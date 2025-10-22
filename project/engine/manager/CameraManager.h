@@ -8,23 +8,50 @@
 class CameraManager
 {
 public:
-	//シングルトンインスタンス
+	/// <summary>
+	/// シングルトンインスタンスを取得する。
+	/// - 初回呼び出し時に内部でインスタンスを生成して返します。
+	/// </summary>
+	/// <returns>CameraManager の単一インスタンスへのポインタ。</returns>
 	static CameraManager* GetInstance();
-	//初期化
+	/// <summary>
+	/// 初期化を行う。
+	/// - 内部のカメラ一覧をクリアし、アクティブカメラをリセットします。
+	/// </summary>
 	void Initialize();
-	//終了
+	/// <summary>
+	/// 終了処理を行う。
+	/// - 内部のカメラ一覧をクリアし、シングルトンインスタンスを破棄します。
+	/// </summary>
 	void Finalize();
-	//カメラ追加
+	/// <summary>
+	/// カメラを追加する。
+	/// - name が未登録かつ camera が nullptr でない場合に登録します。
+	/// - まだアクティブカメラが設定されていなければ追加したカメラをアクティブにします。
+	/// </summary>
+	/// <param name="name">カメラ名（キー）。</param>
+	/// <param name="camera">追加する Camera のポインタ。</param>
 	void AddCamera(const std::string& name,Camera*camera);
 public:
 	///Getter///
-	//アクティブカメラを取得
+	/// <summary>
+	/// 現在のアクティブカメラを取得する。
+	/// </summary>
+	/// <returns>アクティブな Camera*（未設定なら nullptr）。</returns>
 	Camera* GetActiveCamera();
-	//名前からカメラを取得
+	/// <summary>
+	/// 名前からカメラを取得する。
+	/// </summary>
+	/// <param name="name">検索するカメラ名。</param>
+	/// <returns>見つかれば Camera*、見つからなければ nullptr を返す。</returns>
 	Camera* GetCamera(const std::string& name);
 
 	///Setter///
-	//アクティブカメラセット
+	/// <summary>
+	/// 名前でアクティブカメラを設定する。
+	/// - 指定名が登録済みであればそのカメラをアクティブにする。
+	/// </summary>
+	/// <param name="name">アクティブにするカメラの名前。</param>
 	void SetActiveCamera(const std::string& name);
 private:
 	static CameraManager* instance;

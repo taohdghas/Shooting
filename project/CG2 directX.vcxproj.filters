@@ -294,9 +294,6 @@
     <ClCompile Include="game\skybox\Skybox.cpp">
       <Filter>ソース ファイル\application\skybox</Filter>
     </ClCompile>
-    <ClCompile Include="game\skydome\Skydome.cpp">
-      <Filter>ソース ファイル\application\skydome</Filter>
-    </ClCompile>
     <ClCompile Include="game\titleObject\TitleObject.cpp">
       <Filter>ソース ファイル\application\titleobject</Filter>
     </ClCompile>
@@ -481,9 +478,6 @@
     </ClInclude>
     <ClInclude Include="game\skybox\Skybox.h">
       <Filter>ヘッダー ファイル\application\skybox</Filter>
-    </ClInclude>
-    <ClInclude Include="game\skydome\Skydome.h">
-      <Filter>ヘッダー ファイル\application\skydome</Filter>
     </ClInclude>
     <ClInclude Include="game\titleObject\TitleObject.h">
       <Filter>ヘッダー ファイル\application\titleobject</Filter>

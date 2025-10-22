@@ -16,55 +16,124 @@
 class Player
 {
 public:
+	/// <summary>
+	/// コンストラクタ。
+	/// - メンバのデフォルト初期化を行う。
+	/// </summary>
 	Player();
 
+	/// <summary>
+	/// デストラクタ。
+	/// - 保持しているリソース（ユニークポインタ等）は自動で破棄される。
+	/// </summary>
 	~Player();
-	//初期化
+	/// <summary>
+	/// 初期化する。
+	/// - 引数の <c>Object3dBase*</c> を保持し、内部の <c>Object3d</c> を生成・初期化する。
+	/// - モデルを "player/player.obj" に設定しライトを無効化、初期スケール・位置を設定する。
+	/// - レティクル用スプライトを生成して初期設定する（サイズ・アンカーポイント等）。
+	/// </summary>
 	void Initialize(Object3dBase* object3dbase);
-	//更新
+	/// <summary>
+	/// 毎フレームの更新処理を行う。
+	/// - 死亡時は早期リターンする。
+	/// - クールダウン／タイマー類の更新、弾や内部オブジェクトの更新、移動・ジャンプ・回避・攻撃処理を順に行う。
+	/// - レティクルの更新と弾リストの更新もここで行う。
+	/// </summary>
 	void Update();
-	//描画
+	/// <summary>
+	/// 描画処理を行う。
+	/// - 死亡時は描画を行わない。
+	/// - 内部の <c>Object3d</c> と保持する弾を描画する。
+	/// </summary>
 	void Draw();
-	//レティクルの描画
+	/// <summary>
+	/// レティクル（照準）の描画を行う。
+	/// - レティクル用スプライトの描画呼び出しを行う。
+	/// </summary>
 	void ReticleDraw();
-	//移動
+	/// <summary>
+	/// 移動処理を行う。
+	/// - 入力（A/D）に応じた左右移動、座標クランプ（画面境界）を適用する。
+	/// </summary>
 	void Move();
-	//ジャンプ
+	/// <summary>
+	/// ジャンプ処理を行う。
+	/// - 入力によりジャンプを開始し、重力・着地判定・二段ジャンプ管理を行う。
+	/// </summary>
 	void Jump();
-	//攻撃
+	/// <summary>
+	/// 攻撃（弾発射）を行う。
+	/// - レティクルのスクリーン位置をワールド空間のレイに変換し、その方向へ弾を生成して発射する。
+	/// - 攻撃クールタイム管理を行う。
+	/// </summary>
 	void Attack();
-	//回避
+	/// <summary>
+	/// 回避処理を行う。
+	/// - 回避中は回転演出と時間管理を行い、クールダウンを適用する。
+	/// - 回避コマンド（キー入力）で回避を開始する。
+	/// </summary>
 	void Dodge();
-	//レティクル更新
+	/// <summary>
+	/// レティクルの更新を行う。
+	/// - 入力でスクリーン上のレティクル位置を移動し、スプライト位置を更新する。
+	/// </summary>
 	void ReticleUpdate();
-	//スクリーン変換更新
+	/// <summary>
+	/// レティクルのスクリーン座標更新処理。
+	/// - 必要に応じてスクリーン変換・制約を行う（実装は ReticleUpdate 内で呼ばれる想定）。
+	/// </summary>
 	void UpdateReticleScreenPos();
-	//衝突時コールバック
+	/// <summary>
+	/// 衝突時コールバック。
+	/// - プレイヤーの死亡フラグを立てる等の処理を行う。
+	/// </summary>
 	void OnCollision();
-	//HP減少関数
+	/// <summary>
+	/// HP を減少させる。
+	/// - 無敵時間や回避状態をチェックし、ダメージ適用後に無敵タイマー・色変化タイマーを設定する。
+	/// - HP が 0 以下になったら <c>OnCollision()</c> を呼ぶ。
+	/// </summary>
+	/// <param name="damage">与えるダメージ量。</param>
 	void TakeDamage(int damage);
-    //デバック表示
+    /// <summary>
+	/// デバッグ表示を行う（ImGui を使用）。
+	/// - HP / トランスフォーム / 回避状態などのインスペクションと一部操作を行える。
+	/// </summary>
 	void Debug();
-	//OBB取得
+	/// <summary>
+	/// OBB（Oriented Bounding Box）を取得する。
+	/// - 現在の Transform とモデル寸法から OBB を計算して返す。
+	/// </summary>
+	/// <returns>計算された OBB。</returns>
 	OBB GetOBB()const;
-	//デスフラグが立ったか
+	/// <summary>
+	/// 死亡フラグを取得する。
+	/// </summary>
+	/// <returns>デッドであれば true を返す。</returns>
 	bool IsDead()const { return isDead_; }
 public:
 	///Getter/// 
 
-	//位置取得
+	/// <summary>
+	/// 現在のワールド座標（Transform.translate）を取得する。
+	/// </summary>
 	const Vector3& GetTranslate()const { return transform_.translate; }
-	//半径取得
+	/// <summary>
+	/// 衝突判定等で用いる半径を取得する。
+	/// </summary>
 	float GetRadius()const { return radius_; }
-	//弾リスト取得
+	/// <summary>
+	/// 保持しているプレイヤー弾のリストを取得する（読み取り専用）。
+	/// </summary>
 	const std::list<std::unique_ptr<playerBullet>>& GetBullets() const { return bullets_; }
 
 	///Setter/// 
-	//スケールセット
+	/// <summary>スケールを設定する。</summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
-	//回転セット
+	/// <summary>回転を設定する。</summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-	//座標セット
+	/// <summary>座標を設定する。</summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 	
 private:
