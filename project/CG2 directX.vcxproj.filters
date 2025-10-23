@@ -267,9 +267,6 @@
     <ClCompile Include="game\manager\CollisionManager.cpp">
       <Filter>ソース ファイル\application\manager</Filter>
     </ClCompile>
-    <ClCompile Include="engine\manager\FadeManager.cpp">
-      <Filter>ソース ファイル\application\manager</Filter>
-    </ClCompile>
     <ClCompile Include="game\platform\Platform.cpp">
       <Filter>ソース ファイル\application\platform</Filter>
     </ClCompile>
@@ -450,9 +447,6 @@
       <Filter>ヘッダー ファイル\application\enemy</Filter>
     </ClInclude>
     <ClInclude Include="game\manager\CollisionManager.h">
-      <Filter>ヘッダー ファイル\application\manager</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\manager\FadeManager.h">
       <Filter>ヘッダー ファイル\application\manager</Filter>
     </ClInclude>
     <ClInclude Include="game\platform\Platform.h">

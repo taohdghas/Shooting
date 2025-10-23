@@ -3,14 +3,13 @@
 #include "CameraManager.h"
 #include "ImGuiManager.h"
 
-
-//初期化
+// ゲームシーンの初期化処理
 void GameScene::Initialize() {
 
-	//サウンド
+	// サウンド初期化
 	Audio::GetInstance()->Initialize();
 
-	//モデル読み込み
+	// モデルの読み込み
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
 	ModelManager::GetInstance()->LoadModel("player/player.obj");
@@ -20,53 +19,55 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 	ModelManager::GetInstance()->LoadModel("platform/platform.obj");
 
-	//パーティクル
+	// パーティクルグループの生成
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle2", "resources/circle2.png", ParticleType::Normal);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle3", "resources/gradationLine.png", ParticleType::Ring);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
 	ParticleManager::GetInstance()->CreateparticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
 
-	//レールカメラ
+	// レールカメラの初期化・設定
 	railCamera = std::make_unique<RailCamera>();
 	railCamera->Initialize();
 	railCamera->SetPlayerOffset({ 0.0f,-1.5f,10.0f });
 	railCamera->SetSpeed(0.1f);
-	//カメラ
+
+	// メインカメラの初期化・登録
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0,0,-10 });
 	CameraManager::GetInstance()->AddCamera("Main", camera.get());
-	//CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera());
+	// CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera()); // レールカメラを使う場合
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
-	//skybox
+	// Skyboxの初期化
 	skybox = std::make_unique<Skybox>();
 	skybox->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
-	//プラットフォーム
+
+	// プラットフォームの初期化
 	platform = std::make_unique<Platform>();
 	platform->Initialize(Object3dBase::GetInstance());
-	//railCamera->SetPlatform(platform.get());
-	//railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
+	// railCamera->SetPlatform(platform.get());
+	// railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
 
-	//衝突マネージャー
+	// 衝突管理クラスの初期化
 	collisionManager = std::make_unique<CollisionManager>();
 
-	//JsonManager
+	// JsonManagerでレベルデータ読み込み
 	jsonManager = std::make_unique<JsonManager>();
 	levelData = jsonManager->LoadJsonFile("untitled");
 
+	// プレイヤー生成・初期化
 	for (auto& playerData : levelData->players) {
 		player = std::make_unique<Player>();
 		player->Initialize(Object3dBase::GetInstance());
 		Transform transform;
-
 		transform.translate = playerData.translation;
-
 		player->SetTranslate(transform.translate);
-		//railCamera->SetPlayer(player.get());
+		// railCamera->SetPlayer(player.get());
 	}
 
+	// 敵生成・初期化
 	for (auto& enemyData : levelData->enemies) {
 		auto newEnemy = std::make_unique<Enemy>();
 		newEnemy->Initialize(Object3dBase::GetInstance());
@@ -75,34 +76,33 @@ void GameScene::Initialize() {
 		enemies.push_back(std::move(newEnemy));
 	}
 
-	//フェード
+	// フェードの初期化・開始
 	fade = std::make_unique<Fade>();
 	fade->Initialize();
 	fade->FadeStart(Fade::State::FadeIn, 0.5f);
 
-	//最初の1フレーム入力を無視
+	// 最初の1フレーム入力を無視
 	Input::GetInstance()->ClearInput();
-
 }
 
-//終了
+// ゲームシーンの終了処理
 void GameScene::Finalize() {
-	//パーティクルグループの開放
+	// パーティクルグループの開放
 	ParticleManager::GetInstance()->Clear();
-	//カメラマネージャ
+	// カメラマネージャの終了処理
 	CameraManager::GetInstance()->Finalize();
-	//Audio
+	// サウンドの終了処理
 	Audio::GetInstance()->Finalize();
 }
 
-//更新
+// 毎フレームの更新処理
 void GameScene::Update() {
-	//カメラ
+	// カメラの更新
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
-	//レールカメラ
+	// レールカメラの更新
 	railCamera->Update();
 
-	//衝突チェック
+	// 敵ごとの衝突判定・デスパーティクル処理
 	for (auto& enemy : enemies) {
 		collisionManager->CheckPECollisions(player.get(), enemy.get());
 
@@ -113,72 +113,74 @@ void GameScene::Update() {
 			emitter->Emit();
 			particleEmitter.push_back(std::move(emitter));
 
-			//フラグをリセット
+			// デスパーティクルフラグをリセット
 			enemy->SetisDeathParticle(false);
 		}
 	}
-	//プレイヤー
+
+	// プレイヤーの更新
 	player->Update();
-	//敵
+	// 敵の更新
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
-	//skybox
+	// Skyboxの更新
 	skybox->Update();
-	//プラットフォーム
+	// プラットフォームの更新
 	platform->Update();
 	
-	//パーティクル
+	// パーティクルの更新
 	ParticleManager::GetInstance()->Update();
 	for (auto& particle : particleEmitter) {
 		particle->Update();
 	}
 
-	//タイトルシーンへ
+	// プレイヤー死亡時はタイトルシーンへ遷移
 	if (player->IsDead()) {
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
 
-	//クリアシーンへ
+	// Cキーでクリアシーンへ遷移
 	if (Input::GetInstance()->PushKey(DIK_C)) {
 		SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
 
+	// フェードの更新
 	fade->Update();
 
-	//デバック
+	// デバッグ表示
 	Debug();
 }
 
-//描画
+// 描画処理
 void GameScene::Draw() {
-	//3Dオブジェクト描画準備
+	// 3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
-	//プレイヤー
+	// プレイヤーの描画
 	player->Draw();
-	//敵
+	// 敵の描画
 	for (auto& enemy : enemies) {
 		enemy->Draw();
 	}
-	//天球
+	// 天球（Skybox）の描画
 	skybox->Draw();
-	//プラットフォーム
+	// プラットフォームの描画
 	platform->Draw();
-	//パーティクル
+	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
-	//共通描画設定
+	// 共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
+	// レティクル描画
 	player->ReticleDraw();
-	//フェード
+	// フェード描画
 	fade->Draw();
-
 }
 
-//デバック
+// デバッグ表示（ImGuiによるパラメータ調整・状態表示）
 void GameScene::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Begin("SetUp");
-	//カメラ
+	// カメラのパラメータ調整
 	if (ImGui::TreeNode("Camera")) {
 		Vector3 cameraPos = camera->GetTranslate();
 		Vector3 cameraRot = camera->GetRotate();
@@ -188,15 +190,15 @@ void GameScene::Debug() {
 		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
 		ImGui::TreePop();
 	}
-	//プレイヤーDebug
+	// プレイヤーのデバッグ表示
 	player->Debug();
-	//敵Debug
+	// 敵のデバッグ表示
 	for (int i = 0; i < enemies.size(); ++i) {
 		enemies[i]->Debug(i);
 	}
-	//プラットフォームDebug
+	// プラットフォームのデバッグ表示
 	platform->Debug();
-	//skyboxDebug
+	// Skyboxのデバッグ表示
 	Transform& trans = skybox->GetTransform();
 	if (ImGui::TreeNode("SkyBox")) {
 		ImGui::DragFloat3("Scale", &trans.scale.x, 0.01f, 0.01f, 5000.0f);

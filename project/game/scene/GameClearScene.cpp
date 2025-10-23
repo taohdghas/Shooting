@@ -2,31 +2,30 @@
 #include "SceneManager.h"
 #include "Input.h"
 
-//初期化
+// ゲームクリアシーンの初期化処理
 void GameClearScene::Initialize() {
 
 }
 
-//終了
+// ゲームクリアシーンの終了処理
 void GameClearScene::Finalize() {
 
 }
 
-//更新
+// 毎フレームの更新処理
 void GameClearScene::Update() {
-
-	//タイトルへ
+	// Enterキーでタイトルシーンへ遷移
 	if (Input::GetInstance()->PushKey(DIK_RETURN)) {
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
 }
 
-//描画
+// ゲームクリアシーンの描画処理
 void GameClearScene::Draw() {
 
 }
 
-//デバック
+// デバッグ表示（必要に応じて追加）
 void GameClearScene::Debug() {
 
 }

@@ -3,7 +3,7 @@
 #include "ImGuiManager.h"
 #include "MyMath.h"
 
-//初期化
+// 初期化処理
 void Enemy::Initialize(Object3dBase*object3dBase) {
 	object3dBase_ = object3dBase;
 	object_ = std::make_unique<Object3d>();
@@ -13,14 +13,14 @@ void Enemy::Initialize(Object3dBase*object3dBase) {
 	transform_.scale = { 0.5f,0.5f,0.5f };
 	transform_.translate = { 0.0f,3.0f,20.0f };
 }
-//更新
-void Enemy::Update() {
 
-	//デスフラグオンならスルー
+// 毎フレームの更新処理
+void Enemy::Update() {
 	if (isDead_) {
 		return;
 	}
-	
+
+	// 弾の更新とデスフラグ判定（デッドならリストから削除）
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
 		(*it)->Update();
 		if ((*it)->IsDead()) {
@@ -31,81 +31,81 @@ void Enemy::Update() {
 		}
 	}
 
-	//移動
-
-	//攻撃(レーザー)
+	// 攻撃処理（レーザー発射判定）
 	Laser();
 
-	//各Transformをobjectに適用
+	// Transform情報をObject3dへ反映
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
 
-	//色タイマー更新
+	// ダメージ時の色変更タイマー処理
 	if (damageColorTimer_ > 0.0f) {
 		damageColorTimer_ -= DeltaTime;
-		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
+		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f }); // ダメージ色
 	} else {
-		//元の色
-		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f }); // 通常色
 	}
 
 	object_->Update();
-	//弾の更新
+
+	// 弾の再更新
 	for (const auto& bullet : bullets_) {
 		bullet->Update();
 	}
 }
-//描画
+
+// 描画処理
 void Enemy::Draw() {
-	//デスフラグオンならスルー
 	if (isDead_) {
 		return;
 	}
 
 	object_->Draw();
-	//弾の描画
+
+	// 弾の描画
 	for (const auto& bullet : bullets_) {
 		bullet->Draw();
 	}
 }
-//攻撃(レーザー)
+
+// レーザー攻撃判定・発射処理
 void Enemy::Laser() {
-	//デスフラグオンならスルー
 	if (isDead_) {
 		return;
 	}
 
-	//発射タイマー
-
 	static int fireTimer = 0;
 	fireTimer++;
 
-	//インターバルよりも小さい場合スルー
+	// 発射間隔未満なら発射しない
 	if (fireTimer < kFireInterval) {
 		return;
 	}
 
-	if (!player_)return;
+	if (!player_) return;
 
+	// プレイヤーとの距離計算
 	Vector3 toPlayer = Math::Subtract(player_->GetTranslate(), transform_.translate);
 	float distance = Math::Length(toPlayer);
 
-	//距離が定数の値以上なら撃たない
+	// 一定距離以上なら発射しない
 	if (distance > fireDistance) {
 		return;
 	}
 
-	//プレイヤーのZ座標+定数の値以上なら撃たない
+	// プレイヤーのZ座標＋定数より手前なら発射しない
 	if (transform_.translate.z < player_->GetTranslate().z + attackStopDisntanceZ) {
 		return;
 	}
 
-	//発射タイマー0に
+	// 発射タイマーリセット
 	fireTimer = 0;
 
+	// プレイヤー方向に正規化ベクトルを算出
 	Vector3 direction = Math::Normalize(toPlayer);
 
+	// 弾生成・初期化・速度設定
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3dBase_);
 	bullet->GetTranslate(transform_.translate);
@@ -113,23 +113,24 @@ void Enemy::Laser() {
 
 	bullets_.emplace_back(std::move(bullet));
 }
-//衝突時コールバック
+
+// 衝突時の処理（死亡フラグ・パーティクル発生）
 void Enemy::onCollision() {
 	isDead_ = true;
 	isDeathParticle_ = true;
 }
-//HP減少関数
+
+// ダメージ処理
 void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
-	//色変える
-	damageColorTimer_ = damageColorDuration;
-	//object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
+	damageColorTimer_ = damageColorDuration; // ダメージ色タイマーセット
 	if (hp_ <= 0) {
 		hp_ = 0;
-		onCollision();
+		onCollision(); // HP0で死亡処理
 	}
 }
-//Debug
+
+// デバッグ用ImGui表示
 void Enemy::Debug(int id) {
 #ifdef USE_IMGUI
 	std::string treeLabel = "Enemy##" + std::to_string(id);
@@ -148,18 +149,19 @@ void Enemy::Debug(int id) {
 	}
 #endif
 }
-//OBB取得関数
+
+// OBB（当たり判定用の回転付きボックス）取得
 OBB Enemy::GetOBB()const {
 	OBB obb;
-	//中心位置
 	obb.center = transform_.translate;
-	//回転行列
+
+	// 回転行列から各軸ベクトルを算出・正規化
 	Matrix4x4 rotMat = Math::MakeRotateMatrix(transform_.rotate);
-	//各軸ベクトルを正規化
 	obb.orientations[0] = Math::Normalize({ rotMat.m[0][0], rotMat.m[1][0], rotMat.m[2][0] }); // X軸
 	obb.orientations[1] = Math::Normalize({ rotMat.m[0][1], rotMat.m[1][1], rotMat.m[2][1] }); // Y軸
 	obb.orientations[2] = Math::Normalize({ rotMat.m[0][2], rotMat.m[1][2], rotMat.m[2][2] }); // Z軸
 
+	// スケールと寸法からサイズ算出
 	obb.size = (transform_.scale * dimensions) * 0.5f;
 
 	return obb;
