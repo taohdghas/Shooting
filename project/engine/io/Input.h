@@ -11,28 +11,46 @@ class Input
 public:
 	//namespace省略
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
-	//シングルトンインスタンス
+	/// <summary>
+	/// シングルトンインスタンスを取得する。
+	/// - 初回呼び出し時に内部でインスタンスを生成して返します。
+	/// </summary>
+	/// <returns>Input の単一インスタンスへのポインタ。</returns>
 	static Input* GetInstance();
-	//初期化
+	/// <summary>
+	/// 初期化を行う。
+	/// - 引数で渡された WindowsAPI から HINSTANCE/HWND を取得し DirectInput を初期化する。
+	/// - キーボードデバイスを生成し、データフォーマットの設定と協調レベル（DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY）を行う。
+	/// </summary>
+	/// <param name="windowsAPI">ウィンドウ情報を提供する WindowsAPI のポインタ。</param>
 	void Initialize(WindowsAPI*windowsAPI);
-	//終了
+	/// <summary>
+	/// 終了処理を行う。
+	/// - シングルトンインスタンスを破棄します（内部で delete を呼ぶ実装を想定）。
+	/// </summary>
 	void Finalize();
-	//更新
+	/// <summary>
+	/// 毎フレームの更新処理を行う。
+	/// - 前フレームのキー状態を保存し、キーボードデバイスから現在のキー状態を取得して保持する。
+	/// </summary>
 	void Update();
-	//1フレーム入力無視
+	/// <summary>
+	/// 1フレーム分の入力をクリアする（入力を無視する）。
+	/// - 内部のキー状態配列をゼロクリアする実装。
+	/// </summary>
 	void ClearInput();
 
-/// <summary>
-/// キーの押下をチェック
-/// </summary>
-/// <param name = "keyNumber">キー番号(DIK_0等)</param>
-/// <returns>押されているか</returns>
+	/// <summary>
+	/// 指定キーが押されているかをチェックする。
+	/// </summary>
+	/// <param name="keyNumber">チェックするキー番号（DIK_* の値）。</param>
+	/// <returns>押下中であれば true、そうでなければ false を返す。</returns>
 	bool PushKey(BYTE keyNumber);
 	/// <summary>
-/// キーのトリガーをチェック
-/// </summary>
-/// <param name = "keyNumber">キー番号(DIK_0等)</param>
-/// <returns>トリガーか</returns>
+	/// 指定キーがトリガー（前フレームは未押下、今回押下）かをチェックする。
+	/// </summary>
+	/// <param name="keyNumber">チェックするキー番号（DIK_* の値）。</param>
+	/// <returns>トリガーであれば true、そうでなければ false を返す。</returns>
 	bool TriggerKey(BYTE keyNumber);
 private:
 	static Input* instance;

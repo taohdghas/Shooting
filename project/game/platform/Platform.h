@@ -7,15 +7,32 @@
 class Platform
 {
 public:
-	//初期化
+	/// <summary>
+	/// 初期化を行う。
+	/// - 引数の <c>Object3dBase*</c> を保持し、内部の <c>Object3d</c> を生成・初期化してモデルや初期トランスフォームを設定する想定。
+	/// </summary>
+	/// <param name="object3dbase">描画共通設定を提供する <c>Object3dBase*</c>。</param>
 	void Initialize(Object3dBase*object3dbase);
-	//更新
+	/// <summary>
+	/// 毎フレームの更新処理を行う。
+	/// - 必要に応じてトランスフォームの同期や物理的な振る舞いを更新する（現状は Transform の反映などを想定）。
+	/// </summary>
 	void Update();
-	//描画
+	/// <summary>
+	/// 描画処理を行う。
+	/// - 内部の <c>Object3d</c> を用いてプラットフォームを描画する。
+	/// </summary>
 	void Draw();
-	//デバック
+	/// <summary>
+	/// デバッグ表示用の更新処理を行う。
+	/// - ImGui 等でパラメータ調整やデバッグ表示を行う実装を想定する。
+	/// </summary>
 	void Debug();
 public:
+	/// <summary>
+	/// トランスフォーム（平行移動）を設定する。
+	/// </summary>
+	/// <param name="translate">設定するワールド座標（平行移動）。</param>
 	void SetTransform(const Vector3& translate) { transform_.translate = translate; }
 private:
 	Object3dBase* object3dBase_;

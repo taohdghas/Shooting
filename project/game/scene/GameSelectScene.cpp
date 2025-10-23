@@ -1,22 +1,31 @@
 #include "GameSelectScene.h"
+#include "SceneManager.h"
+#include "Input.h"
 
-//初期化
+// ゲームセレクトシーンの初期化処理
 void GameSelectScene::Initialize() {
 
 }
-//終了
+
+// ゲームセレクトシーンの終了処理
 void GameSelectScene::Finalize() {
 
 }
-//更新
-void GameSelectScene::Update() {
 
+// 毎フレームの更新処理
+void GameSelectScene::Update() {
+	// Enterキーでゲームシーンへ遷移
+	if (Input::GetInstance()->PushKey(DIK_RETURN)) {
+		SceneManager::GetInstance()->ChangeScene("GAME");
+	}
 }
-//描画
+
+// ゲームセレクトシーンの描画処理
 void GameSelectScene::Draw() {
 
 }
-//デバック
+
+// デバッグ表示（必要に応じて追加）
 void GameSelectScene::Debug() {
 
 }

@@ -6,39 +6,86 @@
 class Camera
 {
 public:
-	//デフォルトコンストラクタ
+	/// <summary>
+	/// デフォルトコンストラクタ。
+	/// - 既定のスケール/回転/位置で Transform を初期化する。
+	/// - 視野角は 0.45、アスペクト比は __WindowsAPI::kClientWidth / kClientHeight__、ニア/ファークリップは 0.1 / 100.0 を設定する。
+	/// - world/view/projection/viewProjection 行列を初期値で生成する（Math ユーティリティを使用）。
+	/// </summary>
 	Camera();
-	//更新
+	/// <summary>
+	/// 毎フレーム更新する。
+	/// - worldMatrix を Transform（スケール/回転/平行移動）から再生成する。
+	/// - viewMatrix を worldMatrix の逆行列として計算する。
+	/// - projectionMatrix を FovY / aspectRatio / nearClip / farClip から計算する。
+	/// - viewProjectionMatrix を viewMatrix と projectionMatrix の積として更新する。
+	/// </summary>
 	void Update();
 
 	///setter///
 
-	//回転をセット
+	/// <summary>
+	/// 回転を設定する（ラジアン単位などはプロジェクトの規約に従う）。
+	/// </summary>
+	/// <param name="rotate">設定する回転ベクトル。</param>
 	void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }
-	//座標をセット
+	/// <summary>
+	/// 平行移動（座標）を設定する。
+	/// </summary>
+	/// <param name="translate">設定する座標ベクトル。</param>
 	void SetTranslate(const Vector3& translate) { transform.translate = translate; }
-	//水平方向視野角セット
+	/// <summary>
+	/// 垂直方向（y軸）視野角を設定する。
+	/// </summary>
+	/// <param name="fovY">ラジアン単位の視野角。</param>
 	void SetFovY(const float& fovY) { FovY = fovY; }
-	//アスペクト比をセット
+	/// <summary>
+	/// アスペクト比を設定する（幅 / 高さ）。
+	/// </summary>
+	/// <param name="aspectratio">アスペクト比。</param>
 	void SetAspectRatio(const float& aspectratio) { aspectRatio = aspectratio; }
-	//ニアクリップ距離セット
+	/// <summary>
+	/// ニアクリップ距離を設定する。
+	/// </summary>
+	/// <param name="nearclip">ニアクリップ距離（正の値）。</param>
 	void SetNearClip(const float& nearclip){ nearClip = nearclip; }
-	//ファークリップ距離セット
+	/// <summary>
+	/// ファークリップ距離を設定する。
+	/// </summary>
+	/// <param name="farclip">ファークリップ距離（ニアより大きい正の値）。</param>
 	void SetFarClip(const float& farclip) { farClip = farclip; }
 
 	///getter///
 
-	//ワールド行列取得
+	/// <summary>
+	/// ワールド行列を取得する。
+	/// </summary>
+	/// <returns>現在の world 行列の const 参照。</returns>
 	const Matrix4x4& GetWorldMatrix()const { return worldMatrix; }
-	//ビュー行列取得
+	/// <summary>
+	/// ビュー行列を取得する。
+	/// </summary>
+	/// <returns>現在の view 行列の const 参照。</returns>
 	const Matrix4x4& GetViewMatrix()const { return viewMatrix; }
-	//プロジェクション行列取得
+	/// <summary>
+	/// プロジェクション行列を取得する。
+	/// </summary>
+	/// <returns>現在の projection 行列の const 参照。</returns>
 	const Matrix4x4& GetProjectionMatrix()const { return projectionMatrix; }
-	//ビュープロジェクション行列取得
+	/// <summary>
+	/// ビュー×プロジェクション行列を取得する。
+	/// </summary>
+	/// <returns>現在の viewProjection 行列の const 参照。</returns>
 	const Matrix4x4& GetViewProjectionMatrix()const { return viewProjectionMatrix; }
-	//回転取得
+	/// <summary>
+	/// 回転を取得する。
+	/// </summary>
+	/// <returns>Transform に格納された回転ベクトルの const 参照。</returns>
 	const Vector3& GetRotate()const { return transform.rotate; }
-	//座標を取得
+	/// <summary>
+	/// 座標を取得する。
+	/// </summary>
+	/// <returns>Transform に格納された平行移動ベクトルの const 参照。</returns>
 	const Vector3& GetTranslate()const { return transform.translate; }
 private:
 	Transform transform;

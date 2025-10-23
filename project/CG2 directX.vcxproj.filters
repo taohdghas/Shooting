@@ -267,9 +267,6 @@
     <ClCompile Include="game\manager\CollisionManager.cpp">
       <Filter>ソース ファイル\application\manager</Filter>
     </ClCompile>
-    <ClCompile Include="engine\manager\FadeManager.cpp">
-      <Filter>ソース ファイル\application\manager</Filter>
-    </ClCompile>
     <ClCompile Include="game\platform\Platform.cpp">
       <Filter>ソース ファイル\application\platform</Filter>
     </ClCompile>
@@ -293,9 +290,6 @@
     </ClCompile>
     <ClCompile Include="game\skybox\Skybox.cpp">
       <Filter>ソース ファイル\application\skybox</Filter>
-    </ClCompile>
-    <ClCompile Include="game\skydome\Skydome.cpp">
-      <Filter>ソース ファイル\application\skydome</Filter>
     </ClCompile>
     <ClCompile Include="game\titleObject\TitleObject.cpp">
       <Filter>ソース ファイル\application\titleobject</Filter>
@@ -455,9 +449,6 @@
     <ClInclude Include="game\manager\CollisionManager.h">
       <Filter>ヘッダー ファイル\application\manager</Filter>
     </ClInclude>
-    <ClInclude Include="engine\manager\FadeManager.h">
-      <Filter>ヘッダー ファイル\application\manager</Filter>
-    </ClInclude>
     <ClInclude Include="game\platform\Platform.h">
       <Filter>ヘッダー ファイル\application\platform</Filter>
     </ClInclude>
@@ -481,9 +472,6 @@
     </ClInclude>
     <ClInclude Include="game\skybox\Skybox.h">
       <Filter>ヘッダー ファイル\application\skybox</Filter>
-    </ClInclude>
-    <ClInclude Include="game\skydome\Skydome.h">
-      <Filter>ヘッダー ファイル\application\skydome</Filter>
     </ClInclude>
     <ClInclude Include="game\titleObject\TitleObject.h">
       <Filter>ヘッダー ファイル\application\titleobject</Filter>

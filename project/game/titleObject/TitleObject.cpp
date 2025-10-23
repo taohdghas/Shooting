@@ -1,21 +1,23 @@
 #include "TitleObject.h"
 #include "ImGuiManager.h"
 
-//初期化
+// タイトル画面用オブジェクトの初期化処理
 void TitleObject::Initialize() {
-	//タイトルのオブジェクト
+	// タイトルのオブジェクト生成・初期化
 	title = std::make_unique<Object3d>();
 	title->Initialize(Object3dBase::GetInstance());
 	title->SetModel("title.obj");
 	title->SetScale({ 1.2f,1.2f,1.2f });
 	title->SetTranslate({ -1.2f,0.8f,1.0f });
-	//pushspaceのオブジェクト
+
+	// pushspaceのオブジェクト生成・初期化
 	pushspace = std::make_unique<Object3d>();
 	pushspace->Initialize(Object3dBase::GetInstance());
 	pushspace->SetModel("pushspace.obj");
 	pushspace->SetScale({ 0.5f,0.5f,0.5f });
 	pushspace->SetTranslate({ 1.1f,-1.5f,1.0f });
-	//プレイヤーオブジェクト(外見のみ)
+
+	// プレイヤーオブジェクト（外見のみ）生成・初期化
 	playerobj = std::make_unique<Object3d>();
 	playerobj->Initialize(Object3dBase::GetInstance());
 	playerobj->SetModel("player/player.obj");
@@ -23,36 +25,37 @@ void TitleObject::Initialize() {
 	playerobjTransform.rotate = { 0.0f,-0.5f,0.0f };
 	playerobjTransform.translate = { -1.3f,-0.5f,-4.8f };
 }
-//更新
+
+// 毎フレームの更新処理
 void TitleObject::Update() {
-	//タイトルオブジェクト
+	// タイトルオブジェクトの更新
 	title->Update();
-	//pushSpaceの点滅
+
+	// pushspaceの点滅演出（アルファ値を周期的に変化させる）
 	alphaTimer_ += DeltaTime;
 	alpha_ = (sinf(alphaTimer_ * 3.0f) * 0.5f) + 0.5f;
 	pushspace->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
-	//pushSpaceのオブジェクト
 	pushspace->Update();
-	//プレイヤーオブジェクトの演出
+
+	// プレイヤーオブジェクトの演出（回転・ジャンプ処理）
 	PlayerObjDirection();
 }
-//描画
+
+// 描画処理
 void TitleObject::Draw() {
-	//タイトルオブジェクト
 	title->Draw();
-	//pushspaceオブジェクト
 	pushspace->Draw();
-	//プレイヤーオブジェクト
 	playerobj->Draw();
 }
-//プレイヤーオブジェクトの演出
+
+// プレイヤーオブジェクトの演出（回転・ジャンプ処理）
 void TitleObject::PlayerObjDirection() {
-	//プレイヤーオブジェクトの回転
+	// プレイヤーオブジェクトの回転
 	playerobjTransform.rotate.y += RotateSpeed * DeltaTime;
 
-	//ジャンプ処理
-
+	// ジャンプタイマー更新
 	jumpTimer_ += 1.0f;
+	// ジャンプ開始判定
 	if (!isJumping_ && jumpTimer_ >= jumpInterval_) {
 		jumpVelocity_ = jumpPower_;
 		isJumping_ = true;
@@ -60,22 +63,23 @@ void TitleObject::PlayerObjDirection() {
 		jumpTimer_ = 0.0f;
 	}
 
+	// ジャンプ中の処理
 	if (isJumping_) {
 		playerobjTransform.translate.y += jumpVelocity_;
 		jumpVelocity_ += gravity_;
 
-		//2段目ジャンプ
+		// 2段目ジャンプ判定
 		if (jumpCount_ == 1 && jumpVelocity_ < 0.0f) {
 			jumpVelocity_ = jumpPower_ * 1.2f; 
 			jumpCount_ = 2; 
 		}
 
-		//二段目ジャンプ時回転
+		// 2段目ジャンプ時の回転
 		if (jumpCount_ == 2) {
 			playerobjTransform.rotate.x += jumpRotateSpeed_ * DeltaTime;
 		}
 
-		//着地
+		// 着地判定
 		if (playerobjTransform.translate.y <= groundY_) {
 			playerobjTransform.translate.y = groundY_;
 			jumpVelocity_ = 0.0f;
@@ -85,17 +89,19 @@ void TitleObject::PlayerObjDirection() {
 		}
 	}
 
+	// Transform情報をObject3dへ反映
 	playerobj->SetScale(playerobjTransform.scale);
 	playerobj->SetRotate(playerobjTransform.rotate);
 	playerobj->SetTranslate(playerobjTransform.translate);
 	playerobj->Update();
 }
-//デバック
+
+// デバッグ表示（ImGuiによるパラメータ調整）
 void TitleObject::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Begin("TitleObject SetUp");
 
-	//title
+	// タイトルオブジェクトのパラメータ調整
 	static float titleScale[3] = { 1.2f,1.2f,1.2f };
 	static float titleRotate[3] = { 0.0f, 0.0f, 0.0f };
 	static float titleTranslate[3] = { -1.2f, 0.8f, 1.0f };
@@ -113,7 +119,7 @@ void TitleObject::Debug() {
 
 	ImGui::Separator();
 
-	//pushspace
+	// pushspaceオブジェクトのパラメータ調整
 	static float pushScale[3] = { 0.5f, 0.5f, 0.5f };
 	static float pushRotate[3] = { 0.0f, 0.0f, 0.0f };
 	static float pushTranslate[3] = { 1.1f, -1.5f, 1.0f };
@@ -131,7 +137,7 @@ void TitleObject::Debug() {
 
 	ImGui::Separator();
 
-	//playerobj
+	// プレイヤーオブジェクトのパラメータ調整
 	static float playerScale[3] = { 0.5f, 0.5f, 0.5f };
 	static float playerRotate[3] = { 0.0f, 0.0f, 0.0f };
 	static float playerTranslate[3] = { -1.3f,0.0f,-4.8f };

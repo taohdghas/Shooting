@@ -22,17 +22,38 @@
 class TitleScene : public BaseScene
 {
 public:
-	//初期化
+	/// <summary>
+	/// シーン初期化を行う。
+	/// - サウンド／モデルの読み込み、カメラの生成と登録、TitleObject の初期化を行う。
+	/// - フェードを初期化して FadeIn を開始し、Skybox とレベルデータ（Json）を読み込む。
+	/// </summary>
 	void Initialize() override;
-	//終了
+	/// <summary>
+	/// シーン終了時の後始末を行う。
+	/// - CameraManager や Audio 等のサブシステムの Finalize を呼び出してリソースを解放する。
+	/// </summary>
 	void Finalize() override;
-	//更新
+	/// <summary>
+	/// 毎フレーム更新を行う。
+	/// - カメラ／Skybox／TitleObject を更新し、シーン遷移処理 (SceneChange) とデバッグ処理を呼び出す。
+	/// </summary>
 	void Update() override;
-	//描画
+	/// <summary>
+	/// 描画処理を行う。
+	/// - Object3d の共通描画設定を行った上で Skybox／TitleObject を描画し、Sprite の共通設定とフェードを描画する。
+	/// </summary>
 	void Draw() override;
-	//デバック
+	/// <summary>
+	/// デバッグ表示を行う（ImGui）。
+	/// - カメラ・Skybox のパラメータ編集や TitleObject のデバッグ表示を行う。
+	/// </summary>
 	void Debug()override;
-	//シーン遷移
+private:
+	/// <summary>
+	/// シーン遷移処理を行う。
+	/// - フェードの Update を呼び、Space キーで FadeOut を開始する。
+	/// - FadeOut 完了時に SceneManager に対して "GAME" シーンへの遷移を要求する。
+	/// </summary>
 	void SceneChange();
 private:
 	//パーティクルエミッター

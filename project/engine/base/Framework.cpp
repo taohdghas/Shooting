@@ -3,104 +3,119 @@
 
 //初期化
 void Framework::Initialize() {
-	//WindowsAPIの初期化
-	windowsAPI_ = std::make_unique<WindowsAPI>();
-	windowsAPI_->Initialize();
+    // Windows API関連の初期化
+    windowsAPI_ = std::make_unique<WindowsAPI>();
+    windowsAPI_->Initialize();
 
-	//DirectXの初期化
-	DirectXBase::GetInstance()->Initialize(windowsAPI_.get());
+    // DirectXの初期化
+    DirectXBase::GetInstance()->Initialize(windowsAPI_.get());
 
-	//入力の初期化
-	Input::GetInstance()->Initialize(windowsAPI_.get());
+    // 入力管理の初期化
+    Input::GetInstance()->Initialize(windowsAPI_.get());
 
-	//SpriteBaseの初期化
-	SpriteBase::GetInstance()->Initialize(DirectXBase::GetInstance());
+    // 2Dスプライト描画用の初期化
+    SpriteBase::GetInstance()->Initialize(DirectXBase::GetInstance());
 
-	//srvManagerの初期化
-	SrvManager::GetInstance()->Initialize(DirectXBase::GetInstance());
+    // シェーダリソース管理の初期化
+    SrvManager::GetInstance()->Initialize(DirectXBase::GetInstance());
 
-	//テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance());
+    // テクスチャ管理の初期化
+    TextureManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance());
 
-	//初期化
-	Object3dBase::GetInstance()->Initialize(DirectXBase::GetInstance());
+    // 3Dオブジェクト基底クラスの初期化
+    Object3dBase::GetInstance()->Initialize(DirectXBase::GetInstance());
 
-	//モデルマネージャ-
-	ModelManager::GetInstance()->Initialize(DirectXBase::GetInstance());
+    // モデル管理の初期化
+    ModelManager::GetInstance()->Initialize(DirectXBase::GetInstance());
 
-	//ImGuiマネージャ
-	imguimanager_ = std::make_unique<ImGuiManager>();
-	imguimanager_->Initialize(windowsAPI_.get(), DirectXBase::GetInstance(), SrvManager::GetInstance());
+    // ImGui (GUI) 管理の初期化
+    imguimanager_ = std::make_unique<ImGuiManager>();
+    imguimanager_->Initialize(windowsAPI_.get(), DirectXBase::GetInstance(), SrvManager::GetInstance());
 
-	//カメラ
-	CameraManager::GetInstance()->Initialize();
-	//パーティクルマネージャ
-	ParticleManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance(), camera_.get());
+    // カメラ管理の初期化
+    CameraManager::GetInstance()->Initialize();
 
-	//シーンマネージャの生成
-	sceneManager = SceneManager::GetInstance();
+    // パーティクル管理の初期化（カメラ参照が必要）
+    ParticleManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance(), camera_.get());
+
+    // シーン管理の取得（シングルトン）
+    sceneManager = SceneManager::GetInstance();
 }
 
-//終了
+//終了処理
 void Framework::Finalize() {
-	//シーンマネージャ
-	sceneManager->Finalize();
-	//パーティクルマネージャーの終了
-	ParticleManager::GetInstance()->Finalize();
-	//カメラ
-	CameraManager::GetInstance()->Finalize();
-	//ImGui解放
-	imguimanager_->Finalize();
-	//object3dbase
-	Object3dBase::GetInstance()->Finalize();
-	//3Dモデルマネージャの終了
-	ModelManager::GetInstance()->Finalize();
-	//テクスチャマネージャの終了
-	TextureManager::GetInstance()->Finalize();
-	//srvマネージャ終了
-	SrvManager::GetInstance()->Finalize();
-	//SpriteBase
-	SpriteBase::GetInstance()->Finalize();
-	//入力解放
-	Input::GetInstance()->Finalize();
-	//DirectXBase
-	DirectXBase::GetInstance()->Finalize();
-	//windowsAPI
-	windowsAPI_->Finalize();
+    // シーン管理の終了
+    sceneManager->Finalize();
+
+    // パーティクル管理の終了
+    ParticleManager::GetInstance()->Finalize();
+
+    // カメラ管理の終了
+    CameraManager::GetInstance()->Finalize();
+
+    // GUI解放
+    imguimanager_->Finalize();
+
+    // 3Dオブジェクト基底クラスの終了
+    Object3dBase::GetInstance()->Finalize();
+
+    // 3Dモデル管理の終了
+    ModelManager::GetInstance()->Finalize();
+
+    // テクスチャ管理の終了
+    TextureManager::GetInstance()->Finalize();
+
+    // シェーダリソース管理の終了
+    SrvManager::GetInstance()->Finalize();
+
+    // 2Dスプライト管理の終了
+    SpriteBase::GetInstance()->Finalize();
+
+    // 入力管理の終了
+    Input::GetInstance()->Finalize();
+
+    // DirectX終了処理
+    DirectXBase::GetInstance()->Finalize();
+
+    // Windows API終了処理
+    windowsAPI_->Finalize();
 }
 
-//毎フレーム更新
+// 毎フレーム更新
 void Framework::Update() {
 
-	// Windowにメッセージが来てたら最優先で処理させる
-	if (windowsAPI_->ProcessMessage()) {
-		//ゲームループを抜ける
-		endRequst_ = true;
-	}
+    // Windowsからのメッセージを最優先で処理
+    if (windowsAPI_->ProcessMessage()) {
+        // 終了リクエストが来たらゲームループを抜ける
+        endRequst_ = true;
+    }
 
-	//入力の更新
-	Input::GetInstance()->Update();
+    // 入力状態の更新
+    Input::GetInstance()->Update();
 
-	//シーンマネージャの更新
-	sceneManager->Update();
+    // 現在のシーンを更新
+    sceneManager->Update();
 }
 
-//実行
-void Framework::Run(){
-	//ゲームの初期化
-	Initialize();
+// メイン実行関数
+void Framework::Run() {
+    // ゲーム全体の初期化
+    Initialize();
 
-	//ゲームループ
-	while (true) {
-		//毎フレーム更新
-		Update();
-		//終了リクエストで抜ける
-		if (IsEndRequst()) {
-			break;
-		}
-		//描画
-		Draw();
-	}
-	//終了
-	Finalize();
+    // メインゲームループ
+    while (true) {
+        // 毎フレーム更新処理
+        Update();
+
+        // 終了リクエストがあればループ終了
+        if (IsEndRequst()) {
+            break;
+        }
+
+        // 描画処理
+        Draw();
+    }
+
+    // ゲーム全体の終了処理
+    Finalize();
 }

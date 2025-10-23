@@ -1,7 +1,7 @@
 #include "Platform.h"
 #include "ImGuiManager.h"
 
-//初期化
+// プラットフォームの初期化処理
 void Platform::Initialize(Object3dBase* object3dbase) {
 	object3dBase_ = object3dbase;
 	object_ = std::make_unique<Object3d>();
@@ -11,18 +11,21 @@ void Platform::Initialize(Object3dBase* object3dbase) {
 	transform_.scale = { 7.5f,2.0f,3.0f };
 	transform_.translate = { 0.0f,-1.9f,0.0f };
 }
-//更新
+
+// 毎フレームの更新処理（Transform情報をObject3dへ反映）
 void Platform::Update() {
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
 }
-//描画
+
+// プラットフォームの描画処理
 void Platform::Draw() {
 	object_->Draw();
 }
-//デバック
+
+// デバッグ用ImGui表示（Transformのパラメータ調整）
 void Platform::Debug() {
 #ifdef USE_IMGUI
 	if (ImGui::TreeNode("Platform")) {

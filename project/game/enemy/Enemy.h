@@ -10,47 +10,100 @@ class Player;
 class Enemy
 {
 public:
-	//初期化
+	/// <summary>
+	/// 初期化する。
+	/// - 引数の <c>Object3dBase*</c> を保持し、内部で <c>Object3d</c> を生成・初期化する。
+	/// - モデルを "enemy/enemy.obj" に設定し、ライトを無効化、初期のスケール・位置を設定する実装を想定する。
+	/// </summary>
 	void Initialize(Object3dBase*object3dBase);
-	//更新 
+	/// <summary>
+	/// 毎フレームの更新処理を行う。
+	/// - 死亡フラグが立っていれば処理をスキップする。
+	/// - 所有する弾の更新と不要弾の削除を行う。
+	/// - 移動・攻撃（<c>Laser()</c> 呼び出し）を行い、Transform を内部の <c>Object3d</c> に反映する。
+	/// - ダメージ色変化タイマーの更新と色の切り替えを行い、内部オブジェクトを Update する。
+	/// </summary>
 	void Update();
-	//描画
+	/// <summary>
+	/// 描画を行う。
+	/// - 死亡フラグが立っていれば描画を行わない。
+	/// - 内部の <c>Object3d</c> と所有する弾を描画する。
+	/// </summary>
 	void Draw();
-	//攻撃(レーザー)
+	/// <summary>
+	/// レーザー攻撃（弾発射）を行う。
+	/// - プレイヤーへの方向・距離・タイマー等をチェックし、発射条件を満たす場合に弾を生成してリストに追加する。
+	/// </summary>
 	void Laser();
-	//衝突時コールバック
+	/// <summary>
+	/// 衝突時のコールバック。
+	/// - デスフラグやデスパーティクル発生フラグをセットする。
+	/// </summary>
 	void onCollision();
-	//HP減少
+	/// <summary>
+	/// HP を減少させる。
+	/// - ダメージに応じて HP を減らし、色変化タイマーをセットする。
+	/// - HP が 0 以下になった場合は <c>onCollision()</c> を呼んで死亡処理を行う。
+	/// </summary>
+	/// <param name="damege">与えるダメージ量。</param>
 	void TakeDamage(int damege);
-	//Debug
+	/// <summary>
+	/// デバッグ UI を表示する（ImGui を使用）。
+	/// - ID に基づく一意のラベルを生成して HP / スケール / 回転 / 平行移動の編集ウィジェットを表示する実装を想定する。
+	/// </summary>
+	/// <param name="id">デバッグ UI 用の識別子。</param>
 	void Debug(int id);
-	//OBB取得関数
+	/// <summary>
+	/// OBB（Oriented Bounding Box）を取得する。
+	/// - 現在の Transform（位置・回転・スケール）と内部寸法を基に OBB を構築して返す。
+	/// </summary>
+	/// <returns>計算された OBB。</returns>
 	OBB GetOBB()const;
-	//デスフラグが立ったか
+	/// <summary>
+	/// 死亡フラグが立っているか判定する。
+	/// </summary>
+	/// <returns>死亡していれば true。</returns>
 	bool IsDead()const { return isDead_; }
-	//デスパーティクル発生フラグが立ったか
+	/// <summary>
+	/// 死亡時のパーティクル発生フラグが立っているか判定する。
+	/// </summary>
+	/// <returns>デスパーティクル発生フラグが立っていれば true。</returns>
 	bool IsDeathParticle()const { return isDeathParticle_; }
 
 public:
-	///Gettter///
-	//位置
+	/// <summary>
+	/// 現在の位置（Transform.translate）を取得する。
+	/// </summary>
 	const Vector3& GetPosition()const { return transform_.translate; }
-	//半径
+	/// <summary>
+	/// コリジョンや描画に用いる半径を取得する。
+	/// </summary>
 	float GetRadius()const { return radius_; }
-	//弾リストを取得
+	/// <summary>
+	/// 所有する弾リストを取得する（読み取り専用）。
+	/// </summary>
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets()const { return bullets_; }
 
-	///Setter///
-
-	//スケールセット
+	/// <summary>
+	/// スケールを設定する。
+	/// </summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
-	//回転セット
+	/// <summary>
+	/// 回転を設定する。
+	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-	//座標セット
+	/// <summary>
+	/// 座標を設定する。
+	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
-	//Playerのポインタをセット
+	/// <summary>
+	/// 対象プレイヤーのポインタを設定する。
+	/// - 攻撃判定や追従に利用される。
+	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
-	//デスパーティクルフラグ
+	/// <summary>
+	/// デスパーティクル発生フラグを設定する。
+	/// </summary>
 	void SetisDeathParticle(bool flag) { isDeathParticle_ = flag; }
 private:
 	Object3dBase* object3dBase_;
