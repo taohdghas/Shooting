@@ -94,6 +94,22 @@ inline Vector3& operator*=(Vector3& v1, const Vector3& v2) {
     return v1;
 }
 
+/// <summary>
+/// 指定した値に対してイージング（EaseOutQuad）を適用した結果を返します。
+/// - 0.0～1.0の範囲の値xに対して、加速→減速の曲線を返します。
+/// </summary>
+/// <param name="x">イージングを適用する0.0～1.0の値</param>
+/// <returns>イージング後の値（0.0～1.0）</returns>
+double easeOutQuad(double x);
+
+/// <summary>
+/// 指定した値に対してイージング（EaseInOutQuad）を適用した結果を返します。
+/// - 0.0～1.0の範囲の値xに対して、加速→減速の曲線（前半は加速、後半は減速）を返します。
+/// </summary>
+/// <param name="x">イージングを適用する0.0～1.0の値</param>
+/// <returns>イージング後の値（0.0～1.0）</returns>
+double easeInOutQuad(double x);
+
 namespace Math {
     /// <summary>ベクトルの長さを計算する</summary>
     /// <param name="v">計算対象のベクトル</param>

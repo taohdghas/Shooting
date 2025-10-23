@@ -1,11 +1,7 @@
 #include "Fade.h"
 #include "SpriteBase.h"
+#include "MyMath.h"
 #include <algorithm>
-
-// イージング関数（EaseOutQuad）: フェードの進行を滑らかにする
-double easeOutQuad(double x) {
-    return 1.0 - (1.0 - x) * (1.0 - x);
-}
 
 // フェード用スプライトの初期化
 void Fade::Initialize() {

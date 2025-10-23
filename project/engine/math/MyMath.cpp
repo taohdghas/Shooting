@@ -2,6 +2,23 @@
 #include "MyMath.h"
 #include <cassert>
 
+// EaseOutQuadイージング関数
+// x（0.0～1.0）に対して加速→減速のカーブを返す
+double easeOutQuad(double x) {
+	// (1-x)^2で減速カーブを作り、1.0から引くことで加速→減速のイージングを実現
+	return 1.0 - (1.0 - x) * (1.0 - x);
+}
+
+// EaseInOutQuadイージング関数
+// x（0.0～1.0）に対して前半は加速、後半は減速のカーブを返す
+double easeInOutQuad(double x) {
+	// xが0.5未満なら加速（前半）、0.5以上なら減速（後半）
+	if (x < 0.5)
+		return 2 * x * x;
+	else
+		return 1 - pow(-2 * x + 2, 2) / 2;
+}
+
 namespace Math {
 	//長さ
 	float Math::Length(const Vector3& v) {
