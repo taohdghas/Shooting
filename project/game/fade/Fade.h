@@ -27,6 +27,7 @@ public:
 	bool IsFinished();
 public:
 	State GetState() const { return state_; }
+
 private:
 	std::unique_ptr<Sprite> sprite_;
 	//Δtを定義

@@ -18,6 +18,9 @@ void GameClearScene::Finalize() {
 //更新
 void GameClearScene::Update() {
 
+
+	// Update関数やDraw関数の先頭などに追加
+	OutputDebugStringA("現在のシーン: GameClearScene\n");
 	//フェード
 	fade->Update();
 	//シーン遷移

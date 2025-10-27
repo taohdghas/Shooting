@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "Input.h"
 #include <cassert>
 
 SceneManager* SceneManager::instance = nullptr;

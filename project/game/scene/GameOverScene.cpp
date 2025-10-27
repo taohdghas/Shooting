@@ -10,7 +10,9 @@ void GameOverScene::Initialize() {
 	fade = std::make_unique<Fade>();
 	fade->Initialize();
 	fade->FadeStart(Fade::State::FadeIn, 0.5f);
-
+	//ゲームオーバーオブジェクト
+	gameOverObject = std::make_unique<GameOverObject>();
+	gameOverObject->Initialize();
 	
 }
 //終了
@@ -19,6 +21,11 @@ void GameOverScene::Finalize() {
 }
 //更新
 void GameOverScene::Update() {
+
+	// Update関数やDraw関数の先頭などに追加
+	OutputDebugStringA("現在のシーン: GameOverScene\n");
+	//ゲームオーバーオブジェクト
+	gameOverObject->Update();
 	//フェード
 	fade->Update();
 	//シーン遷移
@@ -29,6 +36,9 @@ void GameOverScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
 
+	//ゲームオーバーオブジェクト
+	gameOverObject->Draw();
+
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 
@@ -37,6 +47,8 @@ void GameOverScene::Draw() {
 }
 //デバック
 void GameOverScene::Debug() {
+	//ゲームオーバーオブジェクト
+
 
 }
 //シーン遷移

@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseScene.h"
 #include "Fade.h"
+#include "GameOverObject.h"
 
 //ゲームオーバーシーン
 class GameOverScene : public BaseScene
@@ -22,6 +23,8 @@ public:
 private:
 	//フェード
 	std::unique_ptr<Fade>fade;
+	//ゲームオーバーオブジェクト
+	std::unique_ptr<GameOverObject>gameOverObject;
 	//タイトルシーンへの移行フラグ
 	bool isToTitle = false;
 	//ゲームシーンへの移行フラグ

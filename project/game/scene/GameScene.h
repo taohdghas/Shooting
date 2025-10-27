@@ -63,5 +63,8 @@ private:
 	std::unique_ptr<Fade>fade;
 	//レベルデータ
 	LevelData* levelData;
+
+	//ゲームオーバーシーン遷移フラグ
+	bool isToGameOver = false;
 };
 

@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "CameraManager.h"
 #include "ImGuiManager.h"
+#include <windows.h> // ファイル先頭付近に追加
 
 
 //初期化
@@ -19,6 +20,8 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
 	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 	ModelManager::GetInstance()->LoadModel("platform/platform.obj");
+	ModelManager::GetInstance()->LoadModel("gameover.obj");
+	ModelManager::GetInstance()->LoadModel("retry.obj");
 
 	//パーティクル
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
@@ -134,11 +137,13 @@ void GameScene::Update() {
 		particle->Update();
 	}
 
-	//クリアシーンへ
-	ToGameClear();
+	if(player->IsDead()){
+		isToGameOver = true;
+	}
 
-	//プレイヤーが撃破されたらゲームオーバーへ
-	if (player->IsDead()) {
+	if (!isToGameOver) {
+		ToGameClear();
+	} else {
 		ToGameOver();
 	}
 
@@ -207,6 +212,13 @@ void GameScene::Debug() {
 }
 //ゲームクリアへ
 void GameScene::ToGameClear() {
+	// OutputDebugStringでIsFinishedの状態を出力
+	{
+		bool finished = fade->IsFinished();
+		std::string msg = "[ToGameClear] IsFinished: ";
+		msg += finished ? "true\n" : "false\n";
+		OutputDebugStringA(msg.c_str());
+	}
 	//FadeInが終わっているなら状態をNoneに
 	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
 		fade->End();
@@ -222,6 +234,13 @@ void GameScene::ToGameClear() {
 }
 //ゲームオーバーへ
 void GameScene::ToGameOver() {
+	// OutputDebugStringでIsFinishedの状態を出力
+	{
+		bool finished = fade->IsFinished();
+		std::string msg = "[ToGameOver] IsFinished: ";
+		msg += finished ? "true\n" : "false\n";
+		OutputDebugStringA(msg.c_str());
+	}
 	//FadeInが終わっているなら状態をNoneに
 	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
 		fade->End();
