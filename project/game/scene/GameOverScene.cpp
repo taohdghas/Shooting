@@ -34,7 +34,9 @@ void GameOverScene::Initialize() {
 	//ゲームオーバーオブジェクト
 	gameOverObject = std::make_unique<GameOverObject>();
 	gameOverObject->Initialize();
-	
+	//Skybox
+	skybox = std::make_unique<Skybox>();
+	skybox->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
 }
 //終了
 void GameOverScene::Finalize() {
@@ -46,6 +48,8 @@ void GameOverScene::Update() {
 
 	//カメラ
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	//Skybox
+	skybox->Update();
 
 	//ゲームオーバーオブジェクト
 	gameOverObject->Update();
@@ -60,6 +64,8 @@ void GameOverScene::Update() {
 void GameOverScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
+	//Skybox
+	skybox->Draw();
 
 	//ゲームオーバーオブジェクト
 	gameOverObject->Draw();

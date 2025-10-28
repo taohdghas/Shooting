@@ -104,7 +104,7 @@ private:
 	//ジャンプ速度
 	float jumpVelocity_ = 0.0f;
 	//HP
-	int hp_ = 100;
+	int hp_ = 5;
 	//ジャンプ回数
 	int jumpCount_ = 0;
 	//最大ジャンプ可能回数

@@ -3,6 +3,7 @@
 #include "Fade.h"
 #include "GameOverObject.h"
 #include "Camera.h"
+#include "Skybox.h"
 
 //ゲームオーバーシーン
 class GameOverScene : public BaseScene
@@ -28,6 +29,8 @@ private:
 	std::unique_ptr<Fade>fade;
 	//ゲームオーバーオブジェクト
 	std::unique_ptr<GameOverObject>gameOverObject;
+	//Skybox
+	std::unique_ptr<Skybox>skybox;
 	//タイトルシーンへの移行フラグ
 	bool isToTitle = false;
 	//ゲームシーンへの移行フラグ

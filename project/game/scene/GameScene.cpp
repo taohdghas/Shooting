@@ -67,7 +67,7 @@ void GameScene::Initialize() {
 		player->SetTranslate(transform.translate);
 		//railCamera->SetPlayer(player.get());
 	}
-
+	/*
 	for (auto& enemyData : levelData->enemies) {
 		auto newEnemy = std::make_unique<Enemy>();
 		newEnemy->Initialize(Object3dBase::GetInstance());
@@ -75,7 +75,12 @@ void GameScene::Initialize() {
 		newEnemy->SetPlayer(player.get());
 		enemies.push_back(std::move(newEnemy));
 	}
-
+	*/
+	auto newEnemy = std::make_unique<Enemy>();
+	newEnemy->Initialize(Object3dBase::GetInstance());
+	newEnemy->SetTranslate({ 0.08f, 0.0f, 24.0f });
+	newEnemy->SetPlayer(player.get());
+	enemies.push_back(std::move(newEnemy));
 	//フェード
 	fade = std::make_unique<Fade>();
 	fade->Initialize();
@@ -134,11 +139,11 @@ void GameScene::Update() {
 	for (auto& particle : particleEmitter) {
 		particle->Update();
 	}
-	/*
+	
 	if(player->IsDead()){
 		isToGameOver = true;
 	}
-	*/
+	
 	if (Input::GetInstance()->PushKey(DIK_R)) {
 		isToGameOver = true;
 	}
