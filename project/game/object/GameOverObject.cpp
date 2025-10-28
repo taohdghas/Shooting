@@ -3,13 +3,31 @@
 
 //初期化
 void GameOverObject::Initialize() {
-	//ゲームオーアー字のオブジェクト
+	//ゲームオーバーー字のオブジェクト
 	gameover = std::make_unique<Object3d>();
 	gameover->Initialize(Object3dBase::GetInstance());
 	gameover->SetModel("gameover.obj");
 	gameoverTransform.scale = { 1.0f,1.0f,1.0f };
 	gameoverTransform.rotate = { 0.0f,0.0f,0.0f };
 	gameoverTransform.translate = { -2.4f,0.5f,1.0f };
+	
+	//ゲームオーバー文字
+	std::string models[NumLetters] = {
+	   "g.obj","a.obj","m.obj","e.obj","o.obj","v.obj","e.obj","r.obj"
+	};
+
+	for (int i = 0; i < NumLetters; i++) {
+		letters[i].obj = std::make_unique<Object3d>();
+		letters[i].obj->Initialize(Object3dBase::GetInstance());
+		letters[i].obj->SetModel(models[i]);
+
+		letters[i].transform.scale = { 1.0f,1.0f,1.0f };
+		letters[i].transform.rotate = { 0.0f,0.0f,0.0f };
+		letters[i].transform.translate = { startX + spacing * i, baseY, 1.0f };
+
+		letters[i].delay = i * 0.1f; 
+		
+	}
 
 	//retryのオブジェクト
 	retry = std::make_unique<Object3d>();
@@ -17,11 +35,43 @@ void GameOverObject::Initialize() {
 	retry->SetModel("retry.obj");
 	retryTransform.scale = { 0.7f,0.7f,0.7f };
 	retryTransform.rotate = { 0.0f,0.0f,0.0f };
-	retryTransform.translate = { -0.5f,-1.7f,1.0f };
-	
+	retryTransform.translate = { -0.65f,-1.7f,1.0f };
+
 }
 //更新
 void GameOverObject::Update() {
+
+	//文字ジャンプ処理
+	jumpTimer_ += DeltaTime;
+
+	// 現在ジャンプ中の文字
+	for (int i = 0; i < NumLetters; i++) {
+		float y = 0.0f;
+
+		if (i == currentIndex_) {
+			//ジャンプ中
+			float t = jumpTimer_ / jumpDuration_; // 0～1
+			if (t < 1.0f) {
+				y = sinf(t * 3.14159f) * jumpHeight_;
+			} else {
+				//次の文字へ移行
+				jumpTimer_ = 0.0f;
+				currentIndex_++;
+				if (currentIndex_ >= NumLetters) {
+					//最後まで行ったら最初に戻る
+					currentIndex_ = 0; 
+				}
+			}
+		}
+
+		//反映
+		letters[i].transform.translate.y = y;
+		letters[i].obj->SetScale(letters[i].transform.scale);
+		letters[i].obj->SetRotate(letters[i].transform.rotate);
+		letters[i].obj->SetTranslate(letters[i].transform.translate);
+		letters[i].obj->Update();
+	}
+
 
 	//ゲームオーバートランスフォームのセット
 	gameover->SetScale(gameoverTransform.scale);
@@ -45,8 +95,11 @@ void GameOverObject::Update() {
 }
 //描画
 void GameOverObject::Draw() {
-	//ゲームオーアー字のオブジェクト
-	gameover->Draw();
+	//ゲームオーバー文字のオブジェクト
+	//gameover->Draw();
+	for (int i = 0; i < NumLetters; i++) {
+		letters[i].obj->Draw();
+	}
 	//retryのオブジェクト
 	retry->Draw();
 }

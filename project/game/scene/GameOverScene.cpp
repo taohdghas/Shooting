@@ -4,9 +4,21 @@
 #include "Input.h"
 #include "SceneManager.h"
 #include "CameraManager.h"
+#include "ModelManager.h"
 
 //初期化
 void GameOverScene::Initialize() {
+
+	//モデル読み込み
+	ModelManager::GetInstance()->LoadModel("gameover.obj");
+	ModelManager::GetInstance()->LoadModel("retry.obj");
+	ModelManager::GetInstance()->LoadModel("g.obj");
+	ModelManager::GetInstance()->LoadModel("a.obj");
+	ModelManager::GetInstance()->LoadModel("m.obj");
+	ModelManager::GetInstance()->LoadModel("e.obj");
+	ModelManager::GetInstance()->LoadModel("o.obj");
+	ModelManager::GetInstance()->LoadModel("v.obj");
+	ModelManager::GetInstance()->LoadModel("r.obj");
 
 	//カメラ
 	camera = std::make_unique<Camera>();

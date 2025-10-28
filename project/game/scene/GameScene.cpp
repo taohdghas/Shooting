@@ -20,8 +20,6 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
 	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 	ModelManager::GetInstance()->LoadModel("platform/platform.obj");
-	ModelManager::GetInstance()->LoadModel("gameover.obj");
-	ModelManager::GetInstance()->LoadModel("retry.obj");
 
 	//パーティクル
 	ParticleManager::GetInstance()->CreateparticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
