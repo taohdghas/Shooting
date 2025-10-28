@@ -50,7 +50,7 @@ void GameOverObject::Update() {
 
 		if (i == currentIndex_) {
 			//ジャンプ中
-			float t = jumpTimer_ / jumpDuration_; // 0～1
+			float t = jumpTimer_ / jumpDuration_; 
 			if (t < 1.0f) {
 				y = sinf(t * 3.14159f) * jumpHeight_;
 			} else {
