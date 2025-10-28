@@ -30,9 +30,7 @@ void Player::Initialize(Object3dBase* object3dbase) {
 //更新
 void Player::Update() {
 	//デスの場合スキップ
-	if (isDead_) {
-		return;
-	}
+
 	//攻撃クールタイム
 	if (attackCooldown_ > 0) {
 		attackCooldown_--;
@@ -66,10 +64,6 @@ void Player::Update() {
 	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Attack();
 	}
-	//3方向攻撃
-	if (Input::GetInstance()->PushKey(DIK_R)) {
-		ThreeAttack();
-	}
 	//回避
 	Dodge();
 	//各Transformをobjectに反映
@@ -92,9 +86,7 @@ void Player::Update() {
 //描画
 void Player::Draw() {
 	//デスの場合スキップ
-	if (isDead_) {
-		return;
-	}
+
 	//プレイヤーの描画
 	object_->Draw();
 	//レティクルの描画
@@ -167,34 +159,6 @@ void Player::Attack() {
 	newBullet->SetVelocity(velocity);
 	newBullet->SetPosition(transform_.translate);
 	bullets_.push_back(std::move(newBullet));
-	attackCooldown_ = attackInterval_;
-}
-
-//三方向攻撃
-void Player::ThreeAttack() {
-	//クールタイムが0より大きければスキップ
-	if (attackCooldown_ > 0) {
-		return;
-	}
-
-	//発射方向
-	std::vector<Vector3> directions = {
-		Vector3(-1, 0, 1),
-		Vector3(0, 0, 1),
-		Vector3(1, 0, 1)
-	};
-
-	for (const auto& dir : directions) {
-		Vector3 velocity = Math::Normalize(dir);
-		velocity = Math::Multiply(velocity, kBulletSpeed);
-
-		auto newBullet = std::make_unique<playerBullet>();
-		newBullet->Initialize(object3dBase_);
-		newBullet->SetVelocity(velocity);
-		newBullet->SetPosition(transform_.translate);
-		bullets_.push_back(std::move(newBullet));
-	}
-
 	attackCooldown_ = attackInterval_;
 }
 

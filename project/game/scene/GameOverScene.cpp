@@ -3,9 +3,18 @@
 #include "SpriteBase.h"
 #include "Input.h"
 #include "SceneManager.h"
+#include "CameraManager.h"
 
 //初期化
 void GameOverScene::Initialize() {
+
+	//カメラ
+	camera = std::make_unique<Camera>();
+	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
+	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->SetActiveCamera("Main");
+	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+
 	//フェード
 	fade = std::make_unique<Fade>();
 	fade->Initialize();
@@ -17,19 +26,23 @@ void GameOverScene::Initialize() {
 }
 //終了
 void GameOverScene::Finalize() {
-
+	//カメラマネージャ
+	CameraManager::GetInstance()->Finalize();
 }
 //更新
 void GameOverScene::Update() {
 
-	// Update関数やDraw関数の先頭などに追加
-	OutputDebugStringA("現在のシーン: GameOverScene\n");
+	//カメラ
+	CameraManager::GetInstance()->GetActiveCamera()->Update();
+
 	//ゲームオーバーオブジェクト
 	gameOverObject->Update();
 	//フェード
 	fade->Update();
 	//シーン遷移
 	SceneChange();
+	//デバック
+	Debug();
 }
 //描画
 void GameOverScene::Draw() {
@@ -48,7 +61,7 @@ void GameOverScene::Draw() {
 //デバック
 void GameOverScene::Debug() {
 	//ゲームオーバーオブジェクト
-
+	gameOverObject->Debug();
 
 }
 //シーン遷移

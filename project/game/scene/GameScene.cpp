@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "CameraManager.h"
 #include "ImGuiManager.h"
-#include <windows.h> // ファイル先頭付近に追加
+#include "MyMath.h"
 
 
 //初期化
@@ -136,8 +136,12 @@ void GameScene::Update() {
 	for (auto& particle : particleEmitter) {
 		particle->Update();
 	}
-
+	/*
 	if(player->IsDead()){
+		isToGameOver = true;
+	}
+	*/
+	if (Input::GetInstance()->PushKey(DIK_R)) {
 		isToGameOver = true;
 	}
 
@@ -212,13 +216,6 @@ void GameScene::Debug() {
 }
 //ゲームクリアへ
 void GameScene::ToGameClear() {
-	// OutputDebugStringでIsFinishedの状態を出力
-	{
-		bool finished = fade->IsFinished();
-		std::string msg = "[ToGameClear] IsFinished: ";
-		msg += finished ? "true\n" : "false\n";
-		OutputDebugStringA(msg.c_str());
-	}
 	//FadeInが終わっているなら状態をNoneに
 	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
 		fade->End();
@@ -234,21 +231,48 @@ void GameScene::ToGameClear() {
 }
 //ゲームオーバーへ
 void GameScene::ToGameOver() {
-	// OutputDebugStringでIsFinishedの状態を出力
-	{
-		bool finished = fade->IsFinished();
-		std::string msg = "[ToGameOver] IsFinished: ";
-		msg += finished ? "true\n" : "false\n";
-		OutputDebugStringA(msg.c_str());
-	}
 	//FadeInが終わっているなら状態をNoneに
 	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
 		fade->End();
 	}
-	//フェードアウト開始
-	if (fade->GetState() == Fade::State::None) {
-		fade->FadeStart(Fade::State::FadeOut, 0.5f);
+	//撃破演出開始
+	if (!isDeathMotionStarted) {
+		isDeathMotionStarted = true;
+		deathTimer = 0.0f;
+		deathVelocityY = 0.25f;
+		deathRotationSpeed = 5.0f;
+
+		//回転軸をランダムに
+		deathRotationAxis.x = randomDist(randomEngine);
+		deathRotationAxis.y = randomDist(randomEngine);
+		deathRotationAxis.z = randomDist(randomEngine);
+
+		//正規化
+		Math::Normalize(deathRotationAxis);
 	}
+
+	//撃破演出中
+	if (isDeathMotionStarted) {
+		deathTimer += DeltaTime;
+		//回転
+		Vector3 rot = player->GetRotate();
+		rot.x += deathRotationAxis.x * deathRotationSpeed;
+		rot.y += deathRotationAxis.y * deathRotationSpeed;
+		rot.z += deathRotationAxis.z * deathRotationSpeed;
+		player->SetRotate(rot);
+
+		//落下
+		deathVelocityY -= gravity; 
+		Vector3 pos = player->GetTranslate();
+		pos.y += deathVelocityY;
+		player->SetTranslate(pos);
+
+		//地面より下に落ちたらフェードアウト
+		if (pos.y < -3.0f && fade->GetState() == Fade::State::None) {
+			fade->FadeStart(Fade::State::FadeOut,0.5f);
+		}
+	}
+
 	//フェードアウト終了後シーン移行
 	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
 		SceneManager::GetInstance()->ChangeScene("OVER");

@@ -2,6 +2,7 @@
 #include "BaseScene.h"
 #include "Fade.h"
 #include "GameOverObject.h"
+#include "Camera.h"
 
 //ゲームオーバーシーン
 class GameOverScene : public BaseScene
@@ -21,6 +22,8 @@ public:
 	//シーン遷移
 	void SceneChange();
 private:
+	//カメラ
+	std::unique_ptr<Camera>camera;
 	//フェード
 	std::unique_ptr<Fade>fade;
 	//ゲームオーバーオブジェクト
