@@ -239,21 +239,32 @@ void GameScene::ToGameOver() {
 	if (!isDeathMotionStarted) {
 		isDeathMotionStarted = true;
 		deathTimer = 0.0f;
-		deathVelocityY = 0.25f;
 		deathRotationSpeed = 5.0f;
 
 		//回転軸をランダムに
 		deathRotationAxis.x = randomDist(randomEngine);
 		deathRotationAxis.y = randomDist(randomEngine);
 		deathRotationAxis.z = randomDist(randomEngine);
-
-		//正規化
 		Math::Normalize(deathRotationAxis);
+
+		//飛び上がる初速度をランダムに生成
+		float minY = 0.2f; 
+		float maxY = 0.3f;
+		float velocityY = minY + (maxY - minY) * ((randomDist(randomEngine) + 1.0f) / 2.0f);
+
+		//X/Z方向のランダム成分
+		float velocityXZ = 0.05f;
+		deathVelocity = {
+			randomDist(randomEngine) * velocityXZ, 
+			velocityY,                             
+			randomDist(randomEngine) * velocityXZ  
+		};
 	}
 
 	//撃破演出中
 	if (isDeathMotionStarted) {
 		deathTimer += DeltaTime;
+
 		//回転
 		Vector3 rot = player->GetRotate();
 		rot.x += deathRotationAxis.x * deathRotationSpeed;
@@ -262,17 +273,18 @@ void GameScene::ToGameOver() {
 		player->SetRotate(rot);
 
 		//落下
-		deathVelocityY -= gravity; 
+		deathVelocity.y -= gravity;
 		Vector3 pos = player->GetTranslate();
-		pos.y += deathVelocityY;
+		pos.x += deathVelocity.x;
+		pos.y += deathVelocity.y;
+		pos.z += deathVelocity.z;
 		player->SetTranslate(pos);
 
-		//地面より下に落ちたらフェードアウト
+		//地面寄りしたならフェードアウト開始
 		if (pos.y < -3.0f && fade->GetState() == Fade::State::None) {
-			fade->FadeStart(Fade::State::FadeOut,0.5f);
+			fade->FadeStart(Fade::State::FadeOut, 0.5f);
 		}
 	}
-
 	//フェードアウト終了後シーン移行
 	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
 		SceneManager::GetInstance()->ChangeScene("OVER");

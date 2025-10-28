@@ -67,6 +67,8 @@ private:
 
 	//撃破演出回転軸
 	Vector3 deathRotationAxis = { 1.0f, 0.0f, 0.0f };
+	//撃破演出速度
+	Vector3 deathVelocity;
 	//乱数生成器
 	std::mt19937 randomEngine{ std::random_device{}() };
 	std::uniform_real_distribution<float> randomDist{ -1.0f, 1.0f };
@@ -78,9 +80,7 @@ private:
 	//撃破演出が始まったか
 	bool isDeathMotionStarted = false;
 	//撃破演出経過時間タイマー
-	float deathTimer = 0.0f;          
-	//撃破演出Y移動
-	float deathVelocityY = 0.25f;           
+	float deathTimer = 0.0f;                 
 	//撃破演出回転速度
 	float deathRotationSpeed = 5.0f;  
 	//重力加速度
