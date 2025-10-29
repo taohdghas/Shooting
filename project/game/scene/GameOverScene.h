@@ -1,38 +1,38 @@
 #pragma once
 #include "BaseScene.h"
+#include "Fade.h"
+#include "GameOverObject.h"
+#include "Camera.h"
+#include "Skybox.h"
 
 //ゲームオーバーシーン
 class GameOverScene : public BaseScene
 {
 public:
-	/// <summary>
-	/// シーン初期化処理。
-	/// - シーン開始時に必要なリソース読み込みや状態リセットを行う。
-	/// - 例: フェードやUI、サウンドの再生準備などをここで行う想定。
-	/// </summary>
+	//初期化
 	void Initialize()override;
-	/// <summary>
-	/// シーン終了処理。
-	/// - シーン終了時に確保したリソースの解放や状態のクリーンアップを行う。
-	/// </summary>
+	//終了
 	void Finalize()override;
-	/// <summary>
-	/// 毎フレーム更新処理。
-	/// - ユーザー入力（リトライやタイトルへ戻る等）やアニメーション、フェード状態の更新を行う。
-	/// - 必要に応じて SceneManager によるシーン遷移要求を行う。
-	/// </summary>
+	//更新
 	void Update()override;
-	/// <summary>
-	/// 描画処理。
-	/// - 画面上の UI や背景、フェード等の描画コマンドを発行する。
-	/// </summary>
+	//描画
 	void Draw()override;
-	/// <summary>
-	/// デバッグ表示処理（ImGui 等）。
-	/// - デバッグ用 UI の表示やパラメータ調整を行う（実装はオプション）。
-	/// </summary>
+	//デバック
 	void Debug()override;
+public:
+	//シーン遷移
+	void SceneChange();
 private:
-
+	//カメラ
+	std::unique_ptr<Camera>camera;
+	//フェード
+	std::unique_ptr<Fade>fade;
+	//ゲームオーバーオブジェクト
+	std::unique_ptr<GameOverObject>gameOverObject;
+	//Skybox
+	std::unique_ptr<Skybox>skybox;
+	//タイトルシーンへの移行フラグ
+	bool isToTitle = false;
+	//ゲームシーンへの移行フラグ
+	bool isToGame = false;
 };
-

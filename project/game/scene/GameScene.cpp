@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "CameraManager.h"
 #include "ImGuiManager.h"
+#include "MyMath.h"
 
 // ゲームシーンの初期化処理
 void GameScene::Initialize() {
@@ -134,18 +135,21 @@ void GameScene::Update() {
 	for (auto& particle : particleEmitter) {
 		particle->Update();
 	}
-
-	// プレイヤー死亡時はタイトルシーンへ遷移
-	if (player->IsDead()) {
-		SceneManager::GetInstance()->ChangeScene("TITLE");
+	
+	if(player->IsDead()){
+		isToGameOver = true;
+	}
+	
+	if (Input::GetInstance()->PushKey(DIK_R)) {
+		isToGameOver = true;
 	}
 
-	// Cキーでクリアシーンへ遷移
-	if (Input::GetInstance()->PushKey(DIK_C)) {
-		SceneManager::GetInstance()->ChangeScene("CLEAR");
+	if (!isToGameOver) {
+		ToGameClear();
+	} else {
+		ToGameOver();
 	}
 
-	// フェードの更新
 	fade->Update();
 
 	// デバッグ表示
@@ -174,6 +178,12 @@ void GameScene::Draw() {
 	player->ReticleDraw();
 	// フェード描画
 	fade->Draw();
+	//パーティクル
+	ParticleManager::GetInstance()->Draw();
+
+	//パーティクル
+	ParticleManager::GetInstance()->Draw();
+
 }
 
 // デバッグ表示（ImGuiによるパラメータ調整・状態表示）
@@ -208,4 +218,80 @@ void GameScene::Debug() {
 	}
 	ImGui::End();
 #endif
+}
+//ゲームクリアへ
+void GameScene::ToGameClear() {
+	//FadeInが終わっているなら状態をNoneに
+	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
+		fade->End();
+	}
+	//フェードアウト開始
+	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_C)) {
+		fade->FadeStart(Fade::State::FadeOut, 0.5f);
+	}
+	//フェードアウト終了後シーン移行
+	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
+		SceneManager::GetInstance()->ChangeScene("CLEAR");
+	}
+}
+//ゲームオーバーへ
+void GameScene::ToGameOver() {
+	//FadeInが終わっているなら状態をNoneに
+	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
+		fade->End();
+	}
+	//撃破演出開始
+	if (!isDeathMotionStarted) {
+		isDeathMotionStarted = true;
+		deathTimer = 0.0f;
+		deathRotationSpeed = 5.0f;
+
+		//回転軸をランダムに
+		deathRotationAxis.x = randomDist(randomEngine);
+		deathRotationAxis.y = randomDist(randomEngine);
+		deathRotationAxis.z = randomDist(randomEngine);
+		Math::Normalize(deathRotationAxis);
+
+		//飛び上がる初速度をランダムに生成
+		float minY = 0.2f; 
+		float maxY = 0.3f;
+		float velocityY = minY + (maxY - minY) * ((randomDist(randomEngine) + 1.0f) / 2.0f);
+
+		//X/Z方向のランダム成分
+		float velocityXZ = 0.05f;
+		deathVelocity = {
+			randomDist(randomEngine) * velocityXZ, 
+			velocityY,                             
+			randomDist(randomEngine) * velocityXZ  
+		};
+	}
+
+	//撃破演出中
+	if (isDeathMotionStarted) {
+		deathTimer += DeltaTime;
+
+		//回転
+		Vector3 rot = player->GetRotate();
+		rot.x += deathRotationAxis.x * deathRotationSpeed;
+		rot.y += deathRotationAxis.y * deathRotationSpeed;
+		rot.z += deathRotationAxis.z * deathRotationSpeed;
+		player->SetRotate(rot);
+
+		//落下
+		deathVelocity.y -= gravity;
+		Vector3 pos = player->GetTranslate();
+		pos.x += deathVelocity.x;
+		pos.y += deathVelocity.y;
+		pos.z += deathVelocity.z;
+		player->SetTranslate(pos);
+
+		//地面寄りしたならフェードアウト開始
+		if (pos.y < -3.0f && fade->GetState() == Fade::State::None) {
+			fade->FadeStart(Fade::State::FadeOut, 0.5f);
+		}
+	}
+	//フェードアウト終了後シーン移行
+	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
+		SceneManager::GetInstance()->ChangeScene("OVER");
+	}
 }

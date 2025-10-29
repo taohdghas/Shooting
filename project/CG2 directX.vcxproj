@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
+    <ClCompile Include="game\object\GameOverObject.cpp" />
     <ClCompile Include="game\scene\GameOverScene.cpp" />
     <ClCompile Include="game\fade\Fade.cpp" />
     <ClCompile Include="game\scene\GameSelectScene.cpp" />
@@ -60,7 +61,7 @@
     <ClCompile Include="engine\base\WindowsAPI.cpp" />
     <ClCompile Include="engine\base\Pso.cpp" />
     <ClCompile Include="game\skybox\Skybox.cpp" />
-    <ClCompile Include="game\titleObject\TitleObject.cpp" />
+    <ClCompile Include="game\object\TitleObject.cpp" />
     <ClCompile Include="game\platform\Platform.cpp" />
     <ClCompile Include="engine\math\WorldTransform.cpp" />
     <ClCompile Include="game\railcamera\RailCamera.cpp" />
@@ -68,6 +69,7 @@
   <ItemGroup>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
+    <ClInclude Include="game\object\GameOverObject.h" />
     <ClInclude Include="game\scene\GameOverScene.h" />
     <ClInclude Include="game\fade\Fade.h" />
     <ClInclude Include="game\scene\GameSelectScene.h" />
@@ -122,7 +124,7 @@
     <ClInclude Include="engine\math\Vector3.h" />
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\base\WindowsAPI.h" />
-    <ClInclude Include="game\titleObject\TitleObject.h" />
+    <ClInclude Include="game\object\TitleObject.h" />
     <ClInclude Include="engine\math\WorldTransform.h" />
     <ClInclude Include="game\railcamera\RailCamera.h" />
   </ItemGroup>
@@ -288,7 +290,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -315,7 +317,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox\;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox\;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

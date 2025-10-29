@@ -291,7 +291,7 @@
     <ClCompile Include="game\skybox\Skybox.cpp">
       <Filter>ソース ファイル\application\skybox</Filter>
     </ClCompile>
-    <ClCompile Include="game\titleObject\TitleObject.cpp">
+    <ClCompile Include="game\object\TitleObject.cpp">
       <Filter>ソース ファイル\application\titleobject</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -307,6 +307,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="game\scene\GameOverScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\GameOverObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -473,7 +476,7 @@
     <ClInclude Include="game\skybox\Skybox.h">
       <Filter>ヘッダー ファイル\application\skybox</Filter>
     </ClInclude>
-    <ClInclude Include="game\titleObject\TitleObject.h">
+    <ClInclude Include="game\object\TitleObject.h">
       <Filter>ヘッダー ファイル\application\titleobject</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\WorldTransform.h">
@@ -486,6 +489,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="game\scene\GameOverScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\GameOverObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

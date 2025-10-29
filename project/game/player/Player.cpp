@@ -27,11 +27,9 @@ void Player::Initialize(Object3dBase* object3dbase) {
 
 // 毎フレームの更新処理
 void Player::Update() {
-	// デス状態なら処理をスキップ
-	if (isDead_) {
-		return;
-	}
-	// 攻撃クールタイム更新
+	//デスの場合スキップ
+
+	//攻撃クールタイム
 	if (attackCooldown_ > 0) {
 		attackCooldown_--;
 	}
@@ -86,10 +84,9 @@ void Player::Update() {
 
 // プレイヤー・弾の描画処理
 void Player::Draw() {
-	// デス状態なら描画しない
-	if (isDead_) {
-		return;
-	}
+	//デスの場合スキップ
+
+	//プレイヤーの描画
 	object_->Draw();
 	for (const auto& bullet : bullets_) {
 		bullet->Draw();

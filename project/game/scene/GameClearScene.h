@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+#include "Fade.h"
 
 // ゲームクリアシーン
 class GameClearScene : public BaseScene
@@ -35,7 +36,11 @@ public:
 	/// - ImGui 等によるデバッグ UI を表示する場合はここに実装する（現状は空実装）。
 	/// </summary>
 	void Debug() override;
-
+public:
+	//シーン遷移
+	void SceneChange();
 private:
+	//フェード
+	std::unique_ptr<Fade>fade;
 };
 

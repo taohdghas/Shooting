@@ -114,10 +114,11 @@ public:
 	bool IsDead()const { return isDead_; }
 public:
 	///Getter/// 
-
-	/// <summary>
-	/// 現在のワールド座標（Transform.translate）を取得する。
-	/// </summary>
+	//スケール取得
+	const Vector3& GetScale()const { return transform_.scale; }
+	//回転取得
+	const Vector3& GetRotate()const { return transform_.rotate; }
+	//位置取得
 	const Vector3& GetTranslate()const { return transform_.translate; }
 	/// <summary>
 	/// 衝突判定等で用いる半径を取得する。
