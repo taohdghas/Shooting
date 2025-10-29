@@ -35,7 +35,6 @@ void ParticleManager::Initialize(DirectXBase* directxBase, SrvManager* srvManage
 void ParticleManager::Finalize() {
 	delete instance;
 	instance = nullptr;
-	//particleGroups.clear();
 }
 
 //シーン終了時に呼ぶ
