@@ -8,13 +8,13 @@ class GameClearScene : public BaseScene
 public:
 	/// <summary>
 	/// 初期化処理を行う。
-	/// - シーン開始時のリソース確保や状態リセットを行う場所（現状は空実装）。
+	/// - シーン開始時のリソース確保や状態リセットを行う場所
 	/// </summary>
 	void Initialize() override;
 
 	/// <summary>
 	/// 終了処理を行う。
-	/// - シーン終了時のクリーンアップを行う場所（現状は空実装）。
+	/// - シーン終了時のクリーンアップを行う場所
 	/// </summary>
 	void Finalize() override;
 
@@ -27,13 +27,13 @@ public:
 
 	/// <summary>
 	/// 描画処理を行う。
-	/// - シーンの描画コマンドを発行する場所（現状は空実装）。
+	/// - シーンの描画コマンドを発行する場所
 	/// </summary>
 	void Draw() override;
 
 	/// <summary>
 	/// デバッグ表示用の処理を行う。
-	/// - ImGui 等によるデバッグ UI を表示する場合はここに実装する（現状は空実装）。
+	/// - ImGui 等によるデバッグ UI を表示する場合はここに実装する
 	/// </summary>
 	void Debug() override;
 public:
