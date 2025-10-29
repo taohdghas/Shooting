@@ -59,9 +59,18 @@ public:
 	/// </summary>
 	void Debug()override;
 public:
-	//ゲームクリアへ
+	/// <summary>
+    /// ゲームクリアシーンへ遷移する。
+    /// - シーンマネージャーを通じてゲームクリア画面へのシーン変更を予約する。
+    /// - プレイヤーや敵の状態に応じて、必要な演出やリソース解放処理を行う場合がある。
+    /// </summary>
 	void ToGameClear();
-	//ゲームオーバーへ
+
+	/// <summary>
+	/// ゲームオーバーシーンへ遷移する。
+	/// - シーンマネージャーを通じてゲームオーバー画面へのシーン変更を予約する。
+	/// - プレイヤー死亡時や条件達成時に呼び出され、必要な演出やリソース解放処理を行う場合がある。
+	/// </summary>
 	void ToGameOver();
 private:
 	//プレイヤー
@@ -94,7 +103,7 @@ private:
 	//乱数生成器
 	std::mt19937 randomEngine{ std::random_device{}() };
 	std::uniform_real_distribution<float> randomDist{ -1.0f, 1.0f };
-	
+
 	//Δtを定義
 	const float DeltaTime = 1.0f / 60.0f;
 	//ゲームオーバーシーン遷移フラグ
@@ -102,9 +111,9 @@ private:
 	//撃破演出が始まったか
 	bool isDeathMotionStarted = false;
 	//撃破演出経過時間タイマー
-	float deathTimer = 0.0f;                 
+	float deathTimer = 0.0f;
 	//撃破演出回転速度
-	float deathRotationSpeed = 5.0f;  
+	float deathRotationSpeed = 5.0f;
 	//重力加速度
 	float gravity = 0.015f;
 };

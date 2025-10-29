@@ -80,11 +80,6 @@ public:
 	/// </summary>
 	void ReticleUpdate();
 	/// <summary>
-	/// レティクルのスクリーン座標更新処理。
-	/// - 必要に応じてスクリーン変換・制約を行う（実装は ReticleUpdate 内で呼ばれる想定）。
-	/// </summary>
-	void UpdateReticleScreenPos();
-	/// <summary>
 	/// 衝突時コールバック。
 	/// - プレイヤーの死亡フラグを立てる等の処理を行う。
 	/// </summary>

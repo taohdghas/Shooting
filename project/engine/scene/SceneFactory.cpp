@@ -10,7 +10,6 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneNam
 
 	if (sceneName == "TITLE") {
 		return std::make_unique<TitleScene>();
-	
 	}
 	else if (sceneName == "GAME") {
 		return std::make_unique<GameScene>();
@@ -24,5 +23,6 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneNam
 	else if (sceneName == "OVER") {
 		return std::make_unique<GameOverScene>();
 	}
+	// 上記以外はnullptr
 	return nullptr;
 }
