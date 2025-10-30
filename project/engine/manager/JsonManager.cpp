@@ -110,7 +110,22 @@ LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
             enemySpawn.scaling.z = (float)transform["scaling"][1];
 
             levelData->enemies.push_back(enemySpawn);
-        }
+        }else if(type.compare("BossSpawn")==0){
+            BossSpawnData bossSpawn{};
+            // トランスフォーム読み込み
+            nlohmann::json& transform = object["transform"];
+            bossSpawn.translation.x = (float)transform["translation"][0];
+            bossSpawn.translation.y = (float)transform["translation"][2];
+            bossSpawn.translation.z = (float)transform["translation"][1];
+            bossSpawn.rotation.x = -(float)transform["rotation"][0];
+            bossSpawn.rotation.y = -(float)transform["rotation"][2];
+            bossSpawn.rotation.z = -(float)transform["rotation"][1];
+            bossSpawn.scaling.x = (float)transform["scaling"][0];
+            bossSpawn.scaling.y = (float)transform["scaling"][2];
+            bossSpawn.scaling.z = (float)transform["scaling"][1];
+
+            levelData->bosses.push_back(bossSpawn);
+		}
 
         // 子オブジェクトを再帰的に処理する予定
         if (object.contains("children")) {

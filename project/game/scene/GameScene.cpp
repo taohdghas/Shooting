@@ -17,6 +17,7 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
 	ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
+	ModelManager::GetInstance()->LoadModel("boss/boss.obj");
 	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 	ModelManager::GetInstance()->LoadModel("platform/platform.obj");
 
@@ -76,6 +77,9 @@ void GameScene::Initialize() {
 		newEnemy->SetPlayer(player.get());
 		enemies.push_back(std::move(newEnemy));
 	}
+
+	//ボス(stage1)生成・初期化
+
 
 	// フェードの初期化・開始
 	fade = std::make_unique<Fade>();
