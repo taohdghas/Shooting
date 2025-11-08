@@ -19,6 +19,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "Boss1.h"
 #include "Skybox.h"
 #include "Platform.h"
 
@@ -77,6 +78,8 @@ private:
 	std::unique_ptr<Player>player;
 	//敵
 	std::vector<std::unique_ptr<Enemy>>enemies;
+	//ボス1
+	std::unique_ptr<Boss1> boss1;
 	//Skybox
 	std::unique_ptr<Skybox>skybox;
 	//プラットフォーム

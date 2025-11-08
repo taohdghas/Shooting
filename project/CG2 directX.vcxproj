@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="game\enemy\Boss1.cpp" />
+    <ClCompile Include="game\enemy\EnemyBase.cpp" />
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="game\object\GameOverObject.cpp" />
@@ -67,6 +69,8 @@
     <ClCompile Include="game\railcamera\RailCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="game\enemy\Boss1.h" />
+    <ClInclude Include="game\enemy\EnemyBase.h" />
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
     <ClInclude Include="game\object\GameOverObject.h" />

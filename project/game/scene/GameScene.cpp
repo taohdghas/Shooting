@@ -79,7 +79,12 @@ void GameScene::Initialize() {
 	}
 
 	//ボス(stage1)生成・初期化
-
+	for (auto& bossData : levelData->bosses) {
+		boss1 = std::make_unique<Boss1>();
+		boss1->Initialize(Object3dBase::GetInstance());
+		boss1->SetTranslate(bossData.translation);
+		boss1->SetPlayer(player.get());
+	}
 
 	// フェードの初期化・開始
 	fade = std::make_unique<Fade>();
@@ -119,7 +124,7 @@ void GameScene::Update() {
 			particleEmitter.push_back(std::move(emitter));
 
 			// デスパーティクルフラグをリセット
-			enemy->SetisDeathParticle(false);
+			enemy->SetIsDeathParticle(false);
 		}
 	}
 
@@ -129,21 +134,25 @@ void GameScene::Update() {
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
+	//ボス1の更新
+	if (boss1) {
+		boss1->Update();
+	}
 	// Skyboxの更新
 	skybox->Update();
 	// プラットフォームの更新
 	platform->Update();
-	
+
 	// パーティクルの更新
 	ParticleManager::GetInstance()->Update();
 	for (auto& particle : particleEmitter) {
 		particle->Update();
 	}
-	
-	if(player->IsDead()){
+
+	if (player->IsDead()) {
 		isToGameOver = true;
 	}
-	
+
 	if (Input::GetInstance()->PushKey(DIK_R)) {
 		isToGameOver = true;
 	}
@@ -169,6 +178,10 @@ void GameScene::Draw() {
 	// 敵の描画
 	for (auto& enemy : enemies) {
 		enemy->Draw();
+	}
+	//ボス1の描画
+	if (boss1) {
+		boss1->Draw();
 	}
 	// 天球（Skybox）の描画
 	skybox->Draw();
@@ -257,16 +270,16 @@ void GameScene::ToGameOver() {
 		Math::Normalize(deathRotationAxis);
 
 		//飛び上がる初速度をランダムに生成
-		float minY = 0.2f; 
+		float minY = 0.2f;
 		float maxY = 0.3f;
 		float velocityY = minY + (maxY - minY) * ((randomDist(randomEngine) + 1.0f) / 2.0f);
 
 		//X/Z方向のランダム成分
 		float velocityXZ = 0.05f;
 		deathVelocity = {
-			randomDist(randomEngine) * velocityXZ, 
-			velocityY,                             
-			randomDist(randomEngine) * velocityXZ  
+			randomDist(randomEngine) * velocityXZ,
+			velocityY,
+			randomDist(randomEngine) * velocityXZ
 		};
 	}
 

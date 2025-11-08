@@ -30,7 +30,7 @@ void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
 
                 // 敵が死亡した場合、デスパーティクルフラグを立てる
                 if (enemy->IsDead()) {
-                    enemy->SetisDeathParticle(true);
+                    enemy->SetIsDeathParticle(true);
                 }
             }
         }
@@ -54,6 +54,6 @@ void CollisionManager::CheckPECollisions(Player* player, Enemy* enemy) {
     if (Math::IsCollisionOBB(playerOBB, enemyOBB)) {
         // 両者の衝突コールバックを呼ぶ
         player->OnCollision();
-        enemy->onCollision();
+        enemy->OnCollision();
     }
 }

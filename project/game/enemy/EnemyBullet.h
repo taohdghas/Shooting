@@ -65,7 +65,7 @@ public:
 	/// - 引数の位置を内部の Transform.translate に設定する。
 	/// </summary>
 	/// <param name="position">設定するワールド座標。</param>
-	void GetTranslate(const Vector3& position) { transform_.translate = position; }
+	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 	/// <summary>
 	/// 速度を設定する。
 	/// - Update() 内でこの速度に基づいて位置を更新する想定。
