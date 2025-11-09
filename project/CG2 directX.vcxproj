@@ -67,6 +67,7 @@
     <ClCompile Include="game\platform\Platform.cpp" />
     <ClCompile Include="engine\math\WorldTransform.cpp" />
     <ClCompile Include="game\railcamera\RailCamera.cpp" />
+    <ClCompile Include="Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\enemy\Boss1.h" />
@@ -131,6 +132,7 @@
     <ClInclude Include="game\object\TitleObject.h" />
     <ClInclude Include="engine\math\WorldTransform.h" />
     <ClInclude Include="game\railcamera\RailCamera.h" />
+    <ClInclude Include="Ui.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

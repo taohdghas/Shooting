@@ -123,6 +123,10 @@ public:
 	/// 保持しているプレイヤー弾のリストを取得する（読み取り専用）。
 	/// </summary>
 	const std::list<std::unique_ptr<playerBullet>>& GetBullets() const { return bullets_; }
+	/// <summary>
+	/// HPを取得する
+	/// </summary>
+	int GetHP()const { return hp_; }
 
 	///Setter/// 
 	/// <summary>スケールを設定する。</summary>

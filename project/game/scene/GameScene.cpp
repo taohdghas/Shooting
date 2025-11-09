@@ -86,6 +86,11 @@ void GameScene::Initialize() {
 		boss1->SetPlayer(player.get());
 	}
 
+	// UIの初期化
+	ui = std::make_unique<Ui>();
+	ui->Initialize();
+	ui->SetPlayer(player.get());
+
 	// フェードの初期化・開始
 	fade = std::make_unique<Fade>();
 	fade->Initialize();
@@ -163,6 +168,9 @@ void GameScene::Update() {
 		ToGameOver();
 	}
 
+	//UIの更新
+	ui->Update();
+
 	fade->Update();
 
 	// デバッグ表示
@@ -193,13 +201,10 @@ void GameScene::Draw() {
 	SpriteBase::GetInstance()->DrawBaseSet();
 	// レティクル描画
 	player->ReticleDraw();
+	// UIの描画
+	ui->Draw();
 	// フェード描画
 	fade->Draw();
-	//パーティクル
-	ParticleManager::GetInstance()->Draw();
-
-	//パーティクル
-	ParticleManager::GetInstance()->Draw();
 
 }
 
@@ -233,6 +238,8 @@ void GameScene::Debug() {
 		ImGui::DragFloat3("Translate", &trans.translate.x, 0.1f, -1000.0f, 1000.0f);
 		ImGui::TreePop();
 	}
+	//UIのデバッグ表示
+	ui->Debug();
 	ImGui::End();
 #endif
 }

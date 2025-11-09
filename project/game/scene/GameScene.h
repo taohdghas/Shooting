@@ -22,6 +22,7 @@
 #include "Boss1.h"
 #include "Skybox.h"
 #include "Platform.h"
+#include "Ui.h"
 
 //ゲームシーン
 class GameScene : public BaseScene
@@ -94,6 +95,8 @@ private:
 	std::unique_ptr<Camera>camera;
 	//JsonManager
 	std::unique_ptr<JsonManager>jsonManager;
+	//UI
+	std::unique_ptr<Ui>ui;
 	//フェード
 	std::unique_ptr<Fade>fade;
 	//レベルデータ
