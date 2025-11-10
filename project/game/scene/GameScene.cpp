@@ -135,7 +135,7 @@ void GameScene::Update() {
 	for (auto& particle : particleEmitter) {
 		particle->Update();
 	}
-	
+	/*
 	if(player->IsDead()){
 		isToGameOver = true;
 	}
@@ -149,7 +149,7 @@ void GameScene::Update() {
 	} else {
 		ToGameOver();
 	}
-
+	*/
 	fade->Update();
 
 	// デバッグ表示

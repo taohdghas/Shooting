@@ -55,6 +55,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
         mipImages = std::move(image);
     } else {
         // 非圧縮の場合はミップマップを生成
+        /*
         hr = DirectX::GenerateMipMaps(
             image.GetImages(),
             image.GetImageCount(),
@@ -64,6 +65,9 @@ void TextureManager::LoadTexture(const std::string& filePath) {
             mipImages
         );
         assert(SUCCEEDED(hr));
+        */
+        // ミップマップ生成をスキップし、元画像をそのまま使用
+        mipImages = std::move(image);
     }
 
     // テクスチャデータを登録
