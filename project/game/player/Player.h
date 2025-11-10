@@ -127,6 +127,11 @@ public:
 	/// HPを取得する
 	/// </summary>
 	int GetHP()const { return hp_; }
+	/// <summary>
+	/// プレイヤーの速度ベクトルを取得する。
+	/// </summary>
+	/// <returns>現在の速度ベクトル。</returns>
+	const Vector3& GetVelocity() const { return velocity_; }
 
 	///Setter/// 
 	/// <summary>スケールを設定する。</summary>
@@ -156,6 +161,8 @@ private:
 	Vector4 color_;
 	//回避方向
 	Vector3 dodgeDirection_{ 0.0f,0.0f,0.0f };
+	// 速度ベクトル
+	Vector3 velocity_{ 0.1f, 0.0f, 0.0f };
 	//デスフラグ
 	bool isDead_ = false;
 	//回避状態
@@ -166,13 +173,10 @@ private:
 	bool isInvincible = false;
 	//モデルの寸法
 	float dimensions = 2.0f;
-	//プレイヤーの移動速度
-	float speed = 0.1f;
 	//プレイヤーの半径
 	float radius_ = 1.0f;
 	//ジャンプ速度
 	float jumpVelocity_ = 0.0f;
-	
 	//HP
 	int hp_ = 100;
 	//ジャンプ回数

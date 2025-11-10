@@ -1,6 +1,8 @@
 #pragma once
 #include "BaseScene.h"
 #include "Fade.h"
+#include "Camera.h"
+#include "Skybox.h"
 
 // ゲームクリアシーン
 class GameClearScene : public BaseScene
@@ -44,6 +46,10 @@ public:
     /// </summary>
 	void SceneChange();
 private:
+	// カメラ
+	std::unique_ptr<Camera> camera;
+	// Skybox
+	std::unique_ptr<Skybox> skybox;
 	//フェード
 	std::unique_ptr<Fade>fade;
 };

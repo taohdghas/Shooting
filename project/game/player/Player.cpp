@@ -100,23 +100,21 @@ void Player::ReticleDraw() {
 
 // プレイヤーの移動処理
 void Player::Move() {
-	Vector3 newPos = transform_.translate;
+    // 入力による移動
+    if (Input::GetInstance()->PushKey(DIK_A)) {
+        transform_.translate += Vector3(-velocity_.x, 0.0f, 0.0f);
+    }
+    if (Input::GetInstance()->PushKey(DIK_D)) {
+        transform_.translate += Vector3(velocity_.x, 0.0f, 0.0f);
+    }
 
-	// 左右移動入力
-	if (Input::GetInstance()->PushKey(DIK_A)) {
-		newPos.x -= speed;
-	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
-		newPos.x += speed;
-	}
-
-	// 移動範囲制限
-	newPos.x = std::clamp(newPos.x, groundminX, groundmaxX);
-	if (newPos.y < groundminY) {
-		newPos.y = groundminY;
-	}
-
-	transform_.translate = newPos;
+    // 画面端クランプ
+    if (transform_.translate.x < groundminX) {
+        transform_.translate.x = groundminX;
+    }
+    if (transform_.translate.x > groundmaxX) {
+        transform_.translate.x = groundmaxX;
+    }
 }
 
 // ジャンプ処理

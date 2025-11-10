@@ -37,8 +37,8 @@ void GameScene::Initialize() {
 	// メインカメラの初期化・登録
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0,0,-10 });
-	CameraManager::GetInstance()->AddCamera("Main", camera.get());
-	// CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera()); // レールカメラを使う場合
+	//CameraManager::GetInstance()->AddCamera("Main", camera.get());
+    CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera()); // レールカメラを使う場合
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
@@ -49,8 +49,8 @@ void GameScene::Initialize() {
 	// プラットフォームの初期化
 	platform = std::make_unique<Platform>();
 	platform->Initialize(Object3dBase::GetInstance());
-	// railCamera->SetPlatform(platform.get());
-	// railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
+	railCamera->SetPlatform(platform.get());
+	 railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
 
 	// 衝突管理クラスの初期化
 	collisionManager = std::make_unique<CollisionManager>();
@@ -66,7 +66,7 @@ void GameScene::Initialize() {
 		Transform transform;
 		transform.translate = playerData.translation;
 		player->SetTranslate(transform.translate);
-		// railCamera->SetPlayer(player.get());
+		 railCamera->SetPlayer(player.get());
 	}
 
 	// 敵生成・初期化

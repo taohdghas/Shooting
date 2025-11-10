@@ -27,18 +27,19 @@ void Ui::Draw()
 void Ui::Debug()
 {
 #ifdef USE_IMGUI
-    // HPバーの位置・サイズ取得
     Vector2 position = hPBar_->GetPosition();
     Vector2 size = hPBar_->GetSize();
 
-    // ImGuiで位置・サイズを編集
     if (ImGui::Begin("HPBar Debug")) {
-        ImGui::DragFloat2("Position", &position.x, 1.0f);
-        ImGui::DragFloat2("Size", &size.x, 1.0f);
+        if (ImGui::TreeNode("HPBar")) {
+            ImGui::DragFloat2("Position", &position.x, 1.0f);
+            ImGui::DragFloat2("Size", &size.x, 1.0f);
 
-        // 変更を反映
-        hPBar_->SetPosition(position);
-        hPBar_->SetSize(size);
+            hPBar_->SetPosition(position);
+            hPBar_->SetSize(size);
+
+            ImGui::TreePop();
+        }
     }
     ImGui::End();
 #endif

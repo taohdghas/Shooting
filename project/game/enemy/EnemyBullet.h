@@ -3,6 +3,9 @@
 #include "Object3d.h"
 #include "Transform.h"
 
+//プレイヤークラス前方宣言
+class Player;
+
 //敵の弾
 class EnemyBullet
 {
@@ -72,10 +75,13 @@ public:
 	/// </summary>
 	/// <param name="velocity">設定する速度ベクトル。</param>
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
+	void SetPlayer(Player* player) { player_ = player; }
 private:
 	Object3dBase* object3dBase_;
 	std::unique_ptr<Object3d>object_;
 	Transform transform_;
+	Player* player_ = nullptr;   
+	float homingPower_ = 0.05f;
 	//速度
 	Vector3 velocity_;
 	//半径
@@ -90,5 +96,7 @@ private:
 	int deathTimer_ = kLifeTime;
 	//生存時間
 	static const int kLifeTime = 60 * 5;
+	float speed_ = 0.2f;
+	const float destroyDistanceBehind = 2.0f; 
 };
 

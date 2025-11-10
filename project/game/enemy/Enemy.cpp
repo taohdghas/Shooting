@@ -30,6 +30,8 @@ void Enemy::Update() {
 		}
 	}
 
+	//transform_.translate = Math::Add(transform_.translate, velocity_);
+
 	// 攻撃処理（レーザー発射判定）
 	Laser();
 
@@ -109,6 +111,7 @@ void Enemy::Laser() {
 	bullet->Initialize(object3dBase_);
 	bullet->SetTranslate(transform_.translate);
 	bullet->SetVelocity(Math::Multiply(direction, 0.2f));
+	bullet->SetPlayer(player_);
 
 	bullets_.emplace_back(std::move(bullet));
 }

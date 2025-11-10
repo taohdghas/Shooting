@@ -7,6 +7,7 @@ void EnemyBase::Initialize(Object3dBase* object3dBase) {
 }
 
 void EnemyBase::Update() {
+	object_->Update();
 }
 
 void EnemyBase::Draw() {

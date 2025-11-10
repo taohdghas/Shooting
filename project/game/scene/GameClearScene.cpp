@@ -3,9 +3,20 @@
 #include "Input.h"
 #include "Object3dBase.h"
 #include "SpriteBase.h"
+#include "CameraManager.h"
+#include "ModelManager.h"
 
 // ゲームクリアシーンの初期化処理
 void GameClearScene::Initialize() {
+	//カメラ
+	camera = std::make_unique<Camera>();
+	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
+	CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	CameraManager::GetInstance()->SetActiveCamera("Main");
+	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+	//Skybox
+	skybox = std::make_unique<Skybox>();
+	skybox->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
 	//フェード
 	fade = std::make_unique<Fade>();
 	fade->Initialize();
@@ -14,24 +25,31 @@ void GameClearScene::Initialize() {
 
 // ゲームクリアシーンの終了処理
 void GameClearScene::Finalize() {
-
+	//カメラマネージャ
+	CameraManager::GetInstance()->Finalize();
 }
 
 // 毎フレームの更新処理
 void GameClearScene::Update() {
+	//カメラ
+	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	//Skybox
+	skybox->Update();
 
 	//フェード
 	fade->Update();
 	//シーン遷移
 	SceneChange();
-
+	//デバック
+	Debug();
 }
 
 // ゲームクリアシーンの描画処理
 void GameClearScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
-
+	//Skybox
+	skybox->Draw();
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 

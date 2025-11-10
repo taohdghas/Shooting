@@ -114,7 +114,7 @@ private:
 	//弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>>bullets_;
 	//移動速度
-	Vector3 velocity_ = { 0.0,0 };
+	Vector3 velocity_ = { 0,0,0.02f };
 	//色
 	Vector4 color_;
 	//デスフラグ
@@ -133,8 +133,8 @@ private:
 	float dimensions = 2.0f;
 	//発射間隔
 	static const int kFireInterval = 80;
-	//発射距離
-	const float fireDistance = 25.0f;
+	//発射距離 
+	const float fireDistance = 35.0f;
 	//攻撃停止距離Z
 	const float attackStopDisntanceZ = 6;
 	//Δtを定義

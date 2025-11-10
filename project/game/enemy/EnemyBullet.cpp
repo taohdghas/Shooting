@@ -1,4 +1,5 @@
 #include "EnemyBullet.h"
+#include "Player.h"
 #include "MyMath.h"
 
 // 弾の初期化処理
@@ -13,17 +14,37 @@ void EnemyBullet::Initialize(Object3dBase*object3dBase) {
 
 // 毎フレームの更新処理
 void EnemyBullet::Update() {
-	// 速度ベクトル分だけ座標を移動
-	transform_.translate = Math::Add(transform_.translate, velocity_);
+    if (isDead_) return;
+    if (!player_) { isDead_ = true; return; }
 
-	// 寿命タイマー減算・0以下で消滅フラグ
-	if (--deathTimer_ <= 0) {
-		isDead_ = true;
-	}
+    const Vector3 playerPos = player_->GetTranslate();
 
-	// オブジェクトの座標を更新
-	object_->SetTranslate(transform_.translate);
-	object_->Update();
+    // 🔹 プレイヤーより後ろに行ったら消す
+    if (transform_.translate.z < playerPos.z - destroyDistanceBehind) {
+        isDead_ = true;
+        //return;
+    }
+
+    // 🔹 まだプレイヤーより奥（手前側にいる）ならホーミング
+    if (transform_.translate.z > playerPos.z) {
+        Vector3 toPlayer = Math::Subtract(playerPos, transform_.translate);
+        Vector3 dirToPlayer = Math::Normalize(toPlayer);
+
+        Vector3 currentDir = Math::Normalize(velocity_);
+        Vector3 diff = Math::Subtract(dirToPlayer, currentDir);
+        Vector3 newDir = Math::Add(currentDir, Math::Multiply(diff, homingPower_));
+        newDir = Math::Normalize(newDir);
+
+        velocity_ = Math::Multiply(newDir, speed_);
+    }
+    // 🔹 一度プレイヤーを通過したら（z < playerZ）追尾をやめて直進
+
+    // 弾の移動
+    transform_.translate = Math::Add(transform_.translate, velocity_);
+
+    // オブジェクトの座標更新
+    object_->SetTranslate(transform_.translate);
+    object_->Update();
 }
 
 // 弾の描画処理
