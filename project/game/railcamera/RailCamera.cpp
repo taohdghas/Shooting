@@ -1,4 +1,5 @@
 #include "RailCamera.h"
+#include "Player.h"
 #include "MyMath.h"
 
 RailCamera::RailCamera() {}

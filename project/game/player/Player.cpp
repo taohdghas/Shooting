@@ -27,7 +27,6 @@ void Player::Initialize(Object3dBase* object3dbase) {
 
 // 毎フレームの更新処理
 void Player::Update() {
-	//デスの場合スキップ
 
 	//攻撃クールタイム
 	if (attackCooldown_ > 0) {
@@ -60,7 +59,7 @@ void Player::Update() {
 	}
 
 	// 攻撃入力判定
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+	if (Input::GetInstance()->PushMouseButton(0)) {
 		Attack();
 	}
 	// 回避処理
@@ -234,11 +233,12 @@ void Player::Dodge() {
 
 // レティクル（照準）の座標更新
 void Player::ReticleUpdate() {
-	const float moveSpeed = 10.0f;
-	if (Input::GetInstance()->PushKey(DIK_LEFT))  reticleScreenPos_.x -= moveSpeed;
-	if (Input::GetInstance()->PushKey(DIK_RIGHT)) reticleScreenPos_.x += moveSpeed;
-	if (Input::GetInstance()->PushKey(DIK_UP))    reticleScreenPos_.y -= moveSpeed;
-	if (Input::GetInstance()->PushKey(DIK_DOWN))  reticleScreenPos_.y += moveSpeed;
+
+	float mouseMoveX = static_cast<float>(Input::GetInstance()->GetMouseMoveX());
+	float mouseMoveY = static_cast<float>(Input::GetInstance()->GetMouseMoveY());
+
+	reticleScreenPos_.x += mouseMoveX * sensitivity;
+	reticleScreenPos_.y += mouseMoveY * sensitivity;
 
 	// 画面端制限
 	reticleScreenPos_.x = std::clamp(reticleScreenPos_.x, 0.0f, 1280.0f);

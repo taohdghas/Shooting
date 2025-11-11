@@ -22,6 +22,7 @@ void SceneManager::Finalize() {
 
 // 更新処理
 void SceneManager::Update() {
+
     // 次のシーンがセットされている場合は切り替え
     if (nextScene_) {
         // 現在のシーンを終了

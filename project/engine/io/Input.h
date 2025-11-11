@@ -52,10 +52,17 @@ public:
 	/// <param name="keyNumber">チェックするキー番号（DIK_* の値）。</param>
 	/// <returns>トリガーであれば true、そうでなければ false を返す。</returns>
 	bool TriggerKey(BYTE keyNumber);
+
+	bool PushMouseButton(int button);   // 押されているか
+	bool TriggerMouseButton(int button); // トリガーか
+	int GetMouseMoveX();                 // X方向の移動量
+	int GetMouseMoveY(); 
+
 private:
 	static Input* instance;
 	Input* input_ = nullptr;
-
+	//WindowsAPI
+	WindowsAPI* windowsAPI_ = nullptr;
 	//キーボードのデバイス
 	ComPtr<IDirectInputDevice8>keyboard;
 	//全キーの状態
@@ -64,7 +71,11 @@ private:
 	BYTE keyPre[256] = {};
 	//DirectInputのインスタンス
 	ComPtr<IDirectInput8>directInput;
-	//WindowsAPI
-	WindowsAPI* windowsAPI_ = nullptr;
+	// マウス関連
+	ComPtr<IDirectInputDevice8> mouse;
+	//現在のマウス状態
+	DIMOUSESTATE mouseState{};    
+	//前のフレーム
+	DIMOUSESTATE mouseStatePre{};  
 };
 

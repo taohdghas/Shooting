@@ -225,5 +225,7 @@ private:
 	float damageColorTimer_ = 0.0f;
 	//無敵タイマー
 	float invincibleTimer_ = 0.0f;
+	//マウス感度
+	const float sensitivity = 1.0f;
 };
 

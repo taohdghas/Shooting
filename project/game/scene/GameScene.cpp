@@ -66,7 +66,7 @@ void GameScene::Initialize() {
 		Transform transform;
 		transform.translate = playerData.translation;
 		player->SetTranslate(transform.translate);
-		 railCamera->SetPlayer(player.get());
+		railCamera->SetPlayer(player.get());
 	}
 
 	// 敵生成・初期化
@@ -112,6 +112,7 @@ void GameScene::Finalize() {
 
 // 毎フレームの更新処理
 void GameScene::Update() {
+
 	// カメラの更新
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
 	// レールカメラの更新

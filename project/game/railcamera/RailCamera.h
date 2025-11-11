@@ -1,8 +1,8 @@
 #pragma once
 #include "Camera.h"
-#include "Player.h"
 #include "Platform.h"
 
+class Player;
 class RailCamera {
 public:
     /// <summary>

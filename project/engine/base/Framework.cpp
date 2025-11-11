@@ -93,6 +93,14 @@ void Framework::Update() {
     // 入力状態の更新
     Input::GetInstance()->Update();
 
+    // ESCキー終了処理 ---
+    if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+
+        // Windowsに終了メッセージを送る
+        PostQuitMessage(0);
+        return;
+    }
+
     // 現在のシーンを更新
     sceneManager->Update();
 }
