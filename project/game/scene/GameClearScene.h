@@ -1,8 +1,9 @@
 #pragma once
 #include "BaseScene.h"
-#include "Fade.h"
 #include "Camera.h"
 #include "Skybox.h"
+#include "GameClearObject.h"
+#include "Fade.h"
 
 // ゲームクリアシーン
 class GameClearScene : public BaseScene
@@ -50,6 +51,8 @@ private:
 	std::unique_ptr<Camera> camera;
 	// Skybox
 	std::unique_ptr<Skybox> skybox;
+	// ゲームクリアオブジェクト
+	std::unique_ptr<GameClearObject> gameClearObject;
 	//フェード
 	std::unique_ptr<Fade>fade;
 };

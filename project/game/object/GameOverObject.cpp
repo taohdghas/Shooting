@@ -104,7 +104,6 @@ void GameOverObject::Draw() {
 	retry->Draw();
 }
 //デバック
-//デバック
 void GameOverObject::Debug() {
 #ifdef USE_IMGUI
 	if (ImGui::Begin("GameOverObject SRT")) {
