@@ -1,22 +1,19 @@
 #pragma comment (lib,"winmm.lib")
 #include "WindowsAPI.h"
+#ifdef USE_IMGUI
 #include <externals/imgui/imgui_impl_win32.h>
-
-#pragma comment (lib,"winmm.lib")
-#include "WindowsAPI.h"
-#include <externals/imgui/imgui_impl_win32.h>
-
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
+#endif
 WindowsAPI* WindowsAPI::instance = nullptr;
 
 // ウィンドウプロシージャ
 LRESULT CALLBACK WindowsAPI::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+#ifdef USE_IMGUI
     // ImGuiのメッセージ処理
     if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
         return true;
     }
-
+#endif
     // ゲーム固有のメッセージ処理
     switch (msg) {
     case WM_DESTROY:
