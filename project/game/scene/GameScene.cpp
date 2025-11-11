@@ -163,9 +163,10 @@ void GameScene::Update() {
 		isToGameOver = true;
 	}
 
-	if (!isToGameOver) {
+	// z座標によるゲームクリア判定
+	if (!isToGameOver && player->GetTranslate().z > 250.0f) {
 		ToGameClear();
-	} else {
+	} else if (isToGameOver) {
 		ToGameOver();
 	}
 
@@ -251,7 +252,7 @@ void GameScene::ToGameClear() {
 		fade->End();
 	}
 	//フェードアウト開始
-	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_C)) {
+	if (fade->GetState() == Fade::State::None ) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 	//フェードアウト終了後シーン移行
