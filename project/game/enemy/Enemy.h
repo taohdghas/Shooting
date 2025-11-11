@@ -132,7 +132,7 @@ private:
 	//モデルの寸法
 	float dimensions = 2.0f;
 	//発射間隔
-	static const int kFireInterval = 80;
+	static const int kFireInterval = 120;
 	//発射距離 
 	const float fireDistance = 35.0f;
 	//攻撃停止距離Z

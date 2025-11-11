@@ -32,7 +32,7 @@ void GameScene::Initialize() {
 	railCamera = std::make_unique<RailCamera>();
 	railCamera->Initialize();
 	railCamera->SetPlayerOffset({ 0.0f,-1.5f,10.0f });
-	railCamera->SetSpeed(0.1f);
+	railCamera->SetSpeed(0.2f);
 
 	// メインカメラの初期化・登録
 	camera = std::make_unique<Camera>();
@@ -50,7 +50,7 @@ void GameScene::Initialize() {
 	platform = std::make_unique<Platform>();
 	platform->Initialize(Object3dBase::GetInstance());
 	railCamera->SetPlatform(platform.get());
-	 railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
+	railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
 
 	// 衝突管理クラスの初期化
 	collisionManager = std::make_unique<CollisionManager>();

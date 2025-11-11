@@ -11,10 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="game\object\GameClearObject.cpp" />
     <ClCompile Include="game\enemy\Boss1.cpp" />
     <ClCompile Include="game\enemy\EnemyBase.cpp" />
     <ClCompile Include="engine\scene\BaseScene.cpp" />
-    <ClCompile Include="externals\imgui\imgui.cpp" />
+    <ClCompile Include="externals\imgui\imgui.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="game\object\GameOverObject.cpp" />
     <ClCompile Include="game\scene\GameOverScene.cpp" />
     <ClCompile Include="game\fade\Fade.cpp" />
@@ -70,6 +73,7 @@
     <ClCompile Include="Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="game\object\GameClearObject.h" />
     <ClInclude Include="game\enemy\Boss1.h" />
     <ClInclude Include="game\enemy\EnemyBase.h" />
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />

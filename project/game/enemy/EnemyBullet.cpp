@@ -19,13 +19,13 @@ void EnemyBullet::Update() {
 
     const Vector3 playerPos = player_->GetTranslate();
 
-    // 🔹 プレイヤーより後ろに行ったら消す
+    //プレイヤーより後ろに行ったら消す
     if (transform_.translate.z < playerPos.z - destroyDistanceBehind) {
         isDead_ = true;
-        //return;
+        return;
     }
 
-    // 🔹 まだプレイヤーより奥（手前側にいる）ならホーミング
+    //まだプレイヤーより奥にいるならホーミング
     if (transform_.translate.z > playerPos.z) {
         Vector3 toPlayer = Math::Subtract(playerPos, transform_.translate);
         Vector3 dirToPlayer = Math::Normalize(toPlayer);
@@ -37,7 +37,7 @@ void EnemyBullet::Update() {
 
         velocity_ = Math::Multiply(newDir, speed_);
     }
-    // 🔹 一度プレイヤーを通過したら（z < playerZ）追尾をやめて直進
+    //一度プレイヤーを通過したら追尾をやめて直進
 
     // 弾の移動
     transform_.translate = Math::Add(transform_.translate, velocity_);

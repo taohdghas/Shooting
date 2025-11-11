@@ -81,7 +81,6 @@ private:
 	std::unique_ptr<Object3d>object_;
 	Transform transform_;
 	Player* player_ = nullptr;   
-	float homingPower_ = 0.05f;
 	//速度
 	Vector3 velocity_;
 	//半径
@@ -97,6 +96,7 @@ private:
 	//生存時間
 	static const int kLifeTime = 60 * 5;
 	float speed_ = 0.2f;
-	const float destroyDistanceBehind = 2.0f; 
+	const float destroyDistanceBehind = 20.0f; 
+	float homingPower_ = 0.05f;
 };
 
