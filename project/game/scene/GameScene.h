@@ -74,8 +74,6 @@ public:
 	/// - プレイヤー死亡時や条件達成時に呼び出され、必要な演出やリソース解放処理を行う場合がある。
 	/// </summary>
 	void ToGameOver();
-
-	void StartAnimation();
 private:
 	//プレイヤー
 	std::unique_ptr<Player>player;
@@ -95,7 +93,6 @@ private:
 	std::unique_ptr<RailCamera>railCamera;
 	//カメラ
 	std::unique_ptr<Camera>camera;
-	std::unique_ptr<Camera> startCamera;  // スタート演出用
 	//JsonManager
 	std::unique_ptr<JsonManager>jsonManager;
 	//UI
