@@ -25,7 +25,7 @@ public:
     /// <summary>
     /// デバッグ表示
     /// </summary>
-    void Debug(int id) override;
+    void Debug();
 
     /// <summary>
     /// OBB（当たり判定）取得

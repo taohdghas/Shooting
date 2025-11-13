@@ -37,17 +37,10 @@ void Boss1::Draw()
 }
 
 /// デバッグ
-void Boss1::Debug(int id)
+void Boss1::Debug()
 {
 #ifdef USE_IMGUI
-    std::string label = "Boss1##" + std::to_string(id);
-    if (ImGui::TreeNode(label.c_str())) {
-        ImGui::DragInt("HP", &hp_);
-        ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
-        ImGui::DragFloat3("Rotate", &transform_.rotate.x, 0.1f);
-        ImGui::DragFloat3("Translate", &transform_.translate.x, 0.1f);
-        ImGui::TreePop();
-    }
+
 #endif
 }
 

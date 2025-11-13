@@ -11,8 +11,7 @@ void EnemyBase::Update() {
 }
 
 void EnemyBase::Draw() {
-}
-void EnemyBase::Debug(int id) {
+	object_->Draw();
 }
 void EnemyBase::OnCollision() {
 }

@@ -3,7 +3,7 @@
 #include "Platform.h"
 
 class Player;
-class RailCamera {
+class RailCamera : public Camera{
 public:
     /// <summary>
     /// デフォルトコンストラクタ。
@@ -54,6 +54,8 @@ public:
     /// <param name="speed">追従速度（任意の単位）。</param>
     void SetSpeed(float speed);
 
+    void EnableFollow(bool enable);
+
     /// <summary>
     /// 内部で管理している Camera のポインタを取得する。
     /// - 取得した Camera を描画やシーンにセットして利用できる。
@@ -68,4 +70,5 @@ private:
     Vector3 playerOffset_;
     Platform* platform_ = nullptr;
     Vector3 platformOffset_ = { 0,0,0 };
+    bool followEnabled_;
 };

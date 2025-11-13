@@ -34,6 +34,10 @@ void RailCamera::SetSpeed(float speed) {
     speed_ = speed;
 }
 
+void RailCamera::EnableFollow(bool enable) {
+    followEnabled_ = enable;
+}
+
 // カメラのポインタを取得
 Camera* RailCamera::GetCamera() {
     return &camera_;
@@ -41,24 +45,27 @@ Camera* RailCamera::GetCamera() {
 
 // 毎フレームの更新処理
 void RailCamera::Update() {
-    // カメラを+Z方向に移動
-    Vector3 camPos = camera_.GetTranslate();
-    camPos.z += speed_;
-    camera_.SetTranslate(camPos);
+    if (followEnabled_) {
+        // カメラ移動（Z方向）
+        Vector3 camPos = GetTranslate();
+        camPos.z += speed_;
+        SetTranslate(camPos);
 
-    camera_.Update();
+        // プレイヤー追従
+        if (player_) {
+            Vector3 playerPos = player_->GetTranslate();
+            playerPos.z = camPos.z + playerOffset_.z;
+            player_->SetTranslate(playerPos);
+        }
 
-    // プレイヤーをカメラに追従させる（Z座標のみカメラ基準で調整）
-    if (player_) {
-        Vector3 playerPos = player_->GetTranslate();
-        playerPos.z = camPos.z + playerOffset_.z;
-        player_->SetTranslate(playerPos);
+        // プラットフォーム追従
+        if (platform_) {
+            Vector3 platPos = platformOffset_;
+            platPos.z += camPos.z;
+            platform_->SetTransform(platPos);
+        }
     }
 
-    // プラットフォームをカメラに追従させる（Z座標のみカメラ基準で調整）
-    if (platform_) {
-        Vector3 platPos = platformOffset_;
-        platPos.z += camPos.z;
-        platform_->SetTransform(platPos);
-    }
+    // Camera 基本の更新処理
+    Camera::Update();
 }

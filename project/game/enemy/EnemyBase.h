@@ -34,11 +34,6 @@ public:
     virtual void Draw();
 
     /// <summary>
-    /// デバッグ情報の描画（ImGuiなど）。
-    /// </summary>
-    virtual void Debug(int id);
-
-    /// <summary>
     /// 衝突時のコールバック。
     /// </summary>
     virtual void OnCollision();
