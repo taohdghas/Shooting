@@ -46,19 +46,19 @@ Camera* RailCamera::GetCamera() {
 // 毎フレームの更新処理
 void RailCamera::Update() {
     if (followEnabled_) {
-        // カメラ移動（Z方向）
+        //カメラ移動（Z方向）
         Vector3 camPos = GetTranslate();
         camPos.z += speed_;
         SetTranslate(camPos);
 
-        // プレイヤー追従
+        //プレイヤー追従
         if (player_) {
             Vector3 playerPos = player_->GetTranslate();
             playerPos.z = camPos.z + playerOffset_.z;
             player_->SetTranslate(playerPos);
         }
 
-        // プラットフォーム追従
+        //プラットフォーム追従
         if (platform_) {
             Vector3 platPos = platformOffset_;
             platPos.z += camPos.z;
@@ -66,6 +66,6 @@ void RailCamera::Update() {
         }
     }
 
-    // Camera 基本の更新処理
+    //Camera更新
     Camera::Update();
 }
