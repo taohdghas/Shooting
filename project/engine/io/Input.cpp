@@ -45,8 +45,10 @@ void Input::Initialize(WindowsAPI* windowsAPI) {
     );
     assert(SUCCEEDED(result));
 
-    //カーソル非表示
+#ifdef _RELEASE
+    //カーソル非表示（リリース時のみ）
     ShowCursor(FALSE);
+#endif
 
     //マウスデバイス生成
     result = directInput->CreateDevice(GUID_SysMouse, &mouse, NULL);
@@ -81,7 +83,10 @@ void Input::Initialize(WindowsAPI* windowsAPI) {
 
 // 終了処理
 void Input::Finalize() {
+#ifdef _RELEASE
+    //カーソル表示（リリース時のみ）
     ShowCursor(TRUE);
+#endif
     delete instance;
     instance = nullptr;
 }

@@ -58,10 +58,19 @@ void Player::Update() {
 		transform_.rotate.x += jumpRotateSpeed_ * DeltaTime;
 	}
 
+#ifdef _RELEASE
 	// 攻撃入力判定
 	if (Input::GetInstance()->PushMouseButton(0)) {
 		Attack();
 	}
+#endif
+
+#ifdef _DEBUG
+	if(Input::GetInstance()->PushKey(DIK_SPACE)){
+		Attack();
+	}
+#endif
+
 	// 回避処理
 	Dodge();
 
@@ -234,18 +243,37 @@ void Player::Dodge() {
 // レティクル（照準）の座標更新
 void Player::ReticleUpdate() {
 
-	float mouseMoveX = static_cast<float>(Input::GetInstance()->GetMouseMoveX());
-	float mouseMoveY = static_cast<float>(Input::GetInstance()->GetMouseMoveY());
+#ifdef _RELEASE
+    // マウスでレティクル移動
+    float mouseMoveX = static_cast<float>(Input::GetInstance()->GetMouseMoveX());
+    float mouseMoveY = static_cast<float>(Input::GetInstance()->GetMouseMoveY());
 
-	reticleScreenPos_.x += mouseMoveX * sensitivity;
-	reticleScreenPos_.y += mouseMoveY * sensitivity;
+    reticleScreenPos_.x += mouseMoveX * sensitivity;
+    reticleScreenPos_.y += mouseMoveY * sensitivity;
+#endif
 
-	// 画面端制限
-	reticleScreenPos_.x = std::clamp(reticleScreenPos_.x, 0.0f, 1280.0f);
-	reticleScreenPos_.y = std::clamp(reticleScreenPos_.y, 0.0f, 720.0f);
+#ifdef _DEBUG
+    // キーでレティクル移動
+    if (Input::GetInstance()->PushKey(DIK_UP)) {
+        reticleScreenPos_.y -= sensitivity * 5.0f;
+    }
+    if (Input::GetInstance()->PushKey(DIK_DOWN)) {
+        reticleScreenPos_.y += sensitivity * 5.0f;
+    }
+    if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+        reticleScreenPos_.x -= sensitivity * 5.0f;
+    }
+    if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+        reticleScreenPos_.x += sensitivity * 5.0f;
+    }
+#endif
 
-	reticle_->SetPosition(reticleScreenPos_);
-	reticle_->Update();
+    // 画面端制限
+    reticleScreenPos_.x = std::clamp(reticleScreenPos_.x, 0.0f, 1280.0f);
+    reticleScreenPos_.y = std::clamp(reticleScreenPos_.y, 0.0f, 720.0f);
+
+    reticle_->SetPosition(reticleScreenPos_);
+    reticle_->Update();
 }
 
 // 衝突時コールバック（死亡フラグを立てる）
