@@ -33,13 +33,13 @@ void GameScene::Initialize() {
 	railCamera->Initialize();
 	railCamera->SetPlayerOffset({ 0.0f,-1.5f,10.0f });
 	railCamera->SetSpeed(0.2f);
-	railCamera->EnableFollow(false);
+	railCamera->EnableFollow(true);
 
 	// メインカメラの初期化・登録
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0,0,-10 });
 	//CameraManager::GetInstance()->AddCamera("Main", camera.get());
-    CameraManager::GetInstance()->AddCamera("Main", railCamera.get()); // レールカメラを使う場合
+    CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera()); 
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 

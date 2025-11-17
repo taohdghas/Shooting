@@ -47,9 +47,9 @@ Camera* RailCamera::GetCamera() {
 void RailCamera::Update() {
     if (followEnabled_) {
         //カメラ移動（Z方向）
-        Vector3 camPos = GetTranslate();
+        Vector3 camPos = camera_.GetTranslate();
         camPos.z += speed_;
-        SetTranslate(camPos);
+        camera_.SetTranslate(camPos);
 
         //プレイヤー追従
         if (player_) {
@@ -67,5 +67,5 @@ void RailCamera::Update() {
     }
 
     //Camera更新
-    Camera::Update();
+   camera_.Update();
 }
