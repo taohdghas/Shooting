@@ -65,6 +65,7 @@ void Input::Initialize(WindowsAPI* windowsAPI) {
     );
     assert(SUCCEEDED(result));
 
+#ifdef _RELEASE
     // カーソルをウィンドウ内に制限
     RECT rect;
     GetClientRect(windowsAPI->GetHwnd(), &rect);            
@@ -78,7 +79,7 @@ void Input::Initialize(WindowsAPI* windowsAPI) {
     rect.bottom = rb.y;
 
     ClipCursor(&rect);  
-
+#endif
 }
 
 // 終了処理

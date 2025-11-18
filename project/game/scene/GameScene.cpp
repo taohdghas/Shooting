@@ -33,15 +33,20 @@ void GameScene::Initialize() {
 	railCamera->Initialize();
 	railCamera->SetPlayerOffset({ 0.0f,-1.5f,10.0f });
 	railCamera->SetSpeed(0.2f);
-	railCamera->EnableFollow(true);
+	railCamera->EnableFollow(false);
 
 	// メインカメラの初期化・登録
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0,0,-10 });
-	//CameraManager::GetInstance()->AddCamera("Main", camera.get());
+	camera->SetRotate({ 0, 0, 0 });
+	CameraManager::GetInstance()->AddCamera("Start", camera.get());
     CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera()); 
-	CameraManager::GetInstance()->SetActiveCamera("Main");
+	CameraManager::GetInstance()->SetActiveCamera("Start");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+
+	//初期位置・回転を保存（StartCameraの値を保存）
+	cameraStartPos = camera->GetTranslate();
+	cameraStartRot = camera->GetRotate();
 
 	// Skyboxの初期化
 	skybox = std::make_unique<Skybox>();
@@ -116,6 +121,9 @@ void GameScene::Update() {
 
 	// カメラの更新
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
+
+	StartAnimation();
+
 	// レールカメラの更新
 	railCamera->Update();
 
@@ -246,6 +254,87 @@ void GameScene::Debug() {
 	ImGui::End();
 #endif
 }
+//スタート演出
+void GameScene::StartAnimation() {
+
+	// スタート演出中
+	if (isStartAnimation) {
+
+		Camera* cam = camera.get();
+
+		cameraRotateTimer += DeltaTime;
+		float t = std::min(cameraRotateTimer / totalRotationTime, 1.0f);
+
+		//イージング
+		float easedT = static_cast<float>(easeInOutQuad(t));
+
+		//回転角度
+		float angle = easedT * oneRotation * rotationSpeed;
+
+		// カメラ位置を円軌道で回す
+		Vector3 camPos;
+		camPos.x = cameraStartPos.x * std::cos(angle) - cameraStartPos.z * std::sin(angle);
+		camPos.y = cameraStartPos.y;
+		camPos.z = cameraStartPos.x * std::sin(angle) + cameraStartPos.z * std::cos(angle);
+
+		cam->SetTranslate(camPos);
+
+		// プレイヤーを見る
+		Vector3 dir = player->GetTranslate() - camPos;
+		float yaw = std::atan2(dir.x, dir.z);
+		float pitch = -std::atan2(dir.y, std::sqrt(dir.x * dir.x + dir.z * dir.z));
+
+		cam->SetRotate({ pitch, yaw, 0 });
+
+		// アニメ終了
+		if (t >= 1.0f) {
+			isStartAnimation = false;
+			isReturning = true;
+			cameraRotateTimer = 0.0f;
+		}
+
+		return;
+	}
+
+	// 回転を初期角度へ戻すフェーズ
+	if (isReturning) {
+
+		Camera* cam = camera.get();
+
+		cameraRotateTimer += DeltaTime;
+		float t = std::min(cameraRotateTimer / 1.0f, 1.0f);
+		float easedT = static_cast<float>(easeInOutQuad(t));
+
+		// 回転を0へスムーズに戻す
+		Vector3 curRot = cam->GetRotate();
+		Vector3 targetRot = { 0,0,0 };
+
+		Vector3 newRot;
+		newRot.x = curRot.x + (targetRot.x - curRot.x) * easedT;
+		newRot.y = curRot.y + (targetRot.y - curRot.y) * easedT;
+		newRot.z = 0;
+
+		cam->SetRotate(newRot);
+
+		// 完了したら RailCamera に切り替え
+		if (t >= 1.0f) {
+
+			isReturning = false;
+			cameraRotateTimer = 0.0f;
+
+			//ここで RailCamera を有効化
+			CameraManager::GetInstance()->SetActiveCamera("Main");
+			railCamera->EnableFollow(true);
+
+			//RailCamera がプレイヤーの後ろからスタートするよう調整
+			Vector3 startCamPos = player->GetTranslate();
+			startCamPos += railCamera->GetPlayerOffset();
+			railCamera->GetCamera()->SetTranslate(startCamPos);
+		}
+	}
+}
+
+
 //ゲームクリアへ
 void GameScene::ToGameClear() {
 	//FadeInが終わっているなら状態をNoneに

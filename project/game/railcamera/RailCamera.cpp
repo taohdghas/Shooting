@@ -8,7 +8,14 @@ RailCamera::RailCamera() {}
 void RailCamera::Initialize() {
     camera_.SetTranslate({ 0, 0, -10 });
 }
-
+// カメラの座標（平行移動）を設定
+void RailCamera::SetTranslate(const Vector3& pos) {
+    camera_.SetTranslate(pos);
+}
+// カメラの回転を設定
+void RailCamera::SetRotate(const Vector3& rot) {
+    camera_.SetRotate(rot);
+}
 // プレイヤーの参照をセット
 void RailCamera::SetPlayer(Player* player) {
     player_ = player;
