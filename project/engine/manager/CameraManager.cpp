@@ -13,13 +13,13 @@ CameraManager* CameraManager::GetInstance() {
 // 初期化
 void CameraManager::Initialize() {
     cameras.clear();      // 登録済みカメラをクリア
-    activeCamera = nullptr; // アクティブカメラをリセット
+    activeCamera = nullptr; //
 }
 
 // 終了
 void CameraManager::Finalize() {
     cameras.clear();       // 登録済みカメラをクリア
-    delete instance;       // シングルトン解放
+    delete instance;       
     instance = nullptr;
 }
 

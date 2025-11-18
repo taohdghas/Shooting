@@ -32,6 +32,7 @@ void GameScene::Initialize() {
 	railCamera = std::make_unique<RailCamera>();
 	railCamera->Initialize();
 	railCamera->SetPlayerOffset({ 0.0f,-1.5f,10.0f });
+	railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
 	railCamera->SetSpeed(0.2f);
 	railCamera->EnableFollow(false);
 
@@ -41,7 +42,7 @@ void GameScene::Initialize() {
 	camera->SetRotate({ 0, 0, 0 });
 	CameraManager::GetInstance()->AddCamera("Start", camera.get());
     CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera()); 
-	CameraManager::GetInstance()->SetActiveCamera("Start");
+	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
 	//初期位置・回転を保存（StartCameraの値を保存）
@@ -56,7 +57,6 @@ void GameScene::Initialize() {
 	platform = std::make_unique<Platform>();
 	platform->Initialize(Object3dBase::GetInstance());
 	railCamera->SetPlatform(platform.get());
-	railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
 
 	// 衝突管理クラスの初期化
 	collisionManager = std::make_unique<CollisionManager>();
@@ -122,7 +122,7 @@ void GameScene::Update() {
 	// カメラの更新
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
 
-	StartAnimation();
+	//StartAnimation();
 
 	// レールカメラの更新
 	railCamera->Update();
@@ -244,7 +244,7 @@ void GameScene::Debug() {
 		camera->SetTranslate({ cameraPos.x,cameraPos.y,cameraPos.z });
 		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
 
-		railCamera->Debug();
+		//railCamera->Debug();
 		ImGui::TreePop();
 	}
 	// プレイヤーのデバッグ表示

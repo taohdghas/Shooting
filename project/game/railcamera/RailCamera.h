@@ -3,7 +3,7 @@
 #include "Platform.h"
 
 class Player;
-class RailCamera : public Camera {
+class RailCamera  {
 public:
 	/// <summary>
 	/// デフォルトコンストラクタ。
@@ -86,7 +86,7 @@ public:
 
 private:
 	Camera camera_;
-	float speed_ = 3.0f;
+	float speed_ = 0.2f;
 	Player* player_ = nullptr;
 	Vector3 playerOffset_;
 	Platform* platform_ = nullptr;
