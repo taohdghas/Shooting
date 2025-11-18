@@ -158,9 +158,9 @@ void GameScene::Update() {
 	// プレイヤーの更新
 	player->Update();
 	// 敵の更新
-	for (auto& enemy : enemies) {
-		enemy->Update();
-	}
+	//for (auto& enemy : enemies) {
+	//	enemy->Update();
+	//}
 	//ボス1の更新
 	if (boss1) {
 		boss1->Update();
@@ -185,7 +185,8 @@ void GameScene::Update() {
 	}
 
 	// z座標によるゲームクリア判定
-	if (!isToGameOver && player->GetTranslate().z > 250.0f) {
+	if(!isToGameOver){
+//	if (!isToGameOver && player->GetTranslate().z > 250.0f) {
 		ToGameClear();
 	} else if (isToGameOver) {
 		ToGameOver();
@@ -207,9 +208,9 @@ void GameScene::Draw() {
 	// プレイヤーの描画
 	player->Draw();
 	// 敵の描画
-	for (auto& enemy : enemies) {
-		enemy->Draw();
-	}
+//	for (auto& enemy : enemies) {
+	//	enemy->Draw();
+	//}
 	//ボス1の描画
 	if (boss1) {
 		boss1->Draw();
@@ -344,7 +345,7 @@ void GameScene::ToGameClear() {
 		fade->End();
 	}
 	//フェードアウト開始
-	if (fade->GetState() == Fade::State::None ) {
+	if (fade->GetState() == Fade::State::None &&Input::GetInstance()->PushKey(DIK_C)) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 	//フェードアウト終了後シーン移行

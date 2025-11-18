@@ -30,7 +30,7 @@ void GameClearObject::Initialize() {
         letters[i].delay = i * 0.1f;
     }
     
-    //nextオブジェクトの初期化
+    //PushSpaceオブジェクトの初期化
     pushspace = std::make_unique<Object3d>();
     pushspace->Initialize(Object3dBase::GetInstance());
     pushspace->SetModel("gameclearobject/pushspace.obj");
@@ -41,57 +41,71 @@ void GameClearObject::Initialize() {
 }
 
 //更新
-void GameClearObject::Update() {
-    //文字ジャンプ処理
+void GameClearObject::Update()
+{
+    // 文字回転処理
     jumpTimer_ += DeltaTime;
 
     for (int i = 0; i < NumLetters; i++) {
-        float y = 0.0f;
 
         if (i == currentIndex_) {
-            //ジャンプ中
             float t = jumpTimer_ / jumpDuration_;
+
             if (t < 1.0f) {
-                y = sinf(t * 3.14159f) * jumpHeight_;
+                // 回転
+                float angle = t * 6.283185f;
+                letters[i].transform.rotate.y = angle;
+
+                // ジャンプ
+                letters[i].transform.translate.y = baseY + sinf(t * 3.14159f) * jumpHeight_;
+
+                // 拡大
+                float scaleFactor = 0.6f + sinf(t * 3.14159f) * 0.3f;
+                letters[i].transform.scale = { scaleFactor, scaleFactor, scaleFactor };
+
             } else {
-                //次の文字へ
+                // 次の文字へ
                 jumpTimer_ = 0.0f;
+                letters[i].transform.rotate.y = 0.0f;
+                letters[i].transform.translate.y = baseY;
+                letters[i].transform.scale = { 0.6f,0.6f,0.6f }; 
+
                 currentIndex_++;
                 if (currentIndex_ >= NumLetters) {
                     currentIndex_ = 0;
                 }
             }
+        } else {
+            // 回転していない文字は初期位置
+            letters[i].transform.rotate.y = 0.0f;
+            letters[i].transform.translate.y = baseY;
+            letters[i].transform.scale = { 0.6f,0.6f,0.6f };
         }
 
-        //位置反映
-        letters[i].transform.translate.y = y;
+        // 各文字に反映
         letters[i].obj->SetScale(letters[i].transform.scale);
         letters[i].obj->SetRotate(letters[i].transform.rotate);
         letters[i].obj->SetTranslate(letters[i].transform.translate);
         letters[i].obj->Update();
     }
 
-    
-    //nextの点滅処理
+    // PushSpace の点滅
     alphaTimer_ += DeltaTime;
     alpha_ = (sinf(alphaTimer_ * 3.0f) * 0.5f) + 0.5f;
     pushspace->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
-
-    //nextトランスフォーム設定
     pushspace->SetScale(pushspaceTransform.scale);
     pushspace->SetRotate(pushspaceTransform.rotate);
     pushspace->SetTranslate(pushspaceTransform.translate);
-    
- 
     pushspace->Update();
 }
 
 //描画
 void GameClearObject::Draw() {
-    //gameclear->Draw(); // 個別文字描画を使用するため非表示
+	//文字描画
     for (int i = 0; i < NumLetters; i++) {
         letters[i].obj->Draw();
     }
+	//PushSpace描画
     pushspace->Draw();
 }
 
@@ -102,7 +116,6 @@ void GameClearObject::Debug() {
         ImGui::Text("GameClear Letters");
         ImGui::Separator();
 
-        // 各文字のSRTを個別に編集
         for (int i = 0; i < NumLetters; i++) {
             std::string label = "Letter " + std::to_string(i);
 

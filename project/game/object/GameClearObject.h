@@ -53,12 +53,12 @@ private:
     static const int NumLetters = 9; 
     //文字配列
     std::array<Letter, NumLetters> letters;
-    //文字ジャンプ経過時間
+    //文字回転経過時間
     float jumpTimer_ = 0.0f; 
     //現在ジャンプ中の文字インデックス
     int currentIndex_ = 0;       
     //1文字がジャンプする時間
-    const float jumpDuration_ = 0.6f;
+    const float jumpDuration_ = 0.5f;
     //ジャンプ高さ
     const float jumpHeight_ = 0.6f; 
     //次の文字に移るまでの遅延
@@ -74,5 +74,5 @@ private:
     //文字間の間隔
     float spacing = 0.8f; 
     //正気座標
-    float baseY = -1.0f; 
+    float baseY = 0.2f; 
 };
