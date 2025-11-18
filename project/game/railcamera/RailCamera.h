@@ -23,6 +23,7 @@ public:
 	/// </summary>
 	void Update();
 
+	void Debug();
 	/// <summary>
     /// カメラの座標（平行移動）を設定する。
     /// - 内部 Camera の位置を直接指定することで、レール追従以外の制御も可能。

@@ -33,7 +33,12 @@ public:
 	/// トランスフォーム（平行移動）を設定する。
 	/// </summary>
 	/// <param name="translate">設定するワールド座標（平行移動）。</param>
-	void SetTransform(const Vector3& translate) { transform_.translate = translate; }
+	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
+	/// <summary>
+	/// トランスフォーム（平行移動）を取得する。
+	/// </summary>
+	/// <returns>現在のワールド座標（平行移動）。</returns>
+	const Vector3& GetTranslate() const { return transform_.translate; }
 private:
 	Object3dBase* object3dBase_;
 	Transform transform_;

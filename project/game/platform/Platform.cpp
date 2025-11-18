@@ -12,7 +12,7 @@ void Platform::Initialize(Object3dBase* object3dbase) {
 	transform_.translate = { 0.0f,-1.9f,0.0f };
 }
 
-// 毎フレームの更新処理（Transform情報をObject3dへ反映）
+// 毎フレームの更新処理
 void Platform::Update() {
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
