@@ -120,7 +120,7 @@ void TitleScene::SceneChange() {
 	}
 
 	// スペースキー押下でフェードアウト開始
-	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_SPACE)) {
+	if (fade->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 

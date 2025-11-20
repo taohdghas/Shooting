@@ -140,7 +140,7 @@ void GameScene::Update() {
 		isToGameOver = true;
 	}
 	
-	if (Input::GetInstance()->PushKey(DIK_R)) {
+	if (Input::GetInstance()->IsKeyPressed(DIK_R)) {
 		isToGameOver = true;
 	}
 
@@ -226,7 +226,7 @@ void GameScene::ToGameClear() {
 		fade->End();
 	}
 	//フェードアウト開始
-	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_C)) {
+	if (fade->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_C)) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 	//フェードアウト終了後シーン移行

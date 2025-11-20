@@ -1,13 +1,13 @@
-#include "Pso.h"
+#include "PipeLineStateObject.h"
 #include "DirectXBase.h"
 #include "Logger.h"
 
 //初期化
-void Pso::Initialize(DirectXBase* directXBase) {
-	directXBase_ = directXBase;
+void PipelineStateObject::Initialize(DirectXBase* directXBase) {
+	directx_base_ = directXBase;
 }
 //Object3D用RootSignature
-void Pso::CreateRootSignature() {
+void PipelineStateObject::CreateRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};
 	descriptitonRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -83,13 +83,13 @@ void Pso::CreateRootSignature() {
 		assert(false);
 	}
 	// バイナリを元に生成
-	hr = directXBase_->Getdevice()->CreateRootSignature(0,
+	hr = directx_base_->GetDevice()->CreateRootSignature(0,
 		signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
-		IID_PPV_ARGS(&rootSignature));
+		IID_PPV_ARGS(&root_signature_));
 	assert(SUCCEEDED(hr));
 }
 //Object3D用PipelineState
-void Pso::CreatePipelineState() {
+void PipelineStateObject::CreatePipelineState() {
 	CreateRootSignature();
 	// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
@@ -131,16 +131,16 @@ void Pso::CreatePipelineState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directXBase_->CompileShader(L"resources/shaders/Object3D.VS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directx_base_->CompileShader(L"resources/shaders/Object3D.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/Object3D.ps.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directx_base_->CompileShader(L"resources/shaders/Object3D.ps.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
+	graphicsPipelineStateDesc.pRootSignature = root_signature_.Get();
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
 	vertexShaderBlob->GetBufferSize() };
@@ -172,12 +172,12 @@ void Pso::CreatePipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&graphicsPipelineState));
+	HRESULT hr = directx_base_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&graphics_pipeline_state_));
 	assert(SUCCEEDED(hr));
 }
 //Sprite用RootSignature
-void Pso::CreateSpriteRootSignature() {
+void PipelineStateObject::CreateSpriteRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};
 	descriptitonRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -244,13 +244,13 @@ void Pso::CreateSpriteRootSignature() {
 		assert(false);
 	}
 	// バイナリを元に生成
-	hr = directXBase_->Getdevice()->CreateRootSignature(0,
+	hr = directx_base_->GetDevice()->CreateRootSignature(0,
 		signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
-		IID_PPV_ARGS(&spriteRootSignature));
+		IID_PPV_ARGS(&sprite_root_signature_));
 	assert(SUCCEEDED(hr));
 }
 //Sprite用PipelineState
-void Pso::CreateSpritePipelineState() {
+void PipelineStateObject::CreateSpritePipelineState() {
 	CreateSpriteRootSignature();
 	// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
@@ -291,16 +291,16 @@ void Pso::CreateSpritePipelineState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directXBase_->CompileShader(L"resources/shaders/Sprite.VS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directx_base_->CompileShader(L"resources/shaders/Sprite.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/Sprite.ps.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directx_base_->CompileShader(L"resources/shaders/Sprite.ps.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = spriteRootSignature.Get();
+	graphicsPipelineStateDesc.pRootSignature = sprite_root_signature_.Get();
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
 	vertexShaderBlob->GetBufferSize() };
@@ -332,12 +332,12 @@ void Pso::CreateSpritePipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&spriteGraphicsPipelineState));
+	HRESULT hr = directx_base_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&sprite_graphics_pipeline_state_));
 	assert(SUCCEEDED(hr));
 }
 //Particle用RootSignature
-void Pso::CreateParticleRootSignature() {
+void PipelineStateObject::CreateParticleRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};
 	descriptitonRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -399,13 +399,13 @@ void Pso::CreateParticleRootSignature() {
 		assert(false);
 	}
 	// バイナリを元に生成
-	hr = directXBase_->Getdevice()->CreateRootSignature(0,
+	hr = directx_base_->GetDevice()->CreateRootSignature(0,
 		signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
-		IID_PPV_ARGS(&particleRootSignature));
+		IID_PPV_ARGS(&particle_root_signature_));
 	assert(SUCCEEDED(hr));
 }
 //Particle用PipelineState
-void Pso::CreateParticlePipelineState() {
+void PipelineStateObject::CreateParticlePipelineState() {
 	CreateParticleRootSignature();
 	// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
@@ -446,16 +446,16 @@ void Pso::CreateParticlePipelineState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directXBase_->CompileShader(L"resources/shaders/Particle.VS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directx_base_->CompileShader(L"resources/shaders/Particle.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/Particle.PS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directx_base_->CompileShader(L"resources/shaders/Particle.PS.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = particleRootSignature.Get();
+	graphicsPipelineStateDesc.pRootSignature = particle_root_signature_.Get();
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
 	vertexShaderBlob->GetBufferSize() };
@@ -487,12 +487,12 @@ void Pso::CreateParticlePipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&particleGraphicsPipelineState));
+	HRESULT hr = directx_base_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&particle_graphics_pipeline_state_));
 	assert(SUCCEEDED(hr));
 }
 //PostEffect用RootSignature
-void Pso::CreatePostEffectRootSignature() {
+void PipelineStateObject::CreatePostEffectRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};
 	descriptitonRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -559,13 +559,13 @@ void Pso::CreatePostEffectRootSignature() {
 		assert(false);
 	}
 	// バイナリを元に生成
-	hr = directXBase_->Getdevice()->CreateRootSignature(0,
+	hr = directx_base_->GetDevice()->CreateRootSignature(0,
 		signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
-		IID_PPV_ARGS(&postEffectRootSignature));
+		IID_PPV_ARGS(&post_effect_root_signature_));
 	assert(SUCCEEDED(hr));
 }
 //PostEffect用PipelineState
-void Pso::CreatePostEffectPipelineState() {
+void PipelineStateObject::CreatePostEffectPipelineState() {
 	CreatePostEffectRootSignature();
 	// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
@@ -599,16 +599,16 @@ void Pso::CreatePostEffectPipelineState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob =directXBase_->CompileShader(L"resources/shaders/Fullscreen.VS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob =directx_base_->CompileShader(L"resources/shaders/Fullscreen.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/GaussianFilter.ps.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directx_base_->CompileShader(L"resources/shaders/GaussianFilter.ps.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = postEffectRootSignature.Get();
+	graphicsPipelineStateDesc.pRootSignature = post_effect_root_signature_.Get();
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
 	vertexShaderBlob->GetBufferSize() };
@@ -640,12 +640,12 @@ void Pso::CreatePostEffectPipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&postEffectGraphicsPipelineState));
+	HRESULT hr = directx_base_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&post_effect_graphics_pipeline_state_));
 	assert(SUCCEEDED(hr));
 }
 //SkyBox用RootSignature
-void Pso::CreateSkyBoxRootSignature() {
+void PipelineStateObject::CreateSkyBoxRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptitonRootSignature{};
 	descriptitonRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -706,13 +706,13 @@ void Pso::CreateSkyBoxRootSignature() {
 		assert(false);
 	}
 	// バイナリを元に生成
-	hr = directXBase_->Getdevice()->CreateRootSignature(0,
+	hr = directx_base_->GetDevice()->CreateRootSignature(0,
 		signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
-		IID_PPV_ARGS(&skyBoxRootSignature));
+		IID_PPV_ARGS(&sky_box_root_signature_));
 	assert(SUCCEEDED(hr));
 }
 //SkyBox用PipelineState
-void Pso::CreateSkyBoxPipelineState() {
+void PipelineStateObject::CreateSkyBoxPipelineState() {
 	CreateSkyBoxRootSignature();
 	// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
@@ -746,16 +746,16 @@ void Pso::CreateSkyBoxPipelineState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directXBase_->CompileShader(L"resources/shaders/Skybox.VS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = directx_base_->CompileShader(L"resources/shaders/Skybox.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directXBase_->CompileShader(L"resources/shaders/Skybox.PS.hlsl",
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = directx_base_->CompileShader(L"resources/shaders/Skybox.PS.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = skyBoxRootSignature.Get();
+	graphicsPipelineStateDesc.pRootSignature = sky_box_root_signature_.Get();
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
 	vertexShaderBlob->GetBufferSize() };
@@ -787,7 +787,7 @@ void Pso::CreateSkyBoxPipelineState() {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 実際に生成
-	HRESULT hr = directXBase_->Getdevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&skyBoxGraphicsPipelineState));
+	HRESULT hr = directx_base_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&sky_box_graphics_pipeline_state_));
 	assert(SUCCEEDED(hr));
 }

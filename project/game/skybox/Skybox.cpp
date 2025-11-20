@@ -7,7 +7,7 @@
 // Skyboxの初期化処理
 void Skybox::Initialize(std::string textureFilePath) {
 	directxBase_ = DirectXBase::GetInstance();
-	pso_ = std::make_unique<Pso>();
+	pso_ = std::make_unique<PipelineStateObject>();
 	pso_->Initialize(directxBase_);
 	textureFilePath_ = textureFilePath;
 	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
@@ -46,23 +46,23 @@ void Skybox::Update() {
 // 描画処理
 void Skybox::Draw() {
 	// ルートシグネチャ設定
-	directxBase_->Getcommandlist()->SetGraphicsRootSignature(pso_->GetSkyBoxRootSignature());
+	directxBase_->GetCommandList()->SetGraphicsRootSignature(pso_->GetSkyBoxRootSignature());
 	// PSO設定
-	directxBase_->Getcommandlist()->SetPipelineState(pso_->GetSkyBoxGraphicsPipelineState());
+	directxBase_->GetCommandList()->SetPipelineState(pso_->GetSkyBoxGraphicsPipelineState());
 	// 描画形状設定
-	directxBase_->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	directxBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// VBV設定
-	directxBase_->Getcommandlist()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	directxBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	// インデックス設定
-	directxBase_->Getcommandlist()->IASetIndexBuffer(&indexBufferView);
+	directxBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 	// マテリアルCBufferの場所を設定
-	directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	directxBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	// テクスチャのDescriptorTableを設定
-	directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
+	directxBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
 	// インスタンシングデータのSRVのDescriptorTableを設定
-	directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+	directxBase_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	// 描画コマンド発行
-	directxBase_->Getcommandlist()->DrawIndexedInstanced(static_cast<UINT>(indices.size()), 1, 0, 0, 0);
+	directxBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(indices.size()), 1, 0, 0, 0);
 }
 
 // インデックスデータ作成

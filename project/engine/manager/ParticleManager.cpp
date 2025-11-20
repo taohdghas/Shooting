@@ -16,7 +16,7 @@ ParticleManager* ParticleManager::GetInstance() {
 void ParticleManager::Initialize(DirectXBase* directxBase, SrvManager* srvManager, Camera* camera) {
 	this->directxBase_ = directxBase;
 	this->srvManager_ = srvManager;
-	pso_ = std::make_unique<Pso>();
+	pso_ = std::make_unique<PipelineStateObject>();
 	pso_->Initialize(directxBase_);
 	this->camera_ = camera;
 	//乱数生成器
@@ -133,11 +133,11 @@ void ParticleManager::Update() {
 void ParticleManager::Draw() {
 
 	//ルートシグネチャ
-	directxBase_->Getcommandlist()->SetGraphicsRootSignature(pso_->GetParticleRootSignature());
+	directxBase_->GetCommandList()->SetGraphicsRootSignature(pso_->GetParticleRootSignature());
 	//PSO設定
-	directxBase_->Getcommandlist()->SetPipelineState(pso_->GetParticleGraphicsPipelineState());
+	directxBase_->GetCommandList()->SetPipelineState(pso_->GetParticleGraphicsPipelineState());
 	//描画形状設定
-	directxBase_->Getcommandlist()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	directxBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//パーティクルについて処理
 	for (auto& [name, ParticleGroup] : particleGroups) {
 		//インスタンス数が 0 の場合はスキップ
@@ -145,16 +145,16 @@ void ParticleManager::Draw() {
 			continue;
 		}
 		//頂点バッファ切り替え
-		directxBase_->Getcommandlist()->IASetVertexBuffers(0, 1, &ParticleGroup.vertexBufferView);
+		directxBase_->GetCommandList()->IASetVertexBuffers(0, 1, &ParticleGroup.vertexBufferView);
 
 		//マテリアルCBufferの場所設定
-		directxBase_->Getcommandlist()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		directxBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 		//テクスチャSRVセット
-		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(ParticleGroup.materialData.textureIndex));
+		directxBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(ParticleGroup.materialData.textureIndex));
 		//インスタンスSRVセット
-		directxBase_->Getcommandlist()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(ParticleGroup.SRVIndex));
+		directxBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(ParticleGroup.SRVIndex));
 		//描画
-		directxBase_->Getcommandlist()->DrawInstanced(UINT(ParticleGroup.modelData.vertices.size()), ParticleGroup.kNumInstance, 0, 0);
+		directxBase_->GetCommandList()->DrawInstanced(UINT(ParticleGroup.modelData.vertices.size()), ParticleGroup.kNumInstance, 0, 0);
 	}
 }
 

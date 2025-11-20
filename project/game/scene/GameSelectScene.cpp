@@ -15,7 +15,7 @@ void GameSelectScene::Finalize() {
 // 毎フレームの更新処理
 void GameSelectScene::Update() {
 	// Enterキーでゲームシーンへ遷移
-	if (Input::GetInstance()->PushKey(DIK_RETURN)) {
+	if (Input::GetInstance()->IsKeyPressed(DIK_RETURN)) {
 		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 }

@@ -4,14 +4,14 @@
 //初期化
 void Framework::Initialize() {
     // Windows API関連の初期化
-    windowsAPI_ = std::make_unique<WindowsAPI>();
-    windowsAPI_->Initialize();
+    windows_api_ = std::make_unique<WindowsApi>();
+    windows_api_->Initialize();
 
     // DirectXの初期化
-    DirectXBase::GetInstance()->Initialize(windowsAPI_.get());
+    DirectXBase::GetInstance()->Initialize(windows_api_.get());
 
     // 入力管理の初期化
-    Input::GetInstance()->Initialize(windowsAPI_.get());
+    Input::GetInstance()->Initialize(windows_api_.get());
 
     // 2Dスプライト描画用の初期化
     SpriteBase::GetInstance()->Initialize(DirectXBase::GetInstance());
@@ -29,8 +29,8 @@ void Framework::Initialize() {
     ModelManager::GetInstance()->Initialize(DirectXBase::GetInstance());
 
     // ImGui (GUI) 管理の初期化
-    imguimanager_ = std::make_unique<ImGuiManager>();
-    imguimanager_->Initialize(windowsAPI_.get(), DirectXBase::GetInstance(), SrvManager::GetInstance());
+    imgui_manager_ = std::make_unique<ImGuiManager>();
+    imgui_manager_->Initialize(windows_api_.get(), DirectXBase::GetInstance(), SrvManager::GetInstance());
 
     // カメラ管理の初期化
     CameraManager::GetInstance()->Initialize();
@@ -39,13 +39,13 @@ void Framework::Initialize() {
     ParticleManager::GetInstance()->Initialize(DirectXBase::GetInstance(), SrvManager::GetInstance(), camera_.get());
 
     // シーン管理の取得（シングルトン）
-    sceneManager = SceneManager::GetInstance();
+    scene_manager_ = SceneManager::GetInstance();
 }
 
 //終了処理
 void Framework::Finalize() {
     // シーン管理の終了
-    sceneManager->Finalize();
+    scene_manager_->Finalize();
 
     // パーティクル管理の終了
     ParticleManager::GetInstance()->Finalize();
@@ -54,7 +54,7 @@ void Framework::Finalize() {
     CameraManager::GetInstance()->Finalize();
 
     // GUI解放
-    imguimanager_->Finalize();
+    imgui_manager_->Finalize();
 
     // 3Dオブジェクト基底クラスの終了
     Object3dBase::GetInstance()->Finalize();
@@ -78,23 +78,23 @@ void Framework::Finalize() {
     DirectXBase::GetInstance()->Finalize();
 
     // Windows API終了処理
-    windowsAPI_->Finalize();
+    windows_api_->Finalize();
 }
 
 // 毎フレーム更新
 void Framework::Update() {
 
     // Windowsからのメッセージを最優先で処理
-    if (windowsAPI_->ProcessMessage()) {
+    if (windows_api_->ProcessMessage()) {
         // 終了リクエストが来たらゲームループを抜ける
-        endRequst_ = true;
+        end_request_ = true;
     }
 
     // 入力状態の更新
     Input::GetInstance()->Update();
 
     // 現在のシーンを更新
-    sceneManager->Update();
+    scene_manager_->Update();
 }
 
 // メイン実行関数
@@ -108,7 +108,7 @@ void Framework::Run() {
         Update();
 
         // 終了リクエストがあればループ終了
-        if (IsEndRequst()) {
+        if (is_end_request()) {
             break;
         }
 

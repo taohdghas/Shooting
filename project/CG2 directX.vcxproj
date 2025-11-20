@@ -73,7 +73,7 @@
     <ClCompile Include="engine\base\StringUtility.cpp" />
     <ClCompile Include="engine\manager\TextureManager.cpp" />
     <ClCompile Include="engine\base\WindowsAPI.cpp" />
-    <ClCompile Include="engine\base\Pso.cpp" />
+    <ClCompile Include="engine\base\PipeLineStateObject.cpp" />
     <ClCompile Include="game\skybox\Skybox.cpp" />
     <ClCompile Include="game\object\TitleObject.cpp" />
     <ClCompile Include="game\platform\Platform.cpp" />
@@ -100,7 +100,7 @@
     <ClInclude Include="game\player\playerBullet.h" />
     <ClInclude Include="engine\scene\SceneFactory.h" />
     <ClInclude Include="engine\manager\SceneManager.h" />
-    <ClInclude Include="engine\base\Pso.h" />
+    <ClInclude Include="engine\base\PipeLineStateObject.h" />
     <ClInclude Include="game\skybox\Skybox.h" />
     <ClInclude Include="engine\manager\JsonManager.h" />
     <ClInclude Include="game\platform\Platform.h" />

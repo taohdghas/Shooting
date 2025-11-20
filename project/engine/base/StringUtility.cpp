@@ -1,7 +1,7 @@
 #include "StringUtility.h"
 #include <stringapiset.h>
 
-namespace StringUtility {
+namespace string_utility {
 
     // string -> wstring に変換
     std::wstring ConvertString(const std::string& str) {
@@ -11,7 +11,7 @@ namespace StringUtility {
         }
 
         // 必要なワイド文字列バッファのサイズを取得
-        auto sizeNeeded = MultiByteToWideChar(
+        auto size_needed = MultiByteToWideChar(
             CP_UTF8,
             0,
             reinterpret_cast<const char*>(&str[0]),
@@ -19,13 +19,13 @@ namespace StringUtility {
             NULL,
             0
         );
-        if (sizeNeeded == 0) {
+        if (size_needed == 0) {
             // 変換に失敗した場合は空文字列を返す
             return std::wstring();
         }
 
         // 結果を格納する wstring をサイズ分確保
-        std::wstring result(sizeNeeded, 0);
+        std::wstring result(size_needed, 0);
 
         // 実際の変換処理
         MultiByteToWideChar(
@@ -34,7 +34,7 @@ namespace StringUtility {
             reinterpret_cast<const char*>(&str[0]),
             static_cast<int>(str.size()),
             &result[0],
-            sizeNeeded
+            size_needed
         );
 
         return result;
@@ -47,7 +47,7 @@ namespace StringUtility {
         }
 
         // 必要なマルチバイト文字列バッファのサイズを取得
-        auto sizeNeeded = WideCharToMultiByte(
+        auto size_needed = WideCharToMultiByte(
             CP_UTF8,
             0,
             str.data(),
@@ -57,13 +57,13 @@ namespace StringUtility {
             NULL,
             NULL
         );
-        if (sizeNeeded == 0) {
+        if (size_needed == 0) {
             // 変換に失敗した場合は空文字列を返す
             return std::string();
         }
 
         // 結果を格納する string をサイズ分確保
-        std::string result(sizeNeeded, 0);
+        std::string result(size_needed, 0);
 
         // 実際の変換処理
         WideCharToMultiByte(
@@ -72,7 +72,7 @@ namespace StringUtility {
             str.data(),
             static_cast<int>(str.size()),
             result.data(),
-            sizeNeeded,
+            size_needed,
             NULL,
             NULL
         );

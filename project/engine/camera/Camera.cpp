@@ -1,31 +1,32 @@
 #include "Camera.h"
 #include "MyMath.h"
 
-// デフォルトコンストラクタ
-Camera::Camera()
-    : transform({ {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }) // scale, rotate, translate
-    , FovY(0.45f) // 垂直方向の視野角
-    , aspectRatio((WindowsAPI::kClientWidth) / float(WindowsAPI::kClientHeight)) // 画面のアスペクト比
-    , nearClip(0.1f) // ニアクリップ距離
-    , farClip(100.0f) // ファークリップ距離
-    , worldMatrix(Math::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate)) // ワールド変換行列
-    , viewMatrix(Math::Inverse(worldMatrix)) // ビュー行列はワールド行列の逆行列
-    , projectionMatrix(Math::MakePerspectiveFovMatrix(FovY, aspectRatio, nearClip, farClip)) // 射影行列
-    , viewProjectionMatrix(Math::Multiply(viewMatrix, projectionMatrix)) // ビュー×射影行列
-{
+Camera::Camera() {
+	// Transformの初期化
+	transform_.scale = { 1.0f, 1.0f, 1.0f };
+	transform_.rotate = { 0.0f, 0.0f, 0.0f };
+	transform_.translate = { 0.0f, 0.0f, 0.0f };
+
+	// 視野角・アスペクト比・クリップ距離の初期化
+	fov_y_ = 0.45f;
+	aspect_ratio_ = 16.0f / 9.0f; // 仮値。必要に応じてWindowAPIから取得
+	near_clip_ = 0.1f;
+	far_clip_ = 100.0f;
+
+	// 行列の初期化
+	world_matrix_ = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	view_matrix_ = Math::Inverse(world_matrix_);
+	projection_matrix_ = Math::MakePerspectiveFovMatrix(fov_y_, aspect_ratio_, near_clip_, far_clip_);
+	view_projection_matrix_ =Math::Multiply( view_matrix_ , projection_matrix_);
 }
 
-// 更新処理
 void Camera::Update() {
-    // ワールド行列を再計算
-    worldMatrix = Math::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-
-    // ビュー行列はワールド行列の逆行列
-    viewMatrix = Math::Inverse(worldMatrix);
-
-    // プロジェクション行列を再計算（Fovやアスペクト比の変更対応）
-    projectionMatrix = Math::MakePerspectiveFovMatrix(FovY, aspectRatio, nearClip, farClip);
-
-    // ビュー行列とプロジェクション行列を掛け合わせて最終的な変換行列を作成
-    viewProjectionMatrix = Math::Multiply(viewMatrix, projectionMatrix);
+	// worldMatrixの更新
+	world_matrix_ = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	// viewMatrixの更新
+	view_matrix_ = Math::Inverse(world_matrix_);
+	// projectionMatrixの更新
+	projection_matrix_ = Math::MakePerspectiveFovMatrix(fov_y_, aspect_ratio_, near_clip_, far_clip_);
+	// viewProjectionMatrixの更新
+	view_projection_matrix_ = Math::Multiply(view_matrix_ , projection_matrix_);
 }

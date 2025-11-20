@@ -37,7 +37,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
     assert(srvManager_->Securedcheck());
 
     DirectX::ScratchImage image{};
-    std::wstring filePathW = StringUtility::ConvertString(filePath);
+    std::wstring filePathW = string_utility::ConvertString(filePath);
 
     // .dds形式かそれ以外かで読み込み方法を切り替える
     HRESULT hr;

@@ -3,7 +3,7 @@
 #include <string>
 
 //文字コードユーティリティ
-namespace StringUtility {
+namespace string_utility {
 	/// <summary>
 	/// UTF-8 エンコードされた std::string を std::wstring (Windows の UTF-16) に変換する。
 	/// </summary>

@@ -7,66 +7,66 @@
 
 // 初期化
 void Model::Initialize(ModelBase* modelBase, const std::string& directorypath, const std::string& filename) {
-	modelBase_ = modelBase;
+	model_base_ = modelBase;
 
 	// .objファイルを読み込み、モデルデータを構築
-	modelData_ = LoadModelFile(directorypath, filename);
+	model_data_ = LoadModelFile(directorypath, filename);
 
 	// 頂点データとマテリアルデータをGPUリソースとして生成
 	VertexDataCreate();
 	MaterialCreate();
 
 	// .objが参照しているテクスチャファイルを読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+	TextureManager::GetInstance()->LoadTexture(model_data_.material.textureFilePath);
 
 	// 読み込んだテクスチャのSRVインデックスを取得してマテリアルに設定
-	modelData_.material.textureIndex =
-		TextureManager::GetInstance()->GetSrvIndex(modelData_.material.textureFilePath);
+	model_data_.material.textureIndex =
+		TextureManager::GetInstance()->GetSrvIndex(model_data_.material.textureFilePath);
 }
 
 // 描画
 void Model::Draw() {
 	// 頂点バッファをコマンドリストに設定
-	modelBase_->GetDxBase()->Getcommandlist()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	model_base_->GetDxBase()->GetCommandList()->IASetVertexBuffers(0, 1, &vertex_buffer_view_);
 
 	// マテリアルの定数バッファを設定（ルートパラメータ0）
-	modelBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
 
 	// テクスチャSRVのディスクリプタテーブルを設定（ルートパラメータ2）
-	modelBase_->GetDxBase()->Getcommandlist()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(modelData_.material.textureFilePath));
+	model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(model_data_.material.textureFilePath));
 
 	// DrawCall発行（頂点数分のインスタンスを描画）
-	modelBase_->GetDxBase()->Getcommandlist()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
+	model_base_->GetDxBase()->GetCommandList()->DrawInstanced(UINT(model_data_.vertices.size()), 1, 0, 0);
 }
 
 // 頂点データ作成
 void Model::VertexDataCreate() {
 	// 頂点バッファ用のGPUリソースを生成
-	vertexResource = modelBase_->GetDxBase()->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
+	vertex_resource_ = model_base_->GetDxBase()->CreateBufferResource(sizeof(VertexData) * model_data_.vertices.size());
 
 	// バッファビュー情報を設定
-	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
-	vertexBufferView.StrideInBytes = sizeof(VertexData);
+	vertex_buffer_view_.BufferLocation = vertex_resource_->GetGPUVirtualAddress();
+	vertex_buffer_view_.SizeInBytes = UINT(sizeof(VertexData) * model_data_.vertices.size());
+	vertex_buffer_view_.StrideInBytes = sizeof(VertexData);
 
 	// GPUリソースへ頂点データを書き込む
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	std::memcpy(vertexData, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
+	vertex_resource_->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data_));
+	std::memcpy(vertex_data_, model_data_.vertices.data(), sizeof(VertexData) * model_data_.vertices.size());
 }
 
 // マテリアル作成
 void Model::MaterialCreate() {
 	// マテリアル用の定数バッファリソースを生成
-	materialResource = modelBase_->GetDxBase()->CreateBufferResource(sizeof(Material));
+	material_resource_ = model_base_->GetDxBase()->CreateBufferResource(sizeof(Material));
 
 	// 書き込み先アドレスを取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	material_resource_->Map(0, nullptr, reinterpret_cast<void**>(&material_data_));
 
 	// マテリアルの初期設定
-	materialData->color = Vector4{ 1.0f,1.0f,1.0f,1.0f };
-	materialData->enableLighting = true; // ライティングを有効化
-	materialData->uvTransform = Math::MakeIdentity4x4(); // UV行列を単位行列で初期化
-	materialData->shininess = 40.0f; // 反射の強さを設定
+	material_data_->color = Vector4{ 1.0f,1.0f,1.0f,1.0f };
+	material_data_->enableLighting = true; // ライティングを有効化
+	material_data_->uvTransform = Math::MakeIdentity4x4(); // UV行列を単位行列で初期化
+	material_data_->shininess = 40.0f; // 反射の強さを設定
 }
 
 // .mtlファイルの読み取り

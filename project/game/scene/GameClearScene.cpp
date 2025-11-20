@@ -49,7 +49,7 @@ void GameClearScene::SceneChange() {
 		fade->End();
 	}
 	//タイトルへのフェードアウト開始
-	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_SPACE)) {
+	if (fade->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 	//フェードアウト後シーン移行

@@ -1,6 +1,6 @@
 #pragma once
 #include "DirectXBase.h"
-#include "Pso.h"
+#include "PipeLineStateObject.h"
 #include "Struct.h"
 
 //SkyBoxのクラス
@@ -55,7 +55,7 @@ public:
 
 private:
 	DirectXBase* directxBase_ = nullptr;
-	std::unique_ptr<Pso>pso_;
+	std::unique_ptr<PipelineStateObject>pso_;
 	VertexData* vertexData = nullptr;
 	Material* materialData;
 	Transform transform_;

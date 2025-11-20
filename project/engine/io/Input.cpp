@@ -4,75 +4,75 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
-Input* Input::instance = nullptr;
+Input* Input::instance_ = nullptr;
 
 // シングルトンインスタンス取得
 Input* Input::GetInstance() {
-    if (instance == nullptr) {
-        instance = new Input;
+    if (instance_ == nullptr) {
+        instance_ = new Input;
     }
-    return instance;
+    return instance_;
 }
 
-void Input::Initialize(WindowsAPI* windowsAPI) {
+void Input::Initialize(WindowsApi* windows_api) {
     // 外部から渡されたWinAPIインスタンスを保持
-    this->windowsAPI_ = windowsAPI;
+    windows_api_ = windows_api;
 
     HRESULT result;
 
     // DirectInputインスタンス生成
     result = DirectInput8Create(
-        windowsAPI->GetHInstance(),
+        windows_api_->GetHinstance(),
         DIRECTINPUT_VERSION,
         IID_IDirectInput8,
-        (void**)&directInput,
+        reinterpret_cast<void**>(direct_input_.GetAddressOf()),
         nullptr
     );
     assert(SUCCEEDED(result));
 
     // キーボードデバイス生成
-    result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+    result = direct_input_->CreateDevice(GUID_SysKeyboard, keyboard_device_.GetAddressOf(), NULL);
     assert(SUCCEEDED(result));
 
     // 入力データ形式を設定（標準キーボード形式）
-    result = keyboard->SetDataFormat(&c_dfDIKeyboard);
+    result = keyboard_device_->SetDataFormat(&c_dfDIKeyboard);
     assert(SUCCEEDED(result));
 
     // 排他制御レベルの設定（フォアグラウンド＋非排他＋Winキー無効）
-    result = keyboard->SetCooperativeLevel(
-        windowsAPI->GetHwnd(),
+    result = keyboard_device_->SetCooperativeLevel(
+        windows_api_->GetHwnd(),
         DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY
     );
     assert(SUCCEEDED(result));
 }
 
-// 終了処理
 void Input::Finalize() {
-    delete instance;
-    instance = nullptr;
+    // シングルトンインスタンスの破棄
+    delete instance_;
+    instance_ = nullptr;
 }
 
 void Input::Update() {
     // 前回のキー入力状態を保存
-    memcpy(keyPre, key, sizeof(key));
+    memcpy(prev_key_state_, key_state_, sizeof(key_state_));
 
     // キーボードデバイスから最新の入力状態を取得
-    keyboard->Acquire();
-    keyboard->GetDeviceState(sizeof(key), key);
+    keyboard_device_->Acquire();
+    keyboard_device_->GetDeviceState(sizeof(key_state_), key_state_);
 }
 
-// 1フレーム分の入力をクリア
 void Input::ClearInput() {
-    memset(key, 0, sizeof(key));
-    memset(keyPre, 0, sizeof(keyPre));
+    // キー状態配列をゼロクリア
+    memset(key_state_, 0, sizeof(key_state_));
+    memset(prev_key_state_, 0, sizeof(prev_key_state_));
 }
 
-// 指定キーが押されていればtrue
-bool Input::PushKey(BYTE keyNumber) {
-    return key[keyNumber] != 0;
+bool Input::IsKeyPressed(BYTE key_code) {
+    // 指定キーが押されていれば true
+    return key_state_[key_code] != 0;
 }
 
-// 指定キーが押された瞬間（前回は押されていなかった）ならtrue
-bool Input::TriggerKey(BYTE keyNumber) {
-    return keyPre[keyNumber] == 0 && key[keyNumber] != 0;
+bool Input::IsKeyTriggered(BYTE key_code) {
+    // 指定キーが押された瞬間（前回は押されていなかった）なら true
+    return prev_key_state_[key_code] == 0 && key_state_[key_code] != 0;
 }

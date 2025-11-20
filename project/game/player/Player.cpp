@@ -60,7 +60,7 @@ void Player::Update() {
 	}
 
 	// 攻撃入力判定
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+	if (Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
 		Attack();
 	}
 	// 回避処理
@@ -103,10 +103,10 @@ void Player::Move() {
 	Vector3 newPos = transform_.translate;
 
 	// 左右移動入力
-	if (Input::GetInstance()->PushKey(DIK_A)) {
+	if (Input::GetInstance()->IsKeyPressed(DIK_A)) {
 		newPos.x -= speed;
 	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
+	if (Input::GetInstance()->IsKeyPressed(DIK_D)) {
 		newPos.x += speed;
 	}
 
@@ -122,7 +122,7 @@ void Player::Move() {
 // ジャンプ処理
 void Player::Jump() {
 	// ジャンプ入力判定（最大回数未満ならジャンプ可能）
-	if (Input::GetInstance()->TriggerKey(DIK_W) && jumpCount_ < maxJumpCount_) {
+	if (Input::GetInstance()->IsKeyTriggered(DIK_W) && jumpCount_ < maxJumpCount_) {
 		jumpVelocity_ = jumpPower_;
 		jumpCount_++;
 	}
@@ -228,7 +228,7 @@ void Player::Dodge() {
 	}
 
 	// 回避入力判定
-	if (Input::GetInstance()->PushKey(DIK_F)) {
+	if (Input::GetInstance()->IsKeyPressed(DIK_F)) {
 		dodge_ = true;
 		dodgeCooldown_ = dodgeInterval_;
 	}
@@ -237,10 +237,10 @@ void Player::Dodge() {
 // レティクル（照準）の座標更新
 void Player::ReticleUpdate() {
 	const float moveSpeed = 10.0f;
-	if (Input::GetInstance()->PushKey(DIK_LEFT))  reticleScreenPos_.x -= moveSpeed;
-	if (Input::GetInstance()->PushKey(DIK_RIGHT)) reticleScreenPos_.x += moveSpeed;
-	if (Input::GetInstance()->PushKey(DIK_UP))    reticleScreenPos_.y -= moveSpeed;
-	if (Input::GetInstance()->PushKey(DIK_DOWN))  reticleScreenPos_.y += moveSpeed;
+	if (Input::GetInstance()->IsKeyPressed(DIK_LEFT))  reticleScreenPos_.x -= moveSpeed;
+	if (Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) reticleScreenPos_.x += moveSpeed;
+	if (Input::GetInstance()->IsKeyPressed(DIK_UP))    reticleScreenPos_.y -= moveSpeed;
+	if (Input::GetInstance()->IsKeyPressed(DIK_DOWN))  reticleScreenPos_.y += moveSpeed;
 
 	// 画面端制限
 	reticleScreenPos_.x = std::clamp(reticleScreenPos_.x, 0.0f, 1280.0f);

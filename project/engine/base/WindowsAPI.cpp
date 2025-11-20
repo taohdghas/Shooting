@@ -1,13 +1,15 @@
 #pragma comment (lib,"winmm.lib")
-#include "WindowsAPI.h"
+#include "WindowsApi.h"
+
 #ifdef USE_IMGUI
 #include <externals/imgui/imgui_impl_win32.h>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
-WindowsAPI* WindowsAPI::instance = nullptr;
+
+WindowsApi* WindowsApi::instance_ = nullptr;
 
 // ウィンドウプロシージャ
-LRESULT CALLBACK WindowsAPI::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+LRESULT CALLBACK WindowsApi::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 #ifdef USE_IMGUI
     // ImGuiのメッセージ処理
     if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
@@ -27,14 +29,14 @@ LRESULT CALLBACK WindowsAPI::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 }
 
 // シングルトンインスタンス取得
-WindowsAPI* WindowsAPI::GetInstance() {
-    if (instance == nullptr) {
-        instance = new WindowsAPI;
+WindowsApi* WindowsApi::GetInstance() {
+    if (instance_ == nullptr) {
+        instance_ = new WindowsApi;
     }
-    return instance;
+    return instance_;
 }
 
-void WindowsAPI::Initialize() {
+void WindowsApi::Initialize() {
     // COMライブラリ初期化
     HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 
@@ -42,51 +44,52 @@ void WindowsAPI::Initialize() {
     timeBeginPeriod(1);
 
     // ウィンドウクラスの設定
-    wc.lpfnWndProc = WindowProc;           // ウィンドウプロシージャ
-    wc.lpszClassName = L"CG2WindowClass";  // クラス名
-    wc.hInstance = GetModuleHandle(nullptr); // インスタンスハンドル
-    wc.hCursor = LoadCursor(nullptr, IDC_ARROW); // カーソル設定
+    wc_.lpfnWndProc = WindowProc;             // ウィンドウプロシージャ
+    wc_.lpszClassName = L"CG2WindowClass";    // クラス名
+    wc_.hInstance = GetModuleHandle(nullptr); // インスタンスハンドル
+    wc_.hCursor = LoadCursor(nullptr, IDC_ARROW); // カーソル設定
 
     // ウィンドウクラスを登録
-    RegisterClass(&wc);
+    RegisterClass(&wc_);
 
     // クライアント領域のサイズを設定
-    RECT wrc = { 0, 0, kClientWidth, kClientHeight };
+    RECT window_rect = { 0, 0, kClientWidth, kClientHeight };
 
     // 実際のウィンドウサイズに調整
-    AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
+    AdjustWindowRect(&window_rect, WS_OVERLAPPEDWINDOW, false);
 
     // ウィンドウ生成
-    hwnd = CreateWindow(
-        wc.lpszClassName,
+    hwnd_ = CreateWindow(
+        wc_.lpszClassName,
         L"CG2",
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        wrc.right - wrc.left,
-        wrc.bottom - wrc.top,
+        window_rect.right - window_rect.left,
+        window_rect.bottom - window_rect.top,
         nullptr,
         nullptr,
-        wc.hInstance,
+        wc_.hInstance,
         nullptr
     );
 
     // ウィンドウ表示
-    ShowWindow(hwnd, SW_SHOW);
+    ShowWindow(hwnd_, SW_SHOW);
 }
 
-void WindowsAPI::Update() {
+void WindowsApi::Update() {
     // 今回は何も処理なし
 }
 
-void WindowsAPI::Finalize() {
+void WindowsApi::Finalize() {
     // ウィンドウを閉じる
-    CloseWindow(hwnd);
+    CloseWindow(hwnd_);
+
     // COMライブラリの解放
     CoUninitialize();
 }
 
-bool WindowsAPI::ProcessMessage() {
+bool WindowsApi::ProcessMessage() {
     MSG msg{};
 
     // メッセージが存在すれば取得して処理

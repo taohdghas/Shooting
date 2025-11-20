@@ -1,7 +1,7 @@
 #pragma once
 #include "DirectXBase.h"
 #include "SrvManager.h"
-#include "Pso.h"
+#include "PipeLineStateObject.h"
 #include "TextureManager.h"
 #include "Camera.h"
 #include "Struct.h"
@@ -154,7 +154,7 @@ private:
 	static ParticleManager* instance;
 	DirectXBase* directxBase_;
 	SrvManager* srvManager_;
-	std::unique_ptr<Pso>pso_;
+	std::unique_ptr<PipelineStateObject>pso_;
 	Camera* camera_;
 	ModelData modelData;
 	AABB aabb_;

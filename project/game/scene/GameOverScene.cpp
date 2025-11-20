@@ -89,12 +89,12 @@ void GameOverScene::SceneChange() {
 		fade->End();
 	}
 	//タイトルへのフェードアウト開始
-	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_SPACE)) {
+	if (fade->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 		isToTitle = true;
 	}
 	//ゲームシーンへのフェードアウト(リトライ)
-	if (fade->GetState() == Fade::State::None && Input::GetInstance()->PushKey(DIK_R)) {
+	if (fade->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_R)) {
 		fade->FadeStart(Fade::State::FadeOut, 0.5f);
 		isToGame = true;
 	}

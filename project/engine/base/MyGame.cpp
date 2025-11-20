@@ -8,8 +8,8 @@ void MyGame::Initialize() {
     Framework::Initialize();
 
     // シーンファクトリーを生成し、シーンマネージャにセット
-    sceneFactory = std::make_unique<SceneFactory>();
-    SceneManager::GetInstance()->SetSceneFactory(sceneFactory.get());
+    scene_factory_ = std::make_unique<SceneFactory>();
+    SceneManager::GetInstance()->SetSceneFactory(scene_factory_.get());
 
     // 最初のシーンをTITLEに設定
     SceneManager::GetInstance()->ChangeScene("TITLE");
@@ -25,7 +25,7 @@ void MyGame::Finalize() {
 void MyGame::Update() {
 
     // ImGui描画開始
-    imguimanager_->Begin();
+    imgui_manager_->Begin();
 
     // 基底クラスの更新（入力処理やシーン更新など）
     Framework::Update();
@@ -33,19 +33,19 @@ void MyGame::Update() {
 #ifdef USE_IMGUI
     // ImGuiでRenderTextureの使用設定を切り替え
     if (ImGui::Begin("MyGame SetUp")) {
-        ImGui::Checkbox("Use RenderTexture", &useRenderTexture_);
+        ImGui::Checkbox("Use RenderTexture", &use_render_texture_);
     }
     ImGui::End();
 #endif
 
     // ImGui描画終了
-    imguimanager_->End();
+    imgui_manager_->End();
 }
 
 // 描画処理
 void MyGame::Draw() {
 
-    if (useRenderTexture_) {
+    if (use_render_texture_) {
         // RenderTextureに描画する場合のフロー
 
         // RenderTexture描画開始
@@ -67,7 +67,7 @@ void MyGame::Draw() {
         DirectXBase::GetInstance()->DrawRenderTextureToScreen();
 
         // ImGui描画
-        imguimanager_->Draw();
+        imgui_manager_->Draw();
 
         // 描画後処理（バッファ切り替えなど）
         DirectXBase::GetInstance()->PostDraw();
@@ -77,7 +77,7 @@ void MyGame::Draw() {
         DirectXBase::GetInstance()->PreDraw();
         SrvManager::GetInstance()->PreDraw();
         SceneManager::GetInstance()->Draw();
-        imguimanager_->Draw();
+        imgui_manager_->Draw();
         DirectXBase::GetInstance()->PostDraw();
     }
 }

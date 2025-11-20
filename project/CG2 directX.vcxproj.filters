@@ -207,7 +207,7 @@
     <ClCompile Include="engine\base\MyGame.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\base\Pso.cpp">
+    <ClCompile Include="engine\base\PipeLineStateObject.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\StringUtility.cpp">
@@ -362,7 +362,7 @@
     <ClInclude Include="engine\base\MyGame.h">
       <Filter>ヘッダー ファイル\engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\Pso.h">
+    <ClInclude Include="engine\base\PipeLineStateObject.h">
       <Filter>ヘッダー ファイル\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\StringUtility.h">
