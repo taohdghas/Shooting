@@ -2,36 +2,36 @@
 #include "Input.h"
 #include <cassert>
 
-SceneManager* SceneManager::instance = nullptr;
+SceneManager* SceneManager::instance_ = nullptr;
 
 // シングルトンインスタンス取得
 SceneManager* SceneManager::GetInstance() {
-    if (instance == nullptr) {
-        instance = new SceneManager;
+    if (instance_ == nullptr) {
+        instance_ = new SceneManager;
     }
-    return instance;
+    return instance_;
 }
 
 // 終了処理
 void SceneManager::Finalize() {
     // 最後に実行中のシーンを終了
     scene_->Finalize();
-    delete instance;
-    instance = nullptr;
+    delete instance_;
+    instance_ = nullptr;
 }
 
 // 更新処理
 void SceneManager::Update() {
     // 次のシーンがセットされている場合は切り替え
-    if (nextScene_) {
+    if (next_scene_) {
         // 現在のシーンを終了
         if (scene_) {
             scene_->Finalize();
         }
 
         // シーンを切り替え
-        scene_ = std::move(nextScene_);
-        nextScene_ = nullptr;
+        scene_ = std::move(next_scene_);
+        next_scene_ = nullptr;
 
         // 新しいシーンにSceneManagerをセット
         scene_->SetSceneManager(this);
@@ -50,10 +50,10 @@ void SceneManager::Draw() {
 }
 
 // 次のシーンを予約
-void SceneManager::ChangeScene(const std::string& sceneName) {
-    assert(sceneFactory_);      // シーンファクトリが存在することを確認
-    assert(nextScene_ == nullptr); // 既に予約済みのシーンがないことを確認
+void SceneManager::ChangeScene(const std::string& scene_name) {
+    assert(scene_factory_);        // シーンファクトリが存在することを確認
+    assert(next_scene_ == nullptr); // 既に予約済みのシーンがないことを確認
 
     // 次のシーンを生成して予約
-    nextScene_ = sceneFactory_->CreateScene(sceneName);
+    next_scene_ = scene_factory_->CreateScene(scene_name);
 }
