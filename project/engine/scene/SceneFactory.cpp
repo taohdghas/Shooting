@@ -6,21 +6,21 @@
 #include "GameOverScene.h"
 
 // シーン名に応じたシーンを生成するファクトリメソッド
-std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneName) {
+std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& scene_name) {
 
-	if (sceneName == "TITLE") {
+	if (scene_name == "TITLE") {
 		return std::make_unique<TitleScene>();
 	}
-	else if (sceneName == "GAME") {
+	else if (scene_name == "GAME") {
 		return std::make_unique<GameScene>();
 	}
-	else if (sceneName == "SELECT") {
+	else if (scene_name == "SELECT") {
 		return std::make_unique<GameSelectScene>();
 	}
-	else if (sceneName == "CLEAR") {
+	else if (scene_name == "CLEAR") {
 		return std::make_unique<GameClearScene>();
 	} 
-	else if (sceneName == "OVER") {
+	else if (scene_name == "OVER") {
 		return std::make_unique<GameOverScene>();
 	}
 	// 上記以外はnullptr

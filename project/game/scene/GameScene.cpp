@@ -115,7 +115,7 @@ void GameScene::Update() {
 			particleEmitter.push_back(std::move(emitter));
 
 			// デスパーティクルフラグをリセット
-			enemy->SetisDeathParticle(false);
+			enemy->SetIsDeathParticle(false);
 		}
 	}
 

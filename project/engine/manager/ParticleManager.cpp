@@ -150,9 +150,9 @@ void ParticleManager::Draw() {
 		//マテリアルCBufferの場所設定
 		directxBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 		//テクスチャSRVセット
-		directxBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(ParticleGroup.materialData.textureIndex));
+		directxBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGpuDescriptorHandle(ParticleGroup.materialData.textureIndex));
 		//インスタンスSRVセット
-		directxBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(ParticleGroup.SRVIndex));
+		directxBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGpuDescriptorHandle(ParticleGroup.SRVIndex));
 		//描画
 		directxBase_->GetCommandList()->DrawInstanced(UINT(ParticleGroup.modelData.vertices.size()), ParticleGroup.kNumInstance, 0, 0);
 	}
@@ -205,8 +205,8 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 		newParticle.instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	//SRV生成
-	newParticle.SRVIndex = srvManager_->Allcate();
-	srvManager_->CreateSRVforStructuredBuffer(newParticle.SRVIndex, newParticle.
+	newParticle.SRVIndex = srvManager_->Allocate();
+	srvManager_->CreateSrvForStructuredBuffer(newParticle.SRVIndex, newParticle.
 		instancingResource.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
 
 	particleGroups[name] = newParticle;

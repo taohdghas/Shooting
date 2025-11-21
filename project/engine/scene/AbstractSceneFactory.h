@@ -3,12 +3,12 @@
 #include <string>
 #include <memory>
 
-//シーンを作る
-class AbstractSceneFactory
-{
+// シーンを作る抽象ファクトリクラス
+class AbstractSceneFactory {
 public:
-	//仮想デストラクタ
-	virtual ~AbstractSceneFactory() = default;
-	//シーン生成
-	virtual std::unique_ptr<BaseScene> CreateScene(const std::string& sceneNama) = 0;
+    // 仮想デストラクタ
+    virtual ~AbstractSceneFactory() = default;
+
+    // シーン生成
+    virtual std::unique_ptr<BaseScene> CreateScene(const std::string& scene_name) = 0;
 };

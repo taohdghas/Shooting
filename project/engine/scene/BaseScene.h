@@ -20,7 +20,7 @@ public:
 	virtual ~BaseScene() = default;
 public:
 	//シーンマネージャをシーンに貸す
-	virtual void SetSceneManager(SceneManager* sceneManager) { sceneManager_ = sceneManager; }
+	virtual void SetSceneManager(SceneManager* scene_manager) { sceneManager_ = scene_manager; }
 private:
 	//シーンマネージャ
 	SceneManager* sceneManager_ = nullptr;

@@ -30,7 +30,7 @@ void ImGuiManager::Initialize([[maybe_unused]] WindowsApi* windows_api, DirectXB
     srv_manager_ = srv_manager;
 
     // SRV用のインデックスを取得
-    index_ = srv_manager_->Allcate();
+    index_ = srv_manager_->Allocate();
 
     // ImGuiのコンテキスト生成
     ImGui::CreateContext();
@@ -56,8 +56,8 @@ void ImGuiManager::Initialize([[maybe_unused]] WindowsApi* windows_api, DirectXB
         static_cast<int>(directx_base_->GetSwapChainResourcesNum()),
         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
         srv_manager_->GetDescriptorHeap(),
-        srv_manager_->GetCPUDescriptorHandle(index_),
-        srv_manager_->GetGPUDescriptorHandle(index_)
+        srv_manager_->GetCpuDescriptorHandle(index_),
+        srv_manager_->GetGpuDescriptorHandle(index_)
     );
 #endif
 }

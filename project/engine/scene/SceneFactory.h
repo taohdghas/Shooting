@@ -10,5 +10,5 @@ public:
 	/// </summary>
 	/// <param name="sceneName">生成するシーンを識別する文字列（大文字で比較される実装）。</param>
 	/// <returns>生成された <c>BaseScene</c> のユニークポインタ、該当が無ければ <c>nullptr</c>。</returns>
-	std::unique_ptr<BaseScene>CreateScene(const std::string& sceneName)override;
+	std::unique_ptr<BaseScene>CreateScene(const std::string& scene_name)override;
 };
