@@ -13,7 +13,7 @@ public:
 	/// - 内部で PSO を初期化し、必要な GPU リソースを確保する想定。
 	/// </summary>
 	/// <param name="textureFilePath">使用するキューブマップまたはテクスチャファイルのパス。</param>
-	void Initialize(std::string textureFilePath);
+	void Initialize(std::string texture_file_path);
 	/// <summary>
 	/// 毎フレーム更新処理を行う。
 	/// - Transform からワールド行列を計算し、カメラの ViewProjection 行列と組み合わせて WVP を更新する。
@@ -54,24 +54,23 @@ public:
 	Transform& GetTransform() { return transform_; }
 
 private:
-	DirectXBase* directxBase_ = nullptr;
-	std::unique_ptr<PipelineStateObject>pso_;
-	VertexData* vertexData = nullptr;
-	Material* materialData;
+	DirectXBase* directx_base_ = nullptr;
+	std::unique_ptr<PipelineStateObject> pso_;
+	VertexData* vertex_data_ = nullptr;
+	Material* material_data_;
 	Transform transform_;
-	TransformationMatrix* transformationMatrixData;
-	ModelData modelData;
-	std::string textureFilePath_;
-	std::vector<VertexData> vertices;
-	uint32_t* indexData;
-	std::vector<uint32_t>indices;
+	TransformationMatrix* transformation_matrix_data_;
+	ModelData model_data_;
+	std::string texture_file_path_;
+	std::vector<VertexData> vertices_;
+	uint32_t* index_data_;
+	std::vector<uint32_t> indices_;
 	//バッファリソースの使い道を補足するバッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView;
+	D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view_;
+	D3D12_INDEX_BUFFER_VIEW index_buffer_view_;
 	//バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
-	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource;
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
-	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertex_resource_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> index_resource_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> material_resource_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> transformation_matrix_resource_;
 };
-

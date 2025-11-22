@@ -65,7 +65,7 @@ private:
     Camera camera_;
     float speed_ = 3.0f;
     Player* player_ = nullptr;
-    Vector3 playerOffset_;
+    Vector3 player_offset_;
     Platform* platform_ = nullptr;
-    Vector3 platformOffset_ = { 0,0,0 };
+    Vector3 platform_offset_ = { 0, 0, 0 };
 };

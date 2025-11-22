@@ -48,15 +48,15 @@ public:
 
 private:
 	// カメラ
-	std::unique_ptr<Camera> camera;
+	std::unique_ptr<Camera> camera_;
 	// フェード
-	std::unique_ptr<Fade> fade;
+	std::unique_ptr<Fade> fade_;
 	// ゲームオーバーオブジェクト
-	std::unique_ptr<GameOverObject> gameOverObject;
+	std::unique_ptr<GameOverObject> game_over_object_;
 	// Skybox
-	std::unique_ptr<Skybox> skybox;
+	std::unique_ptr<Skybox> skybox_;
 	// タイトルシーンへの移行フラグ
-	bool isToTitle = false;
+	bool is_to_title_ = false;
 	// ゲームシーンへの移行フラグ
-	bool isToGame = false;
+	bool is_to_game_ = false;
 };

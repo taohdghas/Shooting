@@ -33,7 +33,7 @@ public:
 	/// - モデルを "player/player.obj" に設定しライトを無効化、初期スケール・位置を設定する。
 	/// - レティクル用スプライトを生成して初期設定する（サイズ・アンカーポイント等）。
 	/// </summary>
-	void Initialize(Object3dBase* object3dbase);
+	void Initialize(Object3dBase* object3d_base);
 	/// <summary>
 	/// 毎フレームの更新処理を行う。
 	/// - 死亡時は早期リターンする。
@@ -91,7 +91,7 @@ public:
 	/// </summary>
 	/// <param name="damage">与えるダメージ量。</param>
 	void TakeDamage(int damage);
-    /// <summary>
+	/// <summary>
 	/// デバッグ表示を行う（ImGui を使用）。
 	/// - HP / トランスフォーム / 回避状態などのインスペクションと一部操作を行える。
 	/// </summary>
@@ -101,28 +101,28 @@ public:
 	/// - 現在の Transform とモデル寸法から OBB を計算して返す。
 	/// </summary>
 	/// <returns>計算された OBB。</returns>
-	OBB GetOBB()const;
+	OBB GetOBB() const;
 	/// <summary>
 	/// 死亡フラグを取得する。
 	/// </summary>
 	/// <returns>デッドであれば true を返す。</returns>
-	bool IsDead()const { return isDead_; }
+	bool IsDead() const { return is_dead_; }
 public:
 	///Getter/// 
 	//スケール取得
-	const Vector3& GetScale()const { return transform_.scale; }
+	const Vector3& GetScale() const { return transform_.scale; }
 	//回転取得
-	const Vector3& GetRotate()const { return transform_.rotate; }
+	const Vector3& GetRotate() const { return transform_.rotate; }
 	//位置取得
-	const Vector3& GetTranslate()const { return transform_.translate; }
+	const Vector3& GetTranslate() const { return transform_.translate; }
 	/// <summary>
 	/// 衝突判定等で用いる半径を取得する。
 	/// </summary>
-	float GetRadius()const { return radius_; }
+	float GetRadius() const { return radius_; }
 	/// <summary>
 	/// 保持しているプレイヤー弾のリストを取得する（読み取り専用）。
 	/// </summary>
-	const std::list<std::unique_ptr<playerBullet>>& GetBullets() const { return bullets_; }
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
 
 	///Setter/// 
 	/// <summary>スケールを設定する。</summary>
@@ -131,91 +131,90 @@ public:
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 	/// <summary>座標を設定する。</summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
-	
+
 private:
-	Object3dBase* object3dBase_;
+	Object3dBase* object3d_base_;
 	Camera* camera_;
 	Transform transform_;
 	//レティクル用
-	Transform reticleTransform_;
-	std::unique_ptr<Object3d>object_;
+	Transform reticle_transform_;
+	std::unique_ptr<Object3d> object_;
 	//弾のリスト
-	std::list<std::unique_ptr<playerBullet>>bullets_;
+	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	//レティクル
-	std::unique_ptr<Sprite>reticle_;
+	std::unique_ptr<Sprite> reticle_;
 	//画面上の位置
-	Vector2 reticleScreenPos_{ 640.0f, 360.0f }; 
-	Vector2 reticlePos_ = { 640.0f, 360.0f };
+	Vector2 reticle_screen_pos_{ 640.0f, 360.0f };
+	Vector2 reticle_pos_ = { 640.0f, 360.0f };
 	//レティクルのオフセット
-	Vector3 reticleOffset_{ 0.0f, 0.0f, 10.0f };
+	Vector3 reticle_offset_{ 0.0f, 0.0f, 10.0f };
 	//色
 	Vector4 color_;
 	//回避方向
-	Vector3 dodgeDirection_{ 0.0f,0.0f,0.0f };
+	Vector3 dodge_direction_{ 0.0f,0.0f,0.0f };
 	//デスフラグ
-	bool isDead_ = false;
+	bool is_dead_ = false;
 	//回避状態
 	bool dodge_ = false;
 	//ジャンプフラグ
-	bool isJumping_ = false;
+	bool is_jumping_ = false;
 	//無敵フラグ(デバック)
-	bool isInvincible = false;
+	bool is_invincible_ = false;
 	//モデルの寸法
-	float dimensions = 2.0f;
+	float dimensions_ = 2.0f;
 	//プレイヤーの移動速度
-	float speed = 0.1f;
+	float speed_ = 0.1f;
 	//プレイヤーの半径
 	float radius_ = 1.0f;
 	//ジャンプ速度
-	float jumpVelocity_ = 0.0f;
-	
+	float jump_velocity_ = 0.0f;
+
 	//HP
 	int hp_ = 100;
 	//ジャンプ回数
-	int jumpCount_ = 0;
+	int jump_count_ = 0;
 	//最大ジャンプ可能回数
-	const int maxJumpCount_ = 2;
+	const int kMaxJumpCount = 2;
 	//弾の速度
-	const float bulletSpeed = 1.0f;
+	const float kBulletSpeed = 1.0f;
 	//Δtを定義
-	const float DeltaTime = 1.0f / 60.0f;
+	const float kDeltaTime = 1.0f / 60.0f;
 	//回避速度
-	const float dodgeSpeed_ = 0.1f;
+	const float dodge_speed_ = 0.1f;
 	//回避時の回転
-	const float rotateAngle_ = 360.0f;
+	const float rotate_angle_ = 360.0f;
 	//地面の最小Y移動
-	const float groundminY = -3.0f;
+	const float kGroundMinY = -3.0f;
 	//地面の最小X移動
-	const float groundminX = -4.0f;
+	const float kGroundMinX = -4.0f;
 	//地面の最大X移動
-	const float groundmaxX = 4.0f;
+	const float kGroundMaxX = 4.0f;
 	//重力
 	const float gravity_ = -0.01f;
 	//ジャンプ力
-	const float jumpPower_ = 0.15f;
+	const float jump_power_ = 0.15f;
 	//地面のY座標
-	const float groundY_ = -1.5f;
+	const float ground_y_ = -1.5f;
 	//二段ジャンプ回転速度
-	const float jumpRotateSpeed_ = 720.0f;
+	const float jump_rotate_speed_ = 720.0f;
 	//色変化時間
-	const float DamageColorDuration = 0.1f;
+	const float damage_color_duration_ = 0.1f;
 	//無敵時間
-	const float InvincivleTime = 0.1f;
+	const float invincible_time_ = 0.1f;
 	//攻撃のクールタイム
-	float  attackCooldown_ = 0.0f;
+	float attack_cooldown_ = 0.0f;
 	//再攻撃できるまでの間隔
-	float attackInterval_ = 10.0f;
+	float attack_interval_ = 10.0f;
 	//回避タイマー
-	float dodgeTimer_ = 0.0f;
+	float dodge_timer_ = 0.0f;
 	//回避適用時間
-	float applyDodge_ = 0.5f;
+	float apply_dodge_ = 0.5f;
 	//回避のクールタイム
-	float dodgeCooldown_ = 0.0f;
+	float dodge_cooldown_ = 0.0f;
 	//回避コマンド再使用待機時間
-	float dodgeInterval_ = 5.0f;
+	float dodge_interval_ = 5.0f;
 	//ダメージ色変化タイマー
-	float damageColorTimer_ = 0.0f;
+	float damage_color_timer_ = 0.0f;
 	//無敵タイマー
-	float invincibleTimer_ = 0.0f;
+	float invincible_timer_ = 0.0f;
 };
-

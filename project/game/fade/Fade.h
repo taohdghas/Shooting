@@ -61,11 +61,9 @@ public:
 private:
 	std::unique_ptr<Sprite> sprite_;
 	//Δtを定義
-	const float DeltaTime = 1.0f / 60.0f;
-
+	const float kDeltaTime = 1.0f / 60.0f;
 	//初期状態
 	State state_ = State::None;
-
 	//フェードの持続時間
 	float duration_ = 0.0f;
 	//経過時間

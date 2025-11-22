@@ -3,9 +3,9 @@
 
 // プラットフォームの初期化処理
 void Platform::Initialize(Object3dBase* object3dbase) {
-	object3dBase_ = object3dbase;
+	object3d_base_ = object3dbase;
 	object_ = std::make_unique<Object3d>();
-	object_->Initialize(object3dBase_);
+	object_->Initialize(object3d_base_);
 	object_->SetModel("platform/platform.obj");
 	object_->SetLight(false);
 	transform_.scale = { 7.5f,2.0f,3.0f };

@@ -105,7 +105,7 @@ void Enemy::Laser() {
     // 弾生成・初期化・速度設定
     auto bullet = std::make_unique<EnemyBullet>();
     bullet->Initialize(object3d_base_);
-    bullet->GetTranslate(transform_.translate);
+    bullet->SetTranslate(transform_.translate);
     bullet->SetVelocity(Math::Multiply(direction, 0.2f));
 
     bullets_.emplace_back(std::move(bullet));

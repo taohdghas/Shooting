@@ -15,7 +15,7 @@ void RailCamera::SetPlayer(Player* player) {
 
 // プレイヤーのカメラからのオフセットをセット
 void RailCamera::SetPlayerOffset(const Vector3& offset) {
-    playerOffset_ = offset;
+    player_offset_ = offset;
 }
 
 // プラットフォームの参照をセット
@@ -25,7 +25,7 @@ void RailCamera::SetPlatform(Platform* platform) {
 
 // プラットフォームのカメラからのオフセットをセット
 void RailCamera::SetPlatformOffset(const Vector3& offset) {
-    platformOffset_ = offset;
+    platform_offset_ = offset;
 }
 
 // カメラの進行速度をセット
@@ -50,13 +50,13 @@ void RailCamera::Update() {
     // プレイヤーをカメラに追従させる（Z座標のみカメラ基準で調整）
     if (player_) {
         Vector3 playerPos = player_->GetTranslate();
-        playerPos.z = camPos.z + playerOffset_.z;
+        playerPos.z = camPos.z + player_offset_.z;
         player_->SetTranslate(playerPos);
     }
 
     // プラットフォームをカメラに追従させる（Z座標のみカメラ基準で調整）
     if (platform_) {
-        Vector3 platPos = platformOffset_;
+        Vector3 platPos = platform_offset_;
         platPos.z += camPos.z;
         platform_->SetTransform(platPos);
     }

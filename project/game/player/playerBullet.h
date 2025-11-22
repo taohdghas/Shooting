@@ -5,16 +5,16 @@
 #include <memory>
 
 //プレイヤーの弾のクラス
-class playerBullet
+class PlayerBullet
 {
 public:
 	/// <summary>
 	/// 初期化する。
 	/// - 引数の <c>Object3dBase*</c> を保持し、内部で <c>Object3d</c> を生成・初期化する。
 	/// - モデルは "player/playerbullet.obj" を設定し、スケール等の初期値を与える。
-	/// - 寿命タイマー（deathTimer）を <c>kLifeTime</c> にセットする。
+	/// - 寿命タイマー（death_timer_）を <c>kLifeTime</c> にセットする。
 	/// </summary>
-	void Initialize(Object3dBase* object3dbase);
+	void Initialize(Object3dBase* object3d_base);
 
 	/// <summary>
 	/// 毎フレーム更新する。
@@ -40,26 +40,26 @@ public:
 	/// - 現在のトランスフォーム（位置・回転・スケール）と内部寸法から OBB を構築して返す。
 	/// </summary>
 	/// <returns>計算された OBB。</returns>
-	OBB GetOBB()const;
+	OBB GetOBB() const;
 	/// <summary>
 	/// デスフラグが立っているかを取得する。
 	/// </summary>
 	/// <returns>デッドなら true を返す。</returns>
-	bool IsDead()const { return isDead_; }
+	bool IsDead() const { return is_dead_; }
 public:
 	///Getter///
 	/// <summary>
 	/// 現在の位置（Transform.translate）を取得する。
 	/// </summary>
-	const Vector3& GetPosition()const { return transform_.translate; }
+	const Vector3& GetPosition() const { return transform_.translate; }
 	/// <summary>
 	/// 衝突判定等に用いる半径を取得する。
 	/// </summary>
-	float GetRadius()const { return radius_; }
+	float GetRadius() const { return radius_; }
 	/// <summary>
 	/// 弾の攻撃力を取得する。
 	/// </summary>
-	int GetAttack()const { return attack; }
+	int GetAttack() const { return attack_; }
 	///Setter///
 	/// <summary>
 	/// 弾の位置を設定する。
@@ -71,21 +71,19 @@ public:
 	/// </summary>
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 private:
-	std::unique_ptr<Object3d>object_;
-	Object3dBase* object3dbase_;
+	std::unique_ptr<Object3d> object_;
+	Object3dBase* object3d_base_;
 	Transform transform_;
 	//速度
 	Vector3 velocity_;
 	//寿命
 	static const uint32_t kLifeTime = 60 * 5;
 	//デスタイマー
-	int deathTimer;
+	int death_timer_;
 	//デスフラグ
-	bool isDead_ = false;
+	bool is_dead_ = false;
 	float radius_ = 0.1f;
 	//モデルの寸法
-	float dimensions = 0.2f;
-	uint32_t attack = 5;
-
+	float dimensions_ = 0.2f;
+	uint32_t attack_ = 5;
 };
-

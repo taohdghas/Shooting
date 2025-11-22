@@ -18,7 +18,7 @@
 #include "TitleObject.h"
 #include "JsonManager.h"
 
-//タイトルシーン
+// タイトルシーン
 class TitleScene : public BaseScene
 {
 public:
@@ -47,7 +47,8 @@ public:
 	/// デバッグ表示を行う（ImGui）。
 	/// - カメラ・Skybox のパラメータ編集や TitleObject のデバッグ表示を行う。
 	/// </summary>
-	void Debug()override;
+	void Debug() override;
+
 private:
 	/// <summary>
 	/// シーン遷移処理を行う。
@@ -55,22 +56,22 @@ private:
 	/// - FadeOut 完了時に SceneManager に対して "GAME" シーンへの遷移を要求する。
 	/// </summary>
 	void SceneChange();
-private:
-	//パーティクルエミッター
-	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
-	//カメラ
-	std::unique_ptr<Camera>camera;
-	//ライト
-	std::unique_ptr<DirectionalLight>directionallight;
-	//フェード
-	std::unique_ptr<Fade>fade;
-	//Skybox
-	std::unique_ptr<Skybox>skybox;
-	//タイトルオブジェクト
-	std::unique_ptr<TitleObject>titleObject;
-	//JsonManager
-	std::unique_ptr<JsonManager>jsonManager;
-	//レベルデータ
-	LevelData* levelData;
-};
 
+private:
+	// パーティクルエミッター
+	std::vector<std::unique_ptr<ParticleEmitter>> particle_emitters_;
+	// カメラ
+	std::unique_ptr<Camera> camera_;
+	// ライト
+	std::unique_ptr<DirectionalLight> directional_light_;
+	// フェード
+	std::unique_ptr<Fade> fade_;
+	// Skybox
+	std::unique_ptr<Skybox> skybox_;
+	// タイトルオブジェクト
+	std::unique_ptr<TitleObject> title_object_;
+	// JsonManager
+	std::unique_ptr<JsonManager> json_manager_;
+	// レベルデータ
+	LevelData* level_data_ = nullptr;
+};
