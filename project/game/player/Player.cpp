@@ -3,6 +3,7 @@
 #include "MyMath.h"
 #include "ImGuiManager.h"
 #include "CameraManager.h"
+#include "ParticleManager.h"
 #include <algorithm>
 
 Player::Player() {}
@@ -23,6 +24,9 @@ void Player::Initialize(Object3dBase* object3dbase) {
 	reticle_->Initialize(SpriteBase::GetInstance(), "resources/re.png");
 	reticle_->SetSize({ 32,32 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
+
+	moveEmitter_ = std::make_unique<ParticleEmitter>();
+	moveEmitter_->Initialize("playerMove");
 }
 
 // 毎フレームの更新処理
@@ -65,14 +69,30 @@ void Player::Update() {
 	}
 #endif
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	if(Input::GetInstance()->PushKey(DIK_SPACE)){
 		Attack();
 	}
-#endif
+//#endif
 
 	// 回避処理
 	Dodge();
+
+	// 現在のプレイヤー位置を取得
+	Vector3 pos = transform_.translate;
+	//移動方向と逆側にずらす
+	pos.z += 0.5f;
+
+	pos.y -= 0.2f;
+
+	moveEmitter_->SetPosition(pos);
+
+	// 横移動しているときだけ出す
+	if (Input::GetInstance()->PushKey(DIK_A) ||
+		Input::GetInstance()->PushKey(DIK_D))
+	{
+		moveEmitter_->Update(); 
+	}
 
 	// Transform情報をObject3dへ反映
 	object_->SetScale(transform_.scale);
@@ -131,6 +151,8 @@ void Player::Jump() {
 	if (Input::GetInstance()->TriggerKey(DIK_W) && jumpCount_ < maxJumpCount_) {
 		jumpVelocity_ = jumpPower_;
 		jumpCount_++;
+
+		moveEmitter_->Update();
 	}
 
 	// ジャンプ中の座標・速度更新
@@ -252,7 +274,7 @@ void Player::ReticleUpdate() {
     reticleScreenPos_.y += mouseMoveY * sensitivity;
 #endif
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
     // キーでレティクル移動
     if (Input::GetInstance()->PushKey(DIK_UP)) {
         reticleScreenPos_.y -= sensitivity * 5.0f;
@@ -266,7 +288,7 @@ void Player::ReticleUpdate() {
     if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
         reticleScreenPos_.x += sensitivity * 5.0f;
     }
-#endif
+//#endif
 
     // 画面端制限
     reticleScreenPos_.x = std::clamp(reticleScreenPos_.x, 0.0f, 1280.0f);

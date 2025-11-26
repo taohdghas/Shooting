@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Struct.h"
 #include "playerBullet.h"
+#include "ParticleEmitter.h"
 #include "Camera.h"
 #include <list>
 #include <memory>
@@ -152,6 +153,8 @@ private:
 	std::list<std::unique_ptr<playerBullet>>bullets_;
 	//レティクル
 	std::unique_ptr<Sprite>reticle_;
+	//移動エフェクト
+	std::unique_ptr<ParticleEmitter> moveEmitter_;
 	//画面上の位置
 	Vector2 reticleScreenPos_{ 640.0f, 360.0f }; 
 	Vector2 reticlePos_ = { 640.0f, 360.0f };

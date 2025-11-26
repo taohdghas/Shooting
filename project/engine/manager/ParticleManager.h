@@ -16,6 +16,10 @@ enum class ParticleType {
 	Ring,//Ring型
 	Cylinder,//Cylinder型
 	Explosive,//爆発
+	Smoke,//煙
+	PlayerMove,//プレイヤー移動
+	EnemyDamage,//敵ダメージ
+	Confetti,//紙吹雪
 };
 
 //パーティクル管理クラス

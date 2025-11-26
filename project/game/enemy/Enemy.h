@@ -3,6 +3,7 @@
 #include "Object3dBase.h"
 #include "Transform.h"
 #include "EnemyBullet.h"
+#include "ParticleEmitter.h"
 
 //プレイヤークラス前方宣言
 class Player;
@@ -113,6 +114,8 @@ private:
 	Player* player_;
 	//弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>>bullets_;
+	//ダメージエフェクトパーティクル
+	std::unique_ptr<ParticleEmitter> damegeEmitter_;
 	//移動速度
 	Vector3 velocity_ = { 0,0,0.02f };
 	//色
@@ -122,7 +125,7 @@ private:
 	//デスパーティクル発生フラグ
 	bool isDeathParticle_ = false;
 	//HP
-	int hp_ = 100;
+	int hp_ = 50;
 	//レーザー発射カウントタイマー
 	int fireTimerCount_ = 0;
 	//発射タイマー

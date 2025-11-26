@@ -1,4 +1,6 @@
 #include "Platform.h"
+#include "ParticleManager.h"
+#include "MyMath.h"
 #include "ImGuiManager.h"
 
 // プラットフォームの初期化処理
@@ -10,6 +12,8 @@ void Platform::Initialize(Object3dBase* object3dbase) {
 	object_->SetLight(false);
 	transform_.scale = { 7.5f,2.0f,3.0f };
 	transform_.translate = { 0.0f,-1.9f,0.0f };
+
+	smokeEmitter_.Initialize("particle6");
 }
 
 // 毎フレームの更新処理
@@ -18,6 +22,10 @@ void Platform::Update() {
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
+
+	Vector3 smokePos = transform_.translate + Vector3(0.0f, 0.0f, -1.5f);
+	smokeEmitter_.SetPosition(smokePos);
+	smokeEmitter_.Update();
 }
 
 // プラットフォームの描画処理

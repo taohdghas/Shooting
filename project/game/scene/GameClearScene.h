@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Skybox.h"
 #include "GameClearObject.h"
+#include "ParticleEmitter.h"
 #include "Fade.h"
 
 // ゲームクリアシーン
@@ -55,5 +56,7 @@ private:
 	std::unique_ptr<GameClearObject> gameClearObject;
 	//フェード
 	std::unique_ptr<Fade>fade;
+	//パーティクルエミッター
+	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter_;
 };
 

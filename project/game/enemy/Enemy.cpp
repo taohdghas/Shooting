@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Player.h"
+#include "ParticleManager.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
 
@@ -12,6 +13,9 @@ void Enemy::Initialize(Object3dBase* object3dBase) {
 	object_->SetLight(false);
 	transform_.scale = { 0.5f,0.5f,0.5f };
 	transform_.translate = { 0.0f,3.0f,20.0f };
+
+	damegeEmitter_ = std::make_unique<ParticleEmitter>();
+	damegeEmitter_->Initialize("enemyDamage");
 }
 
 // 毎フレームの更新処理
@@ -30,7 +34,7 @@ void Enemy::Update() {
 		}
 	}
 
-	transform_.translate = Math::Add(transform_.translate, velocity_);
+	//transform_.translate = Math::Add(transform_.translate, velocity_);
 
 	// 攻撃処理（レーザー発射判定）
 	Laser();
@@ -125,7 +129,16 @@ void Enemy::OnCollision() {
 // ダメージ処理
 void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
-	damageColorTimer_ = damageColorDuration; // ダメージ色タイマーセット
+
+	//プレイヤー位置を取得
+	Vector3 pos = transform_.translate;
+	pos.z -= 1.0f;
+
+	damegeEmitter_->SetPosition(pos);
+	damegeEmitter_->Emit();
+
+	// ダメージ色タイマーセット
+	damageColorTimer_ = damageColorDuration; 
 	if (hp_ <= 0) {
 		hp_ = 0;
 		OnCollision(); // HP0で死亡処理

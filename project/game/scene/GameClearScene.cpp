@@ -5,6 +5,7 @@
 #include "SpriteBase.h"
 #include "CameraManager.h"
 #include "ModelManager.h"
+#include "ParticleManager.h"
 
 // ゲームクリアシーンの初期化処理
 void GameClearScene::Initialize() {
@@ -17,6 +18,8 @@ void GameClearScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("gameclearobject/l.obj");
 	ModelManager::GetInstance()->LoadModel("gameclearobject/r.obj");
 	ModelManager::GetInstance()->LoadModel("gameclearobject/pushspace.obj");
+	//パーティクルマネージャ
+	ParticleManager::GetInstance()->CreateparticleGroup("confetti", "resources/confetti.png", ParticleType::Confetti);
 	//カメラ
 	camera = std::make_unique<Camera>();
 	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
@@ -33,10 +36,16 @@ void GameClearScene::Initialize() {
 	fade = std::make_unique<Fade>();
 	fade->Initialize();
 	fade->FadeStart(Fade::State::FadeIn, 0.5f);
+
+	auto confettiEmitter = std::make_unique<ParticleEmitter>();
+	confettiEmitter->Initialize("confetti");
+	particleEmitter_.push_back(std::move(confettiEmitter));
 }
 
 // ゲームクリアシーンの終了処理
 void GameClearScene::Finalize() {
+	// パーティクルグループの開放
+	ParticleManager::GetInstance()->Clear();
 	//カメラマネージャ
 	CameraManager::GetInstance()->Finalize();
 }
@@ -51,6 +60,15 @@ void GameClearScene::Update() {
 	gameClearObject->Update();
 	//フェード
 	fade->Update();
+	// 紙吹雪エミッターの更新
+		for (auto& emitter : particleEmitter_) {
+			Vector3 pos{ 0.0f, 3.0f, 0.0f }; 
+			emitter->SetPosition(pos);
+			emitter->Update();
+		}
+	// パーティクルの更新
+	ParticleManager::GetInstance()->Update();
+
 	//シーン遷移
 	SceneChange();
 	//デバック
@@ -65,6 +83,8 @@ void GameClearScene::Draw() {
 	skybox->Draw();
 	//ゲームクリアオブジェクト
 	gameClearObject->Draw();
+	//パーティクル描画
+	ParticleManager::GetInstance()->Draw();
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
 

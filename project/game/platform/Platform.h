@@ -2,6 +2,7 @@
 #include "Object3d.h"
 #include "Object3dBase.h"
 #include "Struct.h"
+#include "ParticleEmitter.h"
 
 //地面のクラス
 class Platform
@@ -43,5 +44,6 @@ private:
 	Object3dBase* object3dBase_;
 	Transform transform_;
 	std::unique_ptr<Object3d>object_;
+	ParticleEmitter smokeEmitter_;
 };
 

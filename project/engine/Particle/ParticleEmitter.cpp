@@ -26,6 +26,35 @@ void ParticleEmitter::Initialize(std::string name) {
         emitter_.transform.scale = { 1.0f, 1.0f, 1.0f };
         emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
         break;
+    case ParticleType::Smoke:
+        emitter_.count = 2;            // 1度に3つ出す
+        emitter_.frequency = 0.03f;    // 0.03秒ごと
+        emitter_.transform.scale = { 1.0f, 1.0f, 1.0f };
+        emitter_.transform.rotate = { 0.0f, 0.0f, 0.0f };
+        emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
+        break;
+    case ParticleType::PlayerMove:
+        emitter_.count = 1;              // 1つずつ出す
+        emitter_.frequency = 0.01f;      // 高頻度
+        emitter_.transform.scale = { 0.3f, 0.3f, 0.3f };
+        emitter_.transform.rotate = { 0.0f, 0.0f, 0.0f };
+        emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
+        break;
+    case ParticleType::EnemyDamage:
+        emitter_.count = 10;               
+        emitter_.frequency = 9.0f;     
+        emitter_.transform.scale = { 1.4f, 1.4f, 1.4f };
+        emitter_.transform.rotate = { 0.0f, 0.0f, 0.0f };
+        emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
+        break;
+    case ParticleType::Confetti:
+        emitter_.count = 15;             
+        emitter_.frequency = 0.01f;     
+        emitter_.transform.scale = { 0.2f, 0.2f, 0.2f };
+        emitter_.transform.rotate = { 0.0f, 0.0f, 0.0f };
+        emitter_.transform.translate = { 0.0f, 0.0f, 0.0f }; 
+        break;
+
     }
 }
 
