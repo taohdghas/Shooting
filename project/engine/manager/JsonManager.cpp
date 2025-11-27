@@ -95,6 +95,10 @@ LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
         } else if (type.compare("EnemySpawn") == 0) {
             EnemySpawnData enemy_spawn{};
 
+            enemy_spawn.name = object_json["name"].get<std::string>();
+
+            enemy_spawn.fileName = object_json["file_name"].get<std::string>();
+
             // トランスフォーム読み込み
             nlohmann::json& transform = object_json["transform"];
             enemy_spawn.translation.x = (float)transform["translation"][0];
@@ -117,6 +121,38 @@ LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
             // 未実装
         }
     }
+
+    // rails 配列を読み込む
+    if (deserialized_json.contains("rails")) {
+        for (auto& rail_json : deserialized_json["rails"]) {
+            EnemyRailData rail;
+            rail.name = rail_json["name"].get<std::string>();
+            rail.closed = rail_json.contains("closed") && rail_json["closed"].get<bool>();
+
+            // control_points
+            for (auto& point : rail_json["control_points"]) {
+                rail.controlPoints.push_back({
+                    (float)point[0],
+                    (float)point[2],
+                    (float)point[1]
+                    });
+            }
+
+            // rail_point_names
+            for (auto& name : rail_json["rail_point_names"]) {
+                rail.railPointNames.push_back(name.get<std::string>());
+            }
+
+            // owner に紐付け
+            std::string owner = rail_json["owner"].get<std::string>();
+            for (auto& enemy : level_data->enemies) {
+                if (owner == enemy.name) {
+                    enemy.rails.push_back(rail);
+                }
+            }
+        }
+    }
+
 
     return level_data;
 }
