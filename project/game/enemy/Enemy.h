@@ -136,6 +136,7 @@ private:
     Player* player_;
     std::list<std::unique_ptr<EnemyBullet>> bullets_;
     std::vector<Vector3> railPoints_;  
+    std::vector<Vector3> relativeVectors_;
     Vector3 velocity_ = { 0.0f, 0.0f };
     Vector4 color_;
     bool is_dead_ = false;
@@ -153,5 +154,5 @@ private:
     float damage_color_timer_ = 0.0f;
     bool railClosed_ = false;         
     float railProgress_ = 0.0f;      
-    float railSpeed_ = 1.0f;           
+    float railSpeed_ = 0.8f;           
 };

@@ -21,35 +21,29 @@ void Enemy::Update() {
 	}
 
 	// スプライン移動がある場合のみ処理
-	if (!railPoints_.empty() && railPoints_.size() >= 2) {
-		size_t segmentCount = railPoints_.size() - 1;
+	if (!relativeVectors_.empty()) {
+
+		size_t segmentCount = relativeVectors_.size();
 		float totalLength = (float)segmentCount;
 		float prog = railProgress_ * totalLength;
 
-		// 現在の進行度からどの区間（にいるかを算出
 		size_t currentIndex = (size_t)prog;
-		// 区間の範囲外に進んだ場合の処理
-		if (currentIndex >= segmentCount) {
-			if (railClosed_) currentIndex = 0;
-			else currentIndex = segmentCount - 1;
-		}
+		if (currentIndex >= segmentCount) currentIndex = segmentCount - 1;
 
-		// 区間内での補間係数を算出
 		float t = prog - currentIndex;
 
-		Vector3 start = railPoints_[currentIndex];
-		Vector3 end = railPoints_[(currentIndex + 1) % railPoints_.size()];
+		// 相対移動量
+		Vector3 move = relativeVectors_[currentIndex] * (railSpeed_ * delta_time_);
 
-		transform_.translate.x = start.x + (end.x - start.x) * t;
-		transform_.translate.y = start.y + (end.y - start.y) * t;
-		transform_.translate.z = start.z + (end.z - start.z) * t;
+		// 現在の段階の動きだけを加算する
+		transform_.translate += move;
 
-		// レール上の進行度を更新
+		// 進行度を進める
 		railProgress_ += (railSpeed_ * delta_time_) / totalLength;
-		// 進行度が1.0を超えた場合の処理
+
+		// 1サイクル終わったら progress を戻す
 		if (railProgress_ > 1.0f) {
-			if (railClosed_) railProgress_ -= 1.0f;
-			else railProgress_ = 1.0f;
+			railProgress_ -= 1.0f;
 		}
 	}
 
@@ -77,7 +71,7 @@ void Enemy::Update() {
 		damage_color_timer_ -= delta_time_;
 		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f }); // ダメージ色
 	} else {
-		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f }); // 通常色
+		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 	}
 
 	object_->Update();
@@ -200,10 +194,16 @@ OBB Enemy::GetOBB() const {
 
 void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed) {
 	railPoints_ = controlPoints;
-	railClosed_ = closed;
-	railProgress_ = 0.0f;
+	railClosed_ = false;   
 
-	if (!railPoints_.empty()) {
-		transform_.translate = railPoints_[0];
+	// 最初の位置にセット
+	transform_.translate = controlPoints[0];
+
+	// 相対移動ベクトルを作成
+	relativeVectors_.clear();
+	for (size_t i = 0; i < controlPoints.size() - 1; i++) {
+		relativeVectors_.push_back(controlPoints[i + 1] - controlPoints[i]);
 	}
+
+	railProgress_ = 0.0f;
 }

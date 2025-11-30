@@ -133,7 +133,51 @@
                     1.0
                 ]
             },
-            "file_name": "enemy"
+            "file_name": "enemy",
+            "children": [
+                {
+                    "type": "EMPTY",
+                    "name": "EnemySpawn.002_Start",
+                    "transform": {
+                        "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.0,
+                            0.0
+                        ],
+                        "scaling": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                {
+                    "type": "EMPTY",
+                    "name": "EnemySpawn.002_Start.001",
+                    "transform": {
+                        "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.0,
+                            0.0
+                        ],
+                        "scaling": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                }
+            ]
         },
         {
             "type": "BossSpawn",
@@ -345,6 +389,111 @@
                     1.0
                 ]
             }
+        },
+        {
+            "type": "EMPTY",
+            "name": "RailPoint_008",
+            "transform": {
+                "translation": [
+                    6.586264133453369,
+                    73.06061553955078,
+                    13.289962768554688
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "EMPTY",
+            "name": "RailPoint_009",
+            "transform": {
+                "translation": [
+                    6.685187339782715,
+                    68.12059783935547,
+                    8.302779197692871
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "EMPTY",
+            "name": "RailPoint_010",
+            "transform": {
+                "translation": [
+                    6.735898971557617,
+                    60.99098587036133,
+                    13.3466796875
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "EMPTY",
+            "name": "RailPoint_010.001",
+            "transform": {
+                "translation": [
+                    6.735898971557617,
+                    55.909873962402344,
+                    9.195551872253418
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "CURVE",
+            "name": "RailCurveObj_004",
+            "transform": {
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
         }
     ],
     "rails": [
@@ -418,6 +567,45 @@
                 "RailPoint_007"
             ],
             "owner": "EnemySpawn.001",
+            "closed": false
+        },
+        {
+            "name": "RailCurveObj_004",
+            "control_points": [
+                [
+                    6.570000171661377,
+                    78.0,
+                    8.5
+                ],
+                [
+                    6.586264133453369,
+                    73.06061553955078,
+                    13.289962768554688
+                ],
+                [
+                    6.685187339782715,
+                    68.12059783935547,
+                    8.302779197692871
+                ],
+                [
+                    6.735898971557617,
+                    60.99098587036133,
+                    13.3466796875
+                ],
+                [
+                    6.735898971557617,
+                    55.909873962402344,
+                    9.195551872253418
+                ]
+            ],
+            "rail_point_names": [
+                "EnemySpawn.002_Start.001",
+                "RailPoint_008",
+                "RailPoint_009",
+                "RailPoint_010",
+                "RailPoint_010.001"
+            ],
+            "owner": "EnemySpawn.002",
             "closed": false
         }
     ]
