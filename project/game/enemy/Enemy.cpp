@@ -34,7 +34,7 @@ void Enemy::Update() {
 		}
 	}
 
-	//transform_.translate = Math::Add(transform_.translate, velocity_);
+	transform_.translate = Math::Add(transform_.translate, velocity_);
 
 	// 攻撃処理（レーザー発射判定）
 	Laser();

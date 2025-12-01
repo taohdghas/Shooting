@@ -117,7 +117,7 @@ private:
 	//ダメージエフェクトパーティクル
 	std::unique_ptr<ParticleEmitter> damegeEmitter_;
 	//移動速度
-	Vector3 velocity_ = { 0,0,0.02f };
+	Vector3 velocity_ = { 0,0,-0.05f };
 	//色
 	Vector4 color_;
 	//デスフラグ
