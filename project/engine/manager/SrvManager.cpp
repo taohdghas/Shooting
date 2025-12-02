@@ -29,7 +29,7 @@ void SrvManager::Finalize() {
 }
 
 // SRV作成（2Dテクスチャ用）
-void SrvManager::CreateSrvForTexture2D(uint32_t srv_index, ID3D12Resource* p_resource, DirectX::TexMetadata metadata) {
+void SrvManager::CreateSrvForTexture2D(uint32_t srv_index, ID3D12Resource* p_resource,const DirectX::TexMetadata& metadata) {
     D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc{};
     srv_desc.Format = metadata.format;
     srv_desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;

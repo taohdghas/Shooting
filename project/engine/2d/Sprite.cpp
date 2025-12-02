@@ -5,7 +5,7 @@
 #include "Transform.h"
 
 //初期化
-void Sprite::Initialize(SpriteBase* sprite_base, std::string texture_file_path) {
+void Sprite::Initialize(SpriteBase* sprite_base, const std::string& texture_file_path) {
     // スプライトの初期化処理
     sprite_base_ = sprite_base;
 

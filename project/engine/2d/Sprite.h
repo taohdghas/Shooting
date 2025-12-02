@@ -15,7 +15,7 @@ public:
 	/// </summary>
 	/// <param name="sprite_base">描画共通設定を提供する <c>SpriteBase</c> のインスタンス。</param>
 	/// <param name="texture_file_path">読み込むテクスチャのファイルパス。</param>
-	void Initialize(SpriteBase* sprite_base, std::string texture_file_path);
+	void Initialize(SpriteBase* sprite_base, const std::string& texture_file_path);
 
 	/// <summary>
 	/// 毎フレームの更新処理を行う。

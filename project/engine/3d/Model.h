@@ -75,7 +75,6 @@ private:
 	/// <param name="filename">モデルファイル名（例: "model.obj"）。</param>
 	/// <returns>読み取ったモデル情報を格納した ModelData。</returns>
 	ModelData LoadModelFile(const std::string& directory_path, const std::string& filename);
-
 	/// <summary>
 	/// Assimp の aiNode 構造体を自前の Node 構造に変換する。
 	/// 子ノードを再帰的に処理して階層構造を構築する。
