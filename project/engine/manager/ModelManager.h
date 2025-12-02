@@ -43,16 +43,15 @@ public:
     /// <param name="file_path">検索するモデルのファイル名／キー。</param>
     /// <returns>見つかれば Model*、なければ nullptr。</returns>
     Model* FindModel(const std::string& file_path);
-
-private:
-    static ModelManager* instance_;
-
-    ModelBase* model_base_ = nullptr;
-
+public:
     // コンストラクタ
     ModelManager() {}
     // デストラクタ
     ~ModelManager() {}
+private:
+    static std::unique_ptr<ModelManager> instance_;
+
+    std::unique_ptr<ModelBase> model_base_;
     // コピーコンストラクタ
     ModelManager(const ModelManager&) = delete;
     // コピー代入演算子

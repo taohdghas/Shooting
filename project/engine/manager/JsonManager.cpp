@@ -3,14 +3,14 @@
 #include <cassert>
 #include <json.hpp>
 
-JsonManager* JsonManager::instance_ = nullptr;
+std::unique_ptr<JsonManager> JsonManager::instance_ = nullptr;
 
 // シングルトンインスタンス取得
 JsonManager* JsonManager::GetInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new JsonManager;
+    if (!instance_) {
+        instance_ = std::make_unique<JsonManager>();
     }
-    return instance_;
+    return instance_.get();
 }
 
 // JSONファイルを読み込んでLevelDataを生成

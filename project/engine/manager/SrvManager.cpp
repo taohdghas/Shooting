@@ -2,14 +2,14 @@
 
 const uint32_t SrvManager::kMaxCount = 512;
 
-SrvManager* SrvManager::instance_ = nullptr;
+std::unique_ptr<SrvManager> SrvManager::instance_ = nullptr;
 
 // シングルトンインスタンス取得
 SrvManager* SrvManager::GetInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new SrvManager;
+    if (!instance_) {
+        instance_ = std::make_unique<SrvManager>();
     }
-    return instance_;
+    return instance_.get();
 }
 
 // 初期化
@@ -25,8 +25,7 @@ void SrvManager::Initialize(DirectXBase* directx_base) {
 
 // 終了
 void SrvManager::Finalize() {
-    delete instance_;
-    instance_ = nullptr;
+    instance_.reset();
 }
 
 // SRV作成（2Dテクスチャ用）

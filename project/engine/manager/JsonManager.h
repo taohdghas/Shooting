@@ -2,6 +2,7 @@
 #include "Struct.h"
 #include <string>
 #include <vector>
+#include <memory>
 
 // JSON に関連するクラス
 class JsonManager {
@@ -29,8 +30,12 @@ public:
     /// <returns>新しく確保された LevelData*（失敗時は assert により停止する実装）。</returns>
     LevelData* LoadJsonFile(const std::string& filename);
 
+public:
+    JsonManager() = default;
+    ~JsonManager() = default;
+
 private:
-    static JsonManager* instance_;
+    static std::unique_ptr<JsonManager> instance_;
 
     static const std::string kDefaultBaseDirectory;
     static const std::string kExtension;

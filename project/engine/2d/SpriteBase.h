@@ -1,6 +1,7 @@
 #pragma once
 #include "DirectXBase.h"
 #include "PipelineStateObject.h"
+#include <memory>
 
 // スプライト共通部クラス
 class SpriteBase {
@@ -36,16 +37,17 @@ public:
 	/// <returns>内部で保持している DirectXBase*。</returns>
 	DirectXBase* GetDxBase() const { return directx_base_; }
 
+public:
+	SpriteBase() = default;
+	~SpriteBase() = default;
+
 private:
-	static SpriteBase* instance;
+	static std::unique_ptr<SpriteBase> instance;
 	// コピーコンストラクタ・代入演算子を削除
 	SpriteBase(const SpriteBase&) = delete;
 	SpriteBase& operator=(const SpriteBase&) = delete;
 
 	// コンストラクタ・デストラクタはシングルトン用にプライベート
-	SpriteBase() = default;
-	~SpriteBase() = default;
-
 	DirectXBase* directx_base_ = nullptr;
 	std::unique_ptr<PipelineStateObject> pso_;
 };

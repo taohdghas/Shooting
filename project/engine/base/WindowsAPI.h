@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <cstdint>
+#include <memory>
 
 // WindowsAPI関連のクラス
 class WindowsApi {
@@ -59,9 +60,11 @@ public:
     // クライアント領域のサイズ
     static const int32_t kClientWidth = 1280;
     static const int32_t kClientHeight = 720;
-
+public:
+    WindowsApi() = default;
+    ~WindowsApi() = default;
 private:
-    static WindowsApi* instance_;
+    static std::unique_ptr<WindowsApi> instance_;
 
     WindowsApi* windows_api_ = nullptr;
 

@@ -11,14 +11,14 @@
 
 using namespace Microsoft::WRL;
 
-DirectXBase* DirectXBase::instance_ = nullptr;
+std::unique_ptr<DirectXBase> DirectXBase::instance_ = nullptr;
 
 // シングルトンインスタンス
 DirectXBase* DirectXBase::GetInstance() {
-	if (instance_ == nullptr) {
-		instance_ = new DirectXBase;
-	}
-	return instance_;
+    if (!instance_) {
+        instance_ = std::make_unique<DirectXBase>();
+    }
+    return instance_.get();
 }
 
 void DirectXBase::Initialize(WindowsApi* windows_api) {
@@ -60,9 +60,8 @@ void DirectXBase::Initialize(WindowsApi* windows_api) {
 
 // 終了
 void DirectXBase::Finalize() {
-	CloseHandle(fence_event_);
-	delete instance_;
-	instance_ = nullptr;
+    CloseHandle(fence_event_);
+    instance_.reset();
 }
 
 // デバイスの初期化

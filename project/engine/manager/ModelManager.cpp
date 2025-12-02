@@ -1,26 +1,25 @@
 #include "ModelManager.h"
 
-ModelManager* ModelManager::instance_ = nullptr;
+std::unique_ptr<ModelManager> ModelManager::instance_ = nullptr;
 
 // シングルトンインスタンス取得
 ModelManager* ModelManager::GetInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new ModelManager;
+    if (!instance_) {
+        instance_ = std::make_unique<ModelManager>();
     }
-    return instance_;
+    return instance_.get();
 }
 
 // 初期化
 void ModelManager::Initialize(DirectXBase* directx_base) {
     // ModelBase を生成・初期化
-    model_base_ = new ModelBase;
+    model_base_ = std::make_unique<ModelBase>();
     model_base_->Initialize(directx_base);
 }
 
 // 終了
 void ModelManager::Finalize() {
-    delete instance_;
-    instance_ = nullptr;
+    instance_.reset();
 }
 
 // モデルファイルの読み込み
@@ -34,7 +33,7 @@ void ModelManager::LoadModel(const std::string& file_path) {
     std::unique_ptr<Model> model = std::make_unique<Model>();
 
     // ファイルを読み込み初期化
-    model->Initialize(model_base_, "resources", file_path);
+    model->Initialize(model_base_.get(), "resources", file_path);
 
     // map に格納
     models_.insert(std::make_pair(file_path, std::move(model)));

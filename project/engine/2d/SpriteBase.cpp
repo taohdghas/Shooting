@@ -1,13 +1,13 @@
 #include "SpriteBase.h"
 
-SpriteBase* SpriteBase::instance = nullptr;
+std::unique_ptr<SpriteBase> SpriteBase::instance = nullptr;
 
 // シングルトンインスタンスの取得
 SpriteBase* SpriteBase::GetInstance() {
-	if (instance == nullptr) {
-		instance = new SpriteBase;
+	if (!instance) {
+		instance = std::make_unique<SpriteBase>();
 	}
-	return instance;
+	return instance.get();
 }
 
 void SpriteBase::Initialize(DirectXBase* directx_base) {
@@ -24,8 +24,7 @@ void SpriteBase::Initialize(DirectXBase* directx_base) {
 
 void SpriteBase::Finalize() {
 	// シングルトンインスタンスの破棄
-	delete instance;
-	instance = nullptr;
+	instance.reset();
 }
 
 void SpriteBase::DrawBaseSet() {

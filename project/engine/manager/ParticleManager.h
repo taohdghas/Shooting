@@ -140,7 +140,7 @@ private:
     /// </summary>
     void MaterialCreate();
 private:
-    static ParticleManager* instance;
+    static std::unique_ptr<ParticleManager> instance;
 
     DirectXBase* directx_base_;
     SrvManager* srv_manager_;
@@ -175,6 +175,3 @@ private:
     // ビルボード切り替え
     bool use_billboard_ = true;
 };
-
-
-
