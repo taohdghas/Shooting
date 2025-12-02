@@ -121,12 +121,22 @@ public:
     /// </summary>
     void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
+    /// <summary>
+    /// 敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定する。
+    /// - 引数の制御点リストを内部に保持し、レールの閉じている状態フラグも設定する。
+    /// - レールに沿った移動やパス制御に利用される。
+    /// </summary>
+    /// <param name="controlPoints">レールの制御点（ワールド座標の Vector3 配列）。</param>
+    /// <param name="closed">レールが閉じているか（true:閉じている/false:開いている）。</param>
+    void SetRail(const std::vector<Vector3>& controlPoints, bool closed);
 private:
     Object3dBase* object3d_base_;
     std::unique_ptr<Object3d> object_;
     Transform transform_;
     Player* player_;
     std::list<std::unique_ptr<EnemyBullet>> bullets_;
+    std::vector<Vector3> railPoints_;  
+    std::vector<Vector3> relativeVectors_;
     Vector3 velocity_ = { 0.0f, 0.0f };
     Vector4 color_;
     bool is_dead_ = false;
@@ -142,4 +152,7 @@ private:
     const float delta_time_ = 1.0f / 60.0f;
     const float damage_color_duration_ = 0.1f;
     float damage_color_timer_ = 0.0f;
+    bool railClosed_ = false;         
+    float railProgress_ = 0.0f;      
+    float railSpeed_ = 0.8f;           
 };

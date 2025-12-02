@@ -4,7 +4,7 @@
 #include "ImGuiManager.h"
 #include "MyMath.h"
 
-// ゲームシーンの初期化処理
+// ゲームシーンの初期化処理ad
 void GameScene::Initialize() {
 
 	// サウンド初期化
@@ -72,6 +72,15 @@ void GameScene::Initialize() {
 		newEnemy->Initialize(Object3dBase::GetInstance());
 		newEnemy->SetTranslate(enemyData.translation);
 		newEnemy->SetPlayer(player_.get());
+
+		// Rails がある場合セット
+		if (!enemyData.rails.empty()) {
+			// ここでは最初のRailsのみ使用
+			const auto& rail = enemyData.rails[0];
+			newEnemy->SetRail(rail.controlPoints, rail.closed);
+		}
+
+
 		enemies_.push_back(std::move(newEnemy));
 	}
 

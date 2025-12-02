@@ -6,19 +6,21 @@
 #include <string>
 #include <vector>
 
-//頂点データ
+// 頂点データ
 struct VertexData {
 	Vector4 position;
 	Vector2 texcoord;
 	Vector3 normal;
 };
-//トランスフォーム
+
+// トランスフォーム
 struct Transform {
 	Vector3 scale;
 	Vector3 rotate;
 	Vector3 translate;
 };
-//マテリアルデータ
+
+// マテリアルデータ
 struct Material {
 	Vector4 color;
 	int32_t enableLighting;
@@ -26,110 +28,161 @@ struct Material {
 	Matrix4x4 uvTransform;
 	float shininess;
 };
-//座標変換行列データ
+
+// 座標変換行列データ
 struct TransformationMatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
 	Matrix4x4 WorldInverseTranspose;
 };
-//マテリアルデータ
+
+// マテリアルデータ
 struct MaterialData
 {
 	std::string textureFilePath;
 	uint32_t textureIndex = 0;
 };
-//Node
+
+// Node
 struct Node {
 	Matrix4x4 localMatrix;
 	std::string name;
 	std::vector<Node>children;
 };
-//モデルデータ
+
+// モデルデータ
 struct ModelData
 {
 	std::vector<VertexData>vertices;
 	MaterialData material;
 	Node rootNode;
 };
-//ライト
+
+// ライト
 struct DirectionalLight {
-	Vector4 color;//ライトの色
-	Vector3 direction;//ライトの向き
-	float intensity;//輝度
-	int enable;//有効か
+	// ライトの色
+	Vector4 color;
+	// ライトの向き
+	Vector3 direction;
+	// 輝度
+	float intensity;
+	// 有効か
+	int enable;
 };
-//カメラ
+
+// カメラ
 struct CameraForGPU {
 	Vector3 worldPosition;
 };
-//ポイントライト
+
+// ポイントライト
 struct PointLight {
-	Vector4 color;//ライトの色
-	Vector3 position;//ライトの位置
-	float intensity;//輝度
-	float radius;//ライトの届く最大距離
-	float decay;//減衰率
+	// ライトの色
+	Vector4 color;
+	// ライトの位置
+	Vector3 position;
+	// 輝度
+	float intensity;
+	// ライトの届く最大距離
+	float radius;
+	// 減衰率
+	float decay;
 	float padding[2];
-	int enable;//有効か
+	// 有効か
+	int enable;
 };
-//スポットライト
+
+// スポットライト
 struct SpotLight {
-	Vector4 color;//ライトの色
-	Vector3 position;//ライトの位置
-	float intensity;//輝度
-	Vector3 direction;//スポットライト
-	float distance;//ライトの届く最大距離
-	float decay;//減衰率
-	float cosAngle;//スポットライトの余弦
+	// ライトの色
+	Vector4 color;
+	// ライトの位置
+	Vector3 position;
+	// 輝度
+	float intensity;
+	// スポットライト
+	Vector3 direction;
+	// ライトの届く最大距離
+	float distance;
+	// 減衰率
+	float decay;
+	// スポットライトの余弦
+	float cosAngle;
 	float cosFalloffStart;
 	float padding[2];
-	int enable;//有効か
+	// 有効か
+	int enable;
 };
-//AABB
+
+// AABB
 struct AABB {
-	Vector3 min;//最小点
-	Vector3 max;//最大点
+	// 最小点
+	Vector3 min;
+	// 最大点
+	Vector3 max;
 };
-//OBB
+
+// OBB
 struct OBB {
-	Vector3 center;//中心点
-	Vector3 orientations[3];//座標軸
-	Vector3 size;//座標軸方向の長さの半分
+	// 中心点
+	Vector3 center;
+	// 座標軸
+	Vector3 orientations[3];
+	// 座標軸方向の長さの半分
+	Vector3 size;
 };
-//自キャラの生成データ
+
+// 自キャラの生成データ
 struct PlayerSpawnData {
-	//平行移動
+	// 平行移動
 	Vector3 translation;
-	//回転角
+	// 回転角
 	Vector3 rotation;
-	//スケーリング
+	// スケーリング
 	Vector3 scaling;
 };
-//敵キャラの生成データ
+
+// 敵用スプラインデータ
+struct EnemyRailData {
+	// RailCurveObj の名前
+	std::string name;
+	// ワールド座標の制御点
+	std::vector<Vector3> controlPoints;
+	// 制御点に対応するオブジェクト名
+	std::vector<std::string> railPointNames;
+	// スプラインが閉じているか
+	bool closed;
+};
+
+// 敵キャラの生成データ
 struct EnemySpawnData {
-	//ファイル名
+	std::string name;
+	// ファイル名
 	std::string fileName;
-	//平行移動
+	// 平行移動
 	Vector3 translation;
-	//回転角
+	// 回転角
 	Vector3 rotation;
-	//スケーリング
+	// スケーリング			
 	Vector3 scaling;
+	// 所有するレール
+	std::vector<EnemyRailData> rails;
 };
-//レベルデータ
+
+// レベルデータ
 struct LevelData {
-	//オブジェクト1個分のデータ
+	// オブジェクト1個分のデータ
 	struct ObjectData {
-		//ファイル名
+		// ファイル名
 		std::string fileName;
 		Vector3 translation;
 		Vector3 rotation;
 		Vector3 scaling;
 	};
-	//オブジェクトのコンテナ
+	// オブジェクトのコンテナ
 	std::vector<ObjectData>objects;
-	//自キャラ配列
+	// 自キャラ配列
 	std::vector<PlayerSpawnData>players;
-	//敵配列
+	// 敵配列
 	std::vector<EnemySpawnData>enemies;
 };
