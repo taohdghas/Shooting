@@ -30,16 +30,16 @@ public:
 	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 	/// <summary>垂直方向（y軸）視野角を設定する。</summary>
 	/// <param name="fov_y">ラジアン単位の視野角。</param>
-	void SetFovY(const float& fov_y) { fov_y_ = fov_y; }
+	void SetFovY(float& fov_y) { fov_y_ = fov_y; }
 	/// <summary>アスペクト比を設定する（幅 / 高さ）。</summary>
 	/// <param name="aspect_ratio">アスペクト比。</param>
-	void SetAspectRatio(const float& aspect_ratio) { aspect_ratio_ = aspect_ratio; }
+	void SetAspectRatio( float& aspect_ratio) { aspect_ratio_ = aspect_ratio; }
 	/// <summary>ニアクリップ距離を設定する。</summary>
 	/// <param name="near_clip">ニアクリップ距離（正の値）。</param>
-	void SetNearClip(const float& near_clip) { near_clip_ = near_clip; }
+	void SetNearClip(float& near_clip) { near_clip_ = near_clip; }
 	/// <summary>ファークリップ距離を設定する。</summary>
 	/// <param name="far_clip">ファークリップ距離（ニアより大きい正の値）。</param>
-	void SetFarClip(const float& far_clip) { far_clip_ = far_clip; }
+	void SetFarClip(float& far_clip) { far_clip_ = far_clip; }
 
 	/// <summary>ワールド行列を取得する。</summary>
 	/// <returns>現在の world 行列の const 参照。</returns>

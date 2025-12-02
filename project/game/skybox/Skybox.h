@@ -13,7 +13,7 @@ public:
 	/// - 内部で PSO を初期化し、必要な GPU リソースを確保する想定。
 	/// </summary>
 	/// <param name="textureFilePath">使用するキューブマップまたはテクスチャファイルのパス。</param>
-	void Initialize(std::string texture_file_path);
+	void Initialize(const std::string& texture_file_path);
 	/// <summary>
 	/// 毎フレーム更新処理を行う。
 	/// - Transform からワールド行列を計算し、カメラの ViewProjection 行列と組み合わせて WVP を更新する。

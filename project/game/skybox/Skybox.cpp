@@ -5,7 +5,7 @@
 #include "MyMath.h"
 
 // Skyboxの初期化処理
-void Skybox::Initialize(std::string texture_file_path) {
+void Skybox::Initialize(const std::string& texture_file_path) {
 	directx_base_ = DirectXBase::GetInstance();
 	pso_ = std::make_unique<PipelineStateObject>();
 	pso_->Initialize(directx_base_);

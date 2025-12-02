@@ -30,7 +30,7 @@ public:
     /// <param name="srv_index">SRV を格納するインデックス。</param>
     /// <param name="p_resource">SRV を参照する D3D リソース。</param>
     /// <param name="metadata">テクスチャのメタデータ（フォーマット / ミップ数 / キューブ判定など）。</param>
-    void CreateSrvForTexture2D(uint32_t srv_index, ID3D12Resource* p_resource, DirectX::TexMetadata metadata);
+    void CreateSrvForTexture2D(uint32_t srv_index, ID3D12Resource* p_resource, const DirectX::TexMetadata& metadata);
 
     /// <summary>
     /// 構造化バッファ用（Structured Buffer） SRV を作成する。
