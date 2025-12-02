@@ -4,14 +4,14 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
-Input* Input::instance_ = nullptr;
+std::unique_ptr<Input> Input::instance_ = nullptr;
 
 // シングルトンインスタンス取得
 Input* Input::GetInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new Input;
+    if (!instance_) {
+        instance_ = std::make_unique<Input>();
     }
-    return instance_;
+    return instance_.get();
 }
 
 void Input::Initialize(WindowsApi* windows_api) {
@@ -47,9 +47,8 @@ void Input::Initialize(WindowsApi* windows_api) {
 }
 
 void Input::Finalize() {
-    // シングルトンインスタンスの破棄
-    delete instance_;
-    instance_ = nullptr;
+    // 必要な終了処理
+    instance_.reset();
 }
 
 void Input::Update() {

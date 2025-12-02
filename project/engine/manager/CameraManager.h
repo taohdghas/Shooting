@@ -35,8 +35,6 @@ public:
     /// <param name="camera">追加する Camera のポインタ。</param>
     void AddCamera(const std::string& name, Camera* camera);
 
-public:
-    /// Getter ///
     /// <summary>
     /// 現在のアクティブカメラを取得する。
     /// </summary>
@@ -50,7 +48,6 @@ public:
     /// <returns>見つかれば Camera*、見つからなければ nullptr を返す。</returns>
     Camera* GetCamera(const std::string& name);
 
-    /// Setter ///
     /// <summary>
     /// 名前でアクティブカメラを設定する。
     /// - 指定名が登録済みであればそのカメラをアクティブにする。
@@ -58,12 +55,14 @@ public:
     /// <param name="name">アクティブにするカメラの名前。</param>
     void SetActiveCamera(const std::string& name);
 
+public:
+    CameraManager() = default;
+    ~CameraManager() = default;
+
 private:
-    static CameraManager* instance_;
-
-    // カメラ一覧
+    static std::unique_ptr<CameraManager> instance_;
+    //カメラ一覧
     std::unordered_map<std::string, Camera*> cameras_;
-
-    // 現在のアクティブカメラ
+	//アクティブカメラ
     Camera* active_camera_ = nullptr;
 };

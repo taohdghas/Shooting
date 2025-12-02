@@ -4,13 +4,13 @@
 #include <assert.h>
 #include <numbers>
 
-ParticleManager* ParticleManager::instance = nullptr;
+std::unique_ptr<ParticleManager> ParticleManager::instance = nullptr;
 //シングルトンインスタンスの取得
 ParticleManager* ParticleManager::GetInstance() {
-	if (instance == nullptr) {
-		instance = new ParticleManager;
+	if (!instance) {
+		instance = std::make_unique<ParticleManager>();
 	}
-	return instance;
+	return instance.get();
 }
 
 void ParticleManager::Initialize(DirectXBase* directx_base, SrvManager* srv_manager, Camera* camera) {
@@ -32,8 +32,7 @@ void ParticleManager::Initialize(DirectXBase* directx_base, SrvManager* srv_mana
 }
 // 終了
 void ParticleManager::Finalize() {
-	delete instance;
-	instance = nullptr;
+	instance.reset();
 }
 
 // シーン終了時に呼ぶ

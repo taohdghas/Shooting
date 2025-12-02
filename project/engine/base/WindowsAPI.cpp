@@ -6,7 +6,7 @@
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 
-WindowsApi* WindowsApi::instance_ = nullptr;
+std::unique_ptr<WindowsApi> WindowsApi::instance_ = nullptr;
 
 // ウィンドウプロシージャ
 LRESULT CALLBACK WindowsApi::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -30,10 +30,10 @@ LRESULT CALLBACK WindowsApi::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 
 // シングルトンインスタンス取得
 WindowsApi* WindowsApi::GetInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new WindowsApi;
+    if (!instance_) {
+        instance_ = std::make_unique<WindowsApi>();
     }
-    return instance_;
+    return instance_.get();
 }
 
 void WindowsApi::Initialize() {

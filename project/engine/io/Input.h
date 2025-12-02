@@ -4,6 +4,7 @@
 #include <dinput.h>
 #include <wrl.h>
 #include "WindowsAPI.h"
+#include <memory>
 
 // 入力関連クラス
 class Input {
@@ -58,8 +59,12 @@ public:
     /// <returns>トリガーであれば true、そうでなければ false を返す。</returns>
     bool IsKeyTriggered(BYTE key_code);
 
+public:
+    Input() = default;
+    ~Input() = default;
+
 private:
-    static Input* instance_;
+    static std::unique_ptr<Input> instance_;
 
     // キーボードのデバイス
     ComPtr<IDirectInputDevice8> keyboard_device_;

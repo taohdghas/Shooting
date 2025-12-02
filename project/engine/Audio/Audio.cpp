@@ -1,13 +1,13 @@
 #include "Audio.h"
 
-Audio* Audio::instance_ = nullptr;
+std::unique_ptr<Audio> Audio::instance_ = nullptr;
 
 // シングルトンインスタンスの取得
 Audio* Audio::GetInstance() {
-	if (instance_ == nullptr) {
-		instance_ = new Audio();
+	if (!instance_) {
+		instance_ = std::make_unique<Audio>();
 	}
-	return instance_;
+	return instance_.get();
 }
 
 // 終了処理
@@ -26,8 +26,8 @@ void Audio::Finalize() {
 	// XAudio2本体の解放
 	x_audio2_.Reset();
 
-	delete instance_;
-	instance_ = nullptr;
+	// シングルトンインスタンスの破棄
+	instance_.reset();
 }
 
 // 初期化処理

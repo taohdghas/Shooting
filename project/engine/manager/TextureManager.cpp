@@ -1,23 +1,22 @@
 #include "TextureManager.h"
 #include "StringUtility.h"
 
-TextureManager* TextureManager::instance_ = nullptr;
+std::unique_ptr<TextureManager> TextureManager::instance_ = nullptr;
 
 // ImGuiで0番を使用しないため、SRVインデックスは1番から開始
 uint32_t TextureManager::k_srv_index_top_ = 1;
 
 // シングルトンインスタンスの取得
 TextureManager* TextureManager::GetInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new TextureManager;
+    if (!instance_) {
+        instance_ = std::make_unique<TextureManager>();
     }
-    return instance_;
+    return instance_.get();
 }
 
 // シングルトンの解放
 void TextureManager::Finalize() {
-    delete instance_;
-    instance_ = nullptr;
+    instance_.reset();
 }
 
 // 初期化処理

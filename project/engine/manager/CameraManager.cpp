@@ -1,13 +1,13 @@
 #include "CameraManager.h"
 
-CameraManager* CameraManager::instance_ = nullptr;
+std::unique_ptr<CameraManager> CameraManager::instance_ = nullptr;
 
 // シングルトンインスタンス取得
 CameraManager* CameraManager::GetInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new CameraManager;
+    if (!instance_) {
+        instance_ = std::make_unique<CameraManager>();
     }
-    return instance_;
+    return instance_.get();
 }
 
 // 初期化
@@ -19,8 +19,8 @@ void CameraManager::Initialize() {
 // 終了
 void CameraManager::Finalize() {
     cameras_.clear();        // 登録済みカメラをクリア
-    delete instance_;        // シングルトン解放
-    instance_ = nullptr;
+    active_camera_ = nullptr; // アクティブカメラをリセット
+    instance_.reset();      // シングルトン解放
 }
 
 // カメラを追加

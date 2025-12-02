@@ -107,7 +107,7 @@ public:
     static const uint32_t kMaxCount;
 
 private:
-    static SrvManager* instance_;
+    static std::unique_ptr<SrvManager> instance_;
 
     DirectXBase* directx_base_ = nullptr;
     // SRV用DescriptorSizeを取得

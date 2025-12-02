@@ -2,6 +2,7 @@
 #include "WindowsAPI.h"
 #include "DirectXBase.h"
 #include "SrvManager.h"
+#include <memory>
 
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
@@ -61,8 +62,12 @@ public:
     /// </summary>
     void Draw();
 
+public:
+    ImGuiManager() = default;
+    ~ImGuiManager() = default;
+
 private:
-    static ImGuiManager* instance_;
+    static std::unique_ptr<ImGuiManager> instance_;
 
     ImGuiManager* imgui_manager_;
     WindowsApi* windows_api_;

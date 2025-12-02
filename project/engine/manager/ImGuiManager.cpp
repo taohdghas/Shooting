@@ -1,13 +1,13 @@
 #include "ImGuiManager.h"
 
-ImGuiManager* ImGuiManager::instance_ = nullptr;
+std::unique_ptr<ImGuiManager> ImGuiManager::instance_ = nullptr;
 
 // シングルトンインスタンス取得
 ImGuiManager* ImGuiManager::GetInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new ImGuiManager;
+    if (!instance_) {
+        instance_ = std::make_unique<ImGuiManager>();
     }
-    return instance_;
+    return instance_.get();
 }
 
 // 終了処理
@@ -18,8 +18,8 @@ void ImGuiManager::Finalize() {
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
 #endif
-    delete instance_;
-    instance_ = nullptr;
+    // ImGui関連の終了処理
+    instance_.reset();
 }
 
 // 初期化

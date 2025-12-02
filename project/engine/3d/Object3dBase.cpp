@@ -1,13 +1,13 @@
 #include "Object3dBase.h"
 
-Object3dBase* Object3dBase::instance = nullptr;
+std::unique_ptr<Object3dBase> Object3dBase::instance = nullptr;
 
 // シングルトンインスタンスの取得
 Object3dBase* Object3dBase::GetInstance() {
-	if (instance == nullptr) {
-		instance = new Object3dBase;
+	if (!instance) {
+		instance = std::make_unique<Object3dBase>();
 	}
-	return instance;
+	return instance.get();
 }
 
 void Object3dBase::Initialize(DirectXBase* directx_base) {
@@ -18,23 +18,22 @@ void Object3dBase::Initialize(DirectXBase* directx_base) {
 	pso_ = std::make_unique<PipelineStateObject>();
 	pso_->Initialize(directx_base_);
 
-	// 3Dオブジェクト用のパイプラインステートを作成
+	// 3Dオブジェクト描画用のグラフィックスパイプラインを生成
 	pso_->CreatePipelineState();
 }
 
 void Object3dBase::Finalize() {
 	// シングルトンインスタンスの破棄
-	delete instance;
-	instance = nullptr;
+	instance.reset();
 }
 
 void Object3dBase::DrawBaseSet() {
-	// ルートシグネチャを設定（シェーダとリソースの結び付け定義）
+	// ルートシグネチャを設定
 	directx_base_->GetCommandList()->SetGraphicsRootSignature(pso_->GetRootSignature());
 
-	// パイプラインステートを設定（描画時の設定情報をまとめたもの）
+	// グラフィックスパイプラインステートを設定
 	directx_base_->GetCommandList()->SetPipelineState(pso_->GetGraphicsPipelineState());
 
-	// プリミティブトポロジーを設定（三角形リストとして描画）
+	// プリミティブトポロジー（三角形リスト）を設定
 	directx_base_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

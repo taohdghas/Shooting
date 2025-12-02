@@ -2,6 +2,7 @@
 #include "DirectXBase.h"
 #include "camera.h"
 #include "PipeLineStateObject.h"
+#include <memory>
 
 // 3Dオブジェクト共通部クラス
 class Object3dBase {
@@ -62,15 +63,15 @@ public:
 	/// <returns>内部 PSO が保持する <c>ID3D12PipelineState*</c>。</returns>
 	ID3D12PipelineState* GetGraphicsPipelineState() const { return pso_->GetGraphicsPipelineState(); }
 
+public:
+	Object3dBase() = default;
+	~Object3dBase() = default;
+
 private:
-	static Object3dBase* instance;
+	static std::unique_ptr<Object3dBase> instance;
 	// コピーコンストラクタ・代入演算子を削除
 	Object3dBase(const Object3dBase&) = delete;
 	Object3dBase& operator=(const Object3dBase&) = delete;
-
-	// コンストラクタ・デストラクタはシングルトン用にプライベート
-	Object3dBase() = default;
-	~Object3dBase() = default;
 
 	DirectXBase* directx_base_ = nullptr;
 	std::unique_ptr<PipelineStateObject> pso_;

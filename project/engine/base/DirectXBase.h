@@ -11,6 +11,7 @@
 #include <string>
 #include <chrono>
 #include "externals/DirectXTex/DirectXTex.h"
+#include <memory>
 
 // レンダーテクスチャ状態
 enum class RenderTextureState {
@@ -197,12 +198,10 @@ public:
     /// </summary>
     D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
-private:
-    /// <summary>コンストラクタ（プライベート：シングルトン）。</summary>
+public:
     DirectXBase() = default;
-
-    /// <summary>デストラクタ（プライベート）。</summary>
     ~DirectXBase() = default;
+private:
 
     // デバイスの初期化
     void DeviceInitialize();
@@ -327,8 +326,7 @@ private:
     RenderTextureState render_texture_state_ = RenderTextureState::RenderTarget;
 
     // シングルトンインスタンス
-    static DirectXBase* instance_;
-
+    static std::unique_ptr<DirectXBase> instance_;
     // 自身を指すポインタ（用途不明だが名前規則だけ合わせる）
     DirectXBase* directx_base_ = nullptr;
 

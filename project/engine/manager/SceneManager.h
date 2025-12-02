@@ -41,7 +41,7 @@ public:
     /// </summary>
     void SetSceneFactory(AbstractSceneFactory* scene_factory) { scene_factory_ = scene_factory; }
 private:
-    static SceneManager* instance_;
+    static std::unique_ptr<SceneManager> instance_;
     SceneManager* scene_manager_ = nullptr;
     // 現在のシーン
     std::unique_ptr<BaseScene> scene_;

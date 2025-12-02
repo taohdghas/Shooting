@@ -2,22 +2,23 @@
 #include "Input.h"
 #include <cassert>
 
-SceneManager* SceneManager::instance_ = nullptr;
+std::unique_ptr<SceneManager> SceneManager::instance_ = nullptr;
 
 // シングルトンインスタンス取得
 SceneManager* SceneManager::GetInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new SceneManager;
+    if (!instance_) {
+        instance_ = std::make_unique<SceneManager>();
     }
-    return instance_;
+    return instance_.get();
 }
 
 // 終了処理
 void SceneManager::Finalize() {
-    // 最後に実行中のシーンを終了
-    scene_->Finalize();
-    delete instance_;
-    instance_ = nullptr;
+    if (scene_) {
+        scene_->Finalize();
+        scene_.reset();
+    }
+    instance_.reset();
 }
 
 // 更新処理

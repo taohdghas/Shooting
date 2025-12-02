@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <cassert>
 #include <vector>
+#include <memory>
 
 #pragma comment(lib,"xaudio2.lib")
 
@@ -76,8 +77,12 @@ public:
 	/// <param name="sound_data">再生する音声データへの参照。</param>
 	void SoundPlayWave(const SoundData& sound_data);
 
+public:
+	Audio() = default;
+	~Audio() = default;
+
 private:
-	static Audio* instance_;
+	static std::unique_ptr<Audio> instance_;
 	HRESULT result_;
 	Microsoft::WRL::ComPtr<IXAudio2> x_audio2_;
 	IXAudio2MasteringVoice* master_voice_ = nullptr;
