@@ -35,7 +35,6 @@ void ParticleManager::Initialize(DirectXBase* directxBase, SrvManager* srvManage
 void ParticleManager::Finalize() {
 	delete instance;
 	instance = nullptr;
-	//particleGroups.clear();
 }
 
 //シーン終了時に呼ぶ
@@ -74,6 +73,13 @@ void ParticleManager::Update() {
 				particleIterator = ParticleGroups.second.particles.erase(particleIterator);
 				continue;
 			}
+			// Confetti専用：Y座標が下限を超えたら消す
+			if (ParticleGroups.second.type == ParticleType::Confetti &&
+				(*particleIterator).transform.translate.y < -2.0f) {
+				particleIterator = ParticleGroups.second.particles.erase(particleIterator);
+				continue;
+			}
+
 			float alpha = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
 			if (ParticleGroups.second.kNumInstance < kNumMaxInstance) {
 
@@ -104,6 +110,27 @@ void ParticleManager::Update() {
 						}
 					}
 				}
+				if (ParticleGroups.second.type == ParticleType::Smoke) {
+					float t = (*particleIterator).currentTime / (*particleIterator).lifeTime;
+
+					// 徐々にスケールアップ
+					float scale = 0.3f + t * 1.0f; // 最大 1.5倍〜2倍くらい
+					(*particleIterator).transform.scale = { scale, scale, scale };
+
+					// 徐々に透明に
+					ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].color.w = 1.0f - t;
+				}
+				if (ParticleGroups.second.type == ParticleType::Confetti) {
+					const int kConfettiPerFrame = 1; 
+					std::uniform_real_distribution<float> distX(-8.0f, 8.0f); // 横画面範囲
+					std::uniform_real_distribution<float> distZ(-5.0f, 5.0f); // 奥行き範囲
+					static std::mt19937 gen(std::random_device{}());
+
+					for (int i = 0; i < kConfettiPerFrame; ++i) {
+						Vector3 spawnPos{ distX(gen), 6.0f, distZ(gen) };
+						Emit("confetti", spawnPos, 1);
+					}
+				}
 
 				//行列計算
 				Matrix4x4 scaleMatrix = Math::MakeScaleMatrix((*particleIterator).transform.scale);
@@ -113,7 +140,13 @@ void ParticleManager::Update() {
 				Matrix4x4 worldViewProjectionMatrix = Math::Multiply(worldMatrix, viewprojectionMatrix);
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].WVP = worldViewProjectionMatrix;
 				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].World = worldMatrix;
-				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].color;
+				ParticleGroups.second.instancingData[ParticleGroups.second.kNumInstance].color =
+				{
+					(*particleIterator).color.x,
+					(*particleIterator).color.y,
+					(*particleIterator).color.z,
+					alpha
+				};
 				//Fieldの範囲内のParticleには加速度を適用する
 
 				//速度を適用
@@ -184,6 +217,14 @@ void ParticleManager::CreateparticleGroup(const std::string name, const std::str
 		} else if (type == ParticleType::Cylinder) {
 			CylinderVertexDataCreate(newParticle.modelData);
 		} else if (type == ParticleType::Explosive) {
+			VertexDataCreate(newParticle.modelData);
+		} else if (type == ParticleType::Smoke) {
+			VertexDataCreate(newParticle.modelData);
+		} else if (type == ParticleType::PlayerMove) {
+			VertexDataCreate(newParticle.modelData);
+		} else if (type == ParticleType::EnemyDamage) {
+			VertexDataCreate(newParticle.modelData);
+		} else if (type == ParticleType::Confetti) {
 			VertexDataCreate(newParticle.modelData);
 		}
 	}
@@ -257,6 +298,82 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		particle.lifeTime = 1.5f;
 	}
+	else if (type == ParticleType::Smoke) {
+		std::uniform_real_distribution<float> dist_scale(0.3f, 0.6f);
+		std::uniform_real_distribution<float> dist_vel(-0.5f, 0.5f);
+		std::uniform_real_distribution<float> dist_time(0.5f, 1.0f);
+
+		particle.transform.scale = { 0.1f, 0.1f, 0.1f };
+		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+		particle.transform.translate = translate;
+
+		particle.velocity = {
+			dist_vel(randomEngine) * 0.5f,               // 横揺れ
+			dist_vel(randomEngine) * 0.5f,               // 上揺れ
+			-2.0f + dist_vel(randomEngine) * 0.1f        // 後方へ流れる
+		};
+
+		particle.color = { 1.0f, 1.0f, 1.0f, 0.8f };
+		particle.lifeTime = dist_time(randomEngine);
+	}
+	else if (type == ParticleType::PlayerMove) {
+		std::uniform_real_distribution<float> dist_vel(-0.3f, 0.3f);
+		std::uniform_real_distribution<float> dist_time(0.2f, 0.6f);
+
+		particle.transform.scale = { 0.15f, 0.15f, 0.15f };
+		particle.transform.translate = translate;
+
+		particle.velocity = {
+			dist_vel(randomEngine) * 0.2f,  // 横揺れ
+			dist_vel(randomEngine) * 0.2f,  // 縦揺れ
+			-1.5f                           // 進行方向と逆（後ろ）へ流れる
+		};
+
+		particle.color = { 0.8f, 0.8f, 1.0f, 0.9f }; 
+		particle.lifeTime = dist_time(randomEngine);
+	} else if (type == ParticleType::EnemyDamage) {
+
+		std::uniform_real_distribution<float> dist_offset(-0.5f, 0.5f); // 初期位置ランダム
+		std::uniform_real_distribution<float> dist_vel(-1.0f, 1.0f);    // 初期速度ランダム
+		std::uniform_real_distribution<float> dist_time(0.5f, 1.2f);    // 生存時間
+
+		particle.transform.scale = { 0.9f, 0.9f, 0.9f };
+		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+		particle.transform.translate = translate + Vector3(
+			dist_offset(randomEngine),
+			dist_offset(randomEngine),
+			dist_offset(randomEngine)
+		);
+
+		particle.velocity = {
+			dist_vel(randomEngine),
+			dist_vel(randomEngine),
+			dist_vel(randomEngine)
+		};
+
+		particle.color = { 1.0f, 0.85f, 0.1f, 1.0f };
+		particle.lifeTime = dist_time(randomEngine);
+	} else if (type == ParticleType::Confetti) {
+		static std::random_device rd;
+		static std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> distVelX(-0.2f, 0.2f);
+		std::uniform_real_distribution<float> distVelY(-4.0f, -2.0f); // 速く落ちる
+		std::uniform_real_distribution<float> distVelZ(-0.1f, 0.1f);
+		std::uniform_real_distribution<float> distRot(0.0f, 2.0f * std::numbers::pi_v<float>);
+		std::uniform_real_distribution<float> distScale(0.1f, 0.3f);
+		std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+
+		particle.transform.scale = { distScale(gen), distScale(gen), distScale(gen) };
+		particle.transform.rotate = { distRot(gen), distRot(gen), distRot(gen) };
+		particle.transform.translate = translate;
+
+		particle.velocity = { distVelX(gen), distVelY(gen), distVelZ(gen) };
+		particle.color = { distColor(gen), distColor(gen), distColor(gen), 1.0f };
+		particle.lifeTime = 100.0f;
+		particle.currentTime = 0.0f;
+	}
+
+
 	particle.currentTime = 0.0f;
 	return particle;
 }

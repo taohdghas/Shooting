@@ -5,143 +5,133 @@
 
 JsonManager* JsonManager::instance = nullptr;
 
-//シングルトンインスタンスの取得
+// シングルトンインスタンス取得
 JsonManager* JsonManager::GetInstance() {
-	if (instance == nullptr) {
-		instance = new JsonManager;
-	}
-	return instance;
+    if (instance == nullptr) {
+        instance = new JsonManager;
+    }
+    return instance;
 }
 
-//Jsonファイルの読み込み
+// JSONファイルを読み込んでLevelDataを生成
 LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
-	//連続してフルパスを得る
-	const std::string fullpath = "resources/levels/" + filename + ".json";
+    // フルパスを生成
+    const std::string fullpath = "resources/levels/" + filename + ".json";
 
-	//ファイルストリーム
-	std::ifstream file;
+    // ファイルストリームを開く
+    std::ifstream file(fullpath);
+    if (file.fail()) {
+        // ファイルが開けなければアサート
+        assert(0);
+    }
 
-	//ファイルを開く
-	file.open(fullpath);
-	//ファイルオープン失敗をチェック
-	if (file.fail()) {
-		assert(0);
-	}
+    // JSON文字列をパース
+    nlohmann::json deserialized;
+    file >> deserialized;
 
-	//JSON文字列から解凍したデータ
-	nlohmann::json deserialized;
+    // 正しいレベルデータか簡易チェック
+    assert(deserialized.is_object());
+    assert(deserialized.contains("name"));
+    assert(deserialized["name"].is_string());
+    std::string name = deserialized["name"].get<std::string>();
+    assert(name.compare("scene") == 0);
 
-	//解凍
-	file >> deserialized;
+    // レベルデータ格納用インスタンス生成
+    LevelData* levelData = new LevelData();
 
-	//正しいレベルデータファイルかチェック
-	assert(deserialized.is_object());
-	assert(deserialized.contains("name"));
-	assert(deserialized["name"].is_string());
+    // "objects" 配列を走査
+    for (nlohmann::json& object : deserialized["objects"]) {
+        assert(object.contains("type"));
 
-	//"name"を文字列として取得
-	std::string name =
-		deserialized["name"].get<std::string>();
-	//正しいレベルデータファイルかチェック
-	assert(name.compare("scene") == 0);
+        // 無効フラグが立っている場合はスキップ
+        if (object.contains("disabled_flag") && object["disabled_flag"].get<bool>()) {
+            continue;
+        }
 
-	//レベルデータ格納用インスタンスを生成
-	LevelData* levelData = new LevelData();
+        std::string type = object["type"].get<std::string>();
 
-	//"objects"の全オブジェクトを走査
-	for (nlohmann::json& object : deserialized["objects"]) {
-		assert(object.contains("type"));
+        // 種別ごとの処理
+        if (type.compare("MESH") == 0) {
+            // オブジェクトを追加
+            levelData->objects.emplace_back(LevelData::ObjectData{});
+            LevelData::ObjectData& objectData = levelData->objects.back();
 
+            // ファイル名が存在すれば設定
+            if (object.contains("file_name")) {
+                objectData.fileName = object["file_name"];
+            }
 
-		if (object.contains("disabled_flag")) {
-			//有効無効フラグ
-			bool disabled = object["disabled_flag"].get<bool>();
-			if (disabled) {
-				//配置しない
-				continue;
-			}
+            // トランスフォームを読み込み
+            nlohmann::json& transform = object["transform"];
+            objectData.translation.x = (float)transform["translation"][0];
+            objectData.translation.y = (float)transform["translation"][2];
+            objectData.translation.z = (float)transform["translation"][1];
+
+            objectData.rotation.x = -(float)transform["rotation"][0];
+            objectData.rotation.y = -(float)transform["rotation"][2];
+            objectData.rotation.z = -(float)transform["rotation"][1];
+
+            objectData.scaling.x = (float)transform["scaling"][0];
+            objectData.scaling.y = (float)transform["scaling"][2];
+            objectData.scaling.z = (float)transform["scaling"][1];
+        } else if (type.compare("PlayerSpawn") == 0) {
+            PlayerSpawnData playerSpawn{};
+
+            // トランスフォーム読み込み
+            nlohmann::json& transform = object["transform"];
+            playerSpawn.translation.x = (float)transform["translation"][0];
+            playerSpawn.translation.y = (float)transform["translation"][2];
+            playerSpawn.translation.z = (float)transform["translation"][1];
+
+            playerSpawn.rotation.x = -(float)transform["rotation"][0];
+            playerSpawn.rotation.y = -(float)transform["rotation"][2];
+            playerSpawn.rotation.z = -(float)transform["rotation"][1];
+
+            playerSpawn.scaling.x = (float)transform["scaling"][0];
+            playerSpawn.scaling.y = (float)transform["scaling"][2];
+            playerSpawn.scaling.z = (float)transform["scaling"][1];
+
+            levelData->players.push_back(playerSpawn);
+        } else if (type.compare("EnemySpawn") == 0) {
+            EnemySpawnData enemySpawn{};
+
+            // トランスフォーム読み込み
+            nlohmann::json& transform = object["transform"];
+            enemySpawn.translation.x = (float)transform["translation"][0];
+            enemySpawn.translation.y = (float)transform["translation"][2];
+            enemySpawn.translation.z = (float)transform["translation"][1];
+
+            enemySpawn.rotation.x = -(float)transform["rotation"][0];
+            enemySpawn.rotation.y = -(float)transform["rotation"][2];
+            enemySpawn.rotation.z = -(float)transform["rotation"][1];
+
+            enemySpawn.scaling.x = (float)transform["scaling"][0];
+            enemySpawn.scaling.y = (float)transform["scaling"][2];
+            enemySpawn.scaling.z = (float)transform["scaling"][1];
+
+            levelData->enemies.push_back(enemySpawn);
+        }else if(type.compare("BossSpawn")==0){
+            BossSpawnData bossSpawn{};
+            // トランスフォーム読み込み
+            nlohmann::json& transform = object["transform"];
+            bossSpawn.translation.x = (float)transform["translation"][0];
+            bossSpawn.translation.y = (float)transform["translation"][2];
+            bossSpawn.translation.z = (float)transform["translation"][1];
+            bossSpawn.rotation.x = -(float)transform["rotation"][0];
+            bossSpawn.rotation.y = -(float)transform["rotation"][2];
+            bossSpawn.rotation.z = -(float)transform["rotation"][1];
+            bossSpawn.scaling.x = (float)transform["scaling"][0];
+            bossSpawn.scaling.y = (float)transform["scaling"][2];
+            bossSpawn.scaling.z = (float)transform["scaling"][1];
+
+            levelData->bosses.push_back(bossSpawn);
 		}
 
-		//種別を取得
-		std::string type = object["type"].get<std::string>();
+        // 子オブジェクトを再帰的に処理する予定
+        if (object.contains("children")) {
+            // 未実装
+        }
+    }
 
-		//種類ごとの処理
-		//MESH
-		if (type.compare("MESH") == 0) {
-			//要素追加
-			levelData->objects.emplace_back(LevelData::ObjectData{});
-			//追加した要素の参照を得る
-			LevelData::ObjectData& objectData = levelData->objects.back();
-
-			if (object.contains("file_name")) {
-				//ファイル名
-				objectData.fileName = object["file_name"];
-			}
-
-			//トランスフォームのパラメータ読み込み
-			nlohmann::json& transform = object["transform"];
-			//平行移動
-			objectData.translation.x = (float)transform["translation"][0];
-			objectData.translation.y = (float)transform["translation"][2];
-			objectData.translation.z = (float)transform["translation"][1];
-			//回転角
-			objectData.rotation.x = -(float)transform["rotation"][0];
-			objectData.rotation.y = -(float)transform["rotation"][2];
-			objectData.rotation.z = -(float)transform["rotation"][1];
-			//スケーリング
-			objectData.scaling.x = (float)transform["scaling"][0];
-			objectData.scaling.y = (float)transform["scaling"][2];
-			objectData.scaling.z = (float)transform["scaling"][1];
-		}
-		//自キャラ発生ポイント
-		else if (type.compare("PlayerSpawn") == 0) {
-			PlayerSpawnData playerSpawn{};
-
-			//トランスフォームのパラメータ読み込み
-			nlohmann::json& transform = object["transform"];
-			//平行移動
-			playerSpawn.translation.x = (float)transform["translation"][0];
-			playerSpawn.translation.y = (float)transform["translation"][2];
-			playerSpawn.translation.z = (float)transform["translation"][1];
-			//回転角
-			playerSpawn.rotation.x = -(float)transform["rotation"][0];
-			playerSpawn.rotation.y = -(float)transform["rotation"][2];
-			playerSpawn.rotation.z = -(float)transform["rotation"][1];
-			//スケーリング
-			playerSpawn.scaling.x = (float)transform["scaling"][0];
-			playerSpawn.scaling.y = (float)transform["scaling"][2];
-			playerSpawn.scaling.z = (float)transform["scaling"][1];
-
-			levelData->players.push_back(playerSpawn);
-		}
-		//敵キャラ発生ポイント
-		else if (type.compare("EnemySpawn") == 0) {
-			EnemySpawnData enemySpawn{};
-
-			//トランスフォームのパラメータ読み込み
-			nlohmann::json& transform = object["transform"];
-			//平行移動
-			enemySpawn.translation.x = (float)transform["translation"][0];
-			enemySpawn.translation.y = (float)transform["translation"][2];
-			enemySpawn.translation.z = (float)transform["translation"][1];
-			//回転角
-			enemySpawn.rotation.x = -(float)transform["rotation"][0];
-			enemySpawn.rotation.y = -(float)transform["rotation"][2];
-			enemySpawn.rotation.z = -(float)transform["rotation"][1];
-			//スケーリング
-			enemySpawn.scaling.x = (float)transform["scaling"][0];
-			enemySpawn.scaling.y = (float)transform["scaling"][2];
-			enemySpawn.scaling.z = (float)transform["scaling"][1];
-
-			levelData->enemies.push_back(enemySpawn);
-
-		}
-		//オブジェクトを再帰関数にまとめ再帰呼出で枝を走査する
-		if (object.contains("children")) {
-
-		}
-
-
-	}
-	return levelData;
+    return levelData;
 }

@@ -9,15 +9,33 @@
 class TitleObject
 {
 public:
-	//初期化
+	/// <summary>
+	/// タイトル画面に登場する全オブジェクトの初期化を行う。
+	/// モデルの読み込み、スケール・位置の設定などを行う。
+	/// </summary>
 	void Initialize();
-	//更新
+
+	/// <summary>
+	/// 毎フレームの更新処理を行う。
+	/// タイトルや「PUSH SPACE」の点滅、プレイヤー演出を更新する。
+	/// </summary>
 	void Update();
-	//描画
+
+	/// <summary>
+	/// タイトル、PUSH SPACE、プレイヤーモデルを描画する。
+	/// </summary>
 	void Draw();
-	//プレイヤーオブジェクトの演出
+
+	/// <summary>
+	/// プレイヤーオブジェクトの演出処理を行う。
+	/// 回転やジャンプ、二段ジャンプなどの動きを制御する。
+	/// </summary>
 	void PlayerObjDirection();
-	//デバック
+
+	/// <summary>
+	/// デバッグ用UIを表示する。
+	/// ImGuiでスケール・回転・位置をリアルタイム調整可能にする。
+	/// </summary>
 	void Debug();
 private:
 	//タイトルのオブジェクト

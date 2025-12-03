@@ -2,43 +2,48 @@
 
 ModelManager* ModelManager::instance = nullptr;
 
-//シングルインスタンスの取得
-ModelManager*ModelManager::GetInstance(){
-	if (instance == nullptr) {
-		instance = new ModelManager;
-	}
-	return instance;
+// シングルトンインスタンス取得
+ModelManager* ModelManager::GetInstance() {
+    if (instance == nullptr) {
+        instance = new ModelManager;
+    }
+    return instance;
 }
-//初期化
+
+// 初期化
 void ModelManager::Initialize(DirectXBase* directxBase) {
-	modelBase = new ModelBase;
-	modelBase->Initialize(directxBase);
+    // ModelBase を生成・初期化
+    modelBase = new ModelBase;
+    modelBase->Initialize(directxBase);
 }
-//終了
+
+// 終了
 void ModelManager::Finalize() {
-	delete instance;
-	instance = nullptr;
+    delete instance;
+    instance = nullptr;
 }
-//モデルファイルの読み込み
+
+// モデルファイルの読み込み
 void ModelManager::LoadModel(const std::string& filePath) {
-	//読み込みモデルを検索
-	if (models.contains(filePath)) {
-		//読み込み済みなら早期return
-		return;
-	}
-	//モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model>model = std::make_unique<Model>();
-	model->Initialize(modelBase, "resources", filePath);
-	//モデルをmapコンテナに格納する
-	models.insert(std::make_pair(filePath, std::move(model)));
+    // 既に読み込み済みなら処理しない
+    if (models.contains(filePath)) {
+        return;
+    }
+
+    // 新しいモデルを生成
+    std::unique_ptr<Model> model = std::make_unique<Model>();
+
+    // ファイルを読み込み初期化
+    model->Initialize(modelBase, "resources", filePath);
+
+    // map に格納
+    models.insert(std::make_pair(filePath, std::move(model)));
 }
-//モデルの検索
+
+// モデル検索
 Model* ModelManager::FindModel(const std::string& filePath) {
-	//読み込み済みモデルを検索
-	if (models.contains(filePath)) {
-		//読み込みモデルを戻り値としてreturn
-		return models.at(filePath).get();
-	}
-	//ファイル名一致なし
-	return nullptr;
+    if (models.contains(filePath)) {
+        return models.at(filePath).get();
+    }
+    return nullptr; // 一致するモデルなし
 }

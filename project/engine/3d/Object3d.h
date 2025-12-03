@@ -13,55 +13,122 @@ class Object3dBase;
 class Object3d
 {
 public:
-	//初期化
+	/// <summary>
+	/// 初期化を行う。
+	/// Object3dBase の参照を受け取り、必要なリソースやデフォルト状態を設定する。
+	/// </summary>
+	/// <param name="object3dBase">描画共通設定を提供する <c>Object3dBase</c> のポインタ。</param>
 	void Initialize(Object3dBase*object3dBase);
-	//更新
+	/// <summary>
+	/// 毎フレームの更新処理を行う。
+	/// - トランスフォームやライト・カメラデータの更新を行い、GPU へ反映する準備をする。
+	/// </summary>
 	void Update();
-	//描画
+	/// <summary>
+	/// 描画処理を行う。
+	/// - 内部のメッシュ・マテリアル情報を用いて描画コマンドを発行する。
+	/// </summary>
 	void Draw();
-	//デバック
+	/// <summary>
+	/// デバッグ用の更新処理を行う。
+	/// - デバッグ表示やパラメータ調整処理をここで扱う。
+	/// </summary>
 	void DebugUpdate();
 
 	///setter///
 
-	//モデルセット
+	/// <summary>
+	/// 表示するモデルを設定する。
+	/// 指定されたファイルパスを基にモデルリソースを読み込み、内部の Model および ModelData を更新する。
+	/// </summary>
+	/// <param name="filePath">モデルファイルのパス。</param>
 	void SetModel(const std::string& filePath);
-	//スケールセット
+	/// <summary>
+	/// スケールを設定する。
+	/// </summary>
+	/// <param name="scale">設定するスケール値。</param>
 	void SetScale(const Vector3& scale) { this->transform_.scale = scale; }
-	//回転セット
+	/// <summary>
+	/// 回転を設定する。
+	/// </summary>
+	/// <param name="rotate">設定する回転値。</param>
 	void SetRotate(const Vector3& rotate) { this->transform_.rotate = rotate; }
-	//座標セット
+	/// <summary>
+	/// 平行移動（座標）を設定する。
+	/// </summary>
+	/// <param name="translate">設定する座標値。</param>
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
-	//カメラをセット
+	/// <summary>
+	/// 使用するカメラを設定する。
+	/// </summary>
+	/// <param name="camera">描画に用いる <c>Camera</c> のポインタ。</param>
 	void SetCamera(Camera* camera) { this->camera = camera; }
-	//色セット
+	/// <summary>
+	/// マテリアルの色を設定する。
+	/// GPU 上のマテリアルデータに色を反映することを想定する。
+	/// </summary>
+	/// <param name="color">設定する RGBA 色。</param>
 	void SetColor(const Vector4& color);
-	//ライトの有無セット
+	/// <summary>
+	/// ライティングの有効/無効を設定する。
+	/// </summary>
+	/// <param name="enable">true でライティング有効、false で無効。</param>
 	void SetLight(bool enable) { enableLighting = enable; }
-	//DirectionalLightの有無セット
+	/// <summary>
+	/// 平行光（DirectionalLight）の有効/無効を設定する。
+	/// </summary>
+	/// <param name="enable">0 で無効、非ゼロで有効とする整数値。</param>
 	void SetDirectionalLightEnable(int enable) { directionalLight->enable = enable ? 1 : 0; }
-	//PointLightの有無セット
+	/// <summary>
+	/// 点光源（PointLight）の有効/無効を設定する。
+	/// </summary>
+	/// <param name="enable">0 で無効、非ゼロで有効とする整数値。</param>
 	void SetPointLightEnable(int enable) { pointLight->enable = enable ? 1 : 0; }
-	//SpotLightの有無セット
+	/// <summary>
+	/// スポットライト（SpotLight）の有効/無効を設定する。
+	/// </summary>
+	/// <param name="enable">0 で無効、非ゼロで有効とする整数値。</param>
 	void SetSpotLightEnable(int enable) { spotLight->enable = enable ? 1 : 0; }
 	///getter///
 
-	//スケールの取得
+	/// <summary>
+	/// スケールを取得する。
+	/// </summary>
+	/// <returns>現在のスケール。</returns>
 	const Vector3& GetScale()const { return transform_.scale; }
-	//回転取得
+	/// <summary>
+	/// 回転を取得する。
+	/// </summary>
+	/// <returns>現在の回転。</returns>
 	const Vector3& GetRotate()const { return transform_.rotate; }
-	//座標取得
+	/// <summary>
+	/// 座標を取得する。
+	/// </summary>
+	/// <returns>現在の座標（平行移動）。</returns>
 	const Vector3& GetTranslate()const { return transform_.translate; }
 private:
-	//座標変換行列データ作成
+	/// <summary>
+	/// 座標変換行列データを作成する。
+	/// - スケール・回転・平行移動を組み合わせてトランスフォーム行列を構築し、GPU 用バッファへ書き込む処理を行う。
+	/// </summary>
 	void TransformationCreate();
-	//平行光源データ作成
+	/// <summary>
+	/// 平行光源のデータを作成・更新する。
+	/// - DirectionalLight 構造体を初期化し、GPU バッファに反映する処理を行う。
+	/// </summary>
 	void DirectionalLightCreate();
-	//カメラデータ作成
+	/// <summary>
+	/// カメラ関連のデータを作成・更新する。
+	/// - カメラのワールド・ビュー・プロジェクション行列等を GPU 用データに格納する。
+	/// </summary>
 	void CameraDataCreate();
-	//ポイントライトデータ作成
+	/// <summary>
+	/// 点光源（PointLight）のデータを作成・更新する。
+	/// </summary>
 	void PointLightCreate();
-	//スポットライトデータ作成
+	/// <summary>
+	/// スポットライト（SpotLight）のデータを作成・更新する。
+	/// </summary>
 	void SpotLightCreate();
 private:
 	Model* model_ = nullptr;

@@ -3,13 +3,13 @@
 #include "GameScene.h"
 #include "GameSelectScene.h"
 #include "GameClearScene.h"
+#include "GameOverScene.h"
 
-//シーン生成
+// シーン名に応じたシーンを生成するファクトリメソッド
 std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneName) {
 
 	if (sceneName == "TITLE") {
 		return std::make_unique<TitleScene>();
-	
 	}
 	else if (sceneName == "GAME") {
 		return std::make_unique<GameScene>();
@@ -19,6 +19,10 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneNam
 	}
 	else if (sceneName == "CLEAR") {
 		return std::make_unique<GameClearScene>();
+	} 
+	else if (sceneName == "OVER") {
+		return std::make_unique<GameOverScene>();
 	}
+	// 上記以外はnullptr
 	return nullptr;
 }

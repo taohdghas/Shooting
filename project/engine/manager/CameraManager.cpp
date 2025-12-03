@@ -2,56 +2,60 @@
 
 CameraManager* CameraManager::instance = nullptr;
 
-//シングルトンインスタンス
+// シングルトンインスタンス取得
 CameraManager* CameraManager::GetInstance() {
-	if (instance == nullptr) {
-		instance = new CameraManager;
-	}
-	return instance;
+    if (instance == nullptr) {
+        instance = new CameraManager;
+    }
+    return instance;
 }
 
-//初期化
+// 初期化
 void CameraManager::Initialize() {
-	cameras.clear();
-	activeCamera = nullptr;
+    cameras.clear();      // 登録済みカメラをクリア
+    activeCamera = nullptr; //
 }
 
-//終了
+// 終了
 void CameraManager::Finalize() {
-	cameras.clear();
-	delete instance;
-	instance = nullptr;
+    cameras.clear();       // 登録済みカメラをクリア
+    delete instance;       
+    instance = nullptr;
 }
 
-//カメラ追加
-void CameraManager::AddCamera(const std::string& name,Camera*camera) {
-	if (camera == nullptr) return;
-	if (cameras.find(name) == cameras.end()) {
-		cameras.emplace(name, camera);
-		if (!activeCamera) {
-			activeCamera = camera;
-		}
-	}
+// カメラを追加
+void CameraManager::AddCamera(const std::string& name, Camera* camera) {
+    if (camera == nullptr) return;
+
+    // 名前が重複していなければ追加
+    if (cameras.find(name) == cameras.end()) {
+        cameras.emplace(name, camera);
+
+        // アクティブカメラが未設定なら追加したカメラをアクティブに
+        if (!activeCamera) {
+            activeCamera = camera;
+        }
+    }
 }
 
-//アクティブカメラ取得
+// アクティブカメラ取得
 Camera* CameraManager::GetActiveCamera() {
-	return activeCamera;
+    return activeCamera;
 }
 
-//名前からカメラを取得
+// 名前からカメラ取得
 Camera* CameraManager::GetCamera(const std::string& name) {
-	auto it = cameras.find(name);
-	if (it != cameras.end()) {
-		return it->second;
-	}
-	return nullptr;
+    auto it = cameras.find(name);
+    if (it != cameras.end()) {
+        return it->second;
+    }
+    return nullptr;
 }
 
-//アクティブカメラ設定
+// アクティブカメラ設定（名前で指定）
 void CameraManager::SetActiveCamera(const std::string& name) {
-	auto it = cameras.find(name);
-	if (it != cameras.end()) {
-		activeCamera = it->second;
-	}
+    auto it = cameras.find(name);
+    if (it != cameras.end()) {
+        activeCamera = it->second;
+    }
 }

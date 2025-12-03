@@ -14,36 +14,77 @@
 #include "Fade.h"
 
 #include <vector>
+#include <random>
 
 #include "Player.h"
 #include "Enemy.h"
+#include "Boss1.h"
 #include "Skybox.h"
 #include "Platform.h"
+#include "Ui.h"
 
 //ゲームシーン
 class GameScene : public BaseScene
 {
 public:
-	//初期化
+	/// <summary>
+	/// シーン初期化処理。
+	/// - オーディオの初期化、必要モデルの読み込み、パーティクルグループ作成を行う。
+	/// - カメラ（およびレールカメラ）の生成と CameraManager への登録を行い、Object3dBase のデフォルトカメラを設定する。
+	/// - Skybox／Platform／CollisionManager 等を初期化し、JsonManager からレベルデータを読み込んでプレイヤー・敵を生成・配置する。
+	/// - フェード（FadeIn）を開始し、最初のフレームの入力をクリアする。
+	/// </summary>
 	void Initialize()override;
-	//終了
+	/// <summary>
+	/// シーン終了処理。
+	/// - ParticleManager のクリア、CameraManager と Audio の終了処理を呼び出してリソースを解放する。
+	/// </summary>
 	void Finalize()override;
-	//更新
+	/// <summary>
+	/// 毎フレーム更新処理。
+	/// - カメラ（およびレールカメラ）／プレイヤー／敵／Skybox／Platform／パーティクル等を更新する。
+	/// - 衝突判定（敵ごとに CollisionManager::CheckPECollisions を呼ぶ）を行い、敵死亡時にデスパーティクルを発生させる。
+	/// - プレイヤー死亡や特定キー入力によるシーン遷移判定を行い、フェード更新やデバッグ呼出しを行う。
+	/// </summary>
 	void Update()override;
-	//描画
+	/// <summary>
+	/// 描画処理。
+	/// - Object3d 系の共通描画設定を行い、プレイヤー・敵・Skybox・Platform・パーティクルを描画する。
+	/// - Sprite 系の共通描画設定を行った上でプレイヤーのレティクルを描画し、フェードを最後に描画する。
+	/// </summary>
 	void Draw()override;
-	//デバック
+	/// <summary>
+	/// デバッグ表示処理（ImGui）。
+	/// - Camera や Player / Enemy / Platform / Skybox のパラメータを ImGui で調整・表示する。
+	/// - 実行中は Update 内から呼び出される。
+	/// </summary>
 	void Debug()override;
 public:
-	//スタート演出
-	void StartAnimation();
 
 	void FollowCamera();
+	//スタート演出 
+	void StartAnimation();
+
+	/// <summary>
+    /// ゲームクリアシーンへ遷移する。
+    /// - シーンマネージャーを通じてゲームクリア画面へのシーン変更を予約する。
+    /// - プレイヤーや敵の状態に応じて、必要な演出やリソース解放処理を行う場合がある。
+    /// </summary>
+	void ToGameClear();
+
+	/// <summary>
+	/// ゲームオーバーシーンへ遷移する。
+	/// - シーンマネージャーを通じてゲームオーバー画面へのシーン変更を予約する。
+	/// - プレイヤー死亡時や条件達成時に呼び出され、必要な演出やリソース解放処理を行う場合がある。
+	/// </summary>
+	void ToGameOver();
 private:
 	//プレイヤー
 	std::unique_ptr<Player>player;
 	//敵
 	std::vector<std::unique_ptr<Enemy>>enemies;
+	//ボス1
+	std::unique_ptr<Boss1> boss1;
 	//Skybox
 	std::unique_ptr<Skybox>skybox;
 	//プラットフォーム
@@ -56,27 +97,49 @@ private:
 	std::unique_ptr<Camera>camera;
 	//JsonManager
 	std::unique_ptr<JsonManager>jsonManager;
+	//UI
+	std::unique_ptr<Ui>ui;
 	//フェード
 	std::unique_ptr<Fade>fade;
 	//レベルデータ
 	LevelData* levelData;
-	//1回転にかかる時間
-	const float totalRotationTime = 5.0f;
-	//角速度
-	const float rotationSpeed = 1.0f;    
-	//収束に書ける時間
-	const float oneRotation = 2.0f * 3.14159f;
-	//カメラ回転アニメーションフラグ
+
+	//撃破演出回転軸
+	Vector3 deathRotationAxis = { 1.0f, 0.0f, 0.0f };
+	//撃破演出速度
+	Vector3 deathVelocity;
+	//乱数生成器
+	std::mt19937 randomEngine{ std::random_device{}() };
+	std::uniform_real_distribution<float> randomDist{ -1.0f, 1.0f };
+
+	//Δtを定義
+	const float DeltaTime = 1.0f / 60.0f;
+	//ゲームオーバーシーン遷移フラグ
+	bool isToGameOver = false;
+	//撃破演出が始まったか
+	bool isDeathMotionStarted = false;
+	//撃破演出経過時間タイマー
+	float deathTimer = 0.0f;
+	//撃破演出回転速度
+	float deathRotationSpeed = 5.0f;
+	//重力加速度
+	float gravity = 0.015f;
+
+	//1回転にかかる時間 
+	const float totalRotationTime = 5.0f; 
+	//角速度 
+	const float rotationSpeed = 1.0f; 
+	//収束に書ける時間 
+	const float oneRotation = 2.0f * 3.14159f; 
+	//カメラ回転アニメーションフラグ 
 	bool isStartAnimation = true;
 	//カメラ収束フラグ
-	bool isReturning = false;
-	bool isFollowingInitialized = false; // 追従開始時フラグ
-	//回転タイマー
-	float cameraRotateTimer = 0.0f;
-	float zOffset = 0.0f;               // プレイヤーとのZオフセット
+	bool isReturning = false; 
+	//回転タイマー 
+	float cameraRotateTimer = 0.0f; 
 	//回転開始時のカメラ位置
 	Vector3 cameraStartPos;
-	//回転開始時のカメラ回転
+	//回転開始時のカメラ回転 
 	Vector3 cameraStartRot;
 };
 

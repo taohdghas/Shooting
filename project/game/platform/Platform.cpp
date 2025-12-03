@@ -1,7 +1,9 @@
 #include "Platform.h"
+#include "ParticleManager.h"
+#include "MyMath.h"
 #include "ImGuiManager.h"
 
-//初期化
+// プラットフォームの初期化処理
 void Platform::Initialize(Object3dBase* object3dbase) {
 	object3dBase_ = object3dbase;
 	object_ = std::make_unique<Object3d>();
@@ -10,6 +12,8 @@ void Platform::Initialize(Object3dBase* object3dbase) {
 	object_->SetLight(false);
 	transform_.scale = { 7.5f,2.0f,3.0f };
 	transform_.translate = { 0.0f,-1.9f,0.0f };
+
+	smokeEmitter_.Initialize("particle6");
 }
 //更新
 void Platform::Update(bool isStartAnimation, bool isReturning) {
@@ -29,12 +33,18 @@ void Platform::Update(bool isStartAnimation, bool isReturning) {
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
+
+	Vector3 smokePos = transform_.translate + Vector3(0.0f, 0.0f, -1.5f);
+	smokeEmitter_.SetPosition(smokePos);
+	smokeEmitter_.Update();
 }
-//描画
+
+// プラットフォームの描画処理
 void Platform::Draw() {
 	object_->Draw();
 }
-//デバック
+
+// デバッグ用ImGui表示（Transformのパラメータ調整）
 void Platform::Debug() {
 #ifdef USE_IMGUI
 	if (ImGui::TreeNodeEx("Platform", ImGuiTreeNodeFlags_DefaultOpen)) {

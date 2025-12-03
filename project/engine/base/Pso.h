@@ -8,59 +8,86 @@ class DirectXBase;
 class Pso
 {
 public:
-	//初期化
+	/// <summary>
+	/// 初期化する。
+	/// DirectXBase のポインタを保存し、以降の RootSignature / PipelineState 作成で利用する。
+	/// </summary>
+	/// <param name="directXBase">DirectX の共通処理を提供する <c>DirectXBase</c> のポインタ。</param>
 	void Initialize(DirectXBase*directXBase);
-	//Object3D用RootSignature
+	/// <summary>
+	/// Object3D 用のルートシグネチャを作成する。
+	/// - CBV / SRV のルートパラメータ、スタティックサンプラを設定し、シリアライズした後にデバイス上で生成する。
+	/// </summary>
 	void CreateRootSignature();
-	//Object3D用PipelineState
+	/// <summary>
+	/// Object3D 用のグラフィックスパイプラインステートを作成する。
+	/// - 頂点レイアウト、ブレンド／ラスタライザ／深度ステンシル等を設定し、シェーダーをコンパイルして PSO を生成する。
+	/// </summary>
 	void CreatePipelineState();
-	//Sprite用RootSignature
+	/// <summary>
+	/// Sprite 用のルートシグネチャを作成する。
+	/// - Sprite 固有の SRV/CBV レイアウトとスタティックサンプラを定義して生成する。
+	/// </summary>
 	void CreateSpriteRootSignature();
-	//Sprite用PipelineState
+	/// <summary>
+	/// Sprite 用のグラフィックスパイプラインステートを作成する。
+	/// - Sprite シェーダーをコンパイルし、入力レイアウトやブレンドなどを設定して PSO を生成する。
+	/// </summary>
 	void CreateSpritePipelineState();
-	//Particle用RootSignature
+	/// <summary>
+	/// Particle 用のルートシグネチャを作成する。
+	/// - インスタンシング用の SRV テーブルや必要な CBV を定義して生成する。
+	/// </summary>
 	void CreateParticleRootSignature();
-	//Particle用PipelineState
+	/// <summary>
+	/// Particle 用のグラフィックスパイプラインステートを作成する。
+	/// - パーティクル描画に適したブレンド設定や深度設定を行い、対応シェーダーで PSO を生成する。
+	/// </summary>
 	void CreateParticlePipelineState();
-	//PostEffect用RootSignature
+	/// <summary>
+	/// PostEffect 用のルートシグネチャを作成する。
+	/// - フルスクリーンポスト処理用に SRV と CBV を持つレイアウトを定義して生成する。
+	/// </summary>
 	void CreatePostEffectRootSignature();
-	//PostEffect用PipelineState
+	/// <summary>
+	/// PostEffect 用のグラフィックスパイプラインステートを作成する。
+	/// - フルスクリーン描画に適した入力レイアウト（無し）／シェーダー／深度設定で PSO を生成する。
+	/// </summary>
 	void CreatePostEffectPipelineState();
-	//SkyBox用RootSignature
+	/// <summary>
+	/// SkyBox 用のルートシグネチャを作成する。
+	/// - SkyBox 描画に必要な SRV / CBV レイアウトを定義して生成する。
+	/// </summary>
 	void CreateSkyBoxRootSignature();
-	//SkyBox用PipelineState
+	/// <summary>
+	/// SkyBox 用のグラフィックスパイプラインステートを作成する。
+	/// - SkyBox 用シェーダーをコンパイルし、適切な深度／ラスタライザ設定で PSO を生成する。
+	/// </summary>
 	void CreateSkyBoxPipelineState();
 public:
-	///Getter///
-
-	///---Object3D---///
-	//ルートシグネチャ取得
+	/// <summary>Object3D 用のルートシグネチャを取得する。</summary>
 	ID3D12RootSignature* GetRootSignature()const { return rootSignature.Get(); }
-	//パイプラインステート取得
+	/// <summary>Object3D 用のグラフィックスパイプラインステートを取得する。</summary>
 	ID3D12PipelineState* GetGraphicsPipelineState()const { return graphicsPipelineState.Get(); }
 
-	///---Sprite---///
-	//ルートシグネチャ取得
+	/// <summary>Sprite 用のルートシグネチャを取得する。</summary>
 	ID3D12RootSignature* GetSpriteRootSignature()const { return spriteRootSignature.Get(); }
-	//パイプラインステート取得
+	/// <summary>Sprite 用のグラフィックスパイプラインステートを取得する。</summary>
 	ID3D12PipelineState* GetSpriteGraphicsPipelineState()const { return spriteGraphicsPipelineState.Get(); }
 
-	///---Particle---///
-	//ルートシグネチャ取得
+	/// <summary>Particle 用のルートシグネチャを取得する。</summary>
 	ID3D12RootSignature* GetParticleRootSignature()const { return particleRootSignature.Get(); }
-	//パイプラインステート取得
+	/// <summary>Particle 用のグラフィックスパイプラインステートを取得する。</summary>
 	ID3D12PipelineState* GetParticleGraphicsPipelineState()const { return particleGraphicsPipelineState.Get(); }
 	
-    ///---PostEffect---///
-	//ルートシグネチャ取得
+    /// <summary>PostEffect 用のルートシグネチャを取得する。</summary>
 	ID3D12RootSignature* GetPostEffectRootSignature()const { return postEffectRootSignature.Get(); }
-	//パイプラインステート取得
+	/// <summary>PostEffect 用のグラフィックスパイプラインステートを取得する。</summary>
 	ID3D12PipelineState* GetPostEffectGraphicsPipelineState()const { return postEffectGraphicsPipelineState.Get(); }
 	
-	///---SkyBox---///
-	//ルートシグネチャ取得
+	/// <summary>SkyBox 用のルートシグネチャを取得する。</summary>
 	ID3D12RootSignature* GetSkyBoxRootSignature()const { return skyBoxRootSignature.Get(); }
-	//パイプラインステート取得
+	/// <summary>SkyBox 用のグラフィックスパイプラインステートを取得する。</summary>
 	ID3D12PipelineState* GetSkyBoxGraphicsPipelineState()const { return skyBoxGraphicsPipelineState.Get(); }
 
 private:

@@ -1,56 +1,63 @@
 #include "playerBullet.h"
 #include "MyMath.h"
 
-//初期化
+// 弾の初期化処理
 void playerBullet::Initialize(Object3dBase* object3dbase) {
 	object3dbase_ = object3dbase;
 
-	//オブジェクト初期化
+	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(object3dbase_);
 	object_->SetModel("player/playerbullet.obj");
 	object_->SetScale({ 1.0f,1.0f,1.0f });
 
-	//デスタイマー
+	// 寿命タイマーの初期化
 	deathTimer = kLifeTime;
 }
-//更新
+
+// 毎フレームの更新処理
 void playerBullet::Update() {
 	if (isDead_) {
 		return;
 	}
-	//移動
+	// 速度ベクトル分だけ座標を移動
 	transform_.translate = Math::Add(transform_.translate, velocity_);
-	//時間経過で消える
+
+	// 寿命タイマー減算・0以下で消滅フラグ
 	if (--deathTimer <= 0) {
 		isDead_ = true;
 	}
+
+	// オブジェクトの座標を更新
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
 }
-//描画
+
+// 弾の描画処理
 void playerBullet::Draw() {
 	if (isDead_) {
 		return;
 	}
 	object_->Draw();
 }
-//衝突時コールバック関数
+
+// 衝突時の処理（消滅フラグを立てる）
 void playerBullet::OnCollision() {
 	isDead_ = true;
 }
-//OBB取得関数
+
+// OBB（当たり判定用の回転付きボックス）取得
 OBB playerBullet::GetOBB()const {
 	OBB obb;
-	//中心位置
 	obb.center = transform_.translate;
-	//回転行列
+
+	// 回転行列から各軸ベクトルを算出・正規化
 	Matrix4x4 rotMat = Math::MakeRotateMatrix(transform_.rotate);
-	//各軸ベクトルを正規化
 	obb.orientations[0] = Math::Normalize({ rotMat.m[0][0], rotMat.m[1][0], rotMat.m[2][0] }); // X軸
 	obb.orientations[1] = Math::Normalize({ rotMat.m[0][1], rotMat.m[1][1], rotMat.m[2][1] }); // Y軸
 	obb.orientations[2] = Math::Normalize({ rotMat.m[0][2], rotMat.m[1][2], rotMat.m[2][2] }); // Z軸
 
+	// スケールと寸法からサイズ算出
 	obb.size = (transform_.scale * dimensions) * 0.5f;
 
 	return obb;
