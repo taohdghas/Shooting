@@ -102,7 +102,7 @@ void GameScene::Update() {
 	FollowCamera();
 
 	//衝突チェック
-	/*
+	
 	for (auto& enemy : enemies) {
 		collisionManager->CheckPECollisions(player.get(), enemy.get());
 
@@ -117,7 +117,7 @@ void GameScene::Update() {
 			enemy->SetisDeathParticle(false);
 		}
 	}
-	*/
+	
 
 	//プレイヤー
 	player->Update(isStartAnimation, isReturning);
