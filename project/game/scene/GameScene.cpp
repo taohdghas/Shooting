@@ -61,6 +61,7 @@ void GameScene::Initialize() {
 		transform.translate = playerData.translation;
 
 		player->SetTranslate(transform.translate);
+		player->SetPlatform(platform.get());
 	}
 
 	for (auto& enemyData : levelData->enemies) {
@@ -119,7 +120,7 @@ void GameScene::Update() {
 	*/
 
 	//プレイヤー
-	player->Update();
+	player->Update(isStartAnimation, isReturning);
 	//敵
 	for (auto& enemy : enemies) {
 		enemy->Update();
@@ -127,7 +128,7 @@ void GameScene::Update() {
 	//skybox
 	skybox->Update();
 	//プラットフォーム
-	platform->Update();
+	platform->Update(isStartAnimation, isReturning);
 
 	//パーティクル
 	ParticleManager::GetInstance()->Update();

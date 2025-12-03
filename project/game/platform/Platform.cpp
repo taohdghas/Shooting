@@ -12,7 +12,19 @@ void Platform::Initialize(Object3dBase* object3dbase) {
 	transform_.translate = { 0.0f,-1.9f,0.0f };
 }
 //更新
-void Platform::Update() {
+void Platform::Update(bool isStartAnimation, bool isReturning) {
+	//スタート演出中は動かない
+	if (isStartAnimation || isReturning) {
+		object_->SetScale(transform_.scale);
+		object_->SetRotate(transform_.rotate);
+		object_->SetTranslate(transform_.translate);
+		object_->Update();
+		return;
+	}
+
+	//奥方向移動
+	transform_.translate.z += moveSpeedz_;
+
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);

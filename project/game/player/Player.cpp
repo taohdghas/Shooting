@@ -3,6 +3,7 @@
 #include "MyMath.h"
 #include "ImGuiManager.h"
 #include "CameraManager.h"
+#include "Platform.h"
 #include <algorithm>
 
 Player::Player() {}
@@ -28,11 +29,33 @@ void Player::Initialize(Object3dBase* object3dbase) {
 }
 
 //更新
-void Player::Update() {
+void Player::Update(bool isStartAnimation, bool isReturning) {
 	//デスの場合スキップ
 	if (isDead_) {
 		return;
 	}
+
+	// スタート演出中は追従しない
+	if (!isStartAnimation && !isReturning && platform_) {
+		//追従初回フレームで前フレーム位置を初期化
+		if (!isFollowingPlatformInitialized) {
+			prevPlatformPos_ = platform_->GetTranslate();
+			isFollowingPlatformInitialized = true;
+		}
+
+		// プラットフォームの移動量
+		Vector3 platformDelta = platform_->GetTranslate() - prevPlatformPos_;
+		prevPlatformPos_ = platform_->GetTranslate();
+
+		//Z方向追従
+		Vector3 pos = transform_.translate;
+		pos.z += platformDelta.z;
+		transform_.translate = pos;
+	} else {
+		//スタート演出中初期化リセット
+		isFollowingPlatformInitialized = false;
+	}
+
 	//攻撃クールタイム
 	if (attackCooldown_ > 0) {
 		attackCooldown_--;

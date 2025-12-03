@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 
+class Platform;
 //プレイヤー
 class Player
 {
@@ -22,7 +23,7 @@ public:
 	//初期化
 	void Initialize(Object3dBase* object3dbase);
 	//更新
-	void Update();
+	void Update(bool isStartAnimation, bool isReturning);
 	//描画
 	void Draw();
 	//レティクルの描画
@@ -70,7 +71,8 @@ public:
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 	//座標セット
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
-	
+	//プラットフォームセット
+	void SetPlatform(Platform* platform) { platform_ = platform; }
 private:
 	Object3dBase* object3dBase_;
 	Camera* camera_;
@@ -82,6 +84,10 @@ private:
 	std::list<std::unique_ptr<playerBullet>>bullets_;
 	//レティクル
 	std::unique_ptr<Sprite>reticle_;
+	//プラットフォーム
+	Platform* platform_ = nullptr;      
+	//前フレームのプラットフォーム位置
+	Vector3 prevPlatformPos_ = { 0,0,0 }; 
 	//画面上の位置
 	Vector2 reticleScreenPos_{ 640.0f, 360.0f }; 
 	Vector2 reticlePos_ = { 640.0f, 360.0f };
@@ -99,6 +105,8 @@ private:
 	bool isJumping_ = false;
 	//無敵フラグ(デバック)
 	bool isInvincible = false;
+	//追従プラットフォーム初期化フラグ
+	bool isFollowingPlatformInitialized = false; 
 	//モデルの寸法
 	float dimensions = 2.0f;
 	//プレイヤーの移動速度
