@@ -12,7 +12,6 @@
 #include "CollisionManager.h"
 #include "JsonManager.h"
 #include "Fade.h"
-#include "RailCamera.h"
 
 #include <vector>
 
@@ -38,6 +37,8 @@ public:
 public:
 	//スタート演出
 	void StartAnimation();
+
+	void FollowCamera();
 private:
 	//プレイヤー
 	std::unique_ptr<Player>player;
@@ -51,8 +52,6 @@ private:
 	std::vector<std::unique_ptr<ParticleEmitter>>particleEmitter;
 	//衝突マネージャー
 	std::unique_ptr<CollisionManager>collisionManager;
-	//レールカメラ
-	std::unique_ptr<RailCamera>railCamera;
 	//カメラ
 	std::unique_ptr<Camera>camera;
 	//JsonManager
@@ -71,8 +70,10 @@ private:
 	bool isStartAnimation = true;
 	//カメラ収束フラグ
 	bool isReturning = false;
+	bool isFollowingInitialized = false; // 追従開始時フラグ
 	//回転タイマー
 	float cameraRotateTimer = 0.0f;
+	float zOffset = 0.0f;               // プレイヤーとのZオフセット
 	//回転開始時のカメラ位置
 	Vector3 cameraStartPos;
 	//回転開始時のカメラ回転

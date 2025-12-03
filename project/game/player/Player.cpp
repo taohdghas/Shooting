@@ -68,6 +68,7 @@ void Player::Update() {
 	}
 	//回避
 	Dodge();
+
 	//各Transformをobjectに反映
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);

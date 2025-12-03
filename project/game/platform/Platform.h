@@ -16,7 +16,14 @@ public:
 	//デバック
 	void Debug();
 public:
-	void SetTransform(const Vector3& translate) { transform_.translate = translate; }
+	///Gettter///
+
+	//座標取得
+	const Vector3& GetTranslate()const { return transform_.translate; }
+	///Setter///
+	
+	//座標セット
+	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 private:
 	Object3dBase* object3dBase_;
 	Transform transform_;

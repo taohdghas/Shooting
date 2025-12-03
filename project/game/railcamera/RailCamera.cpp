@@ -51,6 +51,6 @@ void RailCamera::Update() {
     if (platform_) {
         Vector3 platPos = platformOffset_;
         platPos.z += camPos.z;
-        platform_->SetTransform(platPos);
+        platform_->SetTranslate(platPos);
     }
 }

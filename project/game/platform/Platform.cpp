@@ -25,7 +25,7 @@ void Platform::Draw() {
 //デバック
 void Platform::Debug() {
 #ifdef USE_IMGUI
-	if (ImGui::TreeNode("Platform")) {
+	if (ImGui::TreeNodeEx("Platform", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::DragFloat3("PlatformScale", &transform_.scale.x, 0.1f);
 		ImGui::DragFloat3("PlatformRotate", &transform_.rotate.x, 0.1f);
 		ImGui::DragFloat3("PlatformTranslate", &transform_.translate.x, 0.1f);
