@@ -18,12 +18,12 @@ void RailCamera::Update() {
     if (platform_) targetPos += platformOffset_;
 
     // 補間で追従
-    Vector3 camPos = camera_.GetTranslate();
-    camPos.x += (targetPos.x - camPos.x) * speed_;
-    camPos.y += (targetPos.y - camPos.y) * speed_;
-    camPos.z += (targetPos.z - camPos.z) * speed_;
+   // Vector3 camPos = camera_.GetTranslate();
+    //camPos.x += (targetPos.x - camPos.x) * speed_;
+    //camPos.y += (targetPos.y - camPos.y) * speed_;
+    //camPos.z += (targetPos.z - camPos.z) * speed_;
 
-    camera_.SetTranslate(camPos);
+    camera_.SetTranslate(targetPos);
     camera_.Update();
 }
 //デバッグ
@@ -33,46 +33,3 @@ void RailCamera::Debug() {
     ImGui::Text("Position: X=%.2f Y=%.2f Z=%.2f", camPos.x, camPos.y, camPos.z);
 #endif
 }
-
-// カメラの座標（平行移動）を設定
-void RailCamera::SetTranslate(const Vector3& pos) {
-    camera_.SetTranslate(pos);
-}
-// カメラの回転を設定
-void RailCamera::SetRotate(const Vector3& rot) {
-    camera_.SetRotate(rot);
-}
-// プレイヤーの参照をセット
-void RailCamera::SetPlayer(Player* player) {
-    player_ = player;
-}
-
-// プレイヤーのカメラからのオフセットをセット
-void RailCamera::SetPlayerOffset(const Vector3& offset) {
-    playerOffset_ = offset;
-}
-
-// プラットフォームの参照をセット
-void RailCamera::SetPlatform(Platform* platform) {
-    platform_ = platform;
-}
-
-// プラットフォームのカメラからのオフセットをセット
-void RailCamera::SetPlatformOffset(const Vector3& offset) {
-    platformOffset_ = offset;
-}
-
-// カメラの進行速度をセット
-void RailCamera::SetSpeed(float speed) {
-    speed_ = speed;
-}
-
-void RailCamera::EnableFollow(bool enable) {
-    followEnabled_ = enable;
-}
-
-// カメラのポインタを取得
-Camera* RailCamera::GetCamera() {
-    return &camera_;
-}
-

@@ -45,7 +45,7 @@ void GameScene::Initialize() {
 	camera->SetRotate({ 0, 0, 0 });
 	CameraManager::GetInstance()->AddCamera("Start", camera.get());
     CameraManager::GetInstance()->AddCamera("Main", railCamera->GetCamera()); 
-	CameraManager::GetInstance()->SetActiveCamera("Main");
+	CameraManager::GetInstance()->SetActiveCamera("Start");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
 
 	//初期位置・回転を保存（StartCameraの値を保存）
@@ -125,22 +125,22 @@ void GameScene::Update() {
 	// カメラの更新
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
 
-	//StartAnimation();
+	StartAnimation();
+
+	if(!isStartAnimation && !isReturning) {
+		//プレイヤー奥移動
+		Vector3 playerPos = player->GetTranslate();
+		playerPos.z += 0.2f; 
+		player->SetTranslate(playerPos);
+
+		//プラットフォーム奥移動
+		Vector3 platPos = platform->GetTranslate();
+		platPos.z += 0.2f; 
+		platform->SetTranslate(platPos);
+	}
 
 	// レールカメラの更新
 	railCamera->Update();
-
-	if(!isStartAnimation && !isReturning) {
-		// プレイヤー奥移動
-		Vector3 playerPos = player->GetTranslate();
-		playerPos.z += 0.2f; // 任意の速度に調整
-		player->SetTranslate(playerPos);
-
-		// プラットフォーム奥移動
-		Vector3 platPos = platform->GetTranslate();
-		platPos.z += 0.2f; // プレイヤーと同じ速度
-		platform->SetTranslate(platPos);
-	}
 
 	// 敵ごとの衝突判定・デスパーティクル処理
 	for (auto& enemy : enemies) {
@@ -248,7 +248,7 @@ void GameScene::Debug() {
 		camera->SetTranslate({ cameraPos.x,cameraPos.y,cameraPos.z });
 		camera->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
 
-		//railCamera->Debug();
+		railCamera->Debug();
 		ImGui::TreePop();
 	}
 	// プレイヤーのデバッグ表示

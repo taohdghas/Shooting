@@ -29,53 +29,53 @@ public:
     /// - 内部 Camera の位置を直接指定することで、レール追従以外の制御も可能。
     /// </summary>
     /// <param name="pos">設定する座標ベクトル。</param>
-	void SetTranslate(const Vector3& pos);
+	void SetTranslate(const Vector3& pos) { camera_.SetTranslate(pos); }
 
 	/// <summary>
 	/// カメラの回転を設定する。
 	/// - 内部 Camera の回転を直接指定することで、視点方向を任意に制御できる。
 	/// </summary>
 	/// <param name="rot">設定する回転ベクトル。</param>
-	void SetRotate(const Vector3& rot);
+	void SetRotate(const Vector3& rot) { camera_.SetRotate(rot); }
 	/// <summary>
 	/// 追従対象のプレイヤーを設定する。
 	/// - SetPlayer を呼んだあと Update でプレイヤー追従が行われる。
 	/// </summary>
 	/// <param name="player">追従対象の Player ポインタ。</param>
-	void SetPlayer(Player* player);
+	void SetPlayer(Player* player) { player_ = player; }
 	/// <summary>
 	/// プレイヤーに対するオフセットを設定する。
 	/// - カメラがプレイヤーからどの相対位置に配置されるかを指定する。
 	/// </summary>
 	/// <param name="offset">プレイヤーからの相対オフセットベクトル。</param>
-	void SetPlayerOffset(const Vector3& offset);
+	void SetPlayerOffset(const Vector3& offset) { playerOffset_ = offset; }
 	/// <summary>
 	/// 追従対象のプラットフォームを設定する。
 	/// - 必要に応じてプレイヤー追従とプラットフォーム追従を組み合わせてカメラ位置を決定する。
 	/// </summary>
 	/// <param name="platform">追従対象の Platform ポインタ。</param>
-	void SetPlatform(Platform* platform);
+	void SetPlatform(Platform* platform) { platform_ = platform; }
 	/// <summary>
 	/// プラットフォームに対するオフセットを設定する。
 	/// - プラットフォーム基準でのカメラ相対位置を指定する。
 	/// </summary>
 	/// <param name="offset">プラットフォームからの相対オフセットベクトル。</param>
-	void SetPlatformOffset(const Vector3& offset);
+	void SetPlatformOffset(const Vector3& offset) { platformOffset_ = offset; }
 	/// <summary>
 	/// カメラ追従速度を設定する。
 	/// - 大きいほど速く追従し、小さいほど緩やかに補間される。
 	/// </summary>
 	/// <param name="speed">追従速度（任意の単位）。</param>
-	void SetSpeed(float speed);
+	void SetSpeed(float speed) { speed_ = speed; }
 
-	void EnableFollow(bool enable);
+	void EnableFollow(bool enable){ followEnabled_ = enable; }
 
 	/// <summary>
 	/// 内部で管理している Camera のポインタを取得する。
 	/// - 取得した Camera を描画やシーンにセットして利用できる。
 	/// </summary>
 	/// <returns>内部 Camera へのポインタ。</returns>
-	Camera* GetCamera();
+	Camera* GetCamera(){ return &camera_; }
 
 	/// <summary>
 	/// プレイヤーに対するオフセットを取得する。
