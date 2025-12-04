@@ -75,6 +75,29 @@ public:
     /// </summary>
     void CreateSkyBoxPipelineState();
 
+private:
+    void CreateRootSignatureCommon(
+        D3D12_ROOT_PARAMETER* rootParameters, UINT numRootParams,
+        D3D12_DESCRIPTOR_RANGE* descriptorRanges, UINT numDescriptorRanges,
+        D3D12_STATIC_SAMPLER_DESC* staticSamplers, UINT numStaticSamplers,
+        Microsoft::WRL::ComPtr<ID3D12RootSignature>& outRootSignature);
+    void CreateGraphicsPipelineStateCommon(
+        ID3D12RootSignature* rootSignature,
+        const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc,
+        const D3D12_BLEND_DESC& blendDesc,
+        const D3D12_RASTERIZER_DESC& rasterizerDesc,
+        const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc,
+        DXGI_FORMAT rtvFormat,
+        DXGI_FORMAT dsvFormat,
+        const wchar_t* vsPath,
+        const wchar_t* vsProfile,
+        const wchar_t* psPath,
+        const wchar_t* psProfile,
+        Microsoft::WRL::ComPtr<ID3D12PipelineState>& outPipelineState);
+    void SetRootParameterCBV(D3D12_ROOT_PARAMETER& param, UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility);
+    void SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER& param, D3D12_DESCRIPTOR_RANGE* range, UINT numRanges, D3D12_SHADER_VISIBILITY visibility);
+    void SetStaticSampler(D3D12_STATIC_SAMPLER_DESC& sampler, D3D12_FILTER filter, D3D12_TEXTURE_ADDRESS_MODE addressU, D3D12_TEXTURE_ADDRESS_MODE addressV, D3D12_TEXTURE_ADDRESS_MODE addressW, UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility);
+
 public:
     /// <summary>Object3D 用のルートシグネチャを取得する。</summary>
     ID3D12RootSignature* GetRootSignature() const { return root_signature_.Get(); }

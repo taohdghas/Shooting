@@ -149,7 +149,7 @@ namespace Math {
     /// <param name="v">ベクトル</param>
     /// <param name="scalar">スカラー値</param>
     /// <returns>掛け算結果のベクトル</returns>
-    Vector3 Multiply(const Vector3& v, const float scalar);
+    Vector3 MultiplyScalar(const Vector3& v, const float scalar);
 
     /// <summary>ベクトルを行列で変換（座標変換）</summary>
     /// <param name="vector">変換対象のベクトル</param>

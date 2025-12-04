@@ -134,7 +134,7 @@ void Enemy::Laser() {
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3d_base_);
 	bullet->SetTranslate(transform_.translate);
-	bullet->SetVelocity(Math::Multiply(direction, 0.2f));
+	bullet->SetVelocity(Math::MultiplyScalar(direction, 0.2f));
 
 	bullets_.emplace_back(std::move(bullet));
 }

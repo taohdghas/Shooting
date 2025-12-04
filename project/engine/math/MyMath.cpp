@@ -55,7 +55,7 @@ namespace Math {
 		return result;
 	}
 	//積(Vectorｘscaler)
-	Vector3 Math::Multiply(const Vector3& v, const float scalar) {
+	Vector3 Math::MultiplyScalar(const Vector3& v, const float scalar) {
 		Vector3 result{};
 		result.x = v.x * scalar;
 		result.y = v.y * scalar;
