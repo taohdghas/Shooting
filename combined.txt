@@ -2529,33 +2529,30 @@ File Path: project/engine/Particle/ParticleEmitter.cpp
 ============================================================
 #include "ParticleEmitter.h"
 
+// ParticleTypeごとの初期値テーブル定義
+const std::unordered_map<ParticleType, ParticleEmitter::ParticleEmitterInitData> ParticleEmitter::kEmitterInitTable = {
+    { ParticleType::Normal,    { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
+    { ParticleType::Ring,      { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
+    { ParticleType::Cylinder,  { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
+    { ParticleType::Explosive, { 15, 5.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } }
+};
+
 // 初期化処理
 void ParticleEmitter::Initialize(const std::string& name) {
     name_ = name;
     emitter_.frequency_time_ = 0.0f; // 発生タイマーを初期化
 
-    // ParticleManagerからパーティクルの種類を取得
     ParticleType type = ParticleManager::GetInstance()->GetParticleType(name_);
 
-    // パーティクルタイプごとの初期設定
-    switch (type) {
-    case ParticleType::Normal:    // 通常パーティクル
-    case ParticleType::Ring:      // リング型
-    case ParticleType::Cylinder:  // シリンダー型
-        emitter_.count_ = 1;
-        emitter_.frequency_ = 99.0f; // 発生頻度（秒）
-        emitter_.transform.scale = { 1.0f, 1.0f, 1.0f };
-        emitter_.transform.rotate = { 0.0f, 0.0f, 0.0f };
-        emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
-        break;
+    auto it = kEmitterInitTable.find(type);
+    assert(it != kEmitterInitTable.end());
+    const auto& init = it->second;
 
-    case ParticleType::Explosive: // 爆発型パーティクル
-        emitter_.count_ = 15;       // 多数のパーティクルを一度に発生
-        emitter_.frequency_ = 5.0f; // 発生頻度
-        emitter_.transform.scale = { 1.0f, 1.0f, 1.0f };
-        emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
-        break;
-    }
+    emitter_.count_ = init.count;
+    emitter_.frequency_ = init.frequency;
+    emitter_.transform.scale = init.scale;
+    emitter_.transform.rotate = init.rotate;
+    emitter_.transform.translate = init.translate;
 }
 
 // 更新処理（フレームごとに呼ばれる）
@@ -2595,6 +2592,16 @@ public:
         float frequency_time_;    // 頻度用時刻
     };
 
+	// エミッター初期化データ
+    struct ParticleEmitterInitData {
+        int count;
+        float frequency;
+        Vector3 scale;
+        Vector3 rotate;
+        Vector3 translate;
+    };
+
+
 public:
     /// <summary>
     /// エミッターを初期化する。
@@ -2627,6 +2634,9 @@ public:
     void SetPosition(const Vector3& pos) { emitter_.transform.translate = pos; }
 
 private:
+    //ParticleTypeごとの初期値テーブル
+    static const std::unordered_map<ParticleType, ParticleEmitterInitData> kEmitterInitTable;
+
     Emitter emitter_;
     std::string name_;
 	const float kDeltaTime = 1.0f / 60.0f;
@@ -6007,6 +6017,14 @@ ParticleManager* ParticleManager::GetInstance() {
 	return instance.get();
 }
 
+// ParticleTypeごとの初期値テーブル定義
+const std::unordered_map<ParticleType, ParticleManager::ParticleInitData> ParticleManager::kParticleInitTable = {
+	{ ParticleType::Normal,    { {0.05f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, -10.0f, 0.0f}, {}, 1.0f } },
+	{ ParticleType::Ring,      { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},   {1.0f,1.0f,1.0f,1.0f}, 1.0f } },
+	{ ParticleType::Cylinder,  { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},   {1.0f,1.0f,1.0f,1.0f}, 99.0f } },
+	{ ParticleType::Explosive, { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 1.0f},  {1.0f,1.0f,1.0f,1.0f}, 1.5f } }
+};
+
 void ParticleManager::Initialize(DirectXBase* directx_base, SrvManager* srv_manager, Camera* camera) {
 	this->directx_base_ = directx_base;
 	this->srv_manager_ = srv_manager;
@@ -6211,46 +6229,31 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 
 // 新規パーティクル作成
 ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& engine, const Vector3& translate, ParticleType type) {
-	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
-	std::uniform_real_distribution<float> dist_color(0.0f, 1.0f);
-	std::uniform_real_distribution<float> dist_time(1.0f, 3.0f);
-	std::uniform_real_distribution<float> dist_scale(0.4f, 1.5f);
-	std::uniform_real_distribution<float> dist_rotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
+    std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+    std::uniform_real_distribution<float> dist_color(0.0f, 1.0f);
+    std::uniform_real_distribution<float> dist_scale(0.4f, 1.5f);
 
-	Particle particle;
+    Particle particle;
 
-	if (type == ParticleType::Normal) {
-		particle.transform.scale = { 0.05f, dist_scale(engine), 1.0f };
-		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-		particle.transform.translate = translate;
-		particle.velocity = { 0.0f, -10.0f, 0.0f };
-		particle.color = { dist_color(engine), dist_color(engine), dist_color(engine) };
-		particle.life_time = 1.0f;
-	} else if (type == ParticleType::Ring) {
-		particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-		particle.transform.translate = translate;
-		particle.velocity = { 0.0f, 0.0f, 0.0f };
-		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		particle.life_time = 1.0f;
-	} else if (type == ParticleType::Cylinder) {
-		particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-		particle.transform.translate = translate;
-		particle.velocity = { 0.0f, 0.0f, 0.0f };
-		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		particle.life_time = 99.0f; // 長寿命
-	} else if (type == ParticleType::Explosive) {
-		particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-		particle.transform.rotate = { 0.0f, 0.0f, -5.0f };
-		particle.transform.translate = translate;
-		particle.velocity = { 0.0f, 0.0f, 1.0f };
-		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		particle.life_time = 1.5f;
-	}
+    auto it = kParticleInitTable.find(type);
+    assert(it != kParticleInitTable.end());
+    const auto& init = it->second;
 
-	particle.current_time = 0.0f;
-	return particle;
+    particle.transform.scale = init.scale;
+    particle.transform.rotate = init.rotate;
+    particle.transform.translate = translate;
+    particle.velocity = init.velocity;
+    particle.color = init.color;
+    particle.life_time = init.life_time;
+
+    // typeごとのランダム値や特殊処理
+    if (type == ParticleType::Normal) {
+        particle.transform.scale.y = dist_scale(engine);
+        particle.color = { dist_color(engine), dist_color(engine), dist_color(engine) };
+    }
+
+    particle.current_time = 0.0f;
+    return particle;
 }
 // パーティクル発生
 void ParticleManager::Emit(const std::string& name, const Vector3& position, uint32_t count) {
@@ -6400,6 +6403,7 @@ File Path: project/engine/manager/ParticleManager.h
 #include <unordered_map>
 #include <string>
 #include <random>
+#include <unordered_map>
 
 // パーティクル種類
 enum class ParticleType {
@@ -6447,6 +6451,15 @@ public:
         ModelData model_data;
         Microsoft::WRL::ComPtr<ID3D12Resource> vertex_resource;
         D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view;
+    };
+
+	// パーティクル初期値データ
+    struct ParticleInitData {
+        Vector3 scale;
+        Vector3 rotate;
+        Vector3 velocity;
+        Vector4 color;
+        float life_time;
     };
 
 public:
@@ -6548,6 +6561,8 @@ private:
         VertexData*& vertex_data);
 private:
     static std::unique_ptr<ParticleManager> instance;
+    // ParticleTypeごとの初期値テーブル
+    static const std::unordered_map<ParticleType, ParticleInitData> kParticleInitTable;
 
     DirectXBase* directx_base_;
     SrvManager* srv_manager_;
@@ -8734,7 +8749,7 @@ private:
     Vector4 color_;
     bool is_dead_ = false;
     bool is_death_particle_ = false;
-    int hp_ = 100;
+    int hp_ = 10;
     int fire_timer_count_ = 0;
     int fire_timer_ = 0;
     float radius_ = 1.0f;
@@ -8925,6 +8940,16 @@ File Path: project/game/fade/Fade.cpp
 #include "SpriteBase.h"
 #include "MyMath.h"
 #include <algorithm>
+#include <unordered_map>
+#include <functional>
+
+// フェード種別ごとのアルファ計算関数
+using AlphaFunc = std::function<float(float)>;
+
+static const std::unordered_map<Fade::State, AlphaFunc> kAlphaFuncTable = {
+    { Fade::State::FadeIn,  [](float eased) { return 1.0f - eased; } },
+    { Fade::State::FadeOut, [](float eased) { return eased; } }
+};
 
 // フェード用スプライトの初期化
 void Fade::Initialize() {
@@ -8955,18 +8980,10 @@ void Fade::Update() {
 
     float alpha = 1.0f;
 
-    // フェード種別に応じてアルファ値を決定
-    switch (state_) {
-    case State::FadeIn:
-        alpha = 1.0f - eased;  // フェードイン：徐々に透明に
-        break;
-
-    case State::FadeOut:
-        alpha = eased;         // フェードアウト：徐々に不透明に
-        break;
-
-    default:
-        break;
+    // データドリブンでアルファ値を決定
+    auto it = kAlphaFuncTable.find(state_);
+    if (it != kAlphaFuncTable.end()) {
+        alpha = it->second(eased);
     }
 
     // スプライトの色（アルファ）を更新
