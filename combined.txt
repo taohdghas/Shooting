@@ -5731,67 +5731,25 @@ LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
 
         // 種別ごとの処理
         if (type.compare("MESH") == 0) {
-            // オブジェクトを追加
             level_data->objects.emplace_back(LevelData::ObjectData{});
             LevelData::ObjectData& object_data = level_data->objects.back();
 
-            // ファイル名が存在すれば設定
             if (object_json.contains("file_name")) {
                 object_data.fileName = object_json["file_name"];
             }
 
-            // トランスフォームを読み込み
-            nlohmann::json& transform = object_json["transform"];
-            object_data.translation.x = (float)transform["translation"][0];
-            object_data.translation.y = (float)transform["translation"][2];
-            object_data.translation.z = (float)transform["translation"][1];
+            ReadTransform(object_json["transform"], object_data.translation, object_data.rotation, object_data.scaling);
 
-            object_data.rotation.x = -(float)transform["rotation"][0];
-            object_data.rotation.y = -(float)transform["rotation"][2];
-            object_data.rotation.z = -(float)transform["rotation"][1];
-
-            object_data.scaling.x = (float)transform["scaling"][0];
-            object_data.scaling.y = (float)transform["scaling"][2];
-            object_data.scaling.z = (float)transform["scaling"][1];
         } else if (type.compare("PlayerSpawn") == 0) {
             PlayerSpawnData player_spawn{};
-
-            // トランスフォーム読み込み
-            nlohmann::json& transform = object_json["transform"];
-            player_spawn.translation.x = (float)transform["translation"][0];
-            player_spawn.translation.y = (float)transform["translation"][2];
-            player_spawn.translation.z = (float)transform["translation"][1];
-
-            player_spawn.rotation.x = -(float)transform["rotation"][0];
-            player_spawn.rotation.y = -(float)transform["rotation"][2];
-            player_spawn.rotation.z = -(float)transform["rotation"][1];
-
-            player_spawn.scaling.x = (float)transform["scaling"][0];
-            player_spawn.scaling.y = (float)transform["scaling"][2];
-            player_spawn.scaling.z = (float)transform["scaling"][1];
-
+            ReadTransform(object_json["transform"], player_spawn.translation, player_spawn.rotation, player_spawn.scaling);
             level_data->players.push_back(player_spawn);
+
         } else if (type.compare("EnemySpawn") == 0) {
             EnemySpawnData enemy_spawn{};
-
             enemy_spawn.name = object_json["name"].get<std::string>();
-
             enemy_spawn.fileName = object_json["file_name"].get<std::string>();
-
-            // トランスフォーム読み込み
-            nlohmann::json& transform = object_json["transform"];
-            enemy_spawn.translation.x = (float)transform["translation"][0];
-            enemy_spawn.translation.y = (float)transform["translation"][2];
-            enemy_spawn.translation.z = (float)transform["translation"][1];
-
-            enemy_spawn.rotation.x = -(float)transform["rotation"][0];
-            enemy_spawn.rotation.y = -(float)transform["rotation"][2];
-            enemy_spawn.rotation.z = -(float)transform["rotation"][1];
-
-            enemy_spawn.scaling.x = (float)transform["scaling"][0];
-            enemy_spawn.scaling.y = (float)transform["scaling"][2];
-            enemy_spawn.scaling.z = (float)transform["scaling"][1];
-
+            ReadTransform(object_json["transform"], enemy_spawn.translation, enemy_spawn.rotation, enemy_spawn.scaling);
             level_data->enemies.push_back(enemy_spawn);
         }
 
@@ -5836,6 +5794,22 @@ LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
     return level_data;
 }
 
+void JsonManager::ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling) {
+    // translation: Y/Z入れ替え
+    translation.x = (float)transform["translation"][0];
+    translation.y = (float)transform["translation"][2];
+    translation.z = (float)transform["translation"][1];
+
+    // rotation: Y/Z入れ替え＋符号反転
+    rotation.x = -(float)transform["rotation"][0];
+    rotation.y = -(float)transform["rotation"][2];
+    rotation.z = -(float)transform["rotation"][1];
+
+    // scaling: Y/Z入れ替え
+    scaling.x = (float)transform["scaling"][0];
+    scaling.y = (float)transform["scaling"][2];
+    scaling.z = (float)transform["scaling"][1];
+}
 
 ============================================================
 File Path: project/engine/manager/JsonManager.h
@@ -5845,6 +5819,7 @@ File Path: project/engine/manager/JsonManager.h
 #include <string>
 #include <vector>
 #include <memory>
+#include <json.hpp>
 
 // JSON に関連するクラス
 class JsonManager {
@@ -5871,6 +5846,16 @@ public:
     /// <param name="filename">レベル名（拡張子・ディレクトリは不要、例: "level01"）。</param>
     /// <returns>新しく確保された LevelData*（失敗時は assert により停止する実装）。</returns>
     LevelData* LoadJsonFile(const std::string& filename);
+
+    /// <summary>
+    /// JSONのtransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
+    /// - translation, rotation, scaling 各要素のY/Z入れ替えや回転の符号反転も行う。
+    /// </summary>
+    /// <param name="transform">JSONのtransformオブジェクト</param>
+    /// <param name="translation">変換後の平行移動ベクトル（出力）</param>
+    /// <param name="rotation">変換後の回転ベクトル（出力）</param>
+    /// <param name="scaling">変換後のスケールベクトル（出力）</param>
+    void ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling);
 
 public:
     JsonManager() = default;
@@ -6299,14 +6284,7 @@ void ParticleManager::VertexDataCreate(ModelData& modelData) {
 
 	modelData.material.textureFilePath = "./resources/circle.png";
 
-	// リソース生成
-	vertex_resource_ = directx_base_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.BufferLocation = vertex_resource_->GetGPUVirtualAddress();
-	vertex_buffer_view_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.StrideInBytes = sizeof(VertexData);
-
-	vertex_resource_->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data_));
-	std::memcpy(vertex_data_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	CreateAndMapVertexBuffer(directx_base_,modelData.vertices,vertex_resource_,vertex_buffer_view_,vertex_data_);
 }
 // Ring型頂点生成
 void ParticleManager::RingVertexDataCreate(ModelData& modelData) {
@@ -6334,13 +6312,7 @@ void ParticleManager::RingVertexDataCreate(ModelData& modelData) {
 
 	modelData.material.textureFilePath = "./resources/gradationLine.png";
 
-	vertex_resource_ = directx_base_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.BufferLocation = vertex_resource_->GetGPUVirtualAddress();
-	vertex_buffer_view_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.StrideInBytes = sizeof(VertexData);
-
-	vertex_resource_->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data_));
-	std::memcpy(vertex_data_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	CreateAndMapVertexBuffer(directx_base_,modelData.vertices,vertex_resource_,vertex_buffer_view_,vertex_data_);
 }
 
 // Cylinder型パーティクルの頂点データ作成
@@ -6370,17 +6342,7 @@ void ParticleManager::CylinderVertexDataCreate(ModelData& modelData) {
 		modelData.vertices.push_back({ { -sinNext * kBottomRadius, 0.0f, cosNext * kBottomRadius, 1.0f }, { uNext, 1.0f }, { -sinNext, 0.0f, cosNext } });
 	}
 
-	// 頂点バッファ用リソース生成
-	vertex_resource_ = directx_base_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-
-	// バッファビュー設定
-	vertex_buffer_view_.BufferLocation = vertex_resource_->GetGPUVirtualAddress();
-	vertex_buffer_view_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.StrideInBytes = sizeof(VertexData);
-
-	// データ書き込み用マッピング
-	vertex_resource_->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data_));
-	std::memcpy(vertex_data_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	CreateAndMapVertexBuffer(directx_base_,modelData.vertices,vertex_resource_,vertex_buffer_view_,vertex_data_);
 }
 // マテリアル用GPUバッファ生成と初期化
 void ParticleManager::MaterialCreate() {
@@ -6394,6 +6356,27 @@ void ParticleManager::MaterialCreate() {
 	material_data_->color = Vector4{ 1.0f, 1.0f, 1.0f, 1.0f };       // デフォルト色
 	material_data_->enableLighting = false;                           // ライティング無効
 	material_data_->uvTransform = Math::MakeIdentity4x4();            // UV変換行列は単位行列
+}
+
+// 頂点バッファ生成とマッピングを共通化
+void ParticleManager::CreateAndMapVertexBuffer(
+	DirectXBase* directx_base,
+	const std::vector<VertexData>& vertices,
+	Microsoft::WRL::ComPtr<ID3D12Resource>& vertex_resource,
+	D3D12_VERTEX_BUFFER_VIEW& vertex_buffer_view,
+	VertexData*& vertex_data)
+{
+    // 頂点バッファ用のGPUリソースを生成
+    vertex_resource = directx_base->CreateBufferResource(sizeof(VertexData) * vertices.size());
+
+    // バッファビュー情報を設定
+    vertex_buffer_view.BufferLocation = vertex_resource->GetGPUVirtualAddress();
+    vertex_buffer_view.SizeInBytes = UINT(sizeof(VertexData) * vertices.size());
+    vertex_buffer_view.StrideInBytes = sizeof(VertexData);
+
+    // GPUリソースをCPUからアクセスできるようにマッピングし、データを書き込む
+    vertex_resource->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data));
+    std::memcpy(vertex_data, vertices.data(), sizeof(VertexData) * vertices.size());
 }
 
 // 指定グループ名のパーティクルタイプ取得
@@ -6547,6 +6530,22 @@ private:
     /// マテリアル用の GPU バッファを生成して初期値を書き込む。
     /// </summary>
     void MaterialCreate();
+
+    /// <summary>
+    /// 頂点バッファリソースを生成し、データをマッピング・コピーする。
+    /// - 指定した頂点配列からGPUリソースを作成し、バッファビューと書き込みポインタをセットする。
+    /// </summary>
+    /// <param name="directx_base">DirectX基盤クラスのポインタ。</param>
+    /// <param name="vertices">頂点データ配列。</param>
+    /// <param name="vertex_resource">生成された頂点バッファリソース（出力）。</param>
+    /// <param name="vertex_buffer_view">頂点バッファビュー（出力）。</param>
+    /// <param name="vertex_data">マッピングされた頂点データ書き込み用ポインタ（出力）。</param>
+    void CreateAndMapVertexBuffer(
+        DirectXBase* directx_base,
+        const std::vector<VertexData>& vertices,
+        Microsoft::WRL::ComPtr<ID3D12Resource>& vertex_resource,
+        D3D12_VERTEX_BUFFER_VIEW& vertex_buffer_view,
+        VertexData*& vertex_data);
 private:
     static std::unique_ptr<ParticleManager> instance;
 
@@ -8334,27 +8333,26 @@ File Path: project/engine/scene/SceneFactory.cpp
 #include "GameSelectScene.h"
 #include "GameClearScene.h"
 #include "GameOverScene.h"
+#include <unordered_map>
+#include <functional>
 
 // シーン名に応じたシーンを生成するファクトリメソッド
 std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& scene_name) {
+    // シーン名と生成関数のマップ
+    static const std::unordered_map<std::string, std::function<std::unique_ptr<BaseScene>()>> scene_map = {
+        { "TITLE",  [] { return std::make_unique<TitleScene>(); } },
+        { "GAME",   [] { return std::make_unique<GameScene>(); } },
+        { "SELECT", [] { return std::make_unique<GameSelectScene>(); } },
+        { "CLEAR",  [] { return std::make_unique<GameClearScene>(); } },
+        { "OVER",   [] { return std::make_unique<GameOverScene>(); } }
+    };
 
-	if (scene_name == "TITLE") {
-		return std::make_unique<TitleScene>();
-	}
-	else if (scene_name == "GAME") {
-		return std::make_unique<GameScene>();
-	}
-	else if (scene_name == "SELECT") {
-		return std::make_unique<GameSelectScene>();
-	}
-	else if (scene_name == "CLEAR") {
-		return std::make_unique<GameClearScene>();
-	} 
-	else if (scene_name == "OVER") {
-		return std::make_unique<GameOverScene>();
-	}
-	// 上記以外はnullptr
-	return nullptr;
+    auto it = scene_map.find(scene_name);
+    if (it != scene_map.end()) {
+        return it->second();
+    }
+    // 上記以外はnullptr
+    return nullptr;
 }
 
 ============================================================
@@ -9095,74 +9093,57 @@ File Path: project/game/manager/CollisionManager.cpp
 #include "PlayerBullet.h"
 #include "EnemyBullet.h"
 
-// プレイヤーと敵の当たり判定処理
-void CollisionManager::CheckPlayerEnemyCollisions(Player* player, Enemy* enemy) {
-    if (!player || !enemy) {
-        return;
-    }
-
-    // プレイヤーと敵の弾リスト取得
-    const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player->GetBullets();
-    const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
-
-    // ---------------------------------------------------------
-    // プレイヤー弾 → 敵 の当たり判定
-    // ---------------------------------------------------------
+// --- プレイヤー弾と敵の当たり判定処理を関数化 ---
+void CollisionManager::CheckPlayerBulletsToEnemy(Player* player, Enemy* enemy) {
+    const auto& playerBullets = player->GetBullets();
     if (!enemy->IsDead()) {
         for (const auto& bullet : playerBullets) {
-            if (bullet->IsDead()) {
-                continue;
-            }
-
+            if (bullet->IsDead()) continue;
             OBB bulletOBB = bullet->GetOBB();
             OBB enemyOBB = enemy->GetOBB();
-
             if (Math::IsCollisionOBB(bulletOBB, enemyOBB)) {
-
-                // 敵にダメージ付与
                 enemy->TakeDamage(bullet->GetAttack());
-
-                // 弾の衝突処理
                 bullet->OnCollision();
-
-                // 敵が死亡したらパーティクルフラグを立てる
                 if (enemy->IsDead()) {
                     enemy->SetIsDeathParticle(true);
                 }
             }
         }
     }
+}
 
-    // ---------------------------------------------------------
-    // 敵弾 → プレイヤー の当たり判定
-    // ---------------------------------------------------------
+// --- 敵弾とプレイヤーの当たり判定処理を関数化 ---
+void CollisionManager::CheckEnemyBulletsToPlayer(Player* player, Enemy* enemy) {
+    const auto& enemyBullets = enemy->GetBullets();
     OBB playerOBB = player->GetOBB();
     for (const auto& bullet : enemyBullets) {
-        if (bullet->IsDead()) {
-            continue;
-        }
-
+        if (bullet->IsDead()) continue;
         OBB bulletOBB = bullet->GetOBB();
-
         if (Math::IsCollisionOBB(bulletOBB, playerOBB)) {
-
-            // プレイヤーにダメージ付与
             player->TakeDamage(bullet->GetAttack());
-
-            // 弾の衝突処理
             bullet->OnCollision();
         }
     }
+}
 
-    // ---------------------------------------------------------
-    // プレイヤー本体 ↔ 敵本体 の当たり判定
-    // ---------------------------------------------------------
+// --- プレイヤー本体と敵本体の当たり判定処理を関数化 ---
+void CollisionManager::CheckPlayerEnemyBody(Player* player, Enemy* enemy) {
+    OBB playerOBB = player->GetOBB();
     OBB enemyOBB = enemy->GetOBB();
     if (Math::IsCollisionOBB(playerOBB, enemyOBB)) {
-
         player->OnCollision();
         enemy->OnCollision();
     }
+}
+
+// プレイヤーと敵の当たり判定処理
+void CollisionManager::CheckPlayerEnemyCollisions(Player* player, Enemy* enemy) {
+    if (!player || !enemy) {
+        return;
+    }
+    CheckPlayerBulletsToEnemy(player, enemy);
+    CheckEnemyBulletsToPlayer(player, enemy);
+    CheckPlayerEnemyBody(player, enemy);
 }
 
 
@@ -9183,16 +9164,41 @@ class EnemyBullet;
 // 衝突管理クラス
 class CollisionManager {
 public:
-    /// @brief プレイヤーと敵（および各弾）の衝突判定を行う。
-    ///
+    /// <summary>
+    /// プレイヤーと敵（および各弾）の衝突判定を行う。
     /// - プレイヤー弾と敵の衝突判定（ヒット時：enemy->TakeDamage(), bullet->OnCollision()）
     /// - 敵弾とプレイヤーの衝突判定（ヒット時：player->TakeDamage(), bullet->OnCollision()）
     /// - プレイヤー本体と敵本体の当たり判定（衝突時：両者のコールバック呼び出し）
     /// - player または enemy が nullptr の場合は何もしない
-    ///
-    /// @param player 判定対象の Player へのポインタ
-    /// @param enemy  判定対象の Enemy へのポインタ
+    /// </summary>
+    /// <param name="player">判定対象の Player へのポインタ</param>
+    /// <param name="enemy">判定対象の Enemy へのポインタ</param>
     void CheckPlayerEnemyCollisions(Player* player, Enemy* enemy);
+
+    /// <summary>
+    /// プレイヤー弾と敵の当たり判定を行う。
+    /// - 死亡していない敵に対して、プレイヤー弾がヒットした場合ダメージ処理・弾の衝突処理を行う。
+    /// - 敵が死亡した場合はデスパーティクルフラグをセットする。
+    /// </summary>
+    /// <param name="player">判定対象の Player へのポインタ</param>
+    /// <param name="enemy">判定対象の Enemy へのポインタ</param>
+    void CheckPlayerBulletsToEnemy(Player* player, Enemy* enemy);
+
+    /// <summary>
+    /// 敵弾とプレイヤーの当たり判定を行う。
+    /// - 敵弾がプレイヤーにヒットした場合、ダメージ処理・弾の衝突処理を行う。
+    /// </summary>
+    /// <param name="player">判定対象の Player へのポインタ</param>
+    /// <param name="enemy">判定対象の Enemy へのポインタ</param>
+    void CheckEnemyBulletsToPlayer(Player* player, Enemy* enemy);
+
+    /// <summary>
+    /// プレイヤー本体と敵本体の当たり判定を行う。
+    /// - OBB同士の衝突判定が成立した場合、両者の OnCollision() を呼び出す。
+    /// </summary>
+    /// <param name="player">判定対象の Player へのポインタ</param>
+    /// <param name="enemy">判定対象の Enemy へのポインタ</param>
+    void CheckPlayerEnemyBody(Player* player, Enemy* enemy);
 
 private:
 };
