@@ -52,67 +52,25 @@ LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
 
         // 種別ごとの処理
         if (type.compare("MESH") == 0) {
-            // オブジェクトを追加
             level_data->objects.emplace_back(LevelData::ObjectData{});
             LevelData::ObjectData& object_data = level_data->objects.back();
 
-            // ファイル名が存在すれば設定
             if (object_json.contains("file_name")) {
                 object_data.fileName = object_json["file_name"];
             }
 
-            // トランスフォームを読み込み
-            nlohmann::json& transform = object_json["transform"];
-            object_data.translation.x = (float)transform["translation"][0];
-            object_data.translation.y = (float)transform["translation"][2];
-            object_data.translation.z = (float)transform["translation"][1];
+            ReadTransform(object_json["transform"], object_data.translation, object_data.rotation, object_data.scaling);
 
-            object_data.rotation.x = -(float)transform["rotation"][0];
-            object_data.rotation.y = -(float)transform["rotation"][2];
-            object_data.rotation.z = -(float)transform["rotation"][1];
-
-            object_data.scaling.x = (float)transform["scaling"][0];
-            object_data.scaling.y = (float)transform["scaling"][2];
-            object_data.scaling.z = (float)transform["scaling"][1];
         } else if (type.compare("PlayerSpawn") == 0) {
             PlayerSpawnData player_spawn{};
-
-            // トランスフォーム読み込み
-            nlohmann::json& transform = object_json["transform"];
-            player_spawn.translation.x = (float)transform["translation"][0];
-            player_spawn.translation.y = (float)transform["translation"][2];
-            player_spawn.translation.z = (float)transform["translation"][1];
-
-            player_spawn.rotation.x = -(float)transform["rotation"][0];
-            player_spawn.rotation.y = -(float)transform["rotation"][2];
-            player_spawn.rotation.z = -(float)transform["rotation"][1];
-
-            player_spawn.scaling.x = (float)transform["scaling"][0];
-            player_spawn.scaling.y = (float)transform["scaling"][2];
-            player_spawn.scaling.z = (float)transform["scaling"][1];
-
+            ReadTransform(object_json["transform"], player_spawn.translation, player_spawn.rotation, player_spawn.scaling);
             level_data->players.push_back(player_spawn);
+
         } else if (type.compare("EnemySpawn") == 0) {
             EnemySpawnData enemy_spawn{};
-
             enemy_spawn.name = object_json["name"].get<std::string>();
-
             enemy_spawn.fileName = object_json["file_name"].get<std::string>();
-
-            // トランスフォーム読み込み
-            nlohmann::json& transform = object_json["transform"];
-            enemy_spawn.translation.x = (float)transform["translation"][0];
-            enemy_spawn.translation.y = (float)transform["translation"][2];
-            enemy_spawn.translation.z = (float)transform["translation"][1];
-
-            enemy_spawn.rotation.x = -(float)transform["rotation"][0];
-            enemy_spawn.rotation.y = -(float)transform["rotation"][2];
-            enemy_spawn.rotation.z = -(float)transform["rotation"][1];
-
-            enemy_spawn.scaling.x = (float)transform["scaling"][0];
-            enemy_spawn.scaling.y = (float)transform["scaling"][2];
-            enemy_spawn.scaling.z = (float)transform["scaling"][1];
-
+            ReadTransform(object_json["transform"], enemy_spawn.translation, enemy_spawn.rotation, enemy_spawn.scaling);
             level_data->enemies.push_back(enemy_spawn);
         }
 
@@ -155,4 +113,21 @@ LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
 
 
     return level_data;
+}
+
+void JsonManager::ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling) {
+    // translation: Y/Z入れ替え
+    translation.x = (float)transform["translation"][0];
+    translation.y = (float)transform["translation"][2];
+    translation.z = (float)transform["translation"][1];
+
+    // rotation: Y/Z入れ替え＋符号反転
+    rotation.x = -(float)transform["rotation"][0];
+    rotation.y = -(float)transform["rotation"][2];
+    rotation.z = -(float)transform["rotation"][1];
+
+    // scaling: Y/Z入れ替え
+    scaling.x = (float)transform["scaling"][0];
+    scaling.y = (float)transform["scaling"][2];
+    scaling.z = (float)transform["scaling"][1];
 }

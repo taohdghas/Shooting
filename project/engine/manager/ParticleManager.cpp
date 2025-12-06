@@ -290,14 +290,7 @@ void ParticleManager::VertexDataCreate(ModelData& modelData) {
 
 	modelData.material.textureFilePath = "./resources/circle.png";
 
-	// リソース生成
-	vertex_resource_ = directx_base_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.BufferLocation = vertex_resource_->GetGPUVirtualAddress();
-	vertex_buffer_view_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.StrideInBytes = sizeof(VertexData);
-
-	vertex_resource_->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data_));
-	std::memcpy(vertex_data_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	CreateAndMapVertexBuffer(directx_base_,modelData.vertices,vertex_resource_,vertex_buffer_view_,vertex_data_);
 }
 // Ring型頂点生成
 void ParticleManager::RingVertexDataCreate(ModelData& modelData) {
@@ -325,13 +318,7 @@ void ParticleManager::RingVertexDataCreate(ModelData& modelData) {
 
 	modelData.material.textureFilePath = "./resources/gradationLine.png";
 
-	vertex_resource_ = directx_base_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.BufferLocation = vertex_resource_->GetGPUVirtualAddress();
-	vertex_buffer_view_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.StrideInBytes = sizeof(VertexData);
-
-	vertex_resource_->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data_));
-	std::memcpy(vertex_data_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	CreateAndMapVertexBuffer(directx_base_,modelData.vertices,vertex_resource_,vertex_buffer_view_,vertex_data_);
 }
 
 // Cylinder型パーティクルの頂点データ作成
@@ -361,17 +348,7 @@ void ParticleManager::CylinderVertexDataCreate(ModelData& modelData) {
 		modelData.vertices.push_back({ { -sinNext * kBottomRadius, 0.0f, cosNext * kBottomRadius, 1.0f }, { uNext, 1.0f }, { -sinNext, 0.0f, cosNext } });
 	}
 
-	// 頂点バッファ用リソース生成
-	vertex_resource_ = directx_base_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-
-	// バッファビュー設定
-	vertex_buffer_view_.BufferLocation = vertex_resource_->GetGPUVirtualAddress();
-	vertex_buffer_view_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	vertex_buffer_view_.StrideInBytes = sizeof(VertexData);
-
-	// データ書き込み用マッピング
-	vertex_resource_->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data_));
-	std::memcpy(vertex_data_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	CreateAndMapVertexBuffer(directx_base_,modelData.vertices,vertex_resource_,vertex_buffer_view_,vertex_data_);
 }
 // マテリアル用GPUバッファ生成と初期化
 void ParticleManager::MaterialCreate() {
@@ -385,6 +362,27 @@ void ParticleManager::MaterialCreate() {
 	material_data_->color = Vector4{ 1.0f, 1.0f, 1.0f, 1.0f };       // デフォルト色
 	material_data_->enableLighting = false;                           // ライティング無効
 	material_data_->uvTransform = Math::MakeIdentity4x4();            // UV変換行列は単位行列
+}
+
+// 頂点バッファ生成とマッピングを共通化
+void ParticleManager::CreateAndMapVertexBuffer(
+	DirectXBase* directx_base,
+	const std::vector<VertexData>& vertices,
+	Microsoft::WRL::ComPtr<ID3D12Resource>& vertex_resource,
+	D3D12_VERTEX_BUFFER_VIEW& vertex_buffer_view,
+	VertexData*& vertex_data)
+{
+    // 頂点バッファ用のGPUリソースを生成
+    vertex_resource = directx_base->CreateBufferResource(sizeof(VertexData) * vertices.size());
+
+    // バッファビュー情報を設定
+    vertex_buffer_view.BufferLocation = vertex_resource->GetGPUVirtualAddress();
+    vertex_buffer_view.SizeInBytes = UINT(sizeof(VertexData) * vertices.size());
+    vertex_buffer_view.StrideInBytes = sizeof(VertexData);
+
+    // GPUリソースをCPUからアクセスできるようにマッピングし、データを書き込む
+    vertex_resource->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data));
+    std::memcpy(vertex_data, vertices.data(), sizeof(VertexData) * vertices.size());
 }
 
 // 指定グループ名のパーティクルタイプ取得

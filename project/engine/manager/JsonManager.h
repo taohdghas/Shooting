@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <json.hpp>
 
 // JSON に関連するクラス
 class JsonManager {
@@ -29,6 +30,16 @@ public:
     /// <param name="filename">レベル名（拡張子・ディレクトリは不要、例: "level01"）。</param>
     /// <returns>新しく確保された LevelData*（失敗時は assert により停止する実装）。</returns>
     LevelData* LoadJsonFile(const std::string& filename);
+
+    /// <summary>
+    /// JSONのtransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
+    /// - translation, rotation, scaling 各要素のY/Z入れ替えや回転の符号反転も行う。
+    /// </summary>
+    /// <param name="transform">JSONのtransformオブジェクト</param>
+    /// <param name="translation">変換後の平行移動ベクトル（出力）</param>
+    /// <param name="rotation">変換後の回転ベクトル（出力）</param>
+    /// <param name="scaling">変換後のスケールベクトル（出力）</param>
+    void ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling);
 
 public:
     JsonManager() = default;

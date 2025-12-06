@@ -139,6 +139,22 @@ private:
     /// マテリアル用の GPU バッファを生成して初期値を書き込む。
     /// </summary>
     void MaterialCreate();
+
+    /// <summary>
+    /// 頂点バッファリソースを生成し、データをマッピング・コピーする。
+    /// - 指定した頂点配列からGPUリソースを作成し、バッファビューと書き込みポインタをセットする。
+    /// </summary>
+    /// <param name="directx_base">DirectX基盤クラスのポインタ。</param>
+    /// <param name="vertices">頂点データ配列。</param>
+    /// <param name="vertex_resource">生成された頂点バッファリソース（出力）。</param>
+    /// <param name="vertex_buffer_view">頂点バッファビュー（出力）。</param>
+    /// <param name="vertex_data">マッピングされた頂点データ書き込み用ポインタ（出力）。</param>
+    void CreateAndMapVertexBuffer(
+        DirectXBase* directx_base,
+        const std::vector<VertexData>& vertices,
+        Microsoft::WRL::ComPtr<ID3D12Resource>& vertex_resource,
+        D3D12_VERTEX_BUFFER_VIEW& vertex_buffer_view,
+        VertexData*& vertex_data);
 private:
     static std::unique_ptr<ParticleManager> instance;
 
