@@ -1,32 +1,29 @@
 #include "ParticleEmitter.h"
 
+// ParticleTypeごとの初期値テーブル定義
+const std::unordered_map<ParticleType, ParticleEmitter::ParticleEmitterInitData> ParticleEmitter::kEmitterInitTable = {
+    { ParticleType::Normal,    { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
+    { ParticleType::Ring,      { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
+    { ParticleType::Cylinder,  { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
+    { ParticleType::Explosive, { 15, 5.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } }
+};
+
 // 初期化処理
 void ParticleEmitter::Initialize(const std::string& name) {
     name_ = name;
     emitter_.frequency_time_ = 0.0f; // 発生タイマーを初期化
 
-    // ParticleManagerからパーティクルの種類を取得
     ParticleType type = ParticleManager::GetInstance()->GetParticleType(name_);
 
-    // パーティクルタイプごとの初期設定
-    switch (type) {
-    case ParticleType::Normal:    // 通常パーティクル
-    case ParticleType::Ring:      // リング型
-    case ParticleType::Cylinder:  // シリンダー型
-        emitter_.count_ = 1;
-        emitter_.frequency_ = 99.0f; // 発生頻度（秒）
-        emitter_.transform.scale = { 1.0f, 1.0f, 1.0f };
-        emitter_.transform.rotate = { 0.0f, 0.0f, 0.0f };
-        emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
-        break;
+    auto it = kEmitterInitTable.find(type);
+    assert(it != kEmitterInitTable.end());
+    const auto& init = it->second;
 
-    case ParticleType::Explosive: // 爆発型パーティクル
-        emitter_.count_ = 15;       // 多数のパーティクルを一度に発生
-        emitter_.frequency_ = 5.0f; // 発生頻度
-        emitter_.transform.scale = { 1.0f, 1.0f, 1.0f };
-        emitter_.transform.translate = { 0.0f, 0.0f, 0.0f };
-        break;
-    }
+    emitter_.count_ = init.count;
+    emitter_.frequency_ = init.frequency;
+    emitter_.transform.scale = init.scale;
+    emitter_.transform.rotate = init.rotate;
+    emitter_.transform.translate = init.translate;
 }
 
 // 更新処理（フレームごとに呼ばれる）

@@ -2,6 +2,16 @@
 #include "SpriteBase.h"
 #include "MyMath.h"
 #include <algorithm>
+#include <unordered_map>
+#include <functional>
+
+// フェード種別ごとのアルファ計算関数
+using AlphaFunc = std::function<float(float)>;
+
+static const std::unordered_map<Fade::State, AlphaFunc> kAlphaFuncTable = {
+    { Fade::State::FadeIn,  [](float eased) { return 1.0f - eased; } },
+    { Fade::State::FadeOut, [](float eased) { return eased; } }
+};
 
 // フェード用スプライトの初期化
 void Fade::Initialize() {
@@ -32,18 +42,10 @@ void Fade::Update() {
 
     float alpha = 1.0f;
 
-    // フェード種別に応じてアルファ値を決定
-    switch (state_) {
-    case State::FadeIn:
-        alpha = 1.0f - eased;  // フェードイン：徐々に透明に
-        break;
-
-    case State::FadeOut:
-        alpha = eased;         // フェードアウト：徐々に不透明に
-        break;
-
-    default:
-        break;
+    // データドリブンでアルファ値を決定
+    auto it = kAlphaFuncTable.find(state_);
+    if (it != kAlphaFuncTable.end()) {
+        alpha = it->second(eased);
     }
 
     // スプライトの色（アルファ）を更新

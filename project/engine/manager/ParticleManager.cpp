@@ -13,6 +13,14 @@ ParticleManager* ParticleManager::GetInstance() {
 	return instance.get();
 }
 
+// ParticleTypeごとの初期値テーブル定義
+const std::unordered_map<ParticleType, ParticleManager::ParticleInitData> ParticleManager::kParticleInitTable = {
+	{ ParticleType::Normal,    { {0.05f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, -10.0f, 0.0f}, {}, 1.0f } },
+	{ ParticleType::Ring,      { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},   {1.0f,1.0f,1.0f,1.0f}, 1.0f } },
+	{ ParticleType::Cylinder,  { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},   {1.0f,1.0f,1.0f,1.0f}, 99.0f } },
+	{ ParticleType::Explosive, { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 1.0f},  {1.0f,1.0f,1.0f,1.0f}, 1.5f } }
+};
+
 void ParticleManager::Initialize(DirectXBase* directx_base, SrvManager* srv_manager, Camera* camera) {
 	this->directx_base_ = directx_base;
 	this->srv_manager_ = srv_manager;
@@ -217,46 +225,31 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 
 // 新規パーティクル作成
 ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& engine, const Vector3& translate, ParticleType type) {
-	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
-	std::uniform_real_distribution<float> dist_color(0.0f, 1.0f);
-	std::uniform_real_distribution<float> dist_time(1.0f, 3.0f);
-	std::uniform_real_distribution<float> dist_scale(0.4f, 1.5f);
-	std::uniform_real_distribution<float> dist_rotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
+    std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+    std::uniform_real_distribution<float> dist_color(0.0f, 1.0f);
+    std::uniform_real_distribution<float> dist_scale(0.4f, 1.5f);
 
-	Particle particle;
+    Particle particle;
 
-	if (type == ParticleType::Normal) {
-		particle.transform.scale = { 0.05f, dist_scale(engine), 1.0f };
-		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-		particle.transform.translate = translate;
-		particle.velocity = { 0.0f, -10.0f, 0.0f };
-		particle.color = { dist_color(engine), dist_color(engine), dist_color(engine) };
-		particle.life_time = 1.0f;
-	} else if (type == ParticleType::Ring) {
-		particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-		particle.transform.translate = translate;
-		particle.velocity = { 0.0f, 0.0f, 0.0f };
-		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		particle.life_time = 1.0f;
-	} else if (type == ParticleType::Cylinder) {
-		particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-		particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
-		particle.transform.translate = translate;
-		particle.velocity = { 0.0f, 0.0f, 0.0f };
-		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		particle.life_time = 99.0f; // 長寿命
-	} else if (type == ParticleType::Explosive) {
-		particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-		particle.transform.rotate = { 0.0f, 0.0f, -5.0f };
-		particle.transform.translate = translate;
-		particle.velocity = { 0.0f, 0.0f, 1.0f };
-		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		particle.life_time = 1.5f;
-	}
+    auto it = kParticleInitTable.find(type);
+    assert(it != kParticleInitTable.end());
+    const auto& init = it->second;
 
-	particle.current_time = 0.0f;
-	return particle;
+    particle.transform.scale = init.scale;
+    particle.transform.rotate = init.rotate;
+    particle.transform.translate = translate;
+    particle.velocity = init.velocity;
+    particle.color = init.color;
+    particle.life_time = init.life_time;
+
+    // typeごとのランダム値や特殊処理
+    if (type == ParticleType::Normal) {
+        particle.transform.scale.y = dist_scale(engine);
+        particle.color = { dist_color(engine), dist_color(engine), dist_color(engine) };
+    }
+
+    particle.current_time = 0.0f;
+    return particle;
 }
 // パーティクル発生
 void ParticleManager::Emit(const std::string& name, const Vector3& position, uint32_t count) {

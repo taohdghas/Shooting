@@ -13,6 +13,16 @@ public:
         float frequency_time_;    // 頻度用時刻
     };
 
+	// エミッター初期化データ
+    struct ParticleEmitterInitData {
+        int count;
+        float frequency;
+        Vector3 scale;
+        Vector3 rotate;
+        Vector3 translate;
+    };
+
+
 public:
     /// <summary>
     /// エミッターを初期化する。
@@ -45,6 +55,9 @@ public:
     void SetPosition(const Vector3& pos) { emitter_.transform.translate = pos; }
 
 private:
+    //ParticleTypeごとの初期値テーブル
+    static const std::unordered_map<ParticleType, ParticleEmitterInitData> kEmitterInitTable;
+
     Emitter emitter_;
     std::string name_;
 	const float kDeltaTime = 1.0f / 60.0f;

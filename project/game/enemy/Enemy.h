@@ -141,7 +141,7 @@ private:
     Vector4 color_;
     bool is_dead_ = false;
     bool is_death_particle_ = false;
-    int hp_ = 100;
+    int hp_ = 10;
     int fire_timer_count_ = 0;
     int fire_timer_ = 0;
     float radius_ = 1.0f;

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <string>
 #include <random>
+#include <unordered_map>
 
 // パーティクル種類
 enum class ParticleType {
@@ -56,6 +57,15 @@ public:
         ModelData model_data;
         Microsoft::WRL::ComPtr<ID3D12Resource> vertex_resource;
         D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view;
+    };
+
+	// パーティクル初期値データ
+    struct ParticleInitData {
+        Vector3 scale;
+        Vector3 rotate;
+        Vector3 velocity;
+        Vector4 color;
+        float life_time;
     };
 
 public:
@@ -157,6 +167,8 @@ private:
         VertexData*& vertex_data);
 private:
     static std::unique_ptr<ParticleManager> instance;
+    // ParticleTypeごとの初期値テーブル
+    static const std::unordered_map<ParticleType, ParticleInitData> kParticleInitTable;
 
     DirectXBase* directx_base_;
     SrvManager* srv_manager_;
