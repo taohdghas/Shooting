@@ -3,6 +3,7 @@
 #include "MyMath.h"
 #include "ImGuiManager.h"
 #include "CameraManager.h"
+#include "Platform.h"
 #include <algorithm>
 
 Player::Player() {}
@@ -26,7 +27,7 @@ void Player::Initialize(Object3dBase* object3d_base) {
 }
 
 // 毎フレームの更新処理
-void Player::Update() {
+void Player::Update(bool is_start_animation_, bool is_returning_) {
 	//デスの場合スキップ
 
 	//攻撃クールタイム
@@ -49,6 +50,28 @@ void Player::Update() {
 	bullets_.remove_if([](const std::unique_ptr<PlayerBullet>& bullet) {
 		return bullet->IsDead();
 		});
+
+	// スタート演出中は追従しない
+	if (!is_start_animation_ && !is_returning_ && platform_) {
+		//追従初回フレームで前フレーム位置を初期化
+		if (!is_following_platform_initialized_) {
+			prev_platform_pos_ = platform_->GetTranslate();
+			is_following_platform_initialized_ = true;
+		}
+
+		// プラットフォームの移動量
+		Vector3 platformDelta = platform_->GetTranslate() - prev_platform_pos_;
+		prev_platform_pos_ = platform_->GetTranslate();
+
+		//Z方向追従
+		Vector3 pos = transform_.translate;
+		pos.z += platformDelta.z;
+		transform_.translate = pos;
+	} else {
+		//スタート演出中初期化リセット
+		is_following_platform_initialized_ = false;
+	}
+
 
 	// 移動処理
 	Move();

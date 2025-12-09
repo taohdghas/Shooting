@@ -17,7 +17,7 @@ public:
 	/// 毎フレームの更新処理を行う。
 	/// - 必要に応じてトランスフォームの同期や物理的な振る舞いを更新する（現状は Transform の反映などを想定）。
 	/// </summary>
-	void Update();
+	void Update(bool is_start_animation_, bool is_returning_);
 
 	/// <summary>
 	/// 描画処理を行う。
@@ -32,13 +32,21 @@ public:
 	void Debug();
 
 	/// <summary>
+	/// トランスフォーム（平行移動）を取得する。
+	/// </summary>
+	/// <returns>現在のワールド座標（平行移動）。</returns>
+	const Vector3& GetTranslate() const { return transform_.translate; }
+
+	/// <summary>
 	/// トランスフォーム（平行移動）を設定する。
 	/// </summary>
 	/// <param name="translate">設定するワールド座標（平行移動）。</param>
-	void SetTransform(const Vector3& translate) { transform_.translate = translate; }
+	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
 private:
 	Object3dBase* object3d_base_;
 	Transform transform_;
 	std::unique_ptr<Object3d> object_;
+	// 奥方向移動速度
+	float move_speed_z_ = 0.1f;
 };

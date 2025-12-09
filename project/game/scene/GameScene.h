@@ -12,7 +12,6 @@
 #include "CollisionManager.h"
 #include "JsonManager.h"
 #include "Fade.h"
-#include "RailCamera.h"
 
 #include <vector>
 #include <random>
@@ -59,7 +58,11 @@ public:
 	/// </summary>
 	void Debug() override;
 
-public:
+	//追従カメラ
+	void FollowCamera();
+	//スタート演出 
+	void StartAnimation();
+
 	/// <summary>
 	/// ゲームクリアシーンへ遷移する。
 	/// </summary>
@@ -83,8 +86,6 @@ private:
 	std::vector<std::unique_ptr<ParticleEmitter>> particle_emitters_;
 	//衝突マネージャー
 	std::unique_ptr<CollisionManager> collision_manager_;
-	//レールカメラ
-	std::unique_ptr<RailCamera> rail_camera_;
 	//カメラ
 	std::unique_ptr<Camera> camera_;
 	//JsonManager
@@ -98,6 +99,10 @@ private:
 	Vector3 death_rotation_axis_ = { 1.0f, 0.0f, 0.0f };
 	//撃破演出速度
 	Vector3 death_velocity_;
+	//回転開始時のカメラ位置
+	Vector3 camera_start_pos_;
+	//回転開始時のカメラ回転 
+	Vector3 camera_start_rot_;
 	//乱数生成器
 	std::mt19937 random_engine_{ std::random_device{}() };
 	std::uniform_real_distribution<float> random_dist_{ -1.0f, 1.0f };
@@ -114,4 +119,20 @@ private:
 	float death_rotation_speed_ = 5.0f;
 	//重力加速度
 	float gravity_ = 0.015f;
+	//1回転にかかる時間 
+	const float totalRotationTime = 5.0f;
+	//角速度 
+	const float rotationSpeed = 1.0f;
+	//収束に書ける時間 
+	const float oneRotation = 2.0f * 3.14159f;
+	//スタート演出フラグ
+	bool is_start_animation_ = true;
+	//リターン演出フラグ
+	bool is_returning_ = false;
+	//カメラ追従初期化フラグ
+	bool is_following_initialized_ = false;
+	//Zオフセット
+	float z_offset_ = 0.0f;
+	//カメラ回転タイマー
+	float camera_rotate_timer_ = 0.0f;
 };

@@ -12,6 +12,8 @@
 #include <memory>
 #include <vector>
 
+//プラットフォーム
+class Platform;
 //プレイヤー
 class Player
 {
@@ -40,7 +42,7 @@ public:
 	/// - クールダウン／タイマー類の更新、弾や内部オブジェクトの更新、移動・ジャンプ・回避・攻撃処理を順に行う。
 	/// - レティクルの更新と弾リストの更新もここで行う。
 	/// </summary>
-	void Update();
+	void Update(bool is_start_animation_, bool is_returning_);
 	/// <summary>
 	/// 描画処理を行う。
 	/// - 死亡時は描画を行わない。
@@ -131,6 +133,12 @@ public:
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 	/// <summary>座標を設定する。</summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
+	/// <summary>
+	/// プラットフォームを設定する。
+	/// - プレイヤーが乗る地面（Platform）のポインタを保持する
+	/// </summary>
+	/// <param name="platform">設定する Platform クラスのポインタ。</param>
+	void SetPlatform(Platform* platform) { platform_ = platform; }
 
 private:
 	Object3dBase* object3d_base_;
@@ -143,11 +151,15 @@ private:
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	//レティクル
 	std::unique_ptr<Sprite> reticle_;
+	//プラットフォーム
+	Platform* platform_ = nullptr;
 	//画面上の位置
 	Vector2 reticle_screen_pos_{ 640.0f, 360.0f };
 	Vector2 reticle_pos_ = { 640.0f, 360.0f };
 	//レティクルのオフセット
 	Vector3 reticle_offset_{ 0.0f, 0.0f, 10.0f };
+	//前フレームのプラットフォーム位置
+	Vector3 prev_platform_pos_ = { 0, 0, 0 };
 	//色
 	Vector4 color_;
 	//回避方向
@@ -160,6 +172,8 @@ private:
 	bool is_jumping_ = false;
 	//無敵フラグ(デバック)
 	bool is_invincible_ = false;
+	//追従プラットフォーム初期化フラグ
+	bool is_following_platform_initialized_ = false;
 	//モデルの寸法
 	float dimensions_ = 2.0f;
 	//プレイヤーの移動速度

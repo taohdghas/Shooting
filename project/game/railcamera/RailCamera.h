@@ -28,38 +28,38 @@ public:
     /// - SetPlayer を呼んだあと Update でプレイヤー追従が行われる。
     /// </summary>
     /// <param name="player">追従対象の Player ポインタ。</param>
-    void SetPlayer(Player* player);
+	void SetPlayer(Player* player) { player_ = player; };
     /// <summary>
     /// プレイヤーに対するオフセットを設定する。
     /// - カメラがプレイヤーからどの相対位置に配置されるかを指定する。
     /// </summary>
     /// <param name="offset">プレイヤーからの相対オフセットベクトル。</param>
-    void SetPlayerOffset(const Vector3& offset);
+	void SetPlayerOffset(const Vector3& offset) { player_offset_ = offset; };
     /// <summary>
     /// 追従対象のプラットフォームを設定する。
     /// - 必要に応じてプレイヤー追従とプラットフォーム追従を組み合わせてカメラ位置を決定する。
     /// </summary>
     /// <param name="platform">追従対象の Platform ポインタ。</param>
-    void SetPlatform(Platform* platform);
+	void SetPlatform(Platform* platform) { platform_ = platform; };
     /// <summary>
     /// プラットフォームに対するオフセットを設定する。
     /// - プラットフォーム基準でのカメラ相対位置を指定する。
     /// </summary>
     /// <param name="offset">プラットフォームからの相対オフセットベクトル。</param>
-    void SetPlatformOffset(const Vector3& offset);
+	void SetPlatformOffset(const Vector3& offset) { platform_offset_ = offset; };
     /// <summary>
     /// カメラ追従速度を設定する。
     /// - 大きいほど速く追従し、小さいほど緩やかに補間される。
     /// </summary>
     /// <param name="speed">追従速度（任意の単位）。</param>
-    void SetSpeed(float speed);
+	void SetSpeed(float speed) { speed_ = speed; };
 
     /// <summary>
     /// 内部で管理している Camera のポインタを取得する。
     /// - 取得した Camera を描画やシーンにセットして利用できる。
     /// </summary>
     /// <returns>内部 Camera へのポインタ。</returns>
-    Camera* GetCamera();
+	Camera* GetCamera() { return &camera_; };
 
 private:
     Camera camera_;
@@ -68,4 +68,5 @@ private:
     Vector3 player_offset_;
     Platform* platform_ = nullptr;
     Vector3 platform_offset_ = { 0, 0, 0 };
+    bool followEnabled_;
 };

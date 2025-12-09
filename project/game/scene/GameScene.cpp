@@ -27,18 +27,17 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->CreateParticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
 	ParticleManager::GetInstance()->CreateParticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
 
-	// レールカメラの初期化・設定
-	rail_camera_ = std::make_unique<RailCamera>();
-	rail_camera_->Initialize();
-	rail_camera_->SetPlayerOffset({ 0.0f,-1.5f,10.0f });
-	rail_camera_->SetSpeed(0.1f);
-
-	// メインカメラの初期化・登録
+	//カメラの初期化・設定
 	camera_ = std::make_unique<Camera>();
-	camera_->SetTranslate({ 0,0,-10 });
+	camera_->SetRotate({ 0.0f,0.0f,0.0f });
+	camera_->SetTranslate({ 0,0,-11 });
 	CameraManager::GetInstance()->AddCamera("Main", camera_.get());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+
+	//初期位置・回転を保存
+	camera_start_pos_ = camera_->GetTranslate();
+	camera_start_rot_ = camera_->GetRotate();
 
 	// Skyboxの初期化
 	skybox_ = std::make_unique<Skybox>();
@@ -47,8 +46,6 @@ void GameScene::Initialize() {
 	// プラットフォームの初期化
 	platform_ = std::make_unique<Platform>();
 	platform_->Initialize(Object3dBase::GetInstance());
-	// railCamera->SetPlatform(platform.get());
-	// // railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
 
 	// 衝突管理クラスの初期化
 	collision_manager_ = std::make_unique<CollisionManager>();
@@ -64,6 +61,7 @@ void GameScene::Initialize() {
 		Transform transform;
 		transform.translate = playerData.translation;
 		player_->SetTranslate(transform.translate);
+		player_->SetPlatform(platform_.get());
 	}
 
 	// 敵生成・初期化
@@ -108,8 +106,12 @@ void GameScene::Finalize() {
 void GameScene::Update() {
 	// カメラの更新
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
-	// レールカメラの更新
-	rail_camera_->Update();
+
+	// スタート演出
+	StartAnimation();
+
+	// 追従カメラ
+	FollowCamera();
 
 	// 敵ごとの衝突判定・デスパーティクル処理
 	for (auto& enemy : enemies_) {
@@ -128,7 +130,7 @@ void GameScene::Update() {
 	}
 
 	// プレイヤーの更新
-	player_->Update();
+	player_->Update(is_start_animation_,is_returning_);
 	// 敵の更新
 	for (auto& enemy : enemies_) {
 		enemy->Update();
@@ -136,7 +138,7 @@ void GameScene::Update() {
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
-	platform_->Update();
+	platform_->Update(is_start_animation_,is_returning_);
 
 	// パーティクルの更新
 	ParticleManager::GetInstance()->Update();
@@ -226,6 +228,93 @@ void GameScene::Debug() {
 	}
 	ImGui::End();
 #endif
+}
+
+//追従カメラ
+void GameScene::FollowCamera() {
+	Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+
+	// スタート演出中は追従しない
+	if (is_start_animation_ || is_returning_) {
+		is_following_initialized_ = false;
+		return;
+	}
+
+	// 追従開始時にZオフセットを記録
+	if (!is_following_initialized_) {
+		z_offset_ = cam->GetTranslate().z - platform_->GetTranslate().z;
+		is_following_initialized_ = true;
+	}
+
+	// Z方向追従
+	Vector3 pos = cam->GetTranslate();
+	float followSpeed = 0.1f;
+	float targetZ = platform_->GetTranslate().z + z_offset_;
+	pos.z += (targetZ - pos.z) * followSpeed;
+
+	cam->SetTranslate(pos);
+}
+
+//スタート演出
+void GameScene::StartAnimation() {
+	if (!is_start_animation_ && Input::GetInstance()->IsKeyPressed(DIK_H)) {
+		SceneManager::GetInstance()->ChangeScene("GAME");
+	}
+
+	// Update内
+	if (is_start_animation_) {
+		camera_rotate_timer_ += 1.0f / 60.0f;
+		float t = std::min(camera_rotate_timer_ / totalRotationTime, 1.0f);
+
+		//イージング適用
+		float easedT = static_cast<float>(easeInOutQuad(t));
+
+		//イージングを反映後角度
+		float angle = easedT * oneRotation * rotationSpeed;
+
+		//初期カメラ位置
+		Vector3 camPos;
+		camPos.x = camera_start_pos_.x * std::cos(angle) - camera_start_pos_.z * std::sin(angle);
+		camPos.y = camera_start_pos_.y; // 高さはそのまま
+		camPos.z = camera_start_pos_.x * std::sin(angle) + camera_start_pos_.z * std::cos(angle);
+
+		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+		cam->SetTranslate(camPos);
+
+		//プレイヤー方向を向く
+		Vector3 dir = player_->GetTranslate() - camPos;
+		float yaw = std::atan2(dir.x, dir.z);
+		float pitch = -std::atan2(dir.y, std::sqrt(dir.x * dir.x + dir.z * dir.z));
+
+		cam->SetRotate({ camera_start_rot_.x + pitch, camera_start_rot_.y + yaw, camera_start_rot_.z });
+		if (t >= 1.0f) {
+			is_start_animation_ = false;
+			is_returning_ = true;
+			camera_rotate_timer_ = 0.0f;
+		}
+	} else if (is_returning_) {
+		//回転終了後角度を初期値に戻す
+		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+		Vector3 currentRot = cam->GetRotate();
+		Vector3 targetRot = { 0.0f, 0.0f, 0.0f };
+
+		//イージングタイマーを更新
+		camera_rotate_timer_ += 1.0f / 60.0f;
+		float t = std::min(camera_rotate_timer_ / 2.0f, 1.0f);
+		float easedT = static_cast<float>(easeInOutQuad(t));
+
+		Vector3 newRot;
+		newRot.x = currentRot.x + (targetRot.x - currentRot.x) * easedT * 0.1f;
+		newRot.y = currentRot.y + (targetRot.y - currentRot.y) * easedT * 0.1f;
+		newRot.z = currentRot.z + (targetRot.z - currentRot.z) * easedT * 0.1f;
+
+		cam->SetRotate(newRot);
+		//収束終了
+		if (t >= 1.0f) {
+			is_returning_ = false;
+			camera_rotate_timer_ = 0.0f;
+		}
+	}
 }
 
 // ゲームクリアへ
