@@ -15,6 +15,7 @@
     <ClCompile Include="externals\imgui\imgui.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="game\object\GameClearObject.cpp" />
     <ClCompile Include="game\object\GameOverObject.cpp" />
     <ClCompile Include="game\scene\GameOverScene.cpp" />
     <ClCompile Include="game\fade\Fade.cpp" />
@@ -83,6 +84,7 @@
   <ItemGroup>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
+    <ClInclude Include="game\object\GameClearObject.h" />
     <ClInclude Include="game\object\GameOverObject.h" />
     <ClInclude Include="game\scene\GameOverScene.h" />
     <ClInclude Include="game\fade\Fade.h" />

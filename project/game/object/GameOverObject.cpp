@@ -14,8 +14,10 @@ void GameOverObject::Initialize() {
 
     // GAME OVER の１文字ずつのモデル名
     std::string models[kNumLetters] = {
-        "g.obj", "a.obj", "m.obj", "e.obj",
-        "o.obj", "v.obj", "e.obj", "r.obj"
+        "gameoverobject/g.obj", "gameoverobject/a.obj", 
+        "gameoverobject/m.obj", "gameoverobject/e.obj",
+        "gameoverobject/o.obj", "gameoverobject/v.obj", 
+        "gameoverobject/e.obj", "gameoverobject/r.obj"
     };
 
     // 各文字生成
