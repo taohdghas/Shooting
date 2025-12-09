@@ -2,7 +2,7 @@
 #include "BaseScene.h"
 
 //ゲームセレクトシーン
-class GameSelectScene : public BaseScene
+class GameSelectScene : public  MyEngine::BaseScene
 {
 public:
 	/// <summary>

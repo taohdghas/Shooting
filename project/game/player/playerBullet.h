@@ -14,7 +14,7 @@ public:
 	/// - モデルは "player/playerbullet.obj" を設定し、スケール等の初期値を与える。
 	/// - 寿命タイマー（death_timer_）を <c>kLifeTime</c> にセットする。
 	/// </summary>
-	void Initialize(Object3dBase* object3d_base);
+	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
 	/// 毎フレーム更新する。
@@ -71,8 +71,8 @@ public:
 	/// </summary>
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 private:
-	std::unique_ptr<Object3d> object_;
-	Object3dBase* object3d_base_;
+	std::unique_ptr< MyEngine::Object3d> object_;
+	MyEngine::Object3dBase* object3d_base_;
 	Transform transform_;
 	//速度
 	Vector3 velocity_;

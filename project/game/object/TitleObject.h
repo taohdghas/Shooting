@@ -39,11 +39,11 @@ public:
 
 private:
 	// タイトルのオブジェクト
-	std::unique_ptr<Object3d> title_;
+	std::unique_ptr< MyEngine::Object3d> title_;
 	// pushspaceのオブジェクト
-	std::unique_ptr<Object3d> push_space_;
+	std::unique_ptr< MyEngine::Object3d> push_space_;
 	// プレイヤーオブジェクト
-	std::unique_ptr<Object3d> player_obj_;
+	std::unique_ptr< MyEngine::Object3d> player_obj_;
 	// プレイヤーオブジェクトTransform
 	Transform player_obj_transform_;
 	// Δtを定義

@@ -11,17 +11,17 @@ Player::Player() {}
 Player::~Player() {}
 
 // プレイヤーの初期化処理
-void Player::Initialize(Object3dBase* object3d_base) {
+void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object3d_base_ = object3d_base;
-	object_ = std::make_unique<Object3d>();
+	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("player/player.obj");
 	object_->SetLight(false);
 	transform_.scale = { 0.25f,0.25f,0.25f };
 	transform_.translate = { 0.0f,-1.5f,0.0f };
 	// レティクル（照準）の初期化
-	reticle_ = std::make_unique<Sprite>();
-	reticle_->Initialize(SpriteBase::GetInstance(), "resources/re.png");
+	reticle_ = std::make_unique< MyEngine::Sprite>();
+	reticle_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/re.png");
 	reticle_->SetSize({ 32,32 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
@@ -83,7 +83,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 	}
 
 	// 攻撃入力判定
-	if (Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
 		Attack();
 	}
 	// 回避処理
@@ -126,10 +126,10 @@ void Player::Move() {
 	Vector3 new_pos = transform_.translate;
 
 	// 左右移動入力
-	if (Input::GetInstance()->IsKeyPressed(DIK_A)) {
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
 		new_pos.x -= speed_;
 	}
-	if (Input::GetInstance()->IsKeyPressed(DIK_D)) {
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
 		new_pos.x += speed_;
 	}
 
@@ -145,7 +145,7 @@ void Player::Move() {
 // ジャンプ処理
 void Player::Jump() {
 	// ジャンプ入力判定（最大回数未満ならジャンプ可能）
-	if (Input::GetInstance()->IsKeyTriggered(DIK_W) && jump_count_ < kMaxJumpCount) {
+	if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_W) && jump_count_ < kMaxJumpCount) {
 		jump_velocity_ = jump_power_;
 		jump_count_++;
 	}
@@ -170,7 +170,7 @@ void Player::Jump() {
 void Player::Attack() {
 	if (attack_cooldown_ > 0.0f) return;
 
-	Camera* camera = CameraManager::GetInstance()->GetActiveCamera();
+	MyEngine::Camera* camera = MyEngine::CameraManager::GetInstance()->GetActiveCamera();
 	if (!camera) return;
 
 	const float screen_width = 1280.0f;
@@ -251,7 +251,7 @@ void Player::Dodge() {
 	}
 
 	// 回避入力判定
-	if (Input::GetInstance()->IsKeyPressed(DIK_F)) {
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_F)) {
 		dodge_ = true;
 		dodge_cooldown_ = dodge_interval_;
 	}
@@ -260,10 +260,10 @@ void Player::Dodge() {
 // レティクル（照準）の座標更新
 void Player::ReticleUpdate() {
 	const float move_speed = 10.0f;
-	if (Input::GetInstance()->IsKeyPressed(DIK_LEFT))  reticle_screen_pos_.x -= move_speed;
-	if (Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) reticle_screen_pos_.x += move_speed;
-	if (Input::GetInstance()->IsKeyPressed(DIK_UP))    reticle_screen_pos_.y -= move_speed;
-	if (Input::GetInstance()->IsKeyPressed(DIK_DOWN))  reticle_screen_pos_.y += move_speed;
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_LEFT))  reticle_screen_pos_.x -= move_speed;
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) reticle_screen_pos_.x += move_speed;
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_UP))    reticle_screen_pos_.y -= move_speed;
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_DOWN))  reticle_screen_pos_.y += move_speed;
 
 	// 画面端制限
 	reticle_screen_pos_.x = std::clamp(reticle_screen_pos_.x, 0.0f, 1280.0f);

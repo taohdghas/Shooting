@@ -2,9 +2,9 @@
 #include "ImGuiManager.h"
 
 // プラットフォームの初期化処理
-void Platform::Initialize(Object3dBase* object3dbase) {
+void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
 	object3d_base_ = object3dbase;
-	object_ = std::make_unique<Object3d>();
+	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("platform/platform.obj");
 	object_->SetLight(false);

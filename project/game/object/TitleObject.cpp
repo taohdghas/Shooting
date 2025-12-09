@@ -4,22 +4,22 @@
 // タイトル画面用オブジェクトの初期化処理
 void TitleObject::Initialize() {
     // タイトルのオブジェクト生成・初期化
-    title_ = std::make_unique<Object3d>();
-    title_->Initialize(Object3dBase::GetInstance());
+    title_ = std::make_unique< MyEngine::Object3d>();
+    title_->Initialize(MyEngine::Object3dBase::GetInstance());
     title_->SetModel("title.obj");
     title_->SetScale({ 1.2f, 1.2f, 1.2f });
     title_->SetTranslate({ -1.2f, 0.8f, 1.0f });
 
     // pushspaceのオブジェクト生成・初期化
-    push_space_ = std::make_unique<Object3d>();
-    push_space_->Initialize(Object3dBase::GetInstance());
+    push_space_ = std::make_unique< MyEngine::Object3d>();
+    push_space_->Initialize(MyEngine::Object3dBase::GetInstance());
     push_space_->SetModel("pushspace.obj");
     push_space_->SetScale({ 0.5f, 0.5f, 0.5f });
     push_space_->SetTranslate({ 1.1f, -1.5f, 1.0f });
 
     // プレイヤーオブジェクト（外見のみ）生成・初期化
-    player_obj_ = std::make_unique<Object3d>();
-    player_obj_->Initialize(Object3dBase::GetInstance());
+    player_obj_ = std::make_unique< MyEngine::Object3d>();
+    player_obj_->Initialize(MyEngine::Object3dBase::GetInstance());
     player_obj_->SetModel("player/player.obj");
     player_obj_transform_.scale = { 0.5f, 0.5f, 0.5f };
     player_obj_transform_.rotate = { 0.0f, -0.5f, 0.0f };

@@ -8,32 +8,32 @@
 void GameScene::Initialize() {
 
 	// サウンド初期化
-	Audio::GetInstance()->Initialize();
+	MyEngine::Audio::GetInstance()->Initialize();
 
 	// モデルの読み込み
-	ModelManager::GetInstance()->LoadModel("plane.obj");
-	ModelManager::GetInstance()->LoadModel("axis.obj");
-	ModelManager::GetInstance()->LoadModel("player/player.obj");
-	ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
-	ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
-	ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
-	ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
-	ModelManager::GetInstance()->LoadModel("platform/platform.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("plane.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("axis.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("platform/platform.obj");
 
 	// パーティクルグループの生成
-	ParticleManager::GetInstance()->CreateParticleGroup("particle", "resources/uvChecker.png", ParticleType::Normal);
-	ParticleManager::GetInstance()->CreateParticleGroup("particle2", "resources/circle2.png", ParticleType::Normal);
-	ParticleManager::GetInstance()->CreateParticleGroup("particle3", "resources/gradationLine.png", ParticleType::Ring);
-	ParticleManager::GetInstance()->CreateParticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
-	ParticleManager::GetInstance()->CreateParticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
+	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle", "resources/uvChecker.png", MyEngine::ParticleType::Normal);
+	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle2", "resources/circle2.png", MyEngine::ParticleType::Normal);
+	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle3", "resources/gradationLine.png", MyEngine::ParticleType::Ring);
+	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle4", "resources/gradationLine.png", MyEngine::ParticleType::Cylinder);
+	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle5", "resources/circle2.png", MyEngine::ParticleType::Explosive);
 
 	//カメラの初期化・設定
-	camera_ = std::make_unique<Camera>();
+	camera_ = std::make_unique< MyEngine::Camera>();
 	camera_->SetRotate({ 0.0f,0.0f,0.0f });
 	camera_->SetTranslate({ 0,0,-11 });
-	CameraManager::GetInstance()->AddCamera("Main", camera_.get());
-	CameraManager::GetInstance()->SetActiveCamera("Main");
-	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+	MyEngine::CameraManager::GetInstance()->AddCamera("Main", camera_.get());
+	MyEngine::CameraManager::GetInstance()->SetActiveCamera("Main");
+	MyEngine::Object3dBase::GetInstance()->SetDefaultCamera(MyEngine::CameraManager::GetInstance()->GetActiveCamera());
 
 	//初期位置・回転を保存
 	camera_start_pos_ = camera_->GetTranslate();
@@ -45,19 +45,19 @@ void GameScene::Initialize() {
 
 	// プラットフォームの初期化
 	platform_ = std::make_unique<Platform>();
-	platform_->Initialize(Object3dBase::GetInstance());
+	platform_->Initialize(MyEngine::Object3dBase::GetInstance());
 
 	// 衝突管理クラスの初期化
 	collision_manager_ = std::make_unique<CollisionManager>();
 
 	// JsonManagerでレベルデータ読み込み
-	json_manager_ = std::make_unique<JsonManager>();
+	json_manager_ = std::make_unique< MyEngine::JsonManager>();
 	level_data_ = json_manager_->LoadJsonFile("untitled");
 
 	// プレイヤー生成・初期化
 	for (auto& playerData : level_data_->players) {
 		player_ = std::make_unique<Player>();
-		player_->Initialize(Object3dBase::GetInstance());
+		player_->Initialize(MyEngine::Object3dBase::GetInstance());
 		Transform transform;
 		transform.translate = playerData.translation;
 		player_->SetTranslate(transform.translate);
@@ -67,7 +67,7 @@ void GameScene::Initialize() {
 	// 敵生成・初期化
 	for (auto& enemyData : level_data_->enemies) {
 		auto newEnemy = std::make_unique<Enemy>();
-		newEnemy->Initialize(Object3dBase::GetInstance());
+		newEnemy->Initialize(MyEngine::Object3dBase::GetInstance());
 		newEnemy->SetTranslate(enemyData.translation);
 		newEnemy->SetPlayer(player_.get());
 
@@ -88,24 +88,24 @@ void GameScene::Initialize() {
 	fade_->FadeStart(Fade::State::FadeIn, 0.5f);
 
 	// 最初の1フレーム入力を無視
-	Input::GetInstance()->ClearInput();
+	MyEngine::Input::GetInstance()->ClearInput();
 }
 
 
 // ゲームシーンの終了処理
 void GameScene::Finalize() {
 	// パーティクルグループの開放
-	ParticleManager::GetInstance()->Clear();
+	MyEngine::ParticleManager::GetInstance()->Clear();
 	// カメラマネージャの終了処理
-	CameraManager::GetInstance()->Finalize();
+	MyEngine::CameraManager::GetInstance()->Finalize();
 	// サウンドの終了処理
-	Audio::GetInstance()->Finalize();
+	MyEngine::Audio::GetInstance()->Finalize();
 }
 
 // 毎フレームの更新処理
 void GameScene::Update() {
 	// カメラの更新
-	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 
 	// スタート演出
 	StartAnimation();
@@ -118,7 +118,7 @@ void GameScene::Update() {
 		collision_manager_->CheckPlayerEnemyCollisions(player_.get(), enemy.get());
 
 		if (enemy->IsDeathParticle()) {
-			auto emitter = std::make_unique<ParticleEmitter>();
+			auto emitter = std::make_unique< MyEngine::ParticleEmitter>();
 			emitter->Initialize("particle3");
 			emitter->SetPosition(enemy->GetPosition());
 			emitter->Emit();
@@ -141,7 +141,7 @@ void GameScene::Update() {
 	platform_->Update(is_start_animation_,is_returning_);
 
 	// パーティクルの更新
-	ParticleManager::GetInstance()->Update();
+	MyEngine::ParticleManager::GetInstance()->Update();
 	for (auto& particle : particle_emitters_) {
 		particle->Update();
 	}
@@ -150,7 +150,7 @@ void GameScene::Update() {
 		is_to_game_over_ = true;
 	}
 
-	if (Input::GetInstance()->IsKeyPressed(DIK_R)) {
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_R)) {
 		is_to_game_over_ = true;
 	}
 
@@ -169,7 +169,7 @@ void GameScene::Update() {
 // 描画処理
 void GameScene::Draw() {
 	// 3Dオブジェクト描画準備
-	Object3dBase::GetInstance()->DrawBaseSet();
+	MyEngine::Object3dBase::GetInstance()->DrawBaseSet();
 	// プレイヤーの描画
 	player_->Draw();
 	// 敵の描画
@@ -181,19 +181,19 @@ void GameScene::Draw() {
 	// プラットフォームの描画
 	platform_->Draw();
 	// パーティクルの描画
-	ParticleManager::GetInstance()->Draw();
+	MyEngine::ParticleManager::GetInstance()->Draw();
 
 	// 共通描画設定
-	SpriteBase::GetInstance()->DrawBaseSet();
+	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
 	// レティクル描画
 	player_->ReticleDraw();
 	// フェード描画
 	fade_->Draw();
 
 	//パーティクル
-	ParticleManager::GetInstance()->Draw();
+	MyEngine::ParticleManager::GetInstance()->Draw();
 	//パーティクル（重複呼び出しは仕様に合わせ保持）
-	ParticleManager::GetInstance()->Draw();
+	MyEngine::ParticleManager::GetInstance()->Draw();
 }
 
 // デバッグ表示（ImGuiによるパラメータ調整・状態表示）
@@ -232,7 +232,7 @@ void GameScene::Debug() {
 
 //追従カメラ
 void GameScene::FollowCamera() {
-	Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+	MyEngine::Camera* cam = MyEngine::CameraManager::GetInstance()->GetActiveCamera();
 
 	// スタート演出中は追従しない
 	if (is_start_animation_ || is_returning_) {
@@ -257,8 +257,8 @@ void GameScene::FollowCamera() {
 
 //スタート演出
 void GameScene::StartAnimation() {
-	if (!is_start_animation_ && Input::GetInstance()->IsKeyPressed(DIK_H)) {
-		SceneManager::GetInstance()->ChangeScene("GAME");
+	if (!is_start_animation_ && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_H)) {
+		MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 
 	// Update内
@@ -278,7 +278,7 @@ void GameScene::StartAnimation() {
 		camPos.y = camera_start_pos_.y; // 高さはそのまま
 		camPos.z = camera_start_pos_.x * std::sin(angle) + camera_start_pos_.z * std::cos(angle);
 
-		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+		MyEngine::Camera* cam = MyEngine::CameraManager::GetInstance()->GetActiveCamera();
 		cam->SetTranslate(camPos);
 
 		//プレイヤー方向を向く
@@ -294,7 +294,7 @@ void GameScene::StartAnimation() {
 		}
 	} else if (is_returning_) {
 		//回転終了後角度を初期値に戻す
-		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+		MyEngine::Camera* cam = MyEngine::CameraManager::GetInstance()->GetActiveCamera();
 		Vector3 currentRot = cam->GetRotate();
 		Vector3 targetRot = { 0.0f, 0.0f, 0.0f };
 
@@ -325,13 +325,13 @@ void GameScene::ToGameClear() {
 	}
 	// フェードアウト開始
 	if (fade_->GetState() == Fade::State::None &&
-		Input::GetInstance()->IsKeyPressed(DIK_C))
+		MyEngine::Input::GetInstance()->IsKeyPressed(DIK_C))
 	{
 		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 	// フェードアウト終了後シーン移行
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()) {
-		SceneManager::GetInstance()->ChangeScene("CLEAR");
+		MyEngine::SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
 }
 
@@ -395,6 +395,6 @@ void GameScene::ToGameOver() {
 	}
 	// フェードアウト終了後シーン移行
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()) {
-		SceneManager::GetInstance()->ChangeScene("OVER");
+		MyEngine::SceneManager::GetInstance()->ChangeScene("OVER");
 	}
 }

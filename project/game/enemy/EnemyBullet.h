@@ -12,7 +12,7 @@ public:
     /// - 引数の <c>Object3dBase*</c> を保持し、内部の <c>Object3d</c> を生成・初期化する想定。
     /// - モデルや初期トランスフォームの設定を行う実装を想定する。
     /// </summary>
-    void Initialize(Object3dBase* object3d_base);
+    void Initialize(MyEngine::Object3dBase* object3d_base);
 
     /// <summary>
     /// 毎フレームの更新処理を行う。
@@ -83,8 +83,8 @@ public:
     void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 
 private:
-    Object3dBase* object3d_base_ = nullptr;
-    std::unique_ptr<Object3d> object_;
+    MyEngine::Object3dBase* object3d_base_ = nullptr;
+    std::unique_ptr< MyEngine::Object3d> object_;
     Transform transform_;
     //速度
     Vector3 velocity_;

@@ -4,9 +4,9 @@
 #include "MyMath.h"
 
 // 初期化処理
-void Enemy::Initialize(Object3dBase* object3d_base) {
+void Enemy::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object3d_base_ = object3d_base;
-	object_ = std::make_unique<Object3d>();
+	object_ = std::make_unique<MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("enemy/enemy.obj");
 	object_->SetLight(false);

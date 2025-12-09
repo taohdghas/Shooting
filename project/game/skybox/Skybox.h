@@ -54,8 +54,8 @@ public:
 	Transform& GetTransform() { return transform_; }
 
 private:
-	DirectXBase* directx_base_ = nullptr;
-	std::unique_ptr<PipelineStateObject> pso_;
+	MyEngine::DirectXBase* directx_base_ = nullptr;
+	std::unique_ptr<MyEngine::PipelineStateObject> pso_;
 	VertexData* vertex_data_ = nullptr;
 	Material* material_data_;
 	Transform transform_;

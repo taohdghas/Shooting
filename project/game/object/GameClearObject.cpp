@@ -19,8 +19,8 @@ void GameClearObject::Initialize() {
 
     //文字ごとの初期化
     for (int i = 0; i < kNumLetters; i++) {
-        letters_[i].object = std::make_unique<Object3d>();
-        letters_[i].object->Initialize(Object3dBase::GetInstance());
+        letters_[i].object = std::make_unique< MyEngine::Object3d>();
+        letters_[i].object->Initialize(MyEngine::Object3dBase::GetInstance());
         letters_[i].object->SetModel(models[i]);
 
         letters_[i].transform.scale = { 0.6f,0.6f,0.6f };
@@ -31,8 +31,8 @@ void GameClearObject::Initialize() {
     }
 
     //PushSpaceオブジェクトの初期化
-    push_space_object_ = std::make_unique<Object3d>();
-    push_space_object_->Initialize(Object3dBase::GetInstance());
+    push_space_object_ = std::make_unique< MyEngine::Object3d>();
+    push_space_object_->Initialize(MyEngine::Object3dBase::GetInstance());
     push_space_object_->SetModel("gameclearobject/pushspace.obj");
     push_space_transform_.scale = { 0.5f,0.5f,0.5f };
     push_space_transform_.rotate = { 0.0f,0.0f,0.0f };

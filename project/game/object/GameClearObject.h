@@ -36,15 +36,15 @@ public:
 private:
     //文字構造体
     struct Letter {
-        std::unique_ptr<Object3d> object;
+        std::unique_ptr< MyEngine::Object3d> object;
         Transform transform;
         float delay; // 出現までの遅延時間
     };
 
     // ゲームクリア文字のオブジェクト
-    std::unique_ptr<Object3d> game_clear_object_;
+    std::unique_ptr< MyEngine::Object3d> game_clear_object_;
     // push spaceのオブジェクト
-    std::unique_ptr<Object3d> push_space_object_;
+    std::unique_ptr< MyEngine::Object3d> push_space_object_;
     // ゲームクリアトランスフォーム
     Transform game_clear_transform_;
     // push spaceトランスフォーム

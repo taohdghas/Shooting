@@ -6,7 +6,7 @@
 #include "Fade.h"
 
 // ゲームクリアシーン
-class GameClearScene : public BaseScene
+class GameClearScene : public  MyEngine::BaseScene
 {
 public:
 	/// <summary>
@@ -48,7 +48,7 @@ public:
 	void SceneChange();
 private:
 	// カメラ
-	std::unique_ptr<Camera> camera_;
+	std::unique_ptr< MyEngine::Camera> camera_;
 	// Skybox
 	std::unique_ptr<Skybox> skybox_;
 	// ゲームクリアオブジェクト

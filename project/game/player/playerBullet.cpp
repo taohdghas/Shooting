@@ -2,11 +2,11 @@
 #include "MyMath.h"
 
 // 弾の初期化処理
-void PlayerBullet::Initialize(Object3dBase* object3d_base) {
+void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object3d_base_ = object3d_base;
 
 	// 3Dオブジェクトの生成・初期化
-	object_ = std::make_unique<Object3d>();
+	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("player/playerbullet.obj");
 	object_->SetScale({ 1.0f, 1.0f, 1.0f });

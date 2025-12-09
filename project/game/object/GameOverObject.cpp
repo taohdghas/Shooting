@@ -13,8 +13,8 @@ void GameOverObject::Initialize() {
 
     // 各文字生成
     for (int i = 0; i < kNumLetters; i++) {
-        letters_[i].obj = std::make_unique<Object3d>();
-        letters_[i].obj->Initialize(Object3dBase::GetInstance());
+        letters_[i].obj = std::make_unique< MyEngine::Object3d>();
+        letters_[i].obj->Initialize(MyEngine::Object3dBase::GetInstance());
         letters_[i].obj->SetModel(models[i]);
 
         letters_[i].transform.scale = { 1.0f, 1.0f, 1.0f };
@@ -29,8 +29,8 @@ void GameOverObject::Initialize() {
     }
 
     // retry オブジェクト
-    retryObj_ = std::make_unique<Object3d>();
-    retryObj_->Initialize(Object3dBase::GetInstance());
+    retryObj_ = std::make_unique< MyEngine::Object3d>();
+    retryObj_->Initialize(MyEngine::Object3dBase::GetInstance());
     retryObj_->SetModel("gameoverobject/retry.obj");
 
     retryTransform_.scale = { 0.7f, 0.7f, 0.7f };

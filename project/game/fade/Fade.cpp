@@ -15,8 +15,8 @@ static const std::unordered_map<Fade::State, AlphaFunc> kAlphaFuncTable = {
 
 // フェード用スプライトの初期化
 void Fade::Initialize() {
-    sprite_ = std::make_unique<Sprite>();
-    sprite_->Initialize(SpriteBase::GetInstance(), "resources/white.png");
+    sprite_ = std::make_unique< MyEngine::Sprite>();
+    sprite_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/white.png");
     sprite_->SetSize({ 1280, 720 });
     sprite_->SetPosition({ 0, 0 });
     sprite_->SetColor(Vector4{ 0, 0, 0, 1 });

@@ -59,7 +59,7 @@ public:
 	State GetState() const { return state_; }
 
 private:
-	std::unique_ptr<Sprite> sprite_;
+	std::unique_ptr< MyEngine::Sprite> sprite_;
 	//Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	//初期状態

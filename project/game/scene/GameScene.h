@@ -22,7 +22,7 @@
 #include "Platform.h"
 
 //ゲームシーン
-class GameScene : public BaseScene
+class GameScene : public  MyEngine::BaseScene
 {
 public:
 	/// <summary>
@@ -83,13 +83,13 @@ private:
 	//プラットフォーム
 	std::unique_ptr<Platform> platform_;
 	//パーティクルエミッター
-	std::vector<std::unique_ptr<ParticleEmitter>> particle_emitters_;
+	std::vector<std::unique_ptr< MyEngine::ParticleEmitter>> particle_emitters_;
 	//衝突マネージャー
 	std::unique_ptr<CollisionManager> collision_manager_;
 	//カメラ
-	std::unique_ptr<Camera> camera_;
+	std::unique_ptr< MyEngine::Camera> camera_;
 	//JsonManager
-	std::unique_ptr<JsonManager> json_manager_;
+	std::unique_ptr< MyEngine::JsonManager> json_manager_;
 	//フェード
 	std::unique_ptr<Fade> fade_;
 	//レベルデータ

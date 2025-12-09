@@ -59,10 +59,10 @@ public:
     /// - 取得した Camera を描画やシーンにセットして利用できる。
     /// </summary>
     /// <returns>内部 Camera へのポインタ。</returns>
-	Camera* GetCamera() { return &camera_; };
+    MyEngine::Camera* GetCamera() { return &camera_; };
 
 private:
-    Camera camera_;
+    MyEngine::Camera camera_;
     float speed_ = 3.0f;
     Player* player_ = nullptr;
     Vector3 player_offset_;

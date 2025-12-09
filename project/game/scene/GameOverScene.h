@@ -6,7 +6,7 @@
 #include "Skybox.h"
 
 // ゲームオーバーシーン
-class GameOverScene : public BaseScene
+class GameOverScene : public  MyEngine::BaseScene
 {
 public:
 	/// <summary>
@@ -48,7 +48,7 @@ public:
 
 private:
 	// カメラ
-	std::unique_ptr<Camera> camera_;
+	std::unique_ptr< MyEngine::Camera> camera_;
 	// フェード
 	std::unique_ptr<Fade> fade_;
 	// ゲームオーバーオブジェクト

@@ -6,11 +6,11 @@
 
 // Skyboxの初期化処理
 void Skybox::Initialize(const std::string& texture_file_path) {
-	directx_base_ = DirectXBase::GetInstance();
-	pso_ = std::make_unique<PipelineStateObject>();
+	directx_base_ = MyEngine::DirectXBase::GetInstance();
+	pso_ = std::make_unique<MyEngine::PipelineStateObject>();
 	pso_->Initialize(directx_base_);
 	texture_file_path_ = texture_file_path;
-	TextureManager::GetInstance()->LoadTexture(texture_file_path_);
+	MyEngine::TextureManager::GetInstance()->LoadTexture(texture_file_path_);
 	// 頂点データ作成
 	CreateVertex();
 	// インデックスデータ作成
@@ -31,8 +31,8 @@ void Skybox::Update() {
 	Matrix4x4 world_matrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	Matrix4x4 world_view_projection_matrix;
 	// カメラが存在する場合はViewProjectionを掛ける
-	if (CameraManager::GetInstance()) {
-		const Matrix4x4& view_projection_matrix = CameraManager::GetInstance()->GetActiveCamera()->GetViewProjectionMatrix();
+	if (MyEngine::CameraManager::GetInstance()) {
+		const Matrix4x4& view_projection_matrix = MyEngine::CameraManager::GetInstance()->GetActiveCamera()->GetViewProjectionMatrix();
 		world_view_projection_matrix = Math::Multiply(world_matrix, view_projection_matrix);
 	} else {
 		world_view_projection_matrix = world_matrix;
@@ -57,7 +57,7 @@ void Skybox::Draw() {
 	// マテリアルCBufferの場所を設定
 	directx_base_->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
 	// テクスチャのDescriptorTableを設定
-	directx_base_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(texture_file_path_));
+	directx_base_->GetCommandList()->SetGraphicsRootDescriptorTable(2, MyEngine::TextureManager::GetInstance()->GetSrvHandleGPU(texture_file_path_));
 	// インスタンシングデータのSRVのDescriptorTableを設定
 	directx_base_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformation_matrix_resource_->GetGPUVirtualAddress());
 	// 描画コマンド発行

@@ -10,21 +10,21 @@
 void GameOverScene::Initialize() {
 
 	//モデル読み込み
-	ModelManager::GetInstance()->LoadModel("gameoverobject/retry.obj");
-	ModelManager::GetInstance()->LoadModel("gameoverobject/g.obj");
-	ModelManager::GetInstance()->LoadModel("gameoverobject/a.obj");
-	ModelManager::GetInstance()->LoadModel("gameoverobject/m.obj");
-	ModelManager::GetInstance()->LoadModel("gameoverobject/e.obj");
-	ModelManager::GetInstance()->LoadModel("gameoverobject/o.obj");
-	ModelManager::GetInstance()->LoadModel("gameoverobject/v.obj");
-	ModelManager::GetInstance()->LoadModel("gameoverobject/r.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/retry.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/g.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/a.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/m.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/e.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/o.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/v.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/r.obj");
 
 	//カメラ
-	camera_ = std::make_unique<Camera>();
+	camera_ = std::make_unique< MyEngine::Camera>();
 	camera_->SetTranslate({ 0.0f,0.0f,-10.0f });
-	CameraManager::GetInstance()->AddCamera("Main", camera_.get());
-	CameraManager::GetInstance()->SetActiveCamera("Main");
-	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+	MyEngine::CameraManager::GetInstance()->AddCamera("Main", camera_.get());
+	MyEngine::CameraManager::GetInstance()->SetActiveCamera("Main");
+	MyEngine::Object3dBase::GetInstance()->SetDefaultCamera(MyEngine::CameraManager::GetInstance()->GetActiveCamera());
 
 	//フェード
 	fade_ = std::make_unique<Fade>();
@@ -40,13 +40,13 @@ void GameOverScene::Initialize() {
 //終了
 void GameOverScene::Finalize() {
 	//カメラマネージャ
-	CameraManager::GetInstance()->Finalize();
+	MyEngine::CameraManager::GetInstance()->Finalize();
 }
 //更新
 void GameOverScene::Update() {
 
 	//カメラ
-	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 	//Skybox
 	skybox_->Update();
 
@@ -62,7 +62,7 @@ void GameOverScene::Update() {
 //描画
 void GameOverScene::Draw() {
 	//3Dオブジェクト描画準備
-	Object3dBase::GetInstance()->DrawBaseSet();
+	MyEngine::Object3dBase::GetInstance()->DrawBaseSet();
 	//Skybox
 	skybox_->Draw();
 
@@ -70,7 +70,7 @@ void GameOverScene::Draw() {
 	game_over_object_->Draw();
 
 	//共通描画設定
-	SpriteBase::GetInstance()->DrawBaseSet();
+	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
 
 	//フェード
 	fade_->Draw();
@@ -88,21 +88,21 @@ void GameOverScene::SceneChange() {
 		fade_->End();
 	}
 	//タイトルへのフェードアウト開始
-	if (fade_->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+	if (fade_->GetState() == Fade::State::None && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
 		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 		is_to_title_ = true;
 	}
 	//ゲームシーンへのフェードアウト(リトライ)
-	if (fade_->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_R)) {
+	if (fade_->GetState() == Fade::State::None && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_R)) {
 		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 		is_to_game_ = true;
 	}
 	//タイトルシーン移行
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()&&is_to_title_) {
-		SceneManager::GetInstance()->ChangeScene("TITLE");
+		MyEngine::SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
 	//ゲームシーン移行
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished() && is_to_game_) {
-		SceneManager::GetInstance()->ChangeScene("GAME");
+		MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 }

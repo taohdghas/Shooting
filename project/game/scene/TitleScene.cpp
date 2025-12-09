@@ -7,21 +7,21 @@
 void TitleScene::Initialize() {
 
 	// サウンド初期化
-	Audio::GetInstance()->Initialize();
+	MyEngine::Audio::GetInstance()->Initialize();
 
 	// モデルの読み込み
-	ModelManager::GetInstance()->LoadModel("plane.gltf");
-	ModelManager::GetInstance()->LoadModel("axis.obj");
-	ModelManager::GetInstance()->LoadModel("title.obj");
-	ModelManager::GetInstance()->LoadModel("pushspace.obj");
-	ModelManager::GetInstance()->LoadModel("player/player.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("plane.gltf");
+	MyEngine::ModelManager::GetInstance()->LoadModel("axis.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("title.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("pushspace.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
 
 	// カメラの初期化・登録
-	camera_ = std::make_unique<Camera>();
+	camera_ = std::make_unique<MyEngine::Camera>();
 	camera_->SetTranslate({ 0.0f,0.0f,-10.0f });
-	CameraManager::GetInstance()->AddCamera("Main", camera_.get());
-	CameraManager::GetInstance()->SetActiveCamera("Main");
-	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+	MyEngine::CameraManager::GetInstance()->AddCamera("Main", camera_.get());
+	MyEngine::CameraManager::GetInstance()->SetActiveCamera("Main");
+	MyEngine::Object3dBase::GetInstance()->SetDefaultCamera(MyEngine::CameraManager::GetInstance()->GetActiveCamera());
 
 	// タイトル画面用オブジェクトの初期化
 	title_object_ = std::make_unique<TitleObject>();
@@ -37,22 +37,22 @@ void TitleScene::Initialize() {
 	skybox_->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
 
 	// JsonManagerでレベルデータ読み込み
-	json_manager_ = std::make_unique<JsonManager>();
+	json_manager_ = std::make_unique<MyEngine::JsonManager>();
 	level_data_ = json_manager_->LoadJsonFile("untitled");
 }
 
 // タイトルシーンの終了処理
 void TitleScene::Finalize() {
 	// カメラマネージャの終了処理
-	CameraManager::GetInstance()->Finalize();
+	MyEngine::CameraManager::GetInstance()->Finalize();
 	// サウンドの終了処理
-	Audio::GetInstance()->Finalize();
+	MyEngine::Audio::GetInstance()->Finalize();
 }
 
 // 毎フレームの更新処理
 void TitleScene::Update() {
 	// カメラの更新
-	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 	// Skyboxの更新
 	skybox_->Update();
 	// タイトルオブジェクトの更新
@@ -68,14 +68,14 @@ void TitleScene::Update() {
 // 描画処理
 void TitleScene::Draw() {
 	// 3Dオブジェクト描画準備
-	Object3dBase::GetInstance()->DrawBaseSet();
+	MyEngine::Object3dBase::GetInstance()->DrawBaseSet();
 	// Skyboxの描画
 	skybox_->Draw();
 	// タイトルオブジェクトの描画
 	title_object_->Draw();
 
 	// 共通描画設定
-	SpriteBase::GetInstance()->DrawBaseSet();
+	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
 
 	// フェード描画
 	fade_->Draw();
@@ -120,12 +120,12 @@ void TitleScene::SceneChange() {
 	}
 
 	// スペースキー押下でフェードアウト開始
-	if (fade_->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+	if (fade_->GetState() == Fade::State::None && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
 		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 
 	// フェードアウト終了後にゲームシーンへ遷移
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()) {
-		SceneManager::GetInstance()->ChangeScene("GAME");
+		MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 }

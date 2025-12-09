@@ -35,7 +35,7 @@ public:
 	/// - モデルを "player/player.obj" に設定しライトを無効化、初期スケール・位置を設定する。
 	/// - レティクル用スプライトを生成して初期設定する（サイズ・アンカーポイント等）。
 	/// </summary>
-	void Initialize(Object3dBase* object3d_base);
+	void Initialize(MyEngine::Object3dBase* object3d_base);
 	/// <summary>
 	/// 毎フレームの更新処理を行う。
 	/// - 死亡時は早期リターンする。
@@ -141,16 +141,16 @@ public:
 	void SetPlatform(Platform* platform) { platform_ = platform; }
 
 private:
-	Object3dBase* object3d_base_;
-	Camera* camera_;
+	MyEngine::Object3dBase* object3d_base_;
+	MyEngine::Camera* camera_;
 	Transform transform_;
 	//レティクル用
 	Transform reticle_transform_;
-	std::unique_ptr<Object3d> object_;
+	std::unique_ptr< MyEngine::Object3d> object_;
 	//弾のリスト
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	//レティクル
-	std::unique_ptr<Sprite> reticle_;
+	std::unique_ptr< MyEngine::Sprite> reticle_;
 	//プラットフォーム
 	Platform* platform_ = nullptr;
 	//画面上の位置

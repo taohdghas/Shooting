@@ -11,7 +11,7 @@ public:
 	/// - 引数の <c>Object3dBase*</c> を保持し、内部の <c>Object3d</c> を生成・初期化してモデルや初期トランスフォームを設定する想定。
 	/// </summary>
 	/// <param name="object3dbase">描画共通設定を提供する <c>Object3dBase*</c>。</param>
-	void Initialize(Object3dBase* object3d_base);
+	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
 	/// 毎フレームの更新処理を行う。
@@ -44,9 +44,9 @@ public:
 	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
 private:
-	Object3dBase* object3d_base_;
+	MyEngine::Object3dBase* object3d_base_;
 	Transform transform_;
-	std::unique_ptr<Object3d> object_;
+	std::unique_ptr< MyEngine::Object3d> object_;
 	// 奥方向移動速度
 	float move_speed_z_ = 0.1f;
 };

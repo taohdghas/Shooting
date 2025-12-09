@@ -15,7 +15,7 @@ public:
     /// - 引数の <c>Object3dBase*</c> を保持し、内部で <c>Object3d</c> を生成・初期化する。
     /// - モデルを "enemy/enemy.obj" に設定し、ライトを無効化、初期のスケール・位置を設定する実装を想定する。
     /// </summary>
-    void Initialize(Object3dBase* object3d_base);
+    void Initialize(MyEngine::Object3dBase* object3d_base);
 
     /// <summary>
     /// 毎フレームの更新処理を行う。
@@ -130,8 +130,8 @@ public:
     /// <param name="closed">レールが閉じているか（true:閉じている/false:開いている）。</param>
     void SetRail(const std::vector<Vector3>& controlPoints, bool closed);
 private:
-    Object3dBase* object3d_base_;
-    std::unique_ptr<Object3d> object_;
+    MyEngine::Object3dBase* object3d_base_;
+    std::unique_ptr<MyEngine::Object3d> object_;
     Transform transform_;
     Player* player_;
     std::list<std::unique_ptr<EnemyBullet>> bullets_;

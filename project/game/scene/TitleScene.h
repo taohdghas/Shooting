@@ -19,7 +19,7 @@
 #include "JsonManager.h"
 
 // タイトルシーン
-class TitleScene : public BaseScene
+class TitleScene : public MyEngine::BaseScene
 {
 public:
 	/// <summary>
@@ -59,9 +59,9 @@ private:
 
 private:
 	// パーティクルエミッター
-	std::vector<std::unique_ptr<ParticleEmitter>> particle_emitters_;
+	std::vector<std::unique_ptr<MyEngine::ParticleEmitter>> particle_emitters_;
 	// カメラ
-	std::unique_ptr<Camera> camera_;
+	std::unique_ptr<MyEngine::Camera> camera_;
 	// ライト
 	std::unique_ptr<DirectionalLight> directional_light_;
 	// フェード
@@ -71,7 +71,7 @@ private:
 	// タイトルオブジェクト
 	std::unique_ptr<TitleObject> title_object_;
 	// JsonManager
-	std::unique_ptr<JsonManager> json_manager_;
+	std::unique_ptr<MyEngine::JsonManager> json_manager_;
 	// レベルデータ
 	LevelData* level_data_ = nullptr;
 };
