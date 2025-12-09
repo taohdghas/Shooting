@@ -9698,11 +9698,24 @@ void Platform::Initialize(Object3dBase* object3dbase) {
 }
 
 // 毎フレームの更新処理（Transform情報をObject3dへ反映）
-void Platform::Update() {
+void Platform::Update(bool is_start_animation_, bool is_returning_) {
+	//スタート演出中は動かない
+	if (is_start_animation_ || is_returning_) {
+		object_->SetScale(transform_.scale);
+		object_->SetRotate(transform_.rotate);
+		object_->SetTranslate(transform_.translate);
+		object_->Update();
+		return;
+	}
+	
+	//奥方向移動
+	transform_.translate.z += move_speed_z_;
+
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
+	
 }
 
 // プラットフォームの描画処理
@@ -9713,7 +9726,7 @@ void Platform::Draw() {
 // デバッグ用ImGui表示（Transformのパラメータ調整）
 void Platform::Debug() {
 #ifdef USE_IMGUI
-	if (ImGui::TreeNode("Platform")) {
+	if (ImGui::TreeNodeEx("Platform", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::DragFloat3("PlatformScale", &transform_.scale.x, 0.1f);
 		ImGui::DragFloat3("PlatformRotate", &transform_.rotate.x, 0.1f);
 		ImGui::DragFloat3("PlatformTranslate", &transform_.translate.x, 0.1f);
@@ -9745,7 +9758,7 @@ public:
 	/// 毎フレームの更新処理を行う。
 	/// - 必要に応じてトランスフォームの同期や物理的な振る舞いを更新する（現状は Transform の反映などを想定）。
 	/// </summary>
-	void Update();
+	void Update(bool is_start_animation_, bool is_returning_);
 
 	/// <summary>
 	/// 描画処理を行う。
@@ -9760,15 +9773,23 @@ public:
 	void Debug();
 
 	/// <summary>
+	/// トランスフォーム（平行移動）を取得する。
+	/// </summary>
+	/// <returns>現在のワールド座標（平行移動）。</returns>
+	const Vector3& GetTranslate() const { return transform_.translate; }
+
+	/// <summary>
 	/// トランスフォーム（平行移動）を設定する。
 	/// </summary>
 	/// <param name="translate">設定するワールド座標（平行移動）。</param>
-	void SetTransform(const Vector3& translate) { transform_.translate = translate; }
+	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
 private:
 	Object3dBase* object3d_base_;
 	Transform transform_;
 	std::unique_ptr<Object3d> object_;
+	// 奥方向移動速度
+	float move_speed_z_ = 0.1f;
 };
 
 
@@ -9780,6 +9801,7 @@ File Path: project/game/player/Player.cpp
 #include "MyMath.h"
 #include "ImGuiManager.h"
 #include "CameraManager.h"
+#include "Platform.h"
 #include <algorithm>
 
 Player::Player() {}
@@ -9803,7 +9825,7 @@ void Player::Initialize(Object3dBase* object3d_base) {
 }
 
 // 毎フレームの更新処理
-void Player::Update() {
+void Player::Update(bool is_start_animation_, bool is_returning_) {
 	//デスの場合スキップ
 
 	//攻撃クールタイム
@@ -9826,6 +9848,28 @@ void Player::Update() {
 	bullets_.remove_if([](const std::unique_ptr<PlayerBullet>& bullet) {
 		return bullet->IsDead();
 		});
+
+	// スタート演出中は追従しない
+	if (!is_start_animation_ && !is_returning_ && platform_) {
+		//追従初回フレームで前フレーム位置を初期化
+		if (!is_following_platform_initialized_) {
+			prev_platform_pos_ = platform_->GetTranslate();
+			is_following_platform_initialized_ = true;
+		}
+
+		// プラットフォームの移動量
+		Vector3 platformDelta = platform_->GetTranslate() - prev_platform_pos_;
+		prev_platform_pos_ = platform_->GetTranslate();
+
+		//Z方向追従
+		Vector3 pos = transform_.translate;
+		pos.z += platformDelta.z;
+		transform_.translate = pos;
+	} else {
+		//スタート演出中初期化リセット
+		is_following_platform_initialized_ = false;
+	}
+
 
 	// 移動処理
 	Move();
@@ -10126,6 +10170,8 @@ File Path: project/game/player/Player.h
 #include <memory>
 #include <vector>
 
+//プラットフォーム
+class Platform;
 //プレイヤー
 class Player
 {
@@ -10154,7 +10200,7 @@ public:
 	/// - クールダウン／タイマー類の更新、弾や内部オブジェクトの更新、移動・ジャンプ・回避・攻撃処理を順に行う。
 	/// - レティクルの更新と弾リストの更新もここで行う。
 	/// </summary>
-	void Update();
+	void Update(bool is_start_animation_, bool is_returning_);
 	/// <summary>
 	/// 描画処理を行う。
 	/// - 死亡時は描画を行わない。
@@ -10245,6 +10291,12 @@ public:
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 	/// <summary>座標を設定する。</summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
+	/// <summary>
+	/// プラットフォームを設定する。
+	/// - プレイヤーが乗る地面（Platform）のポインタを保持する
+	/// </summary>
+	/// <param name="platform">設定する Platform クラスのポインタ。</param>
+	void SetPlatform(Platform* platform) { platform_ = platform; }
 
 private:
 	Object3dBase* object3d_base_;
@@ -10257,11 +10309,15 @@ private:
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	//レティクル
 	std::unique_ptr<Sprite> reticle_;
+	//プラットフォーム
+	Platform* platform_ = nullptr;
 	//画面上の位置
 	Vector2 reticle_screen_pos_{ 640.0f, 360.0f };
 	Vector2 reticle_pos_ = { 640.0f, 360.0f };
 	//レティクルのオフセット
 	Vector3 reticle_offset_{ 0.0f, 0.0f, 10.0f };
+	//前フレームのプラットフォーム位置
+	Vector3 prev_platform_pos_ = { 0, 0, 0 };
 	//色
 	Vector4 color_;
 	//回避方向
@@ -10274,6 +10330,8 @@ private:
 	bool is_jumping_ = false;
 	//無敵フラグ(デバック)
 	bool is_invincible_ = false;
+	//追従プラットフォーム初期化フラグ
+	bool is_following_platform_initialized_ = false;
 	//モデルの寸法
 	float dimensions_ = 2.0f;
 	//プレイヤーの移動速度
@@ -10510,38 +10568,9 @@ void RailCamera::Initialize() {
     camera_.SetTranslate({ 0, 0, -10 });
 }
 
-// プレイヤーの参照をセット
-void RailCamera::SetPlayer(Player* player) {
-    player_ = player;
-}
-
-// プレイヤーのカメラからのオフセットをセット
-void RailCamera::SetPlayerOffset(const Vector3& offset) {
-    player_offset_ = offset;
-}
-
-// プラットフォームの参照をセット
-void RailCamera::SetPlatform(Platform* platform) {
-    platform_ = platform;
-}
-
-// プラットフォームのカメラからのオフセットをセット
-void RailCamera::SetPlatformOffset(const Vector3& offset) {
-    platform_offset_ = offset;
-}
-
-// カメラの進行速度をセット
-void RailCamera::SetSpeed(float speed) {
-    speed_ = speed;
-}
-
-// カメラのポインタを取得
-Camera* RailCamera::GetCamera() {
-    return &camera_;
-}
-
 // 毎フレームの更新処理
 void RailCamera::Update() {
+
     // カメラを+Z方向に移動
     Vector3 camPos = camera_.GetTranslate();
     camPos.z += speed_;
@@ -10560,7 +10589,7 @@ void RailCamera::Update() {
     if (platform_) {
         Vector3 platPos = platform_offset_;
         platPos.z += camPos.z;
-        platform_->SetTransform(platPos);
+        platform_->SetTranslate(platPos);
     }
 }
 
@@ -10597,38 +10626,38 @@ public:
     /// - SetPlayer を呼んだあと Update でプレイヤー追従が行われる。
     /// </summary>
     /// <param name="player">追従対象の Player ポインタ。</param>
-    void SetPlayer(Player* player);
+	void SetPlayer(Player* player) { player_ = player; };
     /// <summary>
     /// プレイヤーに対するオフセットを設定する。
     /// - カメラがプレイヤーからどの相対位置に配置されるかを指定する。
     /// </summary>
     /// <param name="offset">プレイヤーからの相対オフセットベクトル。</param>
-    void SetPlayerOffset(const Vector3& offset);
+	void SetPlayerOffset(const Vector3& offset) { player_offset_ = offset; };
     /// <summary>
     /// 追従対象のプラットフォームを設定する。
     /// - 必要に応じてプレイヤー追従とプラットフォーム追従を組み合わせてカメラ位置を決定する。
     /// </summary>
     /// <param name="platform">追従対象の Platform ポインタ。</param>
-    void SetPlatform(Platform* platform);
+	void SetPlatform(Platform* platform) { platform_ = platform; };
     /// <summary>
     /// プラットフォームに対するオフセットを設定する。
     /// - プラットフォーム基準でのカメラ相対位置を指定する。
     /// </summary>
     /// <param name="offset">プラットフォームからの相対オフセットベクトル。</param>
-    void SetPlatformOffset(const Vector3& offset);
+	void SetPlatformOffset(const Vector3& offset) { platform_offset_ = offset; };
     /// <summary>
     /// カメラ追従速度を設定する。
     /// - 大きいほど速く追従し、小さいほど緩やかに補間される。
     /// </summary>
     /// <param name="speed">追従速度（任意の単位）。</param>
-    void SetSpeed(float speed);
+	void SetSpeed(float speed) { speed_ = speed; };
 
     /// <summary>
     /// 内部で管理している Camera のポインタを取得する。
     /// - 取得した Camera を描画やシーンにセットして利用できる。
     /// </summary>
     /// <returns>内部 Camera へのポインタ。</returns>
-    Camera* GetCamera();
+	Camera* GetCamera() { return &camera_; };
 
 private:
     Camera camera_;
@@ -10637,6 +10666,7 @@ private:
     Vector3 player_offset_;
     Platform* platform_ = nullptr;
     Vector3 platform_offset_ = { 0, 0, 0 };
+    bool followEnabled_;
 };
 
 
@@ -10970,18 +11000,17 @@ void GameScene::Initialize() {
 	ParticleManager::GetInstance()->CreateParticleGroup("particle4", "resources/gradationLine.png", ParticleType::Cylinder);
 	ParticleManager::GetInstance()->CreateParticleGroup("particle5", "resources/circle2.png", ParticleType::Explosive);
 
-	// レールカメラの初期化・設定
-	rail_camera_ = std::make_unique<RailCamera>();
-	rail_camera_->Initialize();
-	rail_camera_->SetPlayerOffset({ 0.0f,-1.5f,10.0f });
-	rail_camera_->SetSpeed(0.1f);
-
-	// メインカメラの初期化・登録
+	//カメラの初期化・設定
 	camera_ = std::make_unique<Camera>();
-	camera_->SetTranslate({ 0,0,-10 });
+	camera_->SetRotate({ 0.0f,0.0f,0.0f });
+	camera_->SetTranslate({ 0,0,-11 });
 	CameraManager::GetInstance()->AddCamera("Main", camera_.get());
 	CameraManager::GetInstance()->SetActiveCamera("Main");
 	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+
+	//初期位置・回転を保存
+	camera_start_pos_ = camera_->GetTranslate();
+	camera_start_rot_ = camera_->GetRotate();
 
 	// Skyboxの初期化
 	skybox_ = std::make_unique<Skybox>();
@@ -10990,8 +11019,6 @@ void GameScene::Initialize() {
 	// プラットフォームの初期化
 	platform_ = std::make_unique<Platform>();
 	platform_->Initialize(Object3dBase::GetInstance());
-	// railCamera->SetPlatform(platform.get());
-	// // railCamera->SetPlatformOffset({ 0.0f,-1.9f,10.0f });
 
 	// 衝突管理クラスの初期化
 	collision_manager_ = std::make_unique<CollisionManager>();
@@ -11007,6 +11034,7 @@ void GameScene::Initialize() {
 		Transform transform;
 		transform.translate = playerData.translation;
 		player_->SetTranslate(transform.translate);
+		player_->SetPlatform(platform_.get());
 	}
 
 	// 敵生成・初期化
@@ -11051,8 +11079,12 @@ void GameScene::Finalize() {
 void GameScene::Update() {
 	// カメラの更新
 	CameraManager::GetInstance()->GetActiveCamera()->Update();
-	// レールカメラの更新
-	rail_camera_->Update();
+
+	// スタート演出
+	StartAnimation();
+
+	// 追従カメラ
+	FollowCamera();
 
 	// 敵ごとの衝突判定・デスパーティクル処理
 	for (auto& enemy : enemies_) {
@@ -11071,7 +11103,7 @@ void GameScene::Update() {
 	}
 
 	// プレイヤーの更新
-	player_->Update();
+	player_->Update(is_start_animation_,is_returning_);
 	// 敵の更新
 	for (auto& enemy : enemies_) {
 		enemy->Update();
@@ -11079,7 +11111,7 @@ void GameScene::Update() {
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
-	platform_->Update();
+	platform_->Update(is_start_animation_,is_returning_);
 
 	// パーティクルの更新
 	ParticleManager::GetInstance()->Update();
@@ -11169,6 +11201,93 @@ void GameScene::Debug() {
 	}
 	ImGui::End();
 #endif
+}
+
+//追従カメラ
+void GameScene::FollowCamera() {
+	Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+
+	// スタート演出中は追従しない
+	if (is_start_animation_ || is_returning_) {
+		is_following_initialized_ = false;
+		return;
+	}
+
+	// 追従開始時にZオフセットを記録
+	if (!is_following_initialized_) {
+		z_offset_ = cam->GetTranslate().z - platform_->GetTranslate().z;
+		is_following_initialized_ = true;
+	}
+
+	// Z方向追従
+	Vector3 pos = cam->GetTranslate();
+	float followSpeed = 0.1f;
+	float targetZ = platform_->GetTranslate().z + z_offset_;
+	pos.z += (targetZ - pos.z) * followSpeed;
+
+	cam->SetTranslate(pos);
+}
+
+//スタート演出
+void GameScene::StartAnimation() {
+	if (!is_start_animation_ && Input::GetInstance()->IsKeyPressed(DIK_H)) {
+		SceneManager::GetInstance()->ChangeScene("GAME");
+	}
+
+	// Update内
+	if (is_start_animation_) {
+		camera_rotate_timer_ += 1.0f / 60.0f;
+		float t = std::min(camera_rotate_timer_ / totalRotationTime, 1.0f);
+
+		//イージング適用
+		float easedT = static_cast<float>(easeInOutQuad(t));
+
+		//イージングを反映後角度
+		float angle = easedT * oneRotation * rotationSpeed;
+
+		//初期カメラ位置
+		Vector3 camPos;
+		camPos.x = camera_start_pos_.x * std::cos(angle) - camera_start_pos_.z * std::sin(angle);
+		camPos.y = camera_start_pos_.y; // 高さはそのまま
+		camPos.z = camera_start_pos_.x * std::sin(angle) + camera_start_pos_.z * std::cos(angle);
+
+		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+		cam->SetTranslate(camPos);
+
+		//プレイヤー方向を向く
+		Vector3 dir = player_->GetTranslate() - camPos;
+		float yaw = std::atan2(dir.x, dir.z);
+		float pitch = -std::atan2(dir.y, std::sqrt(dir.x * dir.x + dir.z * dir.z));
+
+		cam->SetRotate({ camera_start_rot_.x + pitch, camera_start_rot_.y + yaw, camera_start_rot_.z });
+		if (t >= 1.0f) {
+			is_start_animation_ = false;
+			is_returning_ = true;
+			camera_rotate_timer_ = 0.0f;
+		}
+	} else if (is_returning_) {
+		//回転終了後角度を初期値に戻す
+		Camera* cam = CameraManager::GetInstance()->GetActiveCamera();
+		Vector3 currentRot = cam->GetRotate();
+		Vector3 targetRot = { 0.0f, 0.0f, 0.0f };
+
+		//イージングタイマーを更新
+		camera_rotate_timer_ += 1.0f / 60.0f;
+		float t = std::min(camera_rotate_timer_ / 2.0f, 1.0f);
+		float easedT = static_cast<float>(easeInOutQuad(t));
+
+		Vector3 newRot;
+		newRot.x = currentRot.x + (targetRot.x - currentRot.x) * easedT * 0.1f;
+		newRot.y = currentRot.y + (targetRot.y - currentRot.y) * easedT * 0.1f;
+		newRot.z = currentRot.z + (targetRot.z - currentRot.z) * easedT * 0.1f;
+
+		cam->SetRotate(newRot);
+		//収束終了
+		if (t >= 1.0f) {
+			is_returning_ = false;
+			camera_rotate_timer_ = 0.0f;
+		}
+	}
 }
 
 // ゲームクリアへ
@@ -11271,7 +11390,6 @@ File Path: project/game/scene/GameScene.h
 #include "CollisionManager.h"
 #include "JsonManager.h"
 #include "Fade.h"
-#include "RailCamera.h"
 
 #include <vector>
 #include <random>
@@ -11318,7 +11436,11 @@ public:
 	/// </summary>
 	void Debug() override;
 
-public:
+	//追従カメラ
+	void FollowCamera();
+	//スタート演出 
+	void StartAnimation();
+
 	/// <summary>
 	/// ゲームクリアシーンへ遷移する。
 	/// </summary>
@@ -11342,8 +11464,6 @@ private:
 	std::vector<std::unique_ptr<ParticleEmitter>> particle_emitters_;
 	//衝突マネージャー
 	std::unique_ptr<CollisionManager> collision_manager_;
-	//レールカメラ
-	std::unique_ptr<RailCamera> rail_camera_;
 	//カメラ
 	std::unique_ptr<Camera> camera_;
 	//JsonManager
@@ -11357,6 +11477,10 @@ private:
 	Vector3 death_rotation_axis_ = { 1.0f, 0.0f, 0.0f };
 	//撃破演出速度
 	Vector3 death_velocity_;
+	//回転開始時のカメラ位置
+	Vector3 camera_start_pos_;
+	//回転開始時のカメラ回転 
+	Vector3 camera_start_rot_;
 	//乱数生成器
 	std::mt19937 random_engine_{ std::random_device{}() };
 	std::uniform_real_distribution<float> random_dist_{ -1.0f, 1.0f };
@@ -11373,6 +11497,22 @@ private:
 	float death_rotation_speed_ = 5.0f;
 	//重力加速度
 	float gravity_ = 0.015f;
+	//1回転にかかる時間 
+	const float totalRotationTime = 5.0f;
+	//角速度 
+	const float rotationSpeed = 1.0f;
+	//収束に書ける時間 
+	const float oneRotation = 2.0f * 3.14159f;
+	//スタート演出フラグ
+	bool is_start_animation_ = true;
+	//リターン演出フラグ
+	bool is_returning_ = false;
+	//カメラ追従初期化フラグ
+	bool is_following_initialized_ = false;
+	//Zオフセット
+	float z_offset_ = 0.0f;
+	//カメラ回転タイマー
+	float camera_rotate_timer_ = 0.0f;
 };
 
 
