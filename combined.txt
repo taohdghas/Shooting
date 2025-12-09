@@ -9463,15 +9463,6 @@ File Path: project/game/object/GameOverObject.cpp
 
 // 初期化
 void GameOverObject::Initialize() {
-    // GAME OVERのベースオブジェクト
-    gameOverObj_ = std::make_unique<Object3d>();
-    gameOverObj_->Initialize(Object3dBase::GetInstance());
-    gameOverObj_->SetModel("gameover.obj");
-
-    gameOverTransform_.scale = { 1.0f, 1.0f, 1.0f };
-    gameOverTransform_.rotate = { 0.0f, 0.0f, 0.0f };
-    gameOverTransform_.translate = { -2.4f, 0.5f, 1.0f };
-
     // GAME OVER の１文字ずつのモデル名
     std::string models[kNumLetters] = {
         "gameoverobject/g.obj", "gameoverobject/a.obj", 
@@ -9500,7 +9491,7 @@ void GameOverObject::Initialize() {
     // retry オブジェクト
     retryObj_ = std::make_unique<Object3d>();
     retryObj_->Initialize(Object3dBase::GetInstance());
-    retryObj_->SetModel("retry.obj");
+    retryObj_->SetModel("gameoverobject/retry.obj");
 
     retryTransform_.scale = { 0.7f, 0.7f, 0.7f };
     retryTransform_.rotate = { 0.0f, 0.0f, 0.0f };
@@ -9536,12 +9527,6 @@ void GameOverObject::Update() {
         letters_[i].obj->SetTranslate(letters_[i].transform.translate);
         letters_[i].obj->Update();
     }
-
-    // GAME OVER のトランスフォーム反映
-    gameOverObj_->SetScale(gameOverTransform_.scale);
-    gameOverObj_->SetRotate(gameOverTransform_.rotate);
-    gameOverObj_->SetTranslate(gameOverTransform_.translate);
-
     // retry 点滅
     alphaTimer_ += kDeltaTime;
     alpha_ = (sinf(alphaTimer_ * 3.0f) * 0.5f) + 0.5f;
@@ -9551,7 +9536,6 @@ void GameOverObject::Update() {
     retryObj_->SetRotate(retryTransform_.rotate);
     retryObj_->SetTranslate(retryTransform_.translate);
 
-    gameOverObj_->Update();
     retryObj_->Update();
 }
 
@@ -10914,57 +10898,90 @@ File Path: project/game/scene/GameClearScene.cpp
 #include "Input.h"
 #include "Object3dBase.h"
 #include "SpriteBase.h"
+#include "CameraManager.h"
+#include "ModelManager.h"
 
 // ゲームクリアシーンの初期化処理
 void GameClearScene::Initialize() {
+	//モデル読み込み
+	ModelManager::GetInstance()->LoadModel("gameclearobject/g.obj");
+	ModelManager::GetInstance()->LoadModel("gameclearobject/a.obj");
+	ModelManager::GetInstance()->LoadModel("gameclearobject/m.obj");
+	ModelManager::GetInstance()->LoadModel("gameclearobject/e.obj");
+	ModelManager::GetInstance()->LoadModel("gameclearobject/c.obj");
+	ModelManager::GetInstance()->LoadModel("gameclearobject/l.obj");
+	ModelManager::GetInstance()->LoadModel("gameclearobject/r.obj");
+	ModelManager::GetInstance()->LoadModel("gameclearobject/pushspace.obj");
+	//カメラ
+	camera_ = std::make_unique<Camera>();
+	camera_->SetTranslate({ 0.0f,0.0f,-10.0f });
+	CameraManager::GetInstance()->AddCamera("Main", camera_.get());
+	CameraManager::GetInstance()->SetActiveCamera("Main");
+	Object3dBase::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetActiveCamera());
+	//Skybox
+	skybox_ = std::make_unique<Skybox>();
+	skybox_->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
+	//ゲームクリアオブジェクト
+	game_clear_object_ = std::make_unique<GameClearObject>();
+	game_clear_object_->Initialize();
 	//フェード
-	fade = std::make_unique<Fade>();
-	fade->Initialize();
-	fade->FadeStart(Fade::State::FadeIn, 0.5f);
+	fade_ = std::make_unique<Fade>();
+	fade_->Initialize();
+	fade_->FadeStart(Fade::State::FadeIn, 0.5f);
 }
 
 // ゲームクリアシーンの終了処理
 void GameClearScene::Finalize() {
-
+	//カメラマネージャ
+	CameraManager::GetInstance()->Finalize();
 }
 
 // 毎フレームの更新処理
 void GameClearScene::Update() {
-
+	//カメラ
+	CameraManager::GetInstance()->GetActiveCamera()->Update();
+	//Skybox
+	skybox_->Update();
+	//ゲームクリアオブジェクト
+	game_clear_object_->Update();
 	//フェード
-	fade->Update();
+	fade_->Update();
 	//シーン遷移
 	SceneChange();
-
+	//デバック
+	Debug();
 }
 
 // ゲームクリアシーンの描画処理
 void GameClearScene::Draw() {
 	//3Dオブジェクト描画準備
 	Object3dBase::GetInstance()->DrawBaseSet();
-
+	//Skybox
+	skybox_->Draw();
+	//ゲームクリアオブジェクト
+	game_clear_object_->Draw();
 	//共通描画設定
 	SpriteBase::GetInstance()->DrawBaseSet();
-
 	//フェード
-	fade->Draw();
+	fade_->Draw();
 }
 //デバック
 void GameClearScene::Debug() {
-
+	//ゲームクリアオブジェクト
+	game_clear_object_->Debug();
 }
 //シーン遷移
 void GameClearScene::SceneChange() {
 	//フェードインが終わったら状態リセット
-	if (fade->GetState() == Fade::State::FadeIn && fade->IsFinished()) {
-		fade->End();
+	if (fade_->GetState() == Fade::State::FadeIn && fade_->IsFinished()) {
+		fade_->End();
 	}
 	//タイトルへのフェードアウト開始
-	if (fade->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
-		fade->FadeStart(Fade::State::FadeOut, 0.5f);
+	if (fade_->GetState() == Fade::State::None && Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 	//フェードアウト後シーン移行
-	if (fade->GetState() == Fade::State::FadeOut && fade->IsFinished()) {
+	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()) {
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
 }
@@ -10974,6 +10991,9 @@ File Path: project/game/scene/GameClearScene.h
 ============================================================
 #pragma once
 #include "BaseScene.h"
+#include "Camera.h"
+#include "Skybox.h"
+#include "GameClearObject.h"
 #include "Fade.h"
 
 // ゲームクリアシーン
@@ -11018,8 +11038,14 @@ public:
     /// </summary>
 	void SceneChange();
 private:
+	// カメラ
+	std::unique_ptr<Camera> camera_;
+	// Skybox
+	std::unique_ptr<Skybox> skybox_;
+	// ゲームクリアオブジェクト
+	std::unique_ptr<GameClearObject> game_clear_object_;
 	//フェード
-	std::unique_ptr<Fade>fade;
+	std::unique_ptr<Fade>fade_;
 };
 
 
@@ -11039,15 +11065,14 @@ File Path: project/game/scene/GameOverScene.cpp
 void GameOverScene::Initialize() {
 
 	//モデル読み込み
-	ModelManager::GetInstance()->LoadModel("gameover.obj");
-	ModelManager::GetInstance()->LoadModel("retry.obj");
-	ModelManager::GetInstance()->LoadModel("g.obj");
-	ModelManager::GetInstance()->LoadModel("a.obj");
-	ModelManager::GetInstance()->LoadModel("m.obj");
-	ModelManager::GetInstance()->LoadModel("e.obj");
-	ModelManager::GetInstance()->LoadModel("o.obj");
-	ModelManager::GetInstance()->LoadModel("v.obj");
-	ModelManager::GetInstance()->LoadModel("r.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/retry.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/g.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/a.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/m.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/e.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/o.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/v.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/r.obj");
 
 	//カメラ
 	camera_ = std::make_unique<Camera>();
