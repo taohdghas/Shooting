@@ -10,15 +10,14 @@
 void GameOverScene::Initialize() {
 
 	//モデル読み込み
-	ModelManager::GetInstance()->LoadModel("gameover.obj");
-	ModelManager::GetInstance()->LoadModel("retry.obj");
-	ModelManager::GetInstance()->LoadModel("g.obj");
-	ModelManager::GetInstance()->LoadModel("a.obj");
-	ModelManager::GetInstance()->LoadModel("m.obj");
-	ModelManager::GetInstance()->LoadModel("e.obj");
-	ModelManager::GetInstance()->LoadModel("o.obj");
-	ModelManager::GetInstance()->LoadModel("v.obj");
-	ModelManager::GetInstance()->LoadModel("r.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/retry.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/g.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/a.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/m.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/e.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/o.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/v.obj");
+	ModelManager::GetInstance()->LoadModel("gameoverobject/r.obj");
 
 	//カメラ
 	camera_ = std::make_unique<Camera>();

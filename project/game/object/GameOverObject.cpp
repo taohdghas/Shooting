@@ -3,15 +3,6 @@
 
 // 初期化
 void GameOverObject::Initialize() {
-    // GAME OVERのベースオブジェクト
-    gameOverObj_ = std::make_unique<Object3d>();
-    gameOverObj_->Initialize(Object3dBase::GetInstance());
-    gameOverObj_->SetModel("gameover.obj");
-
-    gameOverTransform_.scale = { 1.0f, 1.0f, 1.0f };
-    gameOverTransform_.rotate = { 0.0f, 0.0f, 0.0f };
-    gameOverTransform_.translate = { -2.4f, 0.5f, 1.0f };
-
     // GAME OVER の１文字ずつのモデル名
     std::string models[kNumLetters] = {
         "gameoverobject/g.obj", "gameoverobject/a.obj", 
@@ -40,7 +31,7 @@ void GameOverObject::Initialize() {
     // retry オブジェクト
     retryObj_ = std::make_unique<Object3d>();
     retryObj_->Initialize(Object3dBase::GetInstance());
-    retryObj_->SetModel("retry.obj");
+    retryObj_->SetModel("gameoverobject/retry.obj");
 
     retryTransform_.scale = { 0.7f, 0.7f, 0.7f };
     retryTransform_.rotate = { 0.0f, 0.0f, 0.0f };
@@ -76,12 +67,6 @@ void GameOverObject::Update() {
         letters_[i].obj->SetTranslate(letters_[i].transform.translate);
         letters_[i].obj->Update();
     }
-
-    // GAME OVER のトランスフォーム反映
-    gameOverObj_->SetScale(gameOverTransform_.scale);
-    gameOverObj_->SetRotate(gameOverTransform_.rotate);
-    gameOverObj_->SetTranslate(gameOverTransform_.translate);
-
     // retry 点滅
     alphaTimer_ += kDeltaTime;
     alpha_ = (sinf(alphaTimer_ * 3.0f) * 0.5f) + 0.5f;
@@ -91,7 +76,6 @@ void GameOverObject::Update() {
     retryObj_->SetRotate(retryTransform_.rotate);
     retryObj_->SetTranslate(retryTransform_.translate);
 
-    gameOverObj_->Update();
     retryObj_->Update();
 }
 
