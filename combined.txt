@@ -2574,7 +2574,8 @@ namespace MyEngine {
         { ParticleType::Normal,    { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
         { ParticleType::Ring,      { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
         { ParticleType::Cylinder,  { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
-        { ParticleType::Explosive, { 15, 5.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } }
+        { ParticleType::Explosive, { 15, 5.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
+		{ ParticleType::Smoke,     { 2, 0.03f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
     };
 
     // 初期化処理
@@ -6119,7 +6120,8 @@ namespace MyEngine {
 		{ ParticleType::Normal,    { {0.05f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, -10.0f, 0.0f}, {}, 1.0f } },
 		{ ParticleType::Ring,      { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},   {1.0f,1.0f,1.0f,1.0f}, 1.0f } },
 		{ ParticleType::Cylinder,  { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},   {1.0f,1.0f,1.0f,1.0f}, 99.0f } },
-		{ ParticleType::Explosive, { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 1.0f},  {1.0f,1.0f,1.0f,1.0f}, 1.5f } }
+		{ ParticleType::Explosive, { {1.0f, 1.0f, 1.0f},  {0.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 1.0f},  {1.0f,1.0f,1.0f,1.0f}, 1.5f } },
+		{ParticleType::Smoke,      {{0.1f,0.1f,0.1f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f},{1.0f,1.0f,1.0f,1.0f},99.0f}},
 	};
 
 	void ParticleManager::Initialize(DirectXBase* directx_base, SrvManager* srv_manager, Camera* camera) {
@@ -6218,6 +6220,16 @@ namespace MyEngine {
 						}
 					}
 
+					// Smoke 処理
+					if (group.type == ParticleType::Smoke) {
+						float t = (*particle_it).current_time / (*particle_it).life_time;
+						//徐々にスケールアップ
+						float scale = 0.3f + t * 1.0f;
+						(*particle_it).transform.scale = { scale, scale, scale };
+						//徐々に透明
+						particle_group_pair.second.instancing_data[particle_group_pair.second.num_instance].color.w = 1.0f - t;
+					}
+
 					// 行列計算
 					Matrix4x4 scale_matrix = Math::MakeScaleMatrix((*particle_it).transform.scale);
 					Matrix4x4 rotate_matrix = Math::MakeRotateMatrix((*particle_it).transform.rotate);
@@ -6295,6 +6307,7 @@ namespace MyEngine {
 			else if (type == ParticleType::Ring) RingVertexDataCreate(new_group.model_data);
 			else if (type == ParticleType::Cylinder) CylinderVertexDataCreate(new_group.model_data);
 			else if (type == ParticleType::Explosive) VertexDataCreate(new_group.model_data);
+			else if (type == ParticleType::Smoke) VertexDataCreate(new_group.model_data);
 		}
 
 		// 頂点バッファ生成
@@ -6344,9 +6357,23 @@ namespace MyEngine {
 		particle.life_time = init.life_time;
 
 		// typeごとのランダム値や特殊処理
+		//普通
 		if (type == ParticleType::Normal) {
 			particle.transform.scale.y = dist_scale(engine);
 			particle.color = { dist_color(engine), dist_color(engine), dist_color(engine) };
+		}
+		//Smoke
+		if (type == ParticleType::Smoke) {
+			std::uniform_real_distribution<float>dist_scale(0.3f, 0.6f);
+			std::uniform_real_distribution<float >dist_vel(-0.5f, 0.5f);
+			std::uniform_real_distribution<float>dist_time(0.5f, 1.0f);
+
+			particle.velocity = {
+			dist_vel(random_engine_) * 0.5f,//横揺れ
+			dist_vel(random_engine_) * 0.5f,//上揺れ
+			-2.0f + dist_vel(random_engine_) * 0.1f//後方へ流れる
+			};
+			particle.life_time = dist_time(random_engine_);
 		}
 
 		particle.current_time = 0.0f;
@@ -6511,6 +6538,7 @@ namespace MyEngine {
         Ring,        // Ring型
         Cylinder,    // Cylinder型
         Explosive,   // 爆発
+        Smoke,       //煙
     };
 
     // パーティクル管理クラス
