@@ -7,7 +7,8 @@ namespace MyEngine {
         { ParticleType::Normal,    { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
         { ParticleType::Ring,      { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
         { ParticleType::Cylinder,  { 1, 99.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
-        { ParticleType::Explosive, { 15, 5.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } }
+        { ParticleType::Explosive, { 15, 5.0f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
+		{ ParticleType::Smoke,     { 2, 0.03f, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} } },
     };
 
     // 初期化処理

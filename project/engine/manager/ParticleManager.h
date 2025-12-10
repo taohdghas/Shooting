@@ -19,6 +19,7 @@ namespace MyEngine {
         Ring,        // Ring型
         Cylinder,    // Cylinder型
         Explosive,   // 爆発
+        Smoke,       //煙
     };
 
     // パーティクル管理クラス
