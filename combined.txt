@@ -124,9 +124,12 @@
     └── └── ├── GameSelectScene.h
     └── └── ├── TitleScene.cpp
     └── └── └── TitleScene.h
-    └── └── skybox/
-    └──     ├── Skybox.cpp
-    └──     └── Skybox.h
+    └── ├── skybox/
+    └── └── ├── Skybox.cpp
+    └── └── └── Skybox.h
+    └── └── ui/
+    └──     ├── Ui.cpp
+    └──     └── Ui.h
     ├── leveleditor/
     └── main.cpp
 ================================================================================
@@ -217,6 +220,7 @@ File Path: project/CG2 directX.vcxproj
     <ClCompile Include="game\platform\Platform.cpp" />
     <ClCompile Include="engine\math\WorldTransform.cpp" />
     <ClCompile Include="game\railcamera\RailCamera.cpp" />
+    <ClCompile Include="game\ui\Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
@@ -280,6 +284,7 @@ File Path: project/CG2 directX.vcxproj
     <ClInclude Include="game\object\TitleObject.h" />
     <ClInclude Include="engine\math\WorldTransform.h" />
     <ClInclude Include="game\railcamera\RailCamera.h" />
+    <ClInclude Include="game\ui\Ui.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -443,7 +448,7 @@ File Path: project/CG2 directX.vcxproj
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;$(ProjectDir)game\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -470,7 +475,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox\;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox\;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;$(ProjectDir)game\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -810,6 +815,9 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClCompile Include="game\object\GameClearObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="game\ui\Ui.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -993,6 +1001,9 @@ File Path: project/CG2 directX.vcxproj.filters
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="game\object\GameClearObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="game\ui\Ui.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -6364,7 +6375,6 @@ namespace MyEngine {
 		}
 		//Smoke
 		if (type == ParticleType::Smoke) {
-			std::uniform_real_distribution<float>dist_scale(0.3f, 0.6f);
 			std::uniform_real_distribution<float >dist_vel(-0.5f, 0.5f);
 			std::uniform_real_distribution<float>dist_time(0.5f, 1.0f);
 
@@ -10647,6 +10657,11 @@ public:
 	//位置取得
 	const Vector3& GetTranslate() const { return transform_.translate; }
 	/// <summary>
+	/// HPを取得する
+	/// </summary>
+	int GetHP() const { return hp_; }
+
+	/// <summary>
 	/// 衝突判定等で用いる半径を取得する。
 	/// </summary>
 	float GetRadius() const { return radius_; }
@@ -11473,6 +11488,11 @@ void GameScene::Initialize() {
 	fade_->Initialize();
 	fade_->FadeStart(Fade::State::FadeIn, 0.5f);
 
+	// UIの初期化
+	ui_ = std::make_unique<Ui>();
+	ui_->Initialize();
+	ui_->SetPlayer(player_.get());
+
 	// 最初の1フレーム入力を無視
 	MyEngine::Input::GetInstance()->ClearInput();
 }
@@ -11548,7 +11568,11 @@ void GameScene::Update() {
 		ToGameOver();
 	}
 
+	// フェードの更新
 	fade_->Update();
+
+	// UIの更新
+	ui_->Update();
 
 	// デバッグ表示
 	Debug();
@@ -11579,11 +11603,8 @@ void GameScene::Draw() {
 	player_->ReticleDraw();
 	// フェード描画
 	fade_->Draw();
-
-	//パーティクル
-	MyEngine::ParticleManager::GetInstance()->Draw();
-	//パーティクル（重複呼び出しは仕様に合わせ保持）
-	MyEngine::ParticleManager::GetInstance()->Draw();
+	// UI描画
+	ui_->Draw();
 }
 
 // デバッグ表示（ImGuiによるパラメータ調整・状態表示）
@@ -11815,6 +11836,7 @@ File Path: project/game/scene/GameScene.h
 #include "Enemy.h"
 #include "Skybox.h"
 #include "Platform.h"
+#include "Ui.h"
 
 //ゲームシーン
 class GameScene : public  MyEngine::BaseScene
@@ -11887,6 +11909,8 @@ private:
 	std::unique_ptr< MyEngine::JsonManager> json_manager_;
 	//フェード
 	std::unique_ptr<Fade> fade_;
+	//UI
+	std::unique_ptr<Ui>ui_;
 	//レベルデータ
 	LevelData* level_data_ = nullptr;
 
@@ -12472,6 +12496,113 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformation_matrix_resource_;
 };
 
+
+============================================================
+File Path: project/game/ui/Ui.cpp
+============================================================
+#include "Ui.h"
+#include "SpriteBase.h"
+#include "Input.h"
+#include "ImGuiManager.h"
+#include <algorithm>
+
+//初期化
+void Ui::Initialize()
+{
+    hPBar_ = std::make_unique<MyEngine::Sprite>();
+    hPBar_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/hpbar.png");
+    hPBar_->SetSize({ 200, 20 });
+    hPBar_->SetPosition({ 50, 50 });
+}
+//更新
+void Ui::Update()
+{
+    UpdateHPBar();
+    hPBar_->Update();
+}
+//描画
+void Ui::Draw()
+{
+    hPBar_->Draw();
+}
+//デバック
+void Ui::Debug()
+{
+#ifdef USE_IMGUI
+    Vector2 position = hPBar_->GetPosition();
+    Vector2 size = hPBar_->GetSize();
+
+    if (ImGui::Begin("HPBar Debug")) {
+        if (ImGui::TreeNode("HPBar")) {
+            ImGui::DragFloat2("Position", &position.x, 1.0f);
+            ImGui::DragFloat2("Size", &size.x, 1.0f);
+
+            hPBar_->SetPosition(position);
+            hPBar_->SetSize(size);
+
+            ImGui::TreePop();
+        }
+    }
+    ImGui::End();
+#endif
+}
+//HPバー更新
+void Ui::UpdateHPBar() {
+
+    // 現在のHPを取得
+    float currentHP = static_cast<float>(player_->GetHP());
+
+    // HPの割合
+    constexpr float maxHPValue = 100.0f;
+    float hpRatio = std::clamp(currentHP / maxHPValue, 0.0f, 1.0f);
+
+    // 最大サイズ
+    Vector2 maxSize = { 200.0f, 20.0f };
+
+    // HP割合に応じて横幅を調整
+    hPBar_->SetSize({ maxSize.x * hpRatio, maxSize.y });
+}
+
+============================================================
+File Path: project/game/ui/Ui.h
+============================================================
+#pragma once
+#include "Sprite.h"
+#include "Struct.h"
+#include "Player.h"
+
+class Ui
+{
+public:
+	/// <summary>
+	/// UIの初期化
+	/// </summary>
+	void Initialize();
+	/// <summary>
+	/// UIの更新
+	/// </summary>
+	void Update();
+	/// <summary>
+	/// UIの描画
+	/// </summary>
+	void Draw();
+	/// <summary>
+	/// UIのデバック
+	/// </summary>
+	void Debug();
+	/// <summary>
+	/// HPバー更新
+	/// </summary>
+	void UpdateHPBar();
+public:
+	/// <summary>
+	/// プレイヤーをセット
+	/// </summary>
+	void SetPlayer(Player* player) { player_ = player; }
+private:
+	std::unique_ptr<MyEngine::Sprite> hPBar_;
+	Player* player_ = nullptr;
+};
 
 ============================================================
 File Path: project/main.cpp
