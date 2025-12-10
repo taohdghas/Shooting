@@ -264,7 +264,6 @@ namespace MyEngine {
 		}
 		//Smoke
 		if (type == ParticleType::Smoke) {
-			std::uniform_real_distribution<float>dist_scale(0.3f, 0.6f);
 			std::uniform_real_distribution<float >dist_vel(-0.5f, 0.5f);
 			std::uniform_real_distribution<float>dist_time(0.5f, 1.0f);
 

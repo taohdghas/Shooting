@@ -20,6 +20,7 @@
 #include "Enemy.h"
 #include "Skybox.h"
 #include "Platform.h"
+#include "Ui.h"
 
 //ゲームシーン
 class GameScene : public  MyEngine::BaseScene
@@ -92,6 +93,8 @@ private:
 	std::unique_ptr< MyEngine::JsonManager> json_manager_;
 	//フェード
 	std::unique_ptr<Fade> fade_;
+	//UI
+	std::unique_ptr<Ui>ui_;
 	//レベルデータ
 	LevelData* level_data_ = nullptr;
 

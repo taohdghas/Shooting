@@ -118,6 +118,11 @@ public:
 	//位置取得
 	const Vector3& GetTranslate() const { return transform_.translate; }
 	/// <summary>
+	/// HPを取得する
+	/// </summary>
+	int GetHP() const { return hp_; }
+
+	/// <summary>
 	/// 衝突判定等で用いる半径を取得する。
 	/// </summary>
 	float GetRadius() const { return radius_; }

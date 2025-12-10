@@ -88,6 +88,11 @@ void GameScene::Initialize() {
 	fade_->Initialize();
 	fade_->FadeStart(Fade::State::FadeIn, 0.5f);
 
+	// UIの初期化
+	ui_ = std::make_unique<Ui>();
+	ui_->Initialize();
+	ui_->SetPlayer(player_.get());
+
 	// 最初の1フレーム入力を無視
 	MyEngine::Input::GetInstance()->ClearInput();
 }
@@ -163,7 +168,11 @@ void GameScene::Update() {
 		ToGameOver();
 	}
 
+	// フェードの更新
 	fade_->Update();
+
+	// UIの更新
+	ui_->Update();
 
 	// デバッグ表示
 	Debug();
@@ -194,11 +203,8 @@ void GameScene::Draw() {
 	player_->ReticleDraw();
 	// フェード描画
 	fade_->Draw();
-
-	//パーティクル
-	MyEngine::ParticleManager::GetInstance()->Draw();
-	//パーティクル（重複呼び出しは仕様に合わせ保持）
-	MyEngine::ParticleManager::GetInstance()->Draw();
+	// UI描画
+	ui_->Draw();
 }
 
 // デバッグ表示（ImGuiによるパラメータ調整・状態表示）
