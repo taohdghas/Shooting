@@ -2,6 +2,7 @@
 #include "Object3d.h"
 #include "Object3dBase.h"
 #include "Struct.h"
+#include "ParticleEmitter.h"
 
 // 地面のクラス
 class Platform {
@@ -49,4 +50,6 @@ private:
 	std::unique_ptr< MyEngine::Object3d> object_;
 	// 奥方向移動速度
 	float move_speed_z_ = 0.1f;
+	//煙パーティクルエミッター
+	MyEngine::ParticleEmitter smoke_emitter_;
 };

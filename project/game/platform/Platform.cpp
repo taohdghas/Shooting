@@ -1,5 +1,6 @@
 #include "Platform.h"
 #include "ImGuiManager.h"
+#include "MyMath.h"
 
 // プラットフォームの初期化処理
 void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
@@ -10,6 +11,9 @@ void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
 	object_->SetLight(false);
 	transform_.scale = { 7.5f,2.0f,3.0f };
 	transform_.translate = { 0.0f,-1.9f,0.0f };
+
+	//煙パーティクルエミッター初期化
+	smoke_emitter_.Initialize("platformsmoke");
 }
 
 // 毎フレームの更新処理（Transform情報をObject3dへ反映）
@@ -31,6 +35,10 @@ void Platform::Update(bool is_start_animation_, bool is_returning_) {
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
 	
+	//煙パーティクルエミッター処理
+	Vector3 smoke_pos = transform_.translate + Vector3{ 0.0f,0.0f,-1.5f };
+	smoke_emitter_.SetPosition(smoke_pos);
+	smoke_emitter_.Update();
 }
 
 // プラットフォームの描画処理

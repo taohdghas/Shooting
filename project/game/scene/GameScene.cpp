@@ -26,6 +26,7 @@ void GameScene::Initialize() {
 	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle3", "resources/gradationLine.png", MyEngine::ParticleType::Ring);
 	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle4", "resources/gradationLine.png", MyEngine::ParticleType::Cylinder);
 	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle5", "resources/circle2.png", MyEngine::ParticleType::Explosive);
+	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("platformsmoke", "resources/circle.png", MyEngine::ParticleType::Smoke);
 
 	//カメラの初期化・設定
 	camera_ = std::make_unique< MyEngine::Camera>();
@@ -130,15 +131,17 @@ void GameScene::Update() {
 	}
 
 	// プレイヤーの更新
-	player_->Update(is_start_animation_,is_returning_);
+	player_->Update(is_start_animation_, is_returning_);
 	// 敵の更新
-	for (auto& enemy : enemies_) {
-		enemy->Update();
+	if (!is_start_animation_ && !is_returning_) {
+		for (auto& enemy : enemies_) {
+			enemy->Update();
+		}
 	}
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
-	platform_->Update(is_start_animation_,is_returning_);
+	platform_->Update(is_start_animation_, is_returning_);
 
 	// パーティクルの更新
 	MyEngine::ParticleManager::GetInstance()->Update();
@@ -173,8 +176,10 @@ void GameScene::Draw() {
 	// プレイヤーの描画
 	player_->Draw();
 	// 敵の描画
-	for (auto& enemy : enemies_) {
-		enemy->Draw();
+	if (!is_start_animation_ && !is_returning_) {
+		for (auto& enemy : enemies_) {
+			enemy->Draw();
+		}
 	}
 	// 天球（Skybox）の描画
 	skybox_->Draw();
