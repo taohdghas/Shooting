@@ -10045,6 +10045,7 @@ File Path: project/game/platform/Platform.cpp
 ============================================================
 #include "Platform.h"
 #include "ImGuiManager.h"
+#include "MyMath.h"
 
 // プラットフォームの初期化処理
 void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
@@ -10055,6 +10056,9 @@ void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
 	object_->SetLight(false);
 	transform_.scale = { 7.5f,2.0f,3.0f };
 	transform_.translate = { 0.0f,-1.9f,0.0f };
+
+	//煙パーティクルエミッター初期化
+	smoke_emitter_.Initialize("platformsmoke");
 }
 
 // 毎フレームの更新処理（Transform情報をObject3dへ反映）
@@ -10076,6 +10080,10 @@ void Platform::Update(bool is_start_animation_, bool is_returning_) {
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
 	
+	//煙パーティクルエミッター処理
+	Vector3 smoke_pos = transform_.translate + Vector3{ 0.0f,0.0f,-1.5f };
+	smoke_emitter_.SetPosition(smoke_pos);
+	smoke_emitter_.Update();
 }
 
 // プラットフォームの描画処理
@@ -10103,6 +10111,7 @@ File Path: project/game/platform/Platform.h
 #include "Object3d.h"
 #include "Object3dBase.h"
 #include "Struct.h"
+#include "ParticleEmitter.h"
 
 // 地面のクラス
 class Platform {
@@ -10150,6 +10159,8 @@ private:
 	std::unique_ptr< MyEngine::Object3d> object_;
 	// 奥方向移動速度
 	float move_speed_z_ = 0.1f;
+	//煙パーティクルエミッター
+	MyEngine::ParticleEmitter smoke_emitter_;
 };
 
 
@@ -11400,6 +11411,7 @@ void GameScene::Initialize() {
 	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle3", "resources/gradationLine.png", MyEngine::ParticleType::Ring);
 	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle4", "resources/gradationLine.png", MyEngine::ParticleType::Cylinder);
 	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle5", "resources/circle2.png", MyEngine::ParticleType::Explosive);
+	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("platformsmoke", "resources/circle.png", MyEngine::ParticleType::Smoke);
 
 	//カメラの初期化・設定
 	camera_ = std::make_unique< MyEngine::Camera>();
@@ -11504,15 +11516,17 @@ void GameScene::Update() {
 	}
 
 	// プレイヤーの更新
-	player_->Update(is_start_animation_,is_returning_);
+	player_->Update(is_start_animation_, is_returning_);
 	// 敵の更新
-	for (auto& enemy : enemies_) {
-		enemy->Update();
+	if (!is_start_animation_ && !is_returning_) {
+		for (auto& enemy : enemies_) {
+			enemy->Update();
+		}
 	}
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
-	platform_->Update(is_start_animation_,is_returning_);
+	platform_->Update(is_start_animation_, is_returning_);
 
 	// パーティクルの更新
 	MyEngine::ParticleManager::GetInstance()->Update();
@@ -11547,8 +11561,10 @@ void GameScene::Draw() {
 	// プレイヤーの描画
 	player_->Draw();
 	// 敵の描画
-	for (auto& enemy : enemies_) {
-		enemy->Draw();
+	if (!is_start_animation_ && !is_returning_) {
+		for (auto& enemy : enemies_) {
+			enemy->Draw();
+		}
 	}
 	// 天球（Skybox）の描画
 	skybox_->Draw();
