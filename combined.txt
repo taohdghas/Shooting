@@ -1285,22 +1285,16 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// スプライトを初期化する。
-		/// テクスチャを読み込み、SRV を確保し、頂点・インデックス・マテリアル等の GPU リソースを作成する。
 		/// </summary>
-		/// <param name="sprite_base">描画共通設定を提供する <c>SpriteBase</c> のインスタンス。</param>
-		/// <param name="texture_file_path">読み込むテクスチャのファイルパス。</param>
 		void Initialize(SpriteBase* sprite_base, const std::string& texture_file_path);
 
 		/// <summary>
-		/// 毎フレームの更新処理を行う。
-		/// - 座標変換行列を作成し、必要に応じて GPU 上のバッファへ書き込む。
-		/// - テクスチャやサイズ変更があれば調整を行う。
+		/// 毎フレームの更新処理を行う
 		/// </summary>
 		void Update();
 
 		/// <summary>
 		/// スプライトを描画する。
-		/// - 描画共通設定を行い、頂点・インデックス・マテリアルを用いて描画コマンドを発行する。
 		/// </summary>
 		void Draw();
 
@@ -1346,15 +1340,25 @@ namespace MyEngine {
 		SpriteBase* sprite_base_ = nullptr;
 		SrvManager* srv_manager_ = nullptr;
 
+		/// <summary>
 		// 頂点データ作成
+		/// </summary>
 		void VertexDataCreate();
+		/// <summary>
 		// インデックス作成
+		/// </summary>
 		void IndexCreate();
+		/// <summary>
 		// マテリアル作成
+		/// </summary>
 		void MaterialCreate();
+		/// <summary>
 		// 座標変換行列データ作成
+		/// </summary>
 		void TransformationCreate();
+		/// <summary>
 		// テクスチャサイズをイメージに合わせる
+		/// </summary>
 		void AdjustTextureSize();
 
 		// バッファリソース
@@ -1461,33 +1465,27 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// シングルトンインスタンスを取得する。
-		/// 必要に応じて単一の SpriteBase を返す（生成は内部で行われる場合がある）。
 		/// </summary>
 		static SpriteBase* GetInstance();
 
 		/// <summary>
 		/// 初期化を行う。
-		/// DirectXBase の参照を受け取り、内部の描画共通設定や PSO 等を初期化する。
 		/// </summary>
-		/// <param name="directx_base">描画基盤となる DirectXBase のポインタ。</param>
 		void Initialize(DirectXBase* directx_base);
 
 		/// <summary>
 		/// 終了処理を行う。
-		/// 内部で確保したリソースやユニークポインタの破棄、状態のクリーンアップを行う。
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
 		/// 共通描画設定を行う。
-		/// スプライト描画前に必要なパイプライン設定やルートシグネチャのバインド等を行う。
 		/// </summary>
 		void DrawBaseSet();
 
 		/// <summary>
 		/// DirectXBase のポインタを取得する。
 		/// </summary>
-		/// <returns>内部で保持している DirectXBase*。</returns>
 		DirectXBase* GetDxBase() const { return directx_base_; }
 
 	public:
@@ -1732,82 +1730,57 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// モデルを初期化する。
-		/// 指定したディレクトリとファイル名からモデル（.obj 等）を読み込み、内部データと GPU リソースを作成する。
 		/// </summary>
-		/// <param name="model_base">描画共通設定を提供する ModelBase のポインタ。</param>
-		/// <param name="directory_path">モデルファイルが存在するディレクトリのパス。</param>
-		/// <param name="filename">読み込むモデルファイル名（例: "model.obj"）。</param>
 		void Initialize(ModelBase* model_base, const std::string& directory_path, const std::string& filename);
 
 		/// <summary>
 		/// モデルを描画する。
-		/// 内部で作成した頂点・マテリアル等の GPU リソースを用いて描画コマンドを発行する。
 		/// </summary>
 		void Draw();
 
-
 		/// <summary>
 		/// マテリアル情報のコピーを取得する。
-		/// 内部で保持している Material の値をコピーして返す（外部から直接編集できないようにする）。
 		/// </summary>
-		/// <returns>Material 構造体のコピー。</returns>
 		Material GetMaterialCopy() const;
 
 		/// <summary>
 		/// モデルデータを取得する。
-		/// ModelData の const 参照を返す（コピーは行わない）。
 		/// </summary>
-		/// <returns>内部に保持している ModelData の const 参照。</returns>
 		const ModelData& GetModelData() const { return model_data_; }
 
 		/// <summary>
 		/// マテリアルの色を設定する。
-		/// マテリアルのカラー情報を上書きすることで描画時の色を変更する。
 		/// </summary>
-		/// <param name="color">設定する RGBA カラー。</param>
 		void SetColor(const Vector4& color) { material_data_->color = color; }
 
 		/// <summary>
 		/// ライティングの有効/無効を設定する。
 		/// </summary>
-		/// <param name="enable">true でライティングを有効、false で無効。</param>
 		void SetEnableLighting(bool enable) { material_data_->enableLighting = enable; }
 
 	private:
 		/// <summary>
 		/// モデルから取得したデータを基に頂点バッファ用のデータ構築を行う。
-		/// GPU バッファの作成および vertex_data_ の初期化を行う想定。
 		/// </summary>
 		void VertexDataCreate();
 
 		/// <summary>
 		/// マテリアル情報（テクスチャインデックスや色、ライティング設定など）を作成し,
-		/// GPU 用のマテリアルバッファを準備する。
 		/// </summary>
 		void MaterialCreate();
 
 		/// <summary>
 		/// .mtl（マテリアル定義）ファイルを読み取り、MaterialData を構築して返す。
 		/// </summary>
-		/// <param name="directory_path">.mtl ファイルが存在するディレクトリのパス。</param>
-		/// <param name="filename">.mtl ファイル名。</param>
-		/// <returns>読み取ったマテリアル情報を格納した MaterialData。</returns>
 		MaterialData LoadMaterialTemplateFile(const std::string& directory_path, const std::string& filename);
 
 		/// <summary>
 		/// .obj 等のモデルファイルを読み取り、ModelData を構築して返す。
-		/// 頂点・法線・UV・マテリアル参照などを解析して model_data_ に設定する処理を含む。
 		/// </summary>
-		/// <param name="directory_path">モデルファイルが存在するディレクトリのパス。</param>
-		/// <param name="filename">モデルファイル名（例: "model.obj"）。</param>
-		/// <returns>読み取ったモデル情報を格納した ModelData。</returns>
 		ModelData LoadModelFile(const std::string& directory_path, const std::string& filename);
 		/// <summary>
 		/// Assimp の aiNode 構造体を自前の Node 構造に変換する。
-		/// 子ノードを再帰的に処理して階層構造を構築する。
 		/// </summary>
-		/// <param name="node">変換元の aiNode ポインタ。</param>
-		/// <returns>変換後の Node（ローカル行列・名前・子ノードを含む）。</returns>
 		Node ReadNode(aiNode* node);
 
 	private:
@@ -1853,15 +1826,12 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// 初期化を行う。
-		/// DirectXBase の参照を受け取り、モデル描画に必要な基盤設定を行う。
 		/// </summary>
-		/// <param name="directx_base">描画基盤となる DirectXBase のポインタ。</param>
 		void Initialize(DirectXBase* directx_base);
 
 		/// <summary>
 		/// DirectXBase のポインタを取得する。
 		/// </summary>
-		/// <returns>内部で保持している DirectXBase*。</returns>
 		DirectXBase* GetDxBase() const { return directx_base_; }
 
 	private:
@@ -2114,133 +2084,108 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// 初期化を行う。
-		/// Object3dBase の参照を受け取り、必要なリソースやデフォルト状態を設定する。
 		/// </summary>
-		/// <param name="object3d_base">描画共通設定を提供する <c>Object3dBase</c> のポインタ。</param>
 		void Initialize(Object3dBase* object3d_base);
 
 		/// <summary>
 		/// 毎フレームの更新処理を行う。
-		/// - トランスフォームやライト・カメラデータの更新を行い、GPU へ反映する準備をする。
 		/// </summary>
 		void Update();
 
 		/// <summary>
 		/// 描画処理を行う。
-		/// - 内部のメッシュ・マテリアル情報を用いて描画コマンドを発行する。
 		/// </summary>
 		void Draw();
 
 		/// <summary>
 		/// デバッグ用の更新処理を行う。
-		/// - デバッグ表示やパラメータ調整処理をここで扱う。
 		/// </summary>
 		void DebugUpdate();
 
 		/// <summary>
 		/// 表示するモデルを設定する。
-		/// 指定されたファイルパスを基にモデルリソースを読み込み、内部の Model および ModelData を更新する。
 		/// </summary>
-		/// <param name="file_path">モデルファイルのパス。</param>
 		void SetModel(const std::string& file_path);
 
 		/// <summary>
 		/// スケールを設定する。
 		/// </summary>
-		/// <param name="scale">設定するスケール値。</param>
 		void SetScale(const Vector3& scale) { transform_.scale = scale; }
 
 		/// <summary>
 		/// 回転を設定する。
 		/// </summary>
-		/// <param name="rotate">設定する回転値。</param>
 		void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 
 		/// <summary>
 		/// 平行移動（座標）を設定する。
 		/// </summary>
-		/// <param name="translate">設定する座標値。</param>
 		void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
 		/// <summary>
 		/// 使用するカメラを設定する。
 		/// </summary>
-		/// <param name="camera">描画に用いる <c>Camera</c> のポインタ。</param>
 		void SetCamera(Camera* camera) { camera_ = camera; }
 
 		/// <summary>
 		/// マテリアルの色を設定する。
-		/// GPU 上のマテリアルデータに色を反映することを想定する。
 		/// </summary>
-		/// <param name="color">設定する RGBA 色。</param>
 		void SetColor(const Vector4& color);
 
 		/// <summary>
 		/// ライティングの有効/無効を設定する。
 		/// </summary>
-		/// <param name="enable">true でライティング有効、false で無効。</param>
 		void SetLight(bool enable) { enable_lighting_ = enable; }
 
 		/// <summary>
 		/// 平行光（DirectionalLight）の有効/無効を設定する。
 		/// </summary>
-		/// <param name="enable">0 で無効、非ゼロで有効とする整数値。</param>
 		void SetDirectionalLightEnable(int enable) { directional_light_->enable = enable ? 1 : 0; }
 
 		/// <summary>
 		/// 点光源（PointLight）の有効/無効を設定する。
 		/// </summary>
-		/// <param name="enable">0 で無効、非ゼロで有効とする整数値。</param>
 		void SetPointLightEnable(int enable) { point_light_->enable = enable ? 1 : 0; }
 
 		/// <summary>
 		/// スポットライト（SpotLight）の有効/無効を設定する。
 		/// </summary>
-		/// <param name="enable">0 で無効、非ゼロで有効とする整数値。</param>
 		void SetSpotLightEnable(int enable) { spot_light_->enable = enable ? 1 : 0; }
 
 		/// <summary>
 		/// スケールを取得する。
 		/// </summary>
-		/// <returns>現在のスケール。</returns>
 		const Vector3& GetScale() const { return transform_.scale; }
 
 		/// <summary>
 		/// 回転を取得する。
 		/// </summary>
-		/// <returns>現在の回転。</returns>
 		const Vector3& GetRotate() const { return transform_.rotate; }
 
 		/// <summary>
 		/// 座標を取得する。
 		/// </summary>
-		/// <returns>現在の座標（平行移動）。</returns>
 		const Vector3& GetTranslate() const { return transform_.translate; }
 
 	private:
 
 		/// <summary>
 		/// マテリアル情報を作成・初期化する。
-		/// - マテリアル用のGPUリソースを確保し、初期値や色情報、ライティング設定などを設定する。
-		/// - material_data_ ポインタを初期化し、描画時に利用できる状態にする。
 		/// </summary>
 		void MaterialCreate();
 
 		/// <summary>
 		/// 座標変換行列データを作成する。
-		/// - スケール・回転・平行移動を組み合わせてトランスフォーム行列を構築し、GPU 用バッファへ書き込む処理を行う。
 		/// </summary>
 		void TransformationCreate();
 
 		/// <summary>
 		/// 平行光源のデータを作成・更新する。
-		/// - DirectionalLight 構造体を初期化し、GPU バッファに反映する処理を行う。
 		/// </summary>
 		void DirectionalLightCreate();
 
 		/// <summary>
 		/// カメラ関連のデータを作成・更新する。
-		/// - カメラのワールド・ビュー・プロジェクション行列等を GPU 用データに格納する。
 		/// </summary>
 		void CameraDataCreate();
 
@@ -2352,58 +2297,47 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// シングルトンインスタンスを取得する。
-		/// 必要に応じて単一の Object3dBase を返す（生成は内部で行われる場合がある）。
 		/// </summary>
 		static Object3dBase* GetInstance();
 
 		/// <summary>
 		/// 初期化を行う。
-		/// DirectXBase のポインタを受け取り、内部の描画共通設定や PSO 等を初期化する。
 		/// </summary>
-		/// <param name="directx_base">描画基盤となる <c>DirectXBase</c> のポインタ。</param>
 		void Initialize(DirectXBase* directx_base);
 
 		/// <summary>
 		/// 終了処理を行う。
-		/// 内部で確保したリソースやユニークポインタの破棄、状態のクリーンアップを行う。
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
 		/// 共通描画設定を行う。
-		/// スプライトやオブジェクト描画前に必要なパイプライン設定やルートシグネチャのバインド等を行う。
 		/// </summary>
 		void DrawBaseSet();
 
 		/// <summary>
 		/// デフォルトのカメラをセットする。
-		/// 描画時に使用する既定カメラを登録する。
 		/// </summary>
-		/// <param name="camera">設定する <c>Camera</c> のポインタ。</param>
 		void SetDefaultCamera(Camera* camera) { default_camera_ = camera; }
 
 		/// <summary>
 		/// DirectXBase を取得する。
 		/// </summary>
-		/// <returns>内部で保持している <c>DirectXBase*</c>。</returns>
 		DirectXBase* GetDxBase() const { return directx_base_; }
 
 		/// <summary>
 		/// デフォルトカメラを取得する。
 		/// </summary>
-		/// <returns>登録されているデフォルト <c>Camera*</c>（未設定なら nullptr）。</returns>
 		Camera* GetDefaultCamera() const { return default_camera_; }
 
 		/// <summary>
 		/// ルートシグネチャを取得する。
 		/// </summary>
-		/// <returns>内部 PSO が保持する <c>ID3D12RootSignature*</c>。</returns>
 		ID3D12RootSignature* GetRootSignature() const { return pso_->GetRootSignature(); }
 
 		/// <summary>
 		/// グラフィックスパイプラインステートを取得する。
 		/// </summary>
-		/// <returns>内部 PSO が保持する <c>ID3D12PipelineState*</c>。</returns>
 		ID3D12PipelineState* GetGraphicsPipelineState() const { return pso_->GetGraphicsPipelineState(); }
 
 	public:
@@ -2585,42 +2519,32 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// シングルトンインスタンスを取得する。
-		/// プロセス内で単一の Audio インスタンスを返す。
 		/// </summary>
 		static Audio* GetInstance();
 
 		/// <summary>
 		/// オーディオシステムを終了・解放する。
-		/// - マスター ボイスや XAudio2 インスタンス、ロード済みのサウンドを解放する。
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
 		/// オーディオシステムを初期化する。
-		/// - XAudio2 の初期化とマスターボイスの作成を行うことを想定する。
 		/// </summary>
 		void Initialize();
 
 		/// <summary>
 		/// WAV ファイルを読み込み、SoundData を構築して返す。
-		/// - 指定したファイルを開き、RIFF/FMT/データチャンクを解析してバッファを確保する。
 		/// </summary>
-		/// <param name="filename">読み込む WAV ファイルのパス。</param>
-		/// <returns>読み込んだ音声データを格納した <c>SoundData</c>。失敗時は適切な空のデータを返す実装が想定される。</returns>
 		SoundData SoundLoadWave(const char* filename);
 
 		/// <summary>
 		/// SoundData が保持するバッファ等のリソースを解放する。
-		/// - SoundLoadWave によって確保されたメモリを開放し、内部の管理リストから除去する等を行う。
 		/// </summary>
-		/// <param name="sound_data">解放するサウンドデータへのポインタ。</param>
 		void SoundUnload(SoundData* sound_data);
 
 		/// <summary>
 		/// 指定したサウンドデータを再生する。
-		/// - サンプルデータを XAudio2 のソースボイスへ送信して再生を開始する処理を想定する。
 		/// </summary>
-		/// <param name="sound_data">再生する音声データへの参照。</param>
 		void SoundPlayWave(const SoundData& sound_data);
 
 	public:
@@ -2722,32 +2646,23 @@ namespace MyEngine {
     public:
         /// <summary>
         /// エミッターを初期化する。
-        /// - 指定した名前に対応するパーティクルグループの種類を ParticleManager から取得し、
-        ///   種類に応じた既定値（count / frequency / transform）を設定する。
-        /// - frequencyTime を 0 にリセットする。
         /// </summary>
-        /// <param name="name">登録済みパーティクルグループの名前。</param>
         void Initialize(const std::string& name);
 
         /// <summary>
         /// 毎フレームの更新処理を行う。
-        /// - 内部の frequencyTime を経過時間分だけ進め、frequency を超えていれば Emit() を呼ぶ。
-        /// - 発生後は超過分を差し引いて frequencyTime を調整する。
         /// </summary>
         void Update();
 
         /// <summary>
         /// 即時にパーティクルを発生させる。
-        /// - ParticleManager::Emit を呼び出して emitter_.count 分のパーティクルを生成する。
         /// </summary>
         void Emit();
 
     public:
-        // 座標をセット
         /// <summary>
         /// エミッターの発生位置を設定する。
         /// </summary>
-        /// <param name="pos">設定するワールド座標。</param>
         void SetPosition(const Vector3& pos) { emitter_.transform.translate = pos; }
 
     private:
@@ -3570,44 +3485,36 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// 必要に応じて内部で単一インスタンスを生成して返す想定。
         /// </summary>
         static DirectXBase* GetInstance();
 
         /// <summary>
         /// 初期化を行う。
-        /// WindowsAPI の情報を受け取り、DirectX デバイスやスワップチェイン等の初期化を行う。
         /// </summary>
-        /// <param name="windowsAPI">ウィンドウ関連情報を提供する WindowsAPI のポインタ。</param>
         void Initialize(WindowsApi* windows_api);
 
         /// <summary>
         /// 終了処理を行う。
-        /// 確保したリソースやデバイス、デスクリプタヒープなどを解放する。
         /// </summary>
         void Finalize();
 
         /// <summary>
         /// 描画開始前の共通処理を行う。
-        /// - コマンドリストの準備、レンダーターゲットの遷移などを行う。
         /// </summary>
         void PreDraw();
 
         /// <summary>
         /// 描画終了後の共通処理を行う。
-        /// - コマンドリストのクローズ、キューへの送信、フレーム同期などを行う。
         /// </summary>
         void PostDraw();
 
         /// <summary>
         /// レンダーテクスチャへ描画する際の前処理を行う。
-        /// - レンダーターゲットの切り替えやクリアなどを行う。
         /// </summary>
         void PreDrawRenderTexture();
 
         /// <summary>
         /// レンダーテクスチャの内容をスワップチェインに描画する処理を行う。
-        /// - フルスクリーン合成やシェーダリソースからの描画を想定。
         /// </summary>
         void DrawRenderTextureToScreen();
 
@@ -3618,11 +3525,7 @@ namespace MyEngine {
 
         /// <summary>
         /// テクスチャデータを GPU に転送するユーティリティ。
-        /// - 提供された ScratchImage のミップデータを指定テクスチャリソースへアップロードする。
         /// </summary>
-        /// <param name="texture">アップロード先のテクスチャリソース（ComPtr）。</param>
-        /// <param name="mipImages">アップロードするイメージデータ。</param>
-        /// <returns>アップロード済みのテクスチャリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(
             Microsoft::WRL::ComPtr<ID3D12Resource> texture,
             const DirectX::ScratchImage& mip_images);
@@ -3630,10 +3533,6 @@ namespace MyEngine {
         /// <summary>
         /// デスクリプタヒープを生成する。
         /// </summary>
-        /// <param name="heapType">ヒープの種類（SRV/RTV/DSV/etc）。</param>
-        /// <param name="numDescriptors">要素数。</param>
-        /// <param name="shaderVisivle">シェーダから見えるヒープにするか。</param>
-        /// <returns>生成したデスクリプタヒープ（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
             D3D12_DESCRIPTOR_HEAP_TYPE heap_type,
             UINT num_descriptors,
@@ -3642,10 +3541,6 @@ namespace MyEngine {
         /// <summary>
         /// 深度ステンシル用テクスチャリソースを生成する。
         /// </summary>
-        /// <param name="device">使用する D3D12Device。</param>
-        /// <param name="width">幅。</param>
-        /// <param name="height">高さ。</param>
-        /// <returns>生成した深度ステンシルリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(
             Microsoft::WRL::ComPtr<ID3D12Device> device,
             int32_t width, int32_t height);
@@ -3653,36 +3548,23 @@ namespace MyEngine {
         /// <summary>
         /// シェーダーファイルをコンパイルする。
         /// </summary>
-        /// <param name="filePath">コンパイルするシェーダファイルのパス（ワイド文字列）。</param>
-        /// <param name="profile">ターゲットプロファイル（例: L"ps_6_0"）。</param>
-        /// <returns>コンパイル済みバイナリを保持する IDxcBlob（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
             const std::wstring& file_path, const wchar_t* profile);
 
         /// <summary>
         /// 汎用バッファリソースを生成する。
         /// </summary>
-        /// <param name="sizeInBytes">バッファサイズ（バイト）。</param>
-        /// <returns>生成したバッファリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t size_in_bytes);
 
         /// <summary>
         /// テクスチャリソースを生成する。
         /// </summary>
-        /// <param name="metadata">テクスチャのメタデータ（DirectXTex の TexMetadata）。</param>
-        /// <returns>生成したテクスチャリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(
             const DirectX::TexMetadata& metadata);
 
         /// <summary>
         /// レンダーテクスチャ用のリソースを生成する。
         /// </summary>
-        /// <param name="device">使用する D3D12Device。</param>
-        /// <param name="width">幅。</param>
-        /// <param name="height">高さ。</param>
-        /// <param name="format">ピクセルフォーマット。</param>
-        /// <param name="clearColor">クリアカラー。</param>
-        /// <returns>生成したレンダーテクスチャリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(
             Microsoft::WRL::ComPtr<ID3D12Device> device,
             uint32_t width, uint32_t height,
@@ -3692,21 +3574,17 @@ namespace MyEngine {
         /// <summary>
         /// テクスチャファイルを読み込んで ScratchImage として返すユーティリティ。
         /// </summary>
-        /// <param name="filePath">読み込むテクスチャファイルのパス。</param>
-        /// <returns>読み込んだイメージデータ。</returns>
         static DirectX::ScratchImage LoadTexture(const std::string& file_path);
 
     public:
         /// <summary>
         /// デバイスを取得する。
         /// </summary>
-        /// <returns>ID3D12Device の ComPtr。</returns>
         Microsoft::WRL::ComPtr<ID3D12Device> GetDevice() { return device_; }
 
         /// <summary>
         /// コマンドリストを取得する。
         /// </summary>
-        /// <returns>ID3D12GraphicsCommandList の ComPtr。</returns>
         Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return command_list_; }
 
         /// <summary>
@@ -4038,33 +3916,23 @@ namespace MyEngine {
     public:
         /// <summary>
         /// 初期化処理を行う。
-        /// - WindowsAPI の初期化
-        /// - DirectXBase / Input / SpriteBase / SrvManager / TextureManager / Object3dBase / ModelManager の順で各種マネージャーや共通部を初期化
-        /// - ImGuiManager の生成と初期化
-        /// - CameraManager, ParticleManager の初期化
-        /// - SceneManager の取得と設定
         /// </summary>
         virtual void Initialize();
         /// <summary>
         /// 終了処理を行う。
-        /// - SceneManager, ParticleManager, CameraManager, ImGuiManager など各種モジュールを逆順に破棄・終了してリソースを解放する。
         /// </summary>
         virtual void Finalize();
         /// <summary>
         /// 毎フレームの更新処理を行う。
-        /// - Windows のメッセージを優先で処理し、終了要求があれば内部フラグを立てる
-        /// - 入力の更新、シーンマネージャの更新を行う
         /// </summary>
         virtual void Update();
         /// <summary>
         /// 毎フレームの描画処理（派生クラスで実装必須）。
-        /// - ゲームループ内で呼ばれ、フレームごとの描画コマンドを発行する責務を持つ（純粋仮想）。
         /// </summary>
         virtual void Draw() = 0;
         /// <summary>
         /// 終了要求フラグを取得する。
         /// </summary>
-        /// <returns>終了リクエストがある場合は true、それ以外は false を返す。</returns>
         virtual bool is_end_request() { return end_request_; }
         /// <summary>
         /// デストラクタ（派生クラスでのクリーンアップを許容）。
@@ -4074,8 +3942,6 @@ namespace MyEngine {
     public:
         /// <summary>
         /// アプリケーションを実行する。
-        /// - Initialize() を呼び、ゲームループ（Update() と Draw()）を回し、終了後に Finalize() を呼ぶ。
-        /// - ループは Update() 内でのメッセージ処理により終了要求が立つと抜ける。
         /// </summary>
         void Run();
 
@@ -4223,30 +4089,21 @@ namespace MyEngine {
     public:
         /// <summary>
         /// ゲームの初期化を行う。
-        /// - 基底クラス `Framework::Initialize()` を呼び、各種サブシステムを初期化する。
-        /// - `SceneFactory` を生成して `SceneManager` にセットし、最初のシーンとして "TITLE" を設定する。
         /// </summary>
         void Initialize() override;
 
         /// <summary>
         /// 終了処理を行う。
-        /// - 基底クラス `Framework::Finalize()` を呼んで各種リソースを解放する。
         /// </summary>
         void Finalize() override;
 
         /// <summary>
         /// 毎フレームの更新処理を行う。
-        /// - ImGui の受け付けを開始・終了する。
-        /// - 基底クラス `Framework::Update()` を呼んでメッセージ処理・入力・シーン更新等を行う。
-        /// - `USE_IMGUI` が定義されている場合は ImGui ウィンドウ上で `use_render_texture_` の切り替えを行える UI を表示する。
         /// </summary>
         void Update() override;
 
         /// <summary>
         /// 描画処理を行う。
-        /// - `use_render_texture_` に応じてレンダーターゲットを切り替え、
-        ///   シーン描画 → 必要ならレンダーテクスチャを SRV に遷移 → スワップチェインへ描画、という流れを実行する。
-        /// - いずれの場合も `SrvManager::PreDraw()` と `ImGuiManager::Draw()` を適切なタイミングで呼ぶ。
         /// </summary>
         void Draw() override;
 
@@ -4690,77 +4547,72 @@ namespace MyEngine {
     public:
         /// <summary>
         /// 初期化する。
-        /// DirectXBase のポインタを保存し、以降の RootSignature / PipelineState 作成で利用する。
         /// </summary>
-        /// <param name="directx_base">DirectX の共通処理を提供する <c>DirectXBase</c> のポインタ。</param>
         void Initialize(DirectXBase* directx_base);
 
         /// <summary>
         /// Object3D 用のルートシグネチャを作成する。
-        /// - CBV / SRV のルートパラメータ、スタティックサンプラを設定し、シリアライズした後にデバイス上で生成する。
         /// </summary>
         void CreateRootSignature();
 
         /// <summary>
         /// Object3D 用のグラフィックスパイプラインステートを作成する。
-        /// - 頂点レイアウト、ブレンド／ラスタライザ／深度ステンシル等を設定し、シェーダーをコンパイルして PSO を生成する。
         /// </summary>
         void CreatePipelineState();
 
         /// <summary>
         /// Sprite 用のルートシグネチャを作成する。
-        /// - Sprite 固有の SRV/CBV レイアウトとスタティックサンプラを定義して生成する。
         /// </summary>
         void CreateSpriteRootSignature();
 
         /// <summary>
         /// Sprite 用のグラフィックスパイプラインステートを作成する。
-        /// - Sprite シェーダーをコンパイルし、入力レイアウトやブレンドなどを設定して PSO を生成する。
         /// </summary>
         void CreateSpritePipelineState();
 
         /// <summary>
         /// Particle 用のルートシグネチャを作成する。
-        /// - インスタンシング用の SRV テーブルや必要な CBV を定義して生成する。
         /// </summary>
         void CreateParticleRootSignature();
 
         /// <summary>
         /// Particle 用のグラフィックスパイプラインステートを作成する。
-        /// - パーティクル描画に適したブレンド設定や深度設定を行い、対応シェーダーで PSO を生成する。
         /// </summary>
         void CreateParticlePipelineState();
 
         /// <summary>
         /// PostEffect 用のルートシグネチャを作成する。
-        /// - フルスクリーンポスト処理用に SRV と CBV を持つレイアウトを定義して生成する。
         /// </summary>
         void CreatePostEffectRootSignature();
 
         /// <summary>
         /// PostEffect 用のグラフィックスパイプラインステートを作成する。
-        /// - フルスクリーン描画に適した入力レイアウト（無し）／シェーダー／深度設定で PSO を生成する。
         /// </summary>
         void CreatePostEffectPipelineState();
 
         /// <summary>
         /// SkyBox 用のルートシグネチャを作成する。
-        /// - SkyBox 描画に必要な SRV / CBV レイアウトを定義して生成する。
         /// </summary>
         void CreateSkyBoxRootSignature();
 
         /// <summary>
         /// SkyBox 用のグラフィックスパイプラインステートを作成する。
-        /// - SkyBox 用シェーダーをコンパイルし、適切な深度／ラスタライザ設定で PSO を生成する。
         /// </summary>
         void CreateSkyBoxPipelineState();
 
     private:
+        /// <summary>
+        /// 共通のルートシグネチャを作成する。
+        /// </summary>
         void CreateRootSignatureCommon(
             D3D12_ROOT_PARAMETER* rootParameters, UINT numRootParams,
             D3D12_DESCRIPTOR_RANGE* descriptorRanges, UINT numDescriptorRanges,
             D3D12_STATIC_SAMPLER_DESC* staticSamplers, UINT numStaticSamplers,
             Microsoft::WRL::ComPtr<ID3D12RootSignature>& outRootSignature);
+
+        /// <summary>
+        /// 共通のグラフィックスパイプラインステートを作成する。
+        /// </summary>
         void CreateGraphicsPipelineStateCommon(
             ID3D12RootSignature* rootSignature,
             const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc,
@@ -4774,8 +4626,20 @@ namespace MyEngine {
             const wchar_t* psPath,
             const wchar_t* psProfile,
             Microsoft::WRL::ComPtr<ID3D12PipelineState>& outPipelineState);
+
+        /// <summary>
+        /// CBV（定数バッファビュー）用のルートパラメータを設定する。
+        /// </summary>
         void SetRootParameterCBV(D3D12_ROOT_PARAMETER& param, UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility);
+
+        /// <summary>
+        /// ディスクリプタテーブル用のルートパラメータを設定する。
+        /// </summary>
         void SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER& param, D3D12_DESCRIPTOR_RANGE* range, UINT numRanges, D3D12_SHADER_VISIBILITY visibility);
+
+        /// <summary>
+        /// 静的サンプラーの設定を行う。
+        /// </summary>
         void SetStaticSampler(D3D12_STATIC_SAMPLER_DESC& sampler, D3D12_FILTER filter, D3D12_TEXTURE_ADDRESS_MODE addressU, D3D12_TEXTURE_ADDRESS_MODE addressV, D3D12_TEXTURE_ADDRESS_MODE addressW, UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility);
 
     public:
@@ -4933,14 +4797,10 @@ namespace MyEngine {
 		/// <summary>
 		/// UTF-8 エンコードされた std::string を std::wstring (Windows の UTF-16) に変換する。
 		/// </summary>
-		/// <param name="str">変換元の UTF-8 エンコードされた文字列。</param>
-		/// <returns>変換後の std::wstring（UTF-16）。</returns>
 		std::wstring ConvertString(const std::string& str);
 		/// <summary>
 		/// std::wstring (Windows の UTF-16) を UTF-8 エンコードされた std::string に変換する。
 		/// </summary>
-		/// <param name="str">変換元の std::wstring（UTF-16）。</param>
-		/// <returns>変換後の UTF-8 エンコードされた std::string。</returns>
 		std::string ConvertString(const std::wstring& str);
 	}
 }
@@ -5069,30 +4929,18 @@ namespace MyEngine {
     class WindowsApi {
     public:
         /// <summary>
-        /// ウィンドウプロシージャ（静的コールバック）。
-        /// - ImGui の Win32 ハンドラにまず渡し、処理済みならそれを優先する。
-        /// - WM_DESTROY を受け取った場合は <c>PostQuitMessage(0)</c> を呼んでアプリ終了を通知する。
-        /// - それ以外は既定の処理を <c>DefWindowProc</c> に委ねる。
+        /// ウィンドウプロシージャ（静的コールバック）
         /// </summary>
-        /// <param name="hwnd">ウィンドウハンドル。</param>
-        /// <param name="msg">メッセージコード。</param>
-        /// <param name="wparam">メッセージ固有の追加情報。</param>
-        /// <param name="lparam">メッセージ固有の追加情報。</param>
-        /// <returns>処理結果の LRESULT。</returns>
         static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// - 初回呼び出し時にインスタンスを生成して返す。
         /// </summary>
-        /// <returns>WindowsApi の唯一のインスタンスへのポインタ。</returns>
         static WindowsApi* GetInstance();
 
         /// <summary>
         /// 初期化処理を行う。
-        /// - COM の初期化（<c>CoInitializeEx</c>）、システムタイマーの分解能設定（<c>timeBeginPeriod(1)</c>）を行う。
-        /// - ウィンドウクラス設定、登録、ウィンドウ生成、表示を行う。
         /// </summary>
         void Initialize();
 
@@ -5103,20 +4951,24 @@ namespace MyEngine {
 
         /// <summary>
         /// 終了処理を行う。
-        /// - ウィンドウを閉じ、COM をアンロードする（<c>CoUninitialize</c>）。
         /// </summary>
         void Finalize();
 
         /// <summary>
         /// Windows メッセージをポーリングして処理する。
-        /// - <c>PeekMessage</c> でメッセージを取得し、TranslateMessage/DispatchMessage を行う。
-        /// - WM_QUIT を検出した場合は true を返す（アプリ終了要求）。
         /// </summary>
-        /// <returns>WM_QUIT を受け取っていれば true、そうでなければ false。</returns>
         bool ProcessMessage();
 
         // getter
+
+        /// <summary>
+        /// ウィンドウハンドルを取得する。
+        /// </summary>
         HWND GetHwnd() const { return hwnd_; }
+
+        /// <summary>
+        /// インスタンスハンドルを取得する。
+        /// </summary>
         HINSTANCE GetHinstance() const { return wc_.hInstance; }
 
         // クライアント領域のサイズ
@@ -5191,57 +5043,38 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// デフォルトコンストラクタ。
-		/// - 既定のスケール/回転/位置で Transform を初期化する。
-		/// - 視野角は 0.45、アスペクト比は WindowsAPI::kClientWidth / kClientHeight、ニア/ファークリップは 0.1 / 100.0 を設定する。
-		/// - world/view/projection/viewProjection 行列を初期値で生成する（Math ユーティリティを使用）。
 		/// </summary>
 		Camera();
 
 		/// <summary>
 		/// 毎フレーム更新する。
-		/// - worldMatrix を Transform（スケール/回転/平行移動）から再生成する。
-		/// - viewMatrix を worldMatrix の逆行列として計算する。
-		/// - projectionMatrix を fov_y_ / aspect_ratio_ / near_clip_ / far_clip_ から計算する。
-		/// - view_projection_matrix_ を viewMatrix と projectionMatrix の積として更新する。
 		/// </summary>
 		void Update();
 
 		/// <summary>回転を設定する。</summary>
-		/// <param name="rotate">設定する回転ベクトル。</param>
 		void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 		/// <summary>平行移動（座標）を設定する。</summary>
-		/// <param name="translate">設定する座標ベクトル。</param>
 		void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 		/// <summary>垂直方向（y軸）視野角を設定する。</summary>
-		/// <param name="fov_y">ラジアン単位の視野角。</param>
 		void SetFovY(float& fov_y) { fov_y_ = fov_y; }
 		/// <summary>アスペクト比を設定する（幅 / 高さ）。</summary>
-		/// <param name="aspect_ratio">アスペクト比。</param>
 		void SetAspectRatio(float& aspect_ratio) { aspect_ratio_ = aspect_ratio; }
 		/// <summary>ニアクリップ距離を設定する。</summary>
-		/// <param name="near_clip">ニアクリップ距離（正の値）。</param>
 		void SetNearClip(float& near_clip) { near_clip_ = near_clip; }
 		/// <summary>ファークリップ距離を設定する。</summary>
-		/// <param name="far_clip">ファークリップ距離（ニアより大きい正の値）。</param>
 		void SetFarClip(float& far_clip) { far_clip_ = far_clip; }
 
 		/// <summary>ワールド行列を取得する。</summary>
-		/// <returns>現在の world 行列の const 参照。</returns>
 		const Matrix4x4& GetWorldMatrix() const { return world_matrix_; }
 		/// <summary>ビュー行列を取得する。</summary>
-		/// <returns>現在の view 行列の const 参照。</returns>
 		const Matrix4x4& GetViewMatrix() const { return view_matrix_; }
 		/// <summary>プロジェクション行列を取得する。</summary>
-		/// <returns>現在の projection 行列の const 参照。</returns>
 		const Matrix4x4& GetProjectionMatrix() const { return projection_matrix_; }
 		/// <summary>ビュー×プロジェクション行列を取得する。</summary>
-		/// <returns>現在の viewProjection 行列の const 参照。</returns>
 		const Matrix4x4& GetViewProjectionMatrix() const { return view_projection_matrix_; }
 		/// <summary>回転を取得する。</summary>
-		/// <returns>Transform に格納された回転ベクトルの const 参照。</returns>
 		const Vector3& GetRotate() const { return transform_.rotate; }
 		/// <summary>座標を取得する。</summary>
-		/// <returns>Transform に格納された平行移動ベクトルの const 参照。</returns>
 		const Vector3& GetTranslate() const { return transform_.translate; }
 
 	private:
@@ -5301,9 +5134,6 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// デストラクタ。
-		/// - プログラム終了時に DXGI のデバッグインターフェイスを取得してライブオブジェクトを報告することで
-		///   Direct3D / DXGI リソースのリークを検出する。
-		/// - コンストラクタは定義されておらず、スタックまたは静的領域で生成された場合に終了時自動でチェックが走ることを想定する。
 		/// </summary>
 		~D3DResourceLeakChecker();
 	};
@@ -5342,9 +5172,7 @@ namespace MyEngine {
 	{
 		/// <summary>
 		/// デバッグ出力にメッセージを送る。
-		/// - 実装は <c>OutputDebugStringA</c> を使用し、デバッガ（例: Visual Studio の Output ウィンドウ）に表示されます。
 		/// </summary>
-		/// <param name="message">出力するメッセージ（std::string）。</param>
 		void Log(const std::string& message);
 	}
 }
@@ -5454,49 +5282,37 @@ namespace MyEngine {
 
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// - 初回呼び出し時に内部でインスタンスを生成して返します。
         /// </summary>
-        /// <returns>Input の単一インスタンスへのポインタ。</returns>
         static Input* GetInstance();
 
         /// <summary>
         /// 初期化を行う。
-        /// - 引数で渡された WindowsAPI から HINSTANCE/HWND を取得し DirectInput を初期化する。
-        /// - キーボードデバイスを生成し、データフォーマットの設定と協調レベル（DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY）を行う。
         /// </summary>
-        /// <param name="windows_api">ウィンドウ情報を提供する WindowsAPI のポインタ。</param>
         void Initialize(WindowsApi* windows_api);
 
         /// <summary>
         /// 終了処理を行う。
-        /// - シングルトンインスタンスを破棄します（内部で delete を呼ぶ実装を想定）。
         /// </summary>
         void Finalize();
 
         /// <summary>
         /// 毎フレームの更新処理を行う。
-        /// - 前フレームのキー状態を保存し、キーボードデバイスから現在のキー状態を取得して保持する。
         /// </summary>
         void Update();
 
         /// <summary>
         /// 1フレーム分の入力をクリアする（入力を無視する）。
-        /// - 内部のキー状態配列をゼロクリアする実装。
         /// </summary>
         void ClearInput();
 
         /// <summary>
         /// 指定キーが押されているかをチェックする。
         /// </summary>
-        /// <param name="key_code">チェックするキー番号（DIK_* の値）。</param>
-        /// <returns>押下中であれば true、そうでなければ false を返す。</returns>
         bool IsKeyPressed(BYTE key_code);
 
         /// <summary>
         /// 指定キーがトリガー（前フレームは未押下、今回押下）かをチェックする。
         /// </summary>
-        /// <param name="key_code">チェックするキー番号（DIK_* の値）。</param>
-        /// <returns>トリガーであれば true、そうでなければ false を返す。</returns>
         bool IsKeyTriggered(BYTE key_code);
 
     public:
@@ -5603,50 +5419,37 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// - 初回呼び出し時に内部でインスタンスを生成して返します。
         /// </summary>
-        /// <returns>CameraManager の単一インスタンスへのポインタ。</returns>
         static CameraManager* GetInstance();
 
         /// <summary>
         /// 初期化を行う。
-        /// - 内部のカメラ一覧をクリアし、アクティブカメラをリセットします。
         /// </summary>
         void Initialize();
 
         /// <summary>
         /// 終了処理を行う。
-        /// - 内部のカメラ一覧をクリアし、シングルトンインスタンスを破棄します。
         /// </summary>
         void Finalize();
 
         /// <summary>
         /// カメラを追加する。
-        /// - name が未登録かつ camera が nullptr でない場合に登録します。
-        /// - まだアクティブカメラが設定されていなければ追加したカメラをアクティブにします。
         /// </summary>
-        /// <param name="name">カメラ名（キー）。</param>
-        /// <param name="camera">追加する Camera のポインタ。</param>
         void AddCamera(const std::string& name, Camera* camera);
 
         /// <summary>
         /// 現在のアクティブカメラを取得する。
         /// </summary>
-        /// <returns>アクティブな Camera*（未設定なら nullptr）。</returns>
         Camera* GetActiveCamera();
 
         /// <summary>
         /// 名前からカメラを取得する。
         /// </summary>
-        /// <param name="name">検索するカメラ名。</param>
-        /// <returns>見つかれば Camera*、見つからなければ nullptr を返す。</returns>
         Camera* GetCamera(const std::string& name);
 
         /// <summary>
         /// 名前でアクティブカメラを設定する。
-        /// - 指定名が登録済みであればそのカメラをアクティブにする。
         /// </summary>
-        /// <param name="name">アクティブにするカメラの名前。</param>
         void SetActiveCamera(const std::string& name);
 
     public:
@@ -5781,52 +5584,33 @@ namespace MyEngine {
     // ImGui を管理するクラス
     class ImGuiManager {
     public:
-        // シングルトンインスタンス
         /// <summary>
-        /// ImGuiManager の単一インスタンスを取得する。
-        /// - 初回呼び出し時に内部でインスタンスを生成して返します。
+        /// シングルトンインスタンス
         /// </summary>
         static ImGuiManager* GetInstance();
 
-        // 終了
         /// <summary>
-        /// ImGui 関連の終了処理を行う。
-        /// - DirectX と Win32 用の ImGui バックエンドをシャットダウンし、ImGui コンテキストを破棄します。
-        /// - シングルトンインスタンスを delete して無効化します。
+        /// ImGui 関連の終了処理を行う
         /// </summary>
         void Finalize();
 
-        // 初期化
         /// <summary>
         /// ImGui を初期化する。
-        /// - 引数で受け取った WindowsAPI / DirectXBase / SrvManager を内部に保持します。
-        /// - SrvManager からデスクリプタを割り当て、ImGui コンテキストを生成してスタイルを設定します。
-        /// - 日本語フォントを読み込み、Win32 および DirectX12 用の ImGui 実装を初期化します。
         /// </summary>
-        /// <param name="windows_api">Win32 ウィンドウ情報を提供する WindowsApi*</param>
-        /// <param name="directx_base">DirectX リソースを管理する DirectXBase*</param>
-        /// <param name="srv_manager">SRV の割り当ておよびデスクリプタ情報を提供する SrvManager*</param>
         void Initialize(WindowsApi* windows_api, DirectXBase* directx_base, SrvManager* srv_manager);
 
-        // ImGui 受付開始
         /// <summary>
-        /// ImGui の受け付けを開始するフレーム処理。
-        /// - DX12 と Win32 の各フレーム開始処理を呼び出し、ImGui の新規フレームを開始します。
+        /// ImGui の受け付けを開始する
         /// </summary>
         void Begin();
 
-        // ImGui 受付終了
         /// <summary>
-        /// ImGui の受け付けを終了する処理。
-        /// - 描画前準備として ImGui::Render() を呼び、描画データを確定します（描画自体は Draw() で実行）。
+        /// ImGui の受け付けを終了する
         /// </summary>
         void End();
 
-        // 画面への描画
         /// <summary>
-        /// 確定された ImGui の描画データを GPU に送って描画する。
-        /// - DirectX のコマンドリストを取得し、SrvManager のデスクリプタヒープをセットした上で
-        ///   ImGui_ImplDX12_RenderDrawData を呼んで描画コマンドを発行します。
+        /// 画面への描画
         /// </summary>
         void Draw();
 
@@ -6002,35 +5786,17 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// - 初回呼び出し時に内部でインスタンスを生成して返す。
         /// </summary>
-        /// <returns>JsonManager の単一インスタンスへのポインタ。</returns>
         static JsonManager* GetInstance();
 
         /// <summary>
         /// JSON ファイルを読み込み、LevelData を生成して返す。
-        /// - 実際の実装では "resources/levels/" + filename + ".json" をフルパスとして開く。
-        /// - ファイル存在チェックおよび JSON 構造の検証（"name" == "scene"）を行う（失敗時は assert）。
-        /// - "objects" 配列を走査し、各オブジェクトの "type" に応じて以下を処理する:
-        ///   - "MESH"       : Model 用の ObjectData を追加し、"file_name" と transform(translation/rotation/scaling) を読み取る。
-        ///     - 注意: JSON 内の座標系からエンジン用に Y/Z を入れ替えたり回転に符号を付け替える処理がある。
-        ///   - "PlayerSpawn": PlayerSpawnData を作成して players 配列に追加する（transform 読み取り、Y/Z 入れ替え等）。
-        ///   - "EnemySpawn" : EnemySpawnData を作成して enemies 配列に追加する（transform 読み取り、Y/Z 入れ替え等）。
-        /// - 無効化フラグ ("disabled_flag") が true のオブジェクトはスキップする。
-        /// - 読み込んだデータは動的に確保された LevelData* として返される（呼び出し側で破棄する責務）。
         /// </summary>
-        /// <param name="filename">レベル名（拡張子・ディレクトリは不要、例: "level01"）。</param>
-        /// <returns>新しく確保された LevelData*（失敗時は assert により停止する実装）。</returns>
         LevelData* LoadJsonFile(const std::string& filename);
 
         /// <summary>
         /// JSONのtransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
-        /// - translation, rotation, scaling 各要素のY/Z入れ替えや回転の符号反転も行う。
         /// </summary>
-        /// <param name="transform">JSONのtransformオブジェクト</param>
-        /// <param name="translation">変換後の平行移動ベクトル（出力）</param>
-        /// <param name="rotation">変換後の回転ベクトル（出力）</param>
-        /// <param name="scaling">変換後のスケールベクトル（出力）</param>
         void ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling);
 
     public:
@@ -6118,37 +5884,27 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// - 初回呼び出し時に内部でインスタンスを生成して返す。
         /// </summary>
         static ModelManager* GetInstance();
 
         /// <summary>
         /// 初期化を行う。
-        /// - 内部で ModelBase を生成し、引数の DirectXBase を渡して初期化する。
         /// </summary>
-        /// <param name="directx_base">DirectX の共通処理を提供する DirectXBase*</param>
         void Initialize(DirectXBase* directx_base);
 
         /// <summary>
         /// 終了処理を行う。
-        /// - シングルトンインスタンスを削除して破棄する。
         /// </summary>
         void Finalize();
 
         /// <summary>
         /// モデルファイルを読み込む。
-        /// - 既に読み込まれている場合は何もしない。
-        /// - 新規なら Model を生成して初期化し、内部のマップに格納する。
         /// </summary>
-        /// <param name="file_path">モデルファイル名または識別子（例: "model.obj" のファイル名）。</param>
         void LoadModel(const std::string& file_path);
 
         /// <summary>
         /// 登録済みのモデルを検索して返す。
-        /// - 見つからなければ nullptr を返す。
         /// </summary>
-        /// <param name="file_path">検索するモデルのファイル名／キー。</param>
-        /// <returns>見つかれば Model*、なければ nullptr。</returns>
         Model* FindModel(const std::string& file_path);
     public:
         // コンストラクタ
@@ -6666,37 +6422,31 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// - 初回呼び出し時に内部でインスタンスを生成して返す。
         /// </summary>
         static ParticleManager* GetInstance();
 
         /// <summary>
         /// 初期化する。
-        /// - 各種ポインタを保存、PSO を生成し、マテリアル／乱数生成器を初期化する。
         /// </summary>
         void Initialize(DirectXBase* directx_base, SrvManager* srv_manager, Camera* camera);
 
         /// <summary>
         /// 終了処理を行う。
-        /// - シングルトンインスタンスを破棄する。
         /// </summary>
         void Finalize();
 
         /// <summary>
         /// シーン終了時に呼ぶクリア処理。
-        /// - 登録済みのパーティクルグループをすべて削除する。
         /// </summary>
         void Clear();
 
         /// <summary>
         /// 毎フレーム更新処理を行う。
-        /// - 各パーティクルの寿命・物理更新、インスタンシングデータ更新を行う。
         /// </summary>
         void Update();
 
         /// <summary>
-        /// 描画処理を行う。
-        /// - 各グループについて頂点バッファ・マテリアル・テクスチャ・インスタンスSRV を設定して描画。
+        /// 描画処理を行う
         /// </summary>
         void Draw();
 
@@ -6747,13 +6497,7 @@ namespace MyEngine {
 
         /// <summary>
         /// 頂点バッファリソースを生成し、データをマッピング・コピーする。
-        /// - 指定した頂点配列からGPUリソースを作成し、バッファビューと書き込みポインタをセットする。
         /// </summary>
-        /// <param name="directx_base">DirectX基盤クラスのポインタ。</param>
-        /// <param name="vertices">頂点データ配列。</param>
-        /// <param name="vertex_resource">生成された頂点バッファリソース（出力）。</param>
-        /// <param name="vertex_buffer_view">頂点バッファビュー（出力）。</param>
-        /// <param name="vertex_data">マッピングされた頂点データ書き込み用ポインタ（出力）。</param>
         void CreateAndMapVertexBuffer(
             DirectXBase* directx_base,
             const std::vector<VertexData>& vertices,
@@ -6883,35 +6627,27 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// - 初回呼び出し時にインスタンスを生成して返す。
         /// </summary>
         static SceneManager* GetInstance();
         /// <summary>
         /// 終了処理を行う。
-        /// - 現在のシーンを Finalize() してからシングルトンインスタンスを破棄する。
         /// </summary>
         void Finalize();
         /// <summary>
         /// 毎フレームの更新処理を行う。
-        /// - next_scene_ がセットされていれば現在のシーンを終了し（存在すれば）、next_scene_ を現在のシーンに切り替えて初期化する。
-        /// - その後、現在のシーンの Update() を呼び出す。
         /// </summary>
         void Update();
         /// <summary>
         /// 描画処理を行う。
-        /// - 現在のシーンの Draw() を呼び出す。
         /// </summary>
         void Draw();
     public:
         /// <summary>
         /// 次のシーンを予約する。
-        /// - 指定したシーン名に対応するシーンインスタンスをシーンファクトリで生成し、next_scene_ に格納する。
-        /// - 呼び出し前に scene_factory_ がセットされていること、および next_scene_ が未設定であることが前提。
         /// </summary>
         void ChangeScene(const std::string& scene_name);
         /// <summary>
         /// シーンファクトリーをセットする。
-        /// - SceneManager はこのファクトリーを用いてシーンの生成を行う。
         /// </summary>
         void SetSceneFactory(AbstractSceneFactory* scene_factory) { scene_factory_ = scene_factory; }
     private:
@@ -7061,100 +6797,67 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// - 初回呼び出し時に内部でインスタンスを生成して返します。
         /// </summary>
         static SrvManager* GetInstance();
 
         /// <summary>
         /// 初期化を行う。
-        /// - 指定した <c>DirectXBase</c> を保持し、SRV 用デスクリプタヒープを生成してデスクリプタサイズを取得します。
         /// </summary>
-        /// <param name="directxBase">DirectX の共通処理を提供する <c>DirectXBase*</c>。</param>
         void Initialize(DirectXBase* directx_base);
 
         /// <summary>
         /// 終了処理を行う。
-        /// - シングルトンインスタンスを破棄します（内部で delete を呼ぶ実装）。
         /// </summary>
         void Finalize();
 
         /// <summary>
         /// 2D テクスチャ用の SRV を作成する。
-        /// - 指定したリソースとメタデータに基づき、CPU デスクリプタハンドル位置に SRV を作成します。
         /// </summary>
-        /// <param name="srv_index">SRV を格納するインデックス。</param>
-        /// <param name="p_resource">SRV を参照する D3D リソース。</param>
-        /// <param name="metadata">テクスチャのメタデータ（フォーマット / ミップ数 / キューブ判定など）。</param>
         void CreateSrvForTexture2D(uint32_t srv_index, ID3D12Resource* p_resource, const DirectX::TexMetadata& metadata);
 
         /// <summary>
         /// 構造化バッファ用（Structured Buffer） SRV を作成する。
-        /// - バッファの要素数と要素バイト幅を指定して SRV を生成します。
         /// </summary>
-        /// <param name="srv_index">SRV を格納するインデックス。</param>
-        /// <param name="p_resource">SRV を参照する D3D リソース。</param>
-        /// <param name="num_elements">要素数。</param>
-        /// <param name="structure_byte_stride">構造体のバイト幅。</param>
         void CreateSrvForStructuredBuffer(uint32_t srv_index, ID3D12Resource* p_resource, UINT num_elements, UINT structure_byte_stride);
 
         /// <summary>
-        /// レンダーテクスチャ用の SRV を作成する。
-        /// - 内部のレンダーテクスチャリソースを参照して SRV を生成します（RenderTexture を SRV として扱うケース）。
+        /// レンダーテクスチャ用の SRV を作成する
         /// </summary>
-        /// <param name="srv_index">SRV を格納するインデックス。</param>
-        /// <param name="p_resource">対象リソース（未使用実装では内部 RenderTexture を使用）。</param>
-        /// <param name="format">ピクセルフォーマット（使用時に参照）。</param>
         void CreateSrvForRenderTexture(uint32_t srv_index, ID3D12Resource* p_resource, DXGI_FORMAT format);
 
         /// <summary>
         /// 描画前に SRV 用のデスクリプタヒープをコマンドリストへセットする。
-        /// - 描画ループ開始前に呼び出してデスクリプタヒープを有効化します。
         /// </summary>
         void PreDraw();
 
         /// <summary>
         /// ルートパラメータに対して指定 SRV インデックスの GPU デスクリプタハンドルをセットする。
-        /// - 実際には内部で計算した GPU ハンドルを <c>ID3D12GraphicsCommandList::SetGraphicsRootDescriptorTable</c> に渡します。
         /// </summary>
-        /// <param name="root_parameter_index">ルートパラメータのインデックス。</param>
-        /// <param name="srv_index">セットする SRV のインデックス。</param>
         void SetGraphicsRootDescriptorTable(UINT root_parameter_index, uint32_t srv_index);
 
         /// <summary>
         /// 新しい SRV を割り当て可能かチェックする。
-        /// - 現在の使用インデックスが上限未満かで判定します。
         /// </summary>
-        /// <returns>割り当て可能なら true、上限に達していれば false。</returns>
         bool SecuredCheck();
 
         /// <summary>
         /// SRV インデックスを割り当てる。
-        /// - 上限に達していないことをアサートし、現在のインデックスを返してインクリメントします。
         /// </summary>
-        /// <returns>割り当てられた SRV インデックス。</returns>
         uint32_t Allocate();
 
         /// <summary>
         /// 指定インデックスに対応する CPU デスクリプタハンドルを計算して返す。
-        /// - ヒープの先頭ハンドルに descriptor_size_ * index を加算して算出します。
         /// </summary>
-        /// <param name="index">計算対象のインデックス。</param>
-        /// <returns>対応する D3D12_CPU_DESCRIPTOR_HANDLE。</returns>
         D3D12_CPU_DESCRIPTOR_HANDLE GetCpuDescriptorHandle(uint32_t index);
 
         /// <summary>
         /// 指定インデックスに対応する GPU デスクリプタハンドルを計算して返す。
-        /// - ヒープの先頭 GPU ハンドルに descriptor_size_ * index を加算して算出します。
         /// </summary>
-        /// <param name="index">計算対象のインデックス。</param>
-        /// <returns>対応する D3D12_GPU_DESCRIPTOR_HANDLE。</returns>
         D3D12_GPU_DESCRIPTOR_HANDLE GetGpuDescriptorHandle(uint32_t index);
 
         /// <summary>
-        /// 内部が保持するデスクリプタヒープの生ポインタを返す。
-        /// - ImGui などがヒープのポインタを直接必要とする場面で利用されます。
+        /// 内部が保持するデスクリプタヒープの生ポインタを返す
         /// </summary>
-        /// <returns>ID3D12DescriptorHeap*（ComPtr の生ポインタ）</returns>
         ID3D12DescriptorHeap* GetDescriptorHeap() { return descriptor_heap_.Get(); }
 
     public:
@@ -7309,63 +7012,43 @@ namespace MyEngine {
 	class TextureManager {
 	public:
 		/// <summary>
-		/// シングルトンインスタンスを取得する。
-		/// - 初回呼び出し時に内部でインスタンスを生成して返す。
+		/// シングルトンインスタンスを取得する
 		/// </summary>
 		static TextureManager* GetInstance();
 
 		/// <summary>
-		/// 終了処理を行う。
-		/// - 内部で確保したシングルトンインスタンスを破棄する（Finalize は TextureManager::instance_ を delete する実装）。
+		/// 終了処理を行う
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
-		/// 初期化を行う。
-		/// - DirectXBase と SrvManager のポインタを保持し、以降のテクスチャ読み込みや SRV 作成で利用する。
+		/// 初期化を行う
 		/// </summary>
-		/// <param name="directx_base">DirectX の共通処理を提供する <c>DirectXBase*</c>。</param>
-		/// <param name="srv_manager">SRV 割り当ておよびデスクリプタ管理を行う <c>SrvManager*</c>。</param>
 		void Initialize(DirectXBase* directx_base, SrvManager* srv_manager);
 
 		/// <summary>
-		/// テクスチャファイルを読み込む。
-		/// - 指定ファイルが未ロードであればファイルを読み込み、必要なミップ生成／GPU 転送を行い SRV を作成して内部マップに登録する。
-		/// - .dds とそれ以外（WIC）を自動で判別し、圧縮フォーマットはそのまま、非圧縮はミップマップを生成する実装を想定する。
+		/// テクスチャファイルを読み込む
 		/// </summary>
-		/// <param name="file_path">読み込むテクスチャのファイルパス（例: "resources/texture.png"）。</param>
 		void LoadTexture(const std::string& file_path);
 
 		/// <summary>
 		/// ファイルパスから SRV インデックス（割り当てられた番号）を取得する。
-		/// - 読み込み済みであればその SRV インデックスを返す。未ロードの場合は 0 を返す実装（呼び出し側でのチェック推奨）。
 		/// </summary>
-		/// <param name="file_path">テクスチャのファイルパス。</param>
-		/// <returns>SRV インデックス（未登録なら 0）。</returns>
 		uint32_t GetTextureIndexByFilePath(const std::string& file_path);
 
 		/// <summary>
-		/// 指定ファイルパスに対応するテクスチャのメタデータを取得する。
-		/// - 呼び出し前に該当テクスチャがロード済みであること（assert でチェックする実装）。
+		/// 指定ファイルパスに対応するテクスチャのメタデータを取得する
 		/// </summary>
-		/// <param name="file_path">テクスチャのファイルパス。</param>
-		/// <returns>該当テクスチャの <c>DirectX::TexMetadata</c> の const 参照。</returns>
 		const DirectX::TexMetadata& GetMetaData(const std::string& file_path);
 
 		/// <summary>
-		/// 指定ファイルパスに対応する SRV インデックスを取得する。
-		/// - 例: シェーダに渡すための SRV 番号を取得する用途。
+		/// 指定ファイルパスに対応する SRV インデックスを取得する
 		/// </summary>
-		/// <param name="file_path">テクスチャのファイルパス。</param>
-		/// <returns>対応する SRV インデックス。</returns>
 		uint32_t GetSrvIndex(const std::string& file_path);
 
 		/// <summary>
 		/// 指定ファイルパスに対応する GPU 側のデスクリプタハンドルを取得する。
-		/// - SRV をコマンドリストへバインドする際に使用する GPU ハンドルを返す。
 		/// </summary>
-		/// <param name="file_path">テクスチャのファイルパス。</param>
-		/// <returns>対応する <c>D3D12_GPU_DESCRIPTOR_HANDLE</c>。</returns>
 		D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU(const std::string& file_path);
 	public:
 		TextureManager() = default;
@@ -7920,9 +7603,6 @@ File Path: project/engine/math/MyMath.h
 /// <summary>
 /// Vector3同士の加算
 /// </summary>
-/// <param name="v1">加算対象のベクトル1</param>
-/// <param name="v2">加算対象のベクトル2</param>
-/// <returns>加算結果のベクトル</returns>
 inline Vector3 operator+(const Vector3& v1, const Vector3& v2) {
     return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 }
@@ -7930,9 +7610,6 @@ inline Vector3 operator+(const Vector3& v1, const Vector3& v2) {
 /// <summary>
 /// Vector3に別のベクトルを加算して更新
 /// </summary>
-/// <param name="v1">加算対象かつ更新されるベクトル</param>
-/// <param name="v2">加算するベクトル</param>
-/// <returns>更新後のベクトル</returns>
 inline Vector3& operator+=(Vector3& v1, const Vector3& v2) {
     v1.x += v2.x;
     v1.y += v2.y;
@@ -7943,9 +7620,6 @@ inline Vector3& operator+=(Vector3& v1, const Vector3& v2) {
 /// <summary>
 /// Vector3同士の減算
 /// </summary>
-/// <param name="v1">被減算ベクトル</param>
-/// <param name="v2">減算するベクトル</param>
-/// <returns>減算結果のベクトル</returns>
 inline Vector3 operator-(const Vector3& v1, const Vector3& v2) {
     return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 }
@@ -7953,9 +7627,6 @@ inline Vector3 operator-(const Vector3& v1, const Vector3& v2) {
 /// <summary>
 /// Vector3から別のベクトルを減算して更新
 /// </summary>
-/// <param name="v1">更新対象のベクトル</param>
-/// <param name="v2">減算するベクトル</param>
-/// <returns>更新後のベクトル</returns>
 inline Vector3& operator-=(Vector3& v1, const Vector3& v2) {
     v1.x -= v2.x;
     v1.y -= v2.y;
@@ -7966,9 +7637,6 @@ inline Vector3& operator-=(Vector3& v1, const Vector3& v2) {
 /// <summary>
 /// Vector3とスカラー値の掛け算
 /// </summary>
-/// <param name="v">ベクトル</param>
-/// <param name="s">スカラー値</param>
-/// <returns>掛け算結果のベクトル</returns>
 inline Vector3 operator*(const Vector3& v, float s) {
     return { v.x * s, v.y * s, v.z * s };
 }
@@ -7976,9 +7644,6 @@ inline Vector3 operator*(const Vector3& v, float s) {
 /// <summary>
 /// Vector3にスカラー値を掛けて更新
 /// </summary>
-/// <param name="v">更新対象のベクトル</param>
-/// <param name="s">スカラー値</param>
-/// <returns>更新後のベクトル</returns>
 inline Vector3& operator*=(Vector3& v, float s) {
     v.x *= s;
     v.y *= s;
@@ -7989,9 +7654,6 @@ inline Vector3& operator*=(Vector3& v, float s) {
 /// <summary>
 /// Vector3同士の掛け算（要素ごと）
 /// </summary>
-/// <param name="v1">ベクトル1</param>
-/// <param name="v2">ベクトル2</param>
-/// <returns>掛け算結果のベクトル</returns>
 inline Vector3 operator*(const Vector3& v1, const Vector3& v2) {
     return { v1.x * v2.x, v1.y * v2.y, v1.z * v2.z };
 }
@@ -7999,9 +7661,6 @@ inline Vector3 operator*(const Vector3& v1, const Vector3& v2) {
 /// <summary>
 /// Vector3同士の掛け算（要素ごと）を更新
 /// </summary>
-/// <param name="v1">更新対象のベクトル</param>
-/// <param name="v2">掛けるベクトル</param>
-/// <returns>更新後のベクトル</returns>
 inline Vector3& operator*=(Vector3& v1, const Vector3& v2) {
     v1.x *= v2.x;
     v1.y *= v2.y;
@@ -8011,174 +7670,91 @@ inline Vector3& operator*=(Vector3& v1, const Vector3& v2) {
 
 /// <summary>
 /// 指定した値に対してイージング（EaseOutQuad）を適用した結果を返します。
-/// - 0.0～1.0の範囲の値xに対して、加速→減速の曲線を返します。
 /// </summary>
-/// <param name="x">イージングを適用する0.0～1.0の値</param>
-/// <returns>イージング後の値（0.0～1.0）</returns>
 double easeOutQuad(double x);
 
 /// <summary>
-/// 指定した値に対してイージング（EaseInOutQuad）を適用した結果を返します。
-/// - 0.0～1.0の範囲の値xに対して、加速→減速の曲線（前半は加速、後半は減速）を返します。
+/// 指定した値に対してイージング（EaseInOutQuad）を適用した結果を返します
 /// </summary>
-/// <param name="x">イージングを適用する0.0～1.0の値</param>
-/// <returns>イージング後の値（0.0～1.0）</returns>
 double easeInOutQuad(double x);
 
 namespace Math {
     /// <summary>ベクトルの長さを計算する</summary>
-    /// <param name="v">計算対象のベクトル</param>
-    /// <returns>ベクトルの長さ</returns>
     float Length(const Vector3& v);
 
     /// <summary>2つのベクトルの内積を計算する</summary>
-    /// <param name="v1">ベクトル1</param>
-    /// <param name="v2">ベクトル2</param>
-    /// <returns>内積の結果</returns>
     float Dot(const Vector3& v1, const Vector3& v2);
 
     /// <summary>2つのベクトルの加算</summary>
-    /// <param name="v1">ベクトル1</param>
-    /// <param name="v2">ベクトル2</param>
-    /// <returns>加算結果のベクトル</returns>
     Vector3 Add(const Vector3& v1, const Vector3& v2);
 
     /// <summary>2つのベクトルの減算</summary>
-    /// <param name="v1">ベクトル1</param>
-    /// <param name="v2">ベクトル2</param>
-    /// <returns>減算結果のベクトル</returns>
     Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 
     /// <summary>ベクトルの正規化</summary>
-    /// <param name="v">正規化するベクトル</param>
-    /// <returns>正規化されたベクトル</returns>
     Vector3 Normalize(const Vector3& v);
 
     /// <summary>2つのベクトルの要素ごとの掛け算</summary>
-    /// <param name="v1">ベクトル1</param>
-    /// <param name="v2">ベクトル2</param>
-    /// <returns>掛け算結果のベクトル</returns>
     Vector3 Multiply(const Vector3& v1, const Vector3& v2);
 
     /// <summary>ベクトルとスカラー値の掛け算</summary>
-    /// <param name="v">ベクトル</param>
-    /// <param name="scalar">スカラー値</param>
-    /// <returns>掛け算結果のベクトル</returns>
     Vector3 MultiplyScalar(const Vector3& v, const float scalar);
 
     /// <summary>ベクトルを行列で変換（座標変換）</summary>
-    /// <param name="vector">変換対象のベクトル</param>
-    /// <param name="matrix">変換行列</param>
-    /// <returns>変換後のベクトル</returns>
     Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
     /// <summary>法線ベクトルを行列で変換</summary>
-    /// <param name="v">法線ベクトル</param>
-    /// <param name="m">変換行列</param>
-    /// <returns>変換後の法線ベクトル</returns>
     Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
     /// <summary>2つのベクトルの外積を計算</summary>
-    /// <param name="v1">ベクトル1</param>
-    /// <param name="v2">ベクトル2</param>
-    /// <returns>外積結果のベクトル</returns>
     Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
     /// <summary>座標ベクトル(Vector4)を行列で変換</summary>
-    /// <param name="v">変換対象のベクトル</param>
-    /// <param name="m">変換行列</param>
-    /// <returns>変換後のベクトル</returns>
     Vector4 Transform(const Vector4& v, const Matrix4x4& m);
 
     /// <summary>単位行列を作成</summary>
-    /// <returns>4x4の単位行列</returns>
     Matrix4x4 MakeIdentity4x4();
 
     /// <summary>2つの行列の掛け算</summary>
-    /// <param name="m1">行列1</param>
-    /// <param name="m2">行列2</param>
-    /// <returns>掛け算結果の行列</returns>
     Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 
     /// <summary>平行移動行列を作成</summary>
-    /// <param name="translate">平行移動量</param>
-    /// <returns>平行移動行列</returns>
     Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 
     /// <summary>拡大縮小行列を作成</summary>
-    /// <param name="scale">拡大縮小量</param>
-    /// <returns>拡大縮小行列</returns>
     Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 
     /// <summary>x軸回転行列を作成</summary>
-    /// <param name="radian">回転角度（ラジアン）</param>
-    /// <returns>x軸回転行列</returns>
     Matrix4x4 MakeRotateXMatrix(float radian);
 
     /// <summary>y軸回転行列を作成</summary>
-    /// <param name="radian">回転角度（ラジアン）</param>
-    /// <returns>y軸回転行列</returns>
     Matrix4x4 MakeRotateYMatrix(float radian);
 
     /// <summary>z軸回転行列を作成</summary>
-    /// <param name="radian">回転角度（ラジアン）</param>
-    /// <returns>z軸回転行列</returns>
     Matrix4x4 MakeRotateZMatrix(float radian);
 
     /// <summary>ベクトルによる回転行列を作成</summary>
-    /// <param name="rotate">回転角（x, y, z）</param>
-    /// <returns>回転行列</returns>
     Matrix4x4 MakeRotateMatrix(const Vector3& rotate);
 
     /// <summary>3Dアフィン変換行列を作成</summary>
-    /// <param name="scale">拡大縮小ベクトル</param>
-    /// <param name="rotate">回転ベクトル</param>
-    /// <param name="translate">平行移動ベクトル</param>
-    /// <returns>アフィン変換行列</returns>
     Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
     /// <summary>行列の逆行列を計算</summary>
-    /// <param name="m">対象の行列</param>
-    /// <returns>逆行列</returns>
     Matrix4x4 Inverse(const Matrix4x4& m);
 
     /// <summary>透視投影行列を作成</summary>
-    /// <param name="fovY">垂直視野角（ラジアン）</param>
-    /// <param name="aspectRatio">アスペクト比</param>
-    /// <param name="nearClip">近クリップ距離</param>
-    /// <param name="farClip">遠クリップ距離</param>
-    /// <returns>透視投影行列</returns>
     Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
 
     /// <summary>正射影行列を作成</summary>
-    /// <param name="left">左端</param>
-    /// <param name="top">上端</param>
-    /// <param name="right">右端</param>
-    /// <param name="bottom">下端</param>
-    /// <param name="nearClip">近クリップ距離</param>
-    /// <param name="farClip">遠クリップ距離</param>
-    /// <returns>正射影行列</returns>
     Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
 
     /// <summary>ビューポート行列を作成</summary>
-    /// <param name="left">左端座標</param>
-    /// <param name="top">上端座標</param>
-    /// <param name="width">幅</param>
-    /// <param name="height">高さ</param>
-    /// <param name="minDepth">最小深度</param>
-    /// <param name="maxDepth">最大深度</param>
-    /// <returns>ビューポート行列</returns>
     Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
     /// <summary>行列の転置を計算</summary>
-    /// <param name="m">対象の行列</param>
-    /// <returns>転置行列</returns>
     Matrix4x4 Transpose(const Matrix4x4& m);
 
     /// <summary>OBB同士の衝突判定</summary>
-    /// <param name="obb1">判定対象のOBB1</param>
-    /// <param name="obb2">判定対象のOBB2</param>
-    /// <returns>衝突していればtrue</returns>
     bool IsCollisionOBB(const OBB& obb1, const OBB& obb2);
 }
 
@@ -8536,16 +8112,31 @@ namespace MyEngine {
 	class BaseScene
 	{
 	public:
+		/// <summary>
 		//初期化
+		/// </summary>
 		virtual void Initialize() = 0;
+
+		/// <summary>
 		//終了
 		virtual void Finalize() = 0;
+		/// </summary>
+
+		/// <summary>
 		//更新
+		/// </summary>
 		virtual void Update() = 0;
+
+		/// <summary>
 		//描画
+		/// </summary>
 		virtual void Draw() = 0;
+
+		/// <summary>
 		//デバック
+		/// </summary>
 		virtual void Debug() = 0;
+
 		//仮想デストラクタ
 		virtual ~BaseScene() = default;
 	public:
@@ -8606,8 +8197,6 @@ namespace MyEngine {
 		/// <summary>
 		/// シーン名に応じたシーンインスタンスを生成して返す。
 		/// </summary>
-		/// <param name="sceneName">生成するシーンを識別する文字列（大文字で比較される実装）。</param>
-		/// <returns>生成された <c>BaseScene</c> のユニークポインタ、該当が無ければ <c>nullptr</c>。</returns>
 		std::unique_ptr<BaseScene>CreateScene(const std::string& scene_name)override;
 	};
 }
@@ -8856,192 +8445,168 @@ class Player;
 // 敵の処理を書いたクラス
 class Enemy {
 public:
-    /// <summary>
-    /// 初期化する。
-    /// - 引数の <c>Object3dBase*</c> を保持し、内部で <c>Object3d</c> を生成・初期化する。
-    /// - モデルを "enemy/enemy.obj" に設定し、ライトを無効化、初期のスケール・位置を設定する実装を想定する。
-    /// </summary>
-    void Initialize(MyEngine::Object3dBase* object3d_base);
+	/// <summary>
+	/// 初期化する。
+	/// </summary>
+	void Initialize(MyEngine::Object3dBase* object3d_base);
 
-    /// <summary>
-    /// 毎フレームの更新処理を行う。
-    /// - 死亡フラグが立っていれば処理をスキップする。
-    /// - 所有する弾の更新と不要弾の削除を行う。
-    /// - 移動・攻撃（<c>Laser()</c> 呼び出し）を行い、Transform を内部の <c>Object3d</c> に反映する。
-    /// - ダメージ色変化タイマーの更新と色の切り替えを行い、内部オブジェクトを Update する。
-    /// </summary>
-    void Update();
+	/// <summary>
+	/// 毎フレームの更新処理を行う。
+	/// </summary>
+	void Update();
 
-    /// <summary>
-    /// 描画を行う。
-    /// - 死亡フラグが立っていれば描画を行わない。
-    /// - 内部の <c>Object3d</c> と所有する弾を描画する。
-    /// </summary>
-    void Draw();
+	/// <summary>
+	/// 描画を行う。
+	/// </summary>
+	void Draw();
 
-    /// <summary>
-    /// レーザー攻撃（弾発射）を行う。
-    /// - プレイヤーへの方向・距離・タイマー等をチェックし、発射条件を満たす場合に弾を生成してリストに追加する。
-    /// </summary>
-    void Laser();
+	/// <summary>
+	/// レーザー攻撃（弾発射）を行う。
+	/// </summary>
+	void Laser();
 
-    /// <summary>
-    /// 衝突時のコールバック。
-    /// - デスフラグやデスパーティクル発生フラグをセットする。
-    /// </summary>
-    void OnCollision();
+	/// <summary>
+	/// 衝突時のコールバック。
+	/// </summary>
+	void OnCollision();
 
-    /// <summary>
-    /// HP を減少させる。
-    /// - ダメージに応じて HP を減らし、色変化タイマーをセットする。
-    /// - HP が 0 以下になった場合は <c>OnCollision()</c> を呼んで死亡処理を行う。
-    /// </summary>
-    /// <param name="damage">与えるダメージ量。</param>
-    void TakeDamage(int damage);
+	/// <summary>
+	/// HP を減少させる。
+	/// </summary>
+	void TakeDamage(int damage);
 
-    /// <summary>
-    /// デバッグ UI を表示する（ImGui を使用）。
-    /// - ID に基づく一意のラベルを生成して HP / スケール / 回転 / 平行移動の編集ウィジェットを表示する実装を想定する。
-    /// </summary>
-    /// <param name="id">デバッグ UI 用の識別子。</param>
-    void Debug(int id);
+	/// <summary>
+	/// デバッグ UI を表示する（ImGui を使用）
+	/// </summary>
+	void Debug(int id);
 
-    /// <summary>
-    /// OBB（Oriented Bounding Box）を取得する。
-    /// - 現在の Transform（位置・回転・スケール）と内部寸法を基に OBB を構築して返す。
-    /// </summary>
-    /// <returns>計算された OBB。</returns>
-    OBB GetOBB() const;
+	/// <summary>
+	/// OBB（Oriented Bounding Box）を取得する。
+	/// </summary>
+	OBB GetOBB() const;
 
-    /// <summary>
-    /// 死亡フラグが立っているか判定する。
-    /// </summary>
-    /// <returns>死亡していれば true。</returns>
-    bool IsDead() const { return is_dead_; }
+	/// <summary>
+	/// 死亡フラグが立っているか判定する。
+	/// </summary>
+	bool IsDead() const { return is_dead_; }
 
-    /// <summary>
-    /// 死亡時のパーティクル発生フラグが立っているか判定する。
-    /// </summary>
-    /// <returns>デスパーティクル発生フラグが立っていれば true。</returns>
-    bool IsDeathParticle() const { return is_death_particle_; }
+	/// <summary>
+	/// 死亡時のパーティクル発生フラグが立っているか判定する。
+	/// </summary>
+	bool IsDeathParticle() const { return is_death_particle_; }
 
 public:
-    /// <summary>
-    /// 現在の位置（Transform.translate）を取得する。
-    /// </summary>
-    const Vector3& GetPosition() const { return transform_.translate; }
+	/// <summary>
+	/// 現在の位置（Transform.translate）を取得する。
+	/// </summary>
+	const Vector3& GetPosition() const { return transform_.translate; }
 
-    /// <summary>
-   /// 弾の攻撃力を取得する。
-   /// </summary>
-   /// <returns>攻撃力（ダメージ量）。</returns>
-    int GetAttack() const { return attack_; }
-
-    /// <summary>
-    /// コリジョンや描画に用いる半径を取得する。
+	/// <summary>
+    /// 弾の攻撃力を取得する。
     /// </summary>
-    float GetRadius() const { return radius_; }
+	int GetAttack() const { return attack_; }
 
-    /// <summary>
-    /// 所有する弾リストを取得する（読み取り専用）。
-    /// </summary>
-    const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() const { return bullets_; }
+	/// <summary>
+	/// コリジョンや描画に用いる半径を取得する。
+	/// </summary>
+	float GetRadius() const { return radius_; }
 
-    /// <summary>
-    /// スケールを設定する。
-    /// </summary>
-    void SetScale(const Vector3& scale) { transform_.scale = scale; }
+	/// <summary>
+	/// 所有する弾リストを取得する（読み取り専用）。
+	/// </summary>
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() const { return bullets_; }
 
-    /// <summary>
-    /// 回転を設定する。
-    /// </summary>
-    void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
+	/// <summary>
+	/// スケールを設定する。
+	/// </summary>
+	void SetScale(const Vector3& scale) { transform_.scale = scale; }
 
-    /// <summary>
-    /// 座標を設定する。
-    /// </summary>
-    void SetTranslate(const Vector3& position) { transform_.translate = position; }
+	/// <summary>
+	/// 回転を設定する。
+	/// </summary>
+	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 
-    /// <summary>
-    /// 対象プレイヤーのポインタを設定する。
-    /// - 攻撃判定や追従に利用される。
-    /// </summary>
-    void SetPlayer(Player* player) { player_ = player; }
+	/// <summary>
+	/// 座標を設定する。
+	/// </summary>
+	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 
-    /// <summary>
-    /// デスパーティクル発生フラグを設定する。
-    /// </summary>
-    void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
+	/// <summary>
+	/// 対象プレイヤーのポインタを設定する。
+	/// - 攻撃判定や追従に利用される。
+	/// </summary>
+	void SetPlayer(Player* player) { player_ = player; }
 
-    /// <summary>
-    /// 敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定する。
-    /// - 引数の制御点リストを内部に保持し、レールの閉じている状態フラグも設定する。
-    /// - レールに沿った移動やパス制御に利用される。
-    /// </summary>
-    /// <param name="controlPoints">レールの制御点（ワールド座標の Vector3 配列）。</param>
-    /// <param name="closed">レールが閉じているか（true:閉じている/false:開いている）。</param>
-    void SetRail(const std::vector<Vector3>& controlPoints, bool closed);
+	/// <summary>
+	/// デスパーティクル発生フラグを設定する。
+	/// </summary>
+	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
+
+	/// <summary>
+	/// 敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定する。
+	/// </summary>
+	void SetRail(const std::vector<Vector3>& controlPoints, bool closed);
 private:
-    // 3Dオブジェクト共通設定へのポインタ
-    MyEngine::Object3dBase* object3d_base_;
-    // 敵本体の3Dオブジェクト
-    std::unique_ptr<MyEngine::Object3d> object_;
-    // 敵のワールド変換情報（位置・回転・スケール）
-    Transform transform_;
-    // 攻撃対象となるプレイヤーのポインタ
-    Player* player_;
-    // 敵が発射した弾のリスト
-    std::list<std::unique_ptr<EnemyBullet>> bullets_;
-    // 移動用レール（スプライン）の制御点リスト
-    std::vector<Vector3> railPoints_;  
-    // レール移動時の相対ベクトル（補間用など）
-    std::vector<Vector3> relativeVectors_;
-    // 移動速度ベクトル
-    Vector3 velocity_ = { 0.0f, 0.0f };
-    // 通常時のスケールを保存
-    Vector3 default_scale_ = { 0.5f, 0.5f, 0.5f };
-    // 現在の色（ダメージ時の色変化など）
-    Vector4 color_;
-    // 死亡フラグ
-    bool is_dead_ = false;
-    // 死亡時パーティクル発生フラグ
-    bool is_death_particle_ = false;
-    // 現在のHP
-    int hp_ = 10;
-    //攻撃力
-    uint32_t attack_ = 5;
-    // 弾発射タイマーのカウント
-    int fire_timer_count_ = 0;
-    // 弾発射タイマーの間隔管理
-    int fire_timer_ = 0;
-    // コリジョンや描画に使う半径
-    float radius_ = 1.0f;
-    // OBB計算などに使う寸法（立方体の一辺など）
-    float dimensions_ = 2.0f;
-    // 弾発射のインターバル（フレーム数）
-    static const int kFireInterval = 80;
-    // プレイヤーへの発射有効距離
-    const float kFireDistance = 25.0f;
-    // Z方向の攻撃停止距離
-    const float kAttackStopDistanceZ = 6.0f;
-    // 1フレームあたりの時間（秒）
-    const float kDeltaTime = 1.0f / 60.0f;
-    // ダメージ色の持続時間（秒）
-    const float kDamageColorDuration = 0.1f;
-    // ダメージスケール演出の時間
-    const float kDamageScaleDuration = 0.08f;
-    // ダメージ色の残り時間
-    float damage_color_timer_ = 0.0f;
-    // レールが閉じているかどうか
-    bool railClosed_ = false;         
-    // レール上の進行度（0.0～1.0）
-    float railProgress_ = 0.0f;      
-    // レール移動速度
-    float railSpeed_ = 0.8f;      
-    // ダメージスケール演出の時間
-    float damage_scale_duration_ = 0.08f;
-    // 現在のスケール演出の残り時間
-    float damage_scale_timer_ = 0.0f;
+	// 3Dオブジェクト共通設定へのポインタ
+	MyEngine::Object3dBase* object3d_base_;
+	// 敵本体の3Dオブジェクト
+	std::unique_ptr<MyEngine::Object3d> object_;
+	// 敵のワールド変換情報（位置・回転・スケール）
+	Transform transform_;
+	// 攻撃対象となるプレイヤーのポインタ
+	Player* player_;
+	// 敵が発射した弾のリスト
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	// 移動用レール（スプライン）の制御点リスト
+	std::vector<Vector3> railPoints_;
+	// レール移動時の相対ベクトル（補間用など）
+	std::vector<Vector3> relativeVectors_;
+	// 移動速度ベクトル
+	Vector3 velocity_ = { 0.0f, 0.0f };
+	// 通常時のスケールを保存
+	Vector3 default_scale_ = { 0.5f, 0.5f, 0.5f };
+	// 現在の色（ダメージ時の色変化など）
+	Vector4 color_;
+	// 死亡フラグ
+	bool is_dead_ = false;
+	// 死亡時パーティクル発生フラグ
+	bool is_death_particle_ = false;
+	// 現在のHP
+	int hp_ = 10;
+	//攻撃力
+	uint32_t attack_ = 5;
+	// 弾発射タイマーのカウント
+	int fire_timer_count_ = 0;
+	// 弾発射タイマーの間隔管理
+	int fire_timer_ = 0;
+	// コリジョンや描画に使う半径
+	float radius_ = 1.0f;
+	// OBB計算などに使う寸法（立方体の一辺など）
+	float dimensions_ = 2.0f;
+	// 弾発射のインターバル（フレーム数）
+	static const int kFireInterval = 80;
+	// プレイヤーへの発射有効距離
+	const float kFireDistance = 25.0f;
+	// Z方向の攻撃停止距離
+	const float kAttackStopDistanceZ = 6.0f;
+	// 1フレームあたりの時間（秒）
+	const float kDeltaTime = 1.0f / 60.0f;
+	// ダメージ色の持続時間（秒）
+	const float kDamageColorDuration = 0.1f;
+	// ダメージスケール演出の時間
+	const float kDamageScaleDuration = 0.08f;
+	// ダメージ色の残り時間
+	float damage_color_timer_ = 0.0f;
+	// レールが閉じているかどうか
+	bool railClosed_ = false;
+	// レール上の進行度（0.0～1.0）
+	float railProgress_ = 0.0f;
+	// レール移動速度
+	float railSpeed_ = 0.8f;
+	// ダメージスケール演出の時間
+	float damage_scale_duration_ = 0.08f;
+	// 現在のスケール演出の残り時間
+	float damage_scale_timer_ = 0.0f;
 };
 
 
@@ -9118,40 +8683,32 @@ class EnemyBullet
 public:
     /// <summary>
     /// 初期化する。
-    /// - 引数の <c>Object3dBase*</c> を保持し、内部の <c>Object3d</c> を生成・初期化する想定。
-    /// - モデルや初期トランスフォームの設定を行う実装を想定する。
     /// </summary>
     void Initialize(MyEngine::Object3dBase* object3d_base);
 
     /// <summary>
-    /// 毎フレームの更新処理を行う。
-    /// - 速度に基づく位置更新、寿命タイマーのデクリメント、衝突判定やデス処理の判定を行う。
+    /// 毎フレームの更新処理を行う
     /// </summary>
     void Update();
 
     /// <summary>
-    /// 描画処理を行う。
-    /// - 内部の <c>Object3d</c> に対して Transform を反映し、描画コマンドを発行する。
+    /// 描画処理を行う
     /// </summary>
     void Draw();
 
     /// <summary>
-    /// 衝突時のコールバック。
-    /// - 当たり判定にヒットした際に呼び出され、デスフラグやデス処理を開始する。
+    /// 衝突時のコールバック
     /// </summary>
     void OnCollision();
 
     /// <summary>
-    /// OBB（Oriented Bounding Box）を取得する。
-    /// - 現在の位置・回転・スケールと内部寸法から OBB を構築して返す。
+    /// OBB（Oriented Bounding Box）を取得する
     /// </summary>
-    /// <returns>計算された OBB。</returns>
     OBB GetOBB() const;
 
     /// <summary>
     /// デスフラグが立っているかを取得する。
     /// </summary>
-    /// <returns>デッドなら true。</returns>
     bool IsDead() const { return is_dead_; }
 
 public:
@@ -9160,35 +8717,28 @@ public:
     /// <summary>
     /// 現在の座標（Transform.translate）を取得する。
     /// </summary>
-    /// <returns>弾のワールド座標の const 参照。</returns>
     const Vector3& GetTranslate() const { return transform_.translate; }
 
     /// <summary>
     /// 衝突判定等に使用する半径を取得する。
     /// </summary>
-    /// <returns>弾の半径。</returns>
     float GetRadius() const { return radius_; }
 
     /// <summary>
     /// 弾の攻撃力を取得する。
     /// </summary>
-    /// <returns>攻撃力（ダメージ量）。</returns>
     int GetAttack() const { return attack_; }
 
     /// Setter ///
 
     /// <summary>
     /// 座標を設定する（変名: GetTranslate）。
-    /// - 引数の位置を内部の Transform.translate に設定する。
     /// </summary>
-    /// <param name="position">設定するワールド座標。</param>
     void SetTranslate(const Vector3& position) { transform_.translate = position; }
 
     /// <summary>
     /// 速度を設定する。
-    /// - Update() 内でこの速度に基づいて位置を更新する想定。
     /// </summary>
-    /// <param name="velocity">設定する速度ベクトル。</param>
     void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 
 private:
@@ -9321,32 +8871,20 @@ public:
 	};
 
 	/// <summary>
-	/// フェード機能を初期化する。
-	/// - スプライトのサイズや初期位置、初期色などを設定する。
+	/// フェード機能を初期化する
 	/// </summary>
 	void Initialize();
 	/// <summary>
 	/// 毎フレームの更新処理を行う。
-	/// - state_ が <c>State::None</c> の場合は何もしない。
-	/// - 経過時間 <c>count_</c> を進め、duration_ を上限としてクリップする。
-	/// - 正規化した t = clamp(count_ / duration_, 0, 1) に対してイージングを適用し、フェード種別に応じてスプライトのアルファを更新する。
-	/// - 最後に内部スプライトの <c>Update()</c> を呼ぶ。
 	/// </summary>
 	void Update();
 	/// <summary>
 	/// フェードスプライトを描画する。
-	/// - state_ が <c>State::None</c> の場合は描画を行わない。
-	/// - それ以外では内部スプライトの <c>Draw()</c> を呼ぶ。
 	/// </summary>
 	void Draw();
 	/// <summary>
 	/// フェードを開始する。
 	/// </summary>
-	/// <param name="state">開始するフェードの種類（<c>State::FadeIn</c> または <c>State::FadeOut</c>）。</param>
-	/// <param name="duration">フェードにかける時間（秒）。</param>
-	/// <remarks>
-	/// - 内部で <c>state_</c> に指定値を設定し、<c>duration_</c> を設定、<c>count_</c> を 0 にリセットする。
-	/// </remarks>
 	void FadeStart(State state, float duration);
 	/// <summary>
 	/// フェード状態を停止し <c>State::None</c> にする。
@@ -9354,15 +8892,12 @@ public:
 	void End();
 	/// <summary>
 	/// フェードが終了したか判定する。
-	/// - <c>State::FadeIn</c> / <c>State::FadeOut</c> のいずれかの状態でかつ <c>count_ >= duration_</c> の場合 true を返す。
 	/// </summary>
-	/// <returns>フェード完了なら true、そうでなければ false。</returns>
 	bool IsFinished();
 public:
 	/// <summary>
 	/// 現在のフェード状態を取得する。
 	/// </summary>
-	/// <returns>現在の <c>State</c>。</returns>
 	State GetState() const { return state_; }
 
 private:
@@ -9461,38 +8996,22 @@ class CollisionManager {
 public:
     /// <summary>
     /// プレイヤーと敵（および各弾）の衝突判定を行う。
-    /// - プレイヤー弾と敵の衝突判定（ヒット時：enemy->TakeDamage(), bullet->OnCollision()）
-    /// - 敵弾とプレイヤーの衝突判定（ヒット時：player->TakeDamage(), bullet->OnCollision()）
-    /// - プレイヤー本体と敵本体の当たり判定（衝突時：両者のコールバック呼び出し）
-    /// - player または enemy が nullptr の場合は何もしない
     /// </summary>
-    /// <param name="player">判定対象の Player へのポインタ</param>
-    /// <param name="enemy">判定対象の Enemy へのポインタ</param>
     void CheckPlayerEnemyCollisions(Player* player, Enemy* enemy);
 
     /// <summary>
     /// プレイヤー弾と敵の当たり判定を行う。
-    /// - 死亡していない敵に対して、プレイヤー弾がヒットした場合ダメージ処理・弾の衝突処理を行う。
-    /// - 敵が死亡した場合はデスパーティクルフラグをセットする。
     /// </summary>
-    /// <param name="player">判定対象の Player へのポインタ</param>
-    /// <param name="enemy">判定対象の Enemy へのポインタ</param>
     void CheckPlayerBulletsToEnemy(Player* player, Enemy* enemy);
 
     /// <summary>
     /// 敵弾とプレイヤーの当たり判定を行う。
-    /// - 敵弾がプレイヤーにヒットした場合、ダメージ処理・弾の衝突処理を行う。
     /// </summary>
-    /// <param name="player">判定対象の Player へのポインタ</param>
-    /// <param name="enemy">判定対象の Enemy へのポインタ</param>
     void CheckEnemyBulletsToPlayer(Player* player, Enemy* enemy);
 
     /// <summary>
     /// プレイヤー本体と敵本体の当たり判定を行う。
-    /// - OBB同士の衝突判定が成立した場合、両者の OnCollision() を呼び出す。
     /// </summary>
-    /// <param name="player">判定対象の Player へのポインタ</param>
-    /// <param name="enemy">判定対象の Enemy へのポインタ</param>
     void CheckPlayerEnemyBody(Player* player, Enemy* enemy);
 
 private:
@@ -9657,25 +9176,21 @@ class GameClearObject
 public:
     /// <summary>
     /// ゲームクリアオブジェクトの初期化処理を行う。
-    /// 必要なリソースやオブジェクトの生成・初期化を行う。
     /// </summary>
     void Initialize();
 
     /// <summary>
     /// ゲームクリアオブジェクトの毎フレーム更新処理を行う。
-    /// 文字のジャンプアニメーションやα値の更新などを管理する。
     /// </summary>
     void Update();
 
     /// <summary>
     /// ゲームクリアオブジェクトの描画処理を行う。
-    /// 各文字やオブジェクトの描画コマンドを発行する。
     /// </summary>
     void Draw();
 
     /// <summary>
     /// ゲームクリアオブジェクトのデバッグ表示・デバッグ用更新処理を行う。
-    /// パラメータ調整やデバッグ情報の表示を行う。
     /// </summary>
     void Debug();
 
@@ -9854,25 +9369,21 @@ class GameOverObject {
 public:
     /// <summary>
     /// ゲームオーバーオブジェクトの初期化処理を行う。
-    /// 必要なリソースやオブジェクトの生成・初期化を行う。
     /// </summary>
     void Initialize();
 
     /// <summary>
     /// ゲームオーバーオブジェクトの毎フレーム更新処理を行う。
-    /// 文字のジャンプアニメーションやα値の更新などを管理する。
     /// </summary>
     void Update();
 
     /// <summary>
     /// ゲームオーバーオブジェクトの描画処理を行う。
-    /// 各文字やオブジェクトの描画コマンドを発行する。
     /// </summary>
     void Draw();
 
     /// <summary>
-    /// ゲームオーバーオブジェクトのデバッグ表示・デバッグ用更新処理を行う。
-    /// パラメータ調整やデバッグ情報の表示を行う。
+    /// ゲームオーバーオブジェクトのデバッグ表示・デバッグ用更新処理を行う
     /// </summary>
     void Debug();
 
@@ -10100,14 +9611,12 @@ File Path: project/game/object/TitleObject.h
 class TitleObject {
 public:
 	/// <summary>
-	/// タイトル画面に登場する全オブジェクトの初期化を行う。
-	/// モデルの読み込み、スケール・位置の設定などを行う。
+	/// タイトル画面に登場する全オブジェクトの初期化を行う
 	/// </summary>
 	void Initialize();
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
-	/// タイトルや「PUSH SPACE」の点滅、プレイヤー演出を更新する。
+	/// 毎フレームの更新処理を行う
 	/// </summary>
 	void Update();
 
@@ -10117,14 +9626,12 @@ public:
 	void Draw();
 
 	/// <summary>
-	/// プレイヤーオブジェクトの演出処理を行う。
-	/// 回転やジャンプ、二段ジャンプなどの動きを制御する。
+	/// プレイヤーオブジェクトの演出処理を行う
 	/// </summary>
 	void PlayerObjDirection();
 
 	/// <summary>
 	/// デバッグ用UIを表示する。
-	/// ImGuiでスケール・回転・位置をリアルタイム調整可能にする。
 	/// </summary>
 	void Debug();
 
@@ -10245,40 +9752,33 @@ File Path: project/game/platform/Platform.h
 class Platform {
 public:
 	/// <summary>
-	/// 初期化を行う。
-	/// - 引数の <c>Object3dBase*</c> を保持し、内部の <c>Object3d</c> を生成・初期化してモデルや初期トランスフォームを設定する想定。
+	/// 初期化を行う
 	/// </summary>
-	/// <param name="object3dbase">描画共通設定を提供する <c>Object3dBase*</c>。</param>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
 	/// 毎フレームの更新処理を行う。
-	/// - 必要に応じてトランスフォームの同期や物理的な振る舞いを更新する（現状は Transform の反映などを想定）。
 	/// </summary>
 	void Update(bool is_start_animation_, bool is_returning_);
 
 	/// <summary>
-	/// 描画処理を行う。
-	/// - 内部の <c>Object3d</c> を用いてプラットフォームを描画する。
+	/// 描画処理を行う
 	/// </summary>
 	void Draw();
 
 	/// <summary>
 	/// デバッグ表示用の更新処理を行う。
-	/// - ImGui 等でパラメータ調整やデバッグ表示を行う実装を想定する。
 	/// </summary>
 	void Debug();
 
 	/// <summary>
 	/// トランスフォーム（平行移動）を取得する。
 	/// </summary>
-	/// <returns>現在のワールド座標（平行移動）。</returns>
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
 	/// トランスフォーム（平行移動）を設定する。
 	/// </summary>
-	/// <param name="translate">設定するワールド座標（平行移動）。</param>
 	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
 private:
@@ -10685,130 +10185,133 @@ class Player
 {
 public:
 	/// <summary>
-	/// コンストラクタ。
-	/// - メンバのデフォルト初期化を行う。
+	/// コンストラクタ
 	/// </summary>
 	Player();
 
 	/// <summary>
-	/// デストラクタ。
-	/// - 保持しているリソース（ユニークポインタ等）は自動で破棄される。
+	/// デストラクタ
 	/// </summary>
 	~Player();
+
 	/// <summary>
-	/// 初期化する。
-	/// - 引数の <c>Object3dBase*</c> を保持し、内部の <c>Object3d</c> を生成・初期化する。
-	/// - モデルを "player/player.obj" に設定しライトを無効化、初期スケール・位置を設定する。
-	/// - レティクル用スプライトを生成して初期設定する（サイズ・アンカーポイント等）。
+	/// 初期化
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
+
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
-	/// - 死亡時は早期リターンする。
-	/// - クールダウン／タイマー類の更新、弾や内部オブジェクトの更新、移動・ジャンプ・回避・攻撃処理を順に行う。
-	/// - レティクルの更新と弾リストの更新もここで行う。
+	/// 更新
 	/// </summary>
 	void Update(bool is_start_animation_, bool is_returning_);
+
 	/// <summary>
-	/// 描画処理を行う。
-	/// - 死亡時は描画を行わない。
-	/// - 内部の <c>Object3d</c> と保持する弾を描画する。
+	/// 描画
 	/// </summary>
 	void Draw();
+
 	/// <summary>
-	/// レティクル（照準）の描画を行う。
-	/// - レティクル用スプライトの描画呼び出しを行う。
+	/// レティクル描画
 	/// </summary>
 	void ReticleDraw();
+
 	/// <summary>
-	/// 移動処理を行う。
-	/// - 入力（A/D）に応じた左右移動、座標クランプ（画面境界）を適用する。
+	/// 移動
 	/// </summary>
 	void Move();
+
 	/// <summary>
-	/// ジャンプ処理を行う。
-	/// - 入力によりジャンプを開始し、重力・着地判定・二段ジャンプ管理を行う。
+	/// ジャンプ
 	/// </summary>
 	void Jump();
+
 	/// <summary>
-	/// 攻撃（弾発射）を行う。
-	/// - レティクルのスクリーン位置をワールド空間のレイに変換し、その方向へ弾を生成して発射する。
-	/// - 攻撃クールタイム管理を行う。
+	/// 攻撃
 	/// </summary>
 	void Attack();
+
 	/// <summary>
-	/// 回避処理を行う。
-	/// - 回避中は回転演出と時間管理を行い、クールダウンを適用する。
-	/// - 回避コマンド（キー入力）で回避を開始する。
+	/// 回避
 	/// </summary>
 	void Dodge();
+
 	/// <summary>
-	/// レティクルの更新を行う。
-	/// - 入力でスクリーン上のレティクル位置を移動し、スプライト位置を更新する。
+	/// レティクル更新
 	/// </summary>
 	void ReticleUpdate();
+
 	/// <summary>
-	/// 衝突時コールバック。
-	/// - プレイヤーの死亡フラグを立てる等の処理を行う。
+	/// 衝突時処理
 	/// </summary>
 	void OnCollision();
+
 	/// <summary>
-	/// HP を減少させる。
-	/// - 無敵時間や回避状態をチェックし、ダメージ適用後に無敵タイマー・色変化タイマーを設定する。
-	/// - HP が 0 以下になったら <c>OnCollision()</c> を呼ぶ。
+	/// ダメージ処理
 	/// </summary>
-	/// <param name="damage">与えるダメージ量。</param>
 	void TakeDamage(int damage);
+
 	/// <summary>
-	/// デバッグ表示を行う（ImGui を使用）。
-	/// - HP / トランスフォーム / 回避状態などのインスペクションと一部操作を行える。
+	/// デバッグ表示
 	/// </summary>
 	void Debug();
+
 	/// <summary>
-	/// OBB（Oriented Bounding Box）を取得する。
-	/// - 現在の Transform とモデル寸法から OBB を計算して返す。
+	/// OBB取得
 	/// </summary>
-	/// <returns>計算された OBB。</returns>
 	OBB GetOBB() const;
+
 	/// <summary>
-	/// 死亡フラグを取得する。
+	/// 死亡判定
 	/// </summary>
-	/// <returns>デッドであれば true を返す。</returns>
 	bool IsDead() const { return is_dead_; }
-public:
-	///Getter/// 
-	//スケール取得
-	const Vector3& GetScale() const { return transform_.scale; }
-	//回転取得
-	const Vector3& GetRotate() const { return transform_.rotate; }
-	//位置取得
-	const Vector3& GetTranslate() const { return transform_.translate; }
+
 	/// <summary>
-	/// HPを取得する
+	/// スケール取得
+	/// </summary>
+	const Vector3& GetScale() const { return transform_.scale; }
+
+	/// <summary>
+	/// 回転取得
+	/// </summary>
+	const Vector3& GetRotate() const { return transform_.rotate; }
+
+	/// <summary>
+	/// 位置取得
+	/// </summary>
+	const Vector3& GetTranslate() const { return transform_.translate; }
+
+	/// <summary>
+	/// HP取得
 	/// </summary>
 	int GetHP() const { return hp_; }
 
 	/// <summary>
-	/// 衝突判定等で用いる半径を取得する。
+	/// 半径取得
 	/// </summary>
 	float GetRadius() const { return radius_; }
+
 	/// <summary>
-	/// 保持しているプレイヤー弾のリストを取得する（読み取り専用）。
+	/// 弾リスト取得
 	/// </summary>
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
 
-	///Setter/// 
-	/// <summary>スケールを設定する。</summary>
-	void SetScale(const Vector3& scale) { transform_.scale = scale; }
-	/// <summary>回転を設定する。</summary>
-	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-	/// <summary>座標を設定する。</summary>
-	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 	/// <summary>
-	/// プラットフォームを設定する。
-	/// - プレイヤーが乗る地面（Platform）のポインタを保持する
+	/// スケール設定
 	/// </summary>
-	/// <param name="platform">設定する Platform クラスのポインタ。</param>
+	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+
+	/// <summary>
+	/// 回転設定
+	/// </summary>
+	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
+
+	/// <summary>
+	/// 座標設定
+	/// </summary>
+	void SetTranslate(const Vector3& position) { transform_.translate = position; }
+
+	/// <summary>
+	/// プラットフォーム設定
+	/// </summary>
 	void SetPlatform(Platform* platform) { platform_ = platform; }
 
 private:
@@ -10987,42 +10490,30 @@ class PlayerBullet
 {
 public:
 	/// <summary>
-	/// 初期化する。
-	/// - 引数の <c>Object3dBase*</c> を保持し、内部で <c>Object3d</c> を生成・初期化する。
-	/// - モデルは "player/playerbullet.obj" を設定し、スケール等の初期値を与える。
-	/// - 寿命タイマー（death_timer_）を <c>kLifeTime</c> にセットする。
+	/// 初期化する
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
 	/// 毎フレーム更新する。
-	/// - デスフラグが立っていれば処理を行わない。
-	/// - 速度に従い位置を更新し、寿命タイマーをデクリメントして寿命切れならデッドにする。
-	/// - 内部の <c>Object3d</c> に対して位置を反映し、<c>Update()</c> を呼ぶ。
 	/// </summary>
 	void Update();
 
 	/// <summary>
 	/// 描画を行う。
-	/// - デスフラグが立っている場合は描画を行わない。
-	/// - それ以外では内部の <c>Object3d::Draw()</c> を呼ぶ。
 	/// </summary>
 	void Draw();
 	/// <summary>
 	/// 衝突時コールバック。
-	/// - 衝突を受けた際に呼び出され、デスフラグを立てる等の処理を行う。
 	/// </summary>
 	void OnCollision();
 	/// <summary>
 	/// OBB（Oriented Bounding Box）を取得する。
-	/// - 現在のトランスフォーム（位置・回転・スケール）と内部寸法から OBB を構築して返す。
 	/// </summary>
-	/// <returns>計算された OBB。</returns>
 	OBB GetOBB() const;
 	/// <summary>
 	/// デスフラグが立っているかを取得する。
 	/// </summary>
-	/// <returns>デッドなら true を返す。</returns>
 	bool IsDead() const { return is_dead_; }
 public:
 	///Getter///
@@ -11045,7 +10536,6 @@ public:
 	void SetPosition(const Vector3& position) { transform_.translate = position; }
 	/// <summary>
 	/// 弾の速度を設定する。
-	/// - Update() でこの速度を用いて位置が更新される。
 	/// </summary>
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 private:
@@ -11117,58 +10607,42 @@ class RailCamera {
 public:
     /// <summary>
     /// デフォルトコンストラクタ。
-    /// - 内部のカメラとパラメータを既定値で初期化する。
     /// </summary>
     RailCamera();
 
     /// <summary>
-    /// 初期化処理を行う。
-    /// - 必要に応じてカメラの初期設定（FOV/アスペクト比等）や内部状態のリセットを行う。
+    /// 初期化処理を行う
     /// </summary>
     void Initialize();
     /// <summary>
-    /// 毎フレームの更新処理を行う。
-    /// - プレイヤーやプラットフォームの位置に基づいてカメラ位置を補間（レール移動）し、内部カメラを更新する。
-    /// - speed_ やオフセット値を考慮して追従挙動を決定する。
+    /// 毎フレームの更新処理を行う
     /// </summary>
     void Update();
 
     /// <summary>
     /// 追従対象のプレイヤーを設定する。
-    /// - SetPlayer を呼んだあと Update でプレイヤー追従が行われる。
     /// </summary>
-    /// <param name="player">追従対象の Player ポインタ。</param>
 	void SetPlayer(Player* player) { player_ = player; };
     /// <summary>
     /// プレイヤーに対するオフセットを設定する。
-    /// - カメラがプレイヤーからどの相対位置に配置されるかを指定する。
     /// </summary>
-    /// <param name="offset">プレイヤーからの相対オフセットベクトル。</param>
 	void SetPlayerOffset(const Vector3& offset) { player_offset_ = offset; };
     /// <summary>
     /// 追従対象のプラットフォームを設定する。
-    /// - 必要に応じてプレイヤー追従とプラットフォーム追従を組み合わせてカメラ位置を決定する。
     /// </summary>
-    /// <param name="platform">追従対象の Platform ポインタ。</param>
 	void SetPlatform(Platform* platform) { platform_ = platform; };
     /// <summary>
     /// プラットフォームに対するオフセットを設定する。
-    /// - プラットフォーム基準でのカメラ相対位置を指定する。
     /// </summary>
-    /// <param name="offset">プラットフォームからの相対オフセットベクトル。</param>
 	void SetPlatformOffset(const Vector3& offset) { platform_offset_ = offset; };
     /// <summary>
     /// カメラ追従速度を設定する。
-    /// - 大きいほど速く追従し、小さいほど緩やかに補間される。
     /// </summary>
-    /// <param name="speed">追従速度（任意の単位）。</param>
 	void SetSpeed(float speed) { speed_ = speed; };
 
     /// <summary>
     /// 内部で管理している Camera のポインタを取得する。
-    /// - 取得した Camera を描画やシーンにセットして利用できる。
     /// </summary>
-    /// <returns>内部 Camera へのポインタ。</returns>
     MyEngine::Camera* GetCamera() { return &camera_; };
 
 private:
@@ -11294,39 +10768,31 @@ class GameClearScene : public  MyEngine::BaseScene
 public:
 	/// <summary>
 	/// 初期化処理を行う。
-	/// - シーン開始時のリソース確保や状態リセットを行う場所
 	/// </summary>
 	void Initialize() override;
 
 	/// <summary>
-	/// 終了処理を行う。
-	/// - シーン終了時のクリーンアップを行う場所
+	/// 終了処理を行う
 	/// </summary>
 	void Finalize() override;
 
 	/// <summary>
 	/// 毎フレームの更新処理を行う。
-	/// - Enter (DIK_RETURN) が押されたらシーンマネージャに対して "TITLE" シーンへ切り替えを要求する。
-	/// - その他のゲーム処理（入力やアニメーション等）があればここで扱う。
 	/// </summary>
 	void Update() override;
 
 	/// <summary>
 	/// 描画処理を行う。
-	/// - シーンの描画コマンドを発行する場所
 	/// </summary>
 	void Draw() override;
 
 	/// <summary>
 	/// デバッグ表示用の処理を行う。
-	/// - ImGui 等によるデバッグ UI を表示する場合はここに実装する
 	/// </summary>
 	void Debug() override;
 public:
 	/// <summary>
     /// シーン遷移処理を行う。
-    /// - ゲームクリア後に次のシーン（例: タイトル画面など）へ切り替えるための処理を実装する。
-    /// - フェード演出やシーンマネージャへのシーン変更要求などを行う場合はこの関数内で記述する。
     /// </summary>
 	void SceneChange();
 private:
@@ -11470,38 +10936,32 @@ class GameOverScene : public  MyEngine::BaseScene
 public:
 	/// <summary>
 	/// ゲームオーバーシーンの初期化処理を行う。
-	/// - カメラ、フェード、ゲームオーバーオブジェクト、Skyboxなどの初期化を実施する。
 	/// </summary>
 	void Initialize() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンの終了処理を行う。
-	/// - 使用しているリソースの解放や後処理を実施する。
+	/// ゲームオーバーシーンの終了処理を行う
 	/// </summary>
 	void Finalize() override;
 
 	/// <summary>
 	/// ゲームオーバーシーンの毎フレーム更新処理を行う。
-	/// - 入力判定やオブジェクトの状態更新、シーン遷移判定などを実施する。
 	/// </summary>
 	void Update() override;
 
 	/// <summary>
 	/// ゲームオーバーシーンの描画処理を行う。
-	/// - カメラ、Skybox、ゲームオーバーオブジェクト、フェードなどの描画を実施する。
 	/// </summary>
 	void Draw() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンのデバッグ情報を表示する。
-	/// - オブジェクトの状態や内部情報の可視化を行う。
+	/// ゲームオーバーシーンのデバッグ情報を表示する
 	/// </summary>
 	void Debug() override;
 
 public:
 	/// <summary>
 	/// シーン遷移処理を行う。
-	/// - タイトルシーンやゲームシーンへの移行判定・実行を行う。
 	/// </summary>
 	void SceneChange();
 
@@ -11970,40 +11430,33 @@ class GameScene : public  MyEngine::BaseScene
 public:
 	/// <summary>
 	/// シーン初期化処理。
-	/// - オーディオの初期化、必要モデルの読み込み、パーティクルグループ作成を行う。
-	/// - カメラ（およびレールカメラ）の生成と CameraManager への登録を行い、Object3dBase のデフォルトカメラを設定する。
-	/// - Skybox／Platform／CollisionManager 等を初期化し、JsonManager からレベルデータを読み込んでプレイヤー・敵を生成・配置する。
-	/// - フェード（FadeIn）を開始し、最初のフレームの入力をクリアする。
 	/// </summary>
 	void Initialize() override;
 	/// <summary>
 	/// シーン終了処理。
-	/// - ParticleManager のクリア、CameraManager と Audio の終了処理を呼び出してリソースを解放する。
 	/// </summary>
 	void Finalize() override;
 	/// <summary>
 	/// 毎フレーム更新処理。
-	/// - カメラ（およびレールカメラ）／プレイヤー／敵／Skybox／Platform／パーティクル等を更新する。
-	/// - 衝突判定（敵ごとに CollisionManager::CheckPECollisions を呼ぶ）を行い、敵死亡時にデスパーティクルを発生させる。
-	/// - プレイヤー死亡や特定キー入力によるシーン遷移判定を行い、フェード更新やデバッグ呼出しを行う。
 	/// </summary>
 	void Update() override;
 	/// <summary>
 	/// 描画処理。
-	/// - Object3d 系の共通描画設定を行い、プレイヤー・敵・Skybox・Platform・パーティクルを描画する。
-	/// - Sprite 系の共通描画設定を行った上でプレイヤーのレティクルを描画し、フェードを最後に描画する。
 	/// </summary>
 	void Draw() override;
 	/// <summary>
 	/// デバッグ表示処理（ImGui）。
-	/// - Camera や Player / Enemy / Platform / Skybox のパラメータを ImGui で調整・表示する。
-	/// - 実行中は Update 内から呼び出される。
 	/// </summary>
 	void Debug() override;
 
-	//追従カメラ
+	/// <summary>
+	/// 追従カメラ
+	///	</summary>	
 	void FollowCamera();
-	//スタート演出 
+
+	/// <summary>
+	/// スタート演出 
+	/// </summary>
 	void StartAnimation();
 
 	/// <summary>
@@ -12130,32 +11583,22 @@ class GameSelectScene : public  MyEngine::BaseScene
 public:
 	/// <summary>
 	/// シーンの初期化処理を行う。
-	/// - シーン開始時に必要なリソースの生成・読み込みや状態の初期化を行う場所。
-	/// - 現在の実装では空実装（将来的にモデル読み込みやカメラ設定などを追加する想定）。
 	/// </summary>
 	void Initialize()override;
 	/// <summary>
 	/// シーンの終了処理を行う。
-	/// - シーン終了時に確保したリソースの解放や状態のクリーンアップを行う場所。
-	/// - 現在の実装では空実装。
 	/// </summary>
 	void Finalize()override;
 	/// <summary>
 	/// 毎フレームの更新処理を行う。
-	/// - 入力処理や UI 更新、シーン内オブジェクトの更新をここで行う。
-	/// - 現在の実装では空実装。
 	/// </summary>
 	void Update()override;
 	/// <summary>
 	/// 描画処理を行う。
-	/// - シーン内の 3D/2D オブジェクトの描画呼び出しを行う場所。
-	/// - 現在の実装では空実装。
 	/// </summary>
 	void Draw()override;
 	/// <summary>
 	/// デバッグ用の処理を行う。
-	/// - ImGui 等を使ったデバッグ表示やパラメータ調整を行う場所。
-	/// - 現在の実装では空実装。
 	/// </summary>
 	void Debug()override;
 private:
@@ -12329,36 +11772,28 @@ class TitleScene : public MyEngine::BaseScene
 public:
 	/// <summary>
 	/// シーン初期化を行う。
-	/// - サウンド／モデルの読み込み、カメラの生成と登録、TitleObject の初期化を行う。
-	/// - フェードを初期化して FadeIn を開始し、Skybox とレベルデータ（Json）を読み込む。
 	/// </summary>
 	void Initialize() override;
 	/// <summary>
 	/// シーン終了時の後始末を行う。
-	/// - CameraManager や Audio 等のサブシステムの Finalize を呼び出してリソースを解放する。
 	/// </summary>
 	void Finalize() override;
 	/// <summary>
 	/// 毎フレーム更新を行う。
-	/// - カメラ／Skybox／TitleObject を更新し、シーン遷移処理 (SceneChange) とデバッグ処理を呼び出す。
 	/// </summary>
 	void Update() override;
 	/// <summary>
 	/// 描画処理を行う。
-	/// - Object3d の共通描画設定を行った上で Skybox／TitleObject を描画し、Sprite の共通設定とフェードを描画する。
 	/// </summary>
 	void Draw() override;
 	/// <summary>
-	/// デバッグ表示を行う（ImGui）。
-	/// - カメラ・Skybox のパラメータ編集や TitleObject のデバッグ表示を行う。
+	/// デバッグ表示を行う（ImGui）
 	/// </summary>
 	void Debug() override;
 
 private:
 	/// <summary>
 	/// シーン遷移処理を行う。
-	/// - フェードの Update を呼び、Space キーで FadeOut を開始する。
-	/// - FadeOut 完了時に SceneManager に対して "GAME" シーンへの遷移を要求する。
 	/// </summary>
 	void SceneChange();
 
@@ -12556,48 +11991,36 @@ class Skybox
 public:
 	/// <summary>
 	/// 初期化を行う。
-	/// - 指定したテクスチャファイルを読み込み、頂点・インデックス・マテリアル・変換行列用バッファを作成する。
-	/// - 内部で PSO を初期化し、必要な GPU リソースを確保する想定。
 	/// </summary>
-	/// <param name="textureFilePath">使用するキューブマップまたはテクスチャファイルのパス。</param>
 	void Initialize(const std::string& texture_file_path);
 	/// <summary>
 	/// 毎フレーム更新処理を行う。
-	/// - Transform からワールド行列を計算し、カメラの ViewProjection 行列と組み合わせて WVP を更新する。
-	/// - 更新結果は GPU 用の変換バッファに書き込まれる。
 	/// </summary>
 	void Update();
 	/// <summary>
 	/// 描画処理を行う。
-	/// - 適切なルートシグネチャ／PSO をセットし、頂点バッファ／インデックスバッファ／マテリアル／テクスチャをバインドして描画コマンドを発行する。
 	/// </summary>
 	void Draw();
 	/// <summary>
-	/// インデックスデータを作成し、インデックスバッファを生成する。
-	/// - インデックス配列のセットおよび GPU リソースへの転送を行う。
+	/// インデックスデータを作成し、インデックスバッファを生成する
 	/// </summary>
 	void CreateIndex();
 	/// <summary>
 	/// マテリアルデータ用の GPU バッファを作成して初期化する。
-	/// - マテリアルの色やライティングフラグ、UV トランスフォーム等を初期化して GPU バッファへ書き込む。
 	/// </summary>
 	void CreateMaterial();
 	/// <summary>
 	/// 座標変換（WVP/World）用バッファを生成し初期化する。
-	/// - 描画時に CPU 側で更新した行列を GPU に反映するためのリソースを準備する。
 	/// </summary>
 	void CreateTransformation();
 	/// <summary>
 	/// 頂点データを生成して頂点バッファを作成する。
-	/// - キューブの各面の頂点を作成し、GPU 用バッファにコピーする処理を行う。
 	/// </summary>
 	void CreateVertex();
 public:
 	/// <summary>
 	/// 内部で保持している Transform を取得する（参照を返す）。
-	/// - 取得した Transform を利用して外部からスケール/回転/平行移動を調整できる。
 	/// </summary>
-	/// <returns>内部 Transform の参照。</returns>
 	Transform& GetTransform() { return transform_; }
 
 private:
