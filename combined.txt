@@ -1544,13 +1544,29 @@ namespace MyEngine {
 		model_base_->GetDxBase()->GetCommandList()->IASetVertexBuffers(0, 1, &vertex_buffer_view_);
 
 		// マテリアルの定数バッファを設定（ルートパラメータ0）
-		model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
+		//model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
 
 		// テクスチャSRVのディスクリプタテーブルを設定（ルートパラメータ2）
 		model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(model_data_.material.textureFilePath));
 
 		// DrawCall発行（頂点数分のインスタンスを描画）
 		model_base_->GetDxBase()->GetCommandList()->DrawInstanced(UINT(model_data_.vertices.size()), 1, 0, 0);
+	}
+
+	// マテリアル情報のコピーを取得
+	Material Model::GetMaterialCopy() const {
+
+		Material mat{};
+		if (material_data_) {
+			mat = *material_data_; 
+		} else {
+			// 保険：デフォルト値
+			mat.color = Vector4{ 1,1,1,1 };
+			mat.enableLighting = 0;
+			mat.uvTransform = Math::MakeIdentity4x4();
+			mat.shininess = 40.0f;
+		}
+		return mat;
 	}
 
 	// 頂点データ作成
@@ -1729,6 +1745,14 @@ namespace MyEngine {
 		/// </summary>
 		void Draw();
 
+
+		/// <summary>
+		/// マテリアル情報のコピーを取得する。
+		/// 内部で保持している Material の値をコピーして返す（外部から直接編集できないようにする）。
+		/// </summary>
+		/// <returns>Material 構造体のコピー。</returns>
+		Material GetMaterialCopy() const;
+
 		/// <summary>
 		/// モデルデータを取得する。
 		/// ModelData の const 参照を返す（コピーは行わない）。
@@ -1851,6 +1875,7 @@ File Path: project/engine/3d/Object3d.cpp
 ============================================================
 #include "Object3d.h"
 #include "Object3dBase.h"
+#include "DirectXBase.h"
 #include "MyMath.h"
 #include "TextureManager.h"
 #include "Model.h"
@@ -1866,7 +1891,8 @@ namespace MyEngine {
 		this->object3d_base_ = object3dBase;
 		this->camera_ = object3d_base_->GetDefaultCamera();
 
-		// 各種バッファリソースの生成（座標変換・ライト・カメラなど）
+		// 各種バッファリソースの生成
+		MaterialCreate();
 		TransformationCreate();
 		DirectionalLightCreate();
 		CameraDataCreate();
@@ -1883,7 +1909,11 @@ namespace MyEngine {
 		model_data_ = model_->GetModelData();
 
 		// モデルにライティング有効・無効を反映
-		model_->SetEnableLighting(enable_lighting_);
+		//model_->SetEnableLighting(enable_lighting_);
+
+		if (material_data_) {
+			material_data_->enableLighting = enable_lighting_ ? 1 : 0;
+		}
 
 		// Transform からワールド行列を作成
 		Matrix4x4 worldMatrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
@@ -1911,6 +1941,9 @@ namespace MyEngine {
 		// 各種リソースをコマンドリストにバインド（描画準備）
 		object3d_base_->GetDxBase()->GetCommandList()->SetGraphicsRootSignature(object3d_base_->GetRootSignature());
 		object3d_base_->GetDxBase()->GetCommandList()->SetPipelineState(object3d_base_->GetGraphicsPipelineState());
+
+		// Material（マテリアルCBuffer）
+		object3d_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
 
 		// Transform（行列系CBuffer）
 		object3d_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformation_matrix_resource_->GetGPUVirtualAddress());
@@ -1962,12 +1995,34 @@ namespace MyEngine {
 	void Object3d::SetModel(const std::string& filePath) {
 		// 指定ファイルパスのモデルを検索してセット
 		model_ = ModelManager::GetInstance()->FindModel(filePath);
+
+		// マテリアルデータをObject3d側にコピー
+		if (model_ && material_data_) {
+			Material mat = model_->GetMaterialCopy(); // コピーを取得
+			*material_data_ = mat; // Object3d 側のマテリアルCBにコピー
+		}
 	}
 
 	void Object3d::SetColor(const Vector4& color) {
+		/*
 		if (model_) {
 			model_->SetColor(color);
 		}
+		*/
+		if (material_data_) {
+			material_data_->color = color;
+		}
+	}
+
+	// マテリアル作成
+	void Object3d::MaterialCreate() {
+		// マテリアルリソースの生成と初期化
+		material_resource_ = DirectXBase::GetInstance()->CreateBufferResource(sizeof(Material));
+		material_resource_->Map(0, nullptr, reinterpret_cast<void**>(&material_data_));
+		material_data_->color = { 1,1,1,1 };
+		material_data_->enableLighting = false;
+		material_data_->uvTransform = Math::MakeIdentity4x4();
+		material_data_->shininess = 40.0f;
 	}
 
 	// 座標変換行列データ作成
@@ -2163,6 +2218,14 @@ namespace MyEngine {
 		const Vector3& GetTranslate() const { return transform_.translate; }
 
 	private:
+
+		/// <summary>
+		/// マテリアル情報を作成・初期化する。
+		/// - マテリアル用のGPUリソースを確保し、初期値や色情報、ライティング設定などを設定する。
+		/// - material_data_ ポインタを初期化し、描画時に利用できる状態にする。
+		/// </summary>
+		void MaterialCreate();
+
 		/// <summary>
 		/// 座標変換行列データを作成する。
 		/// - スケール・回転・平行移動を組み合わせてトランスフォーム行列を構築し、GPU 用バッファへ書き込む処理を行う。
@@ -8600,8 +8663,6 @@ void Enemy::Update() {
 			railProgress_ -= 1.0f;
 		}
 	}
-
-
 	// 弾の更新とデスフラグ判定（デッドならリストから削除）
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
 		(*it)->Update();
@@ -8615,18 +8676,31 @@ void Enemy::Update() {
 	// 攻撃処理（レーザー発射判定）
 	Laser();
 
-	// Transform情報をObject3dへ反映
-	object_->SetScale(transform_.scale);
-	object_->SetRotate(transform_.rotate);
-	object_->SetTranslate(transform_.translate);
+	// ダメージスケール処理
+	if (damage_scale_timer_ > 0.0f) {
+		damage_scale_timer_ -= delta_time_;
+
+		// 拡大してから戻る
+		float t = (damage_scale_timer_ / damage_scale_duration_);
+		float scaleRate = 1.0f + 0.5f * t;
+
+		transform_.scale = default_scale_ * scaleRate;
+	} else {
+		transform_.scale = default_scale_;
+	}
 
 	// ダメージ時の色変更タイマー処理
 	if (damage_color_timer_ > 0.0f) {
 		damage_color_timer_ -= delta_time_;
-		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f }); // ダメージ色
+		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
 	} else {
 		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 	}
+
+	// Transform情報をObject3dへ反映
+	object_->SetScale(transform_.scale);
+	object_->SetRotate(transform_.rotate);
+	object_->SetTranslate(transform_.translate);
 
 	object_->Update();
 
@@ -8702,7 +8776,10 @@ void Enemy::OnCollision() {
 // ダメージ処理
 void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
-	damage_color_timer_ = damage_color_duration_; // ダメージ色タイマーセット
+	// スケール演出タイマーセット
+	damage_scale_timer_ = damage_scale_duration_;
+	// ダメージ色タイマーセット
+	damage_color_timer_ = damage_color_duration_;
 	if (hp_ <= 0) {
 		hp_ = 0;
 		OnCollision(); // HP0で死亡処理
@@ -8898,31 +8975,62 @@ public:
     /// <param name="closed">レールが閉じているか（true:閉じている/false:開いている）。</param>
     void SetRail(const std::vector<Vector3>& controlPoints, bool closed);
 private:
+    // 3Dオブジェクト共通設定へのポインタ
     MyEngine::Object3dBase* object3d_base_;
+    // 敵本体の3Dオブジェクト
     std::unique_ptr<MyEngine::Object3d> object_;
+    // 敵のワールド変換情報（位置・回転・スケール）
     Transform transform_;
+    // 攻撃対象となるプレイヤーのポインタ
     Player* player_;
+    // 敵が発射した弾のリスト
     std::list<std::unique_ptr<EnemyBullet>> bullets_;
+    // 移動用レール（スプライン）の制御点リスト
     std::vector<Vector3> railPoints_;  
+    // レール移動時の相対ベクトル（補間用など）
     std::vector<Vector3> relativeVectors_;
+    // 移動速度ベクトル
     Vector3 velocity_ = { 0.0f, 0.0f };
+    // 通常時のスケールを保存
+    Vector3 default_scale_ = { 0.5f, 0.5f, 0.5f };
+    // 現在の色（ダメージ時の色変化など）
     Vector4 color_;
+    // 死亡フラグ
     bool is_dead_ = false;
+    // 死亡時パーティクル発生フラグ
     bool is_death_particle_ = false;
+    // 現在のHP
     int hp_ = 10;
+    // 弾発射タイマーのカウント
     int fire_timer_count_ = 0;
+    // 弾発射タイマーの間隔管理
     int fire_timer_ = 0;
+    // コリジョンや描画に使う半径
     float radius_ = 1.0f;
+    // OBB計算などに使う寸法（立方体の一辺など）
     float dimensions_ = 2.0f;
+    // 弾発射のインターバル（フレーム数）
     static const int k_fire_interval_ = 80;
+    // プレイヤーへの発射有効距離
     const float fire_distance_ = 25.0f;
+    // Z方向の攻撃停止距離
     const float attack_stop_distance_z_ = 6.0f;
+    // 1フレームあたりの時間（秒）
     const float delta_time_ = 1.0f / 60.0f;
+    // ダメージ色の持続時間（秒）
     const float damage_color_duration_ = 0.1f;
+    // ダメージ色の残り時間
     float damage_color_timer_ = 0.0f;
+    // レールが閉じているかどうか
     bool railClosed_ = false;         
+    // レール上の進行度（0.0～1.0）
     float railProgress_ = 0.0f;      
-    float railSpeed_ = 0.8f;           
+    // レール移動速度
+    float railSpeed_ = 0.8f;      
+    // ダメージスケール演出の時間
+    float damage_scale_duration_ = 0.08f;
+    // 現在のスケール演出の残り時間
+    float damage_scale_timer_ = 0.0f;
 };
 
 
