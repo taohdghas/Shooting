@@ -72,22 +72,26 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 		is_following_platform_initialized_ = false;
 	}
 
+	//スタート演出中は不可
+	if (!is_start_animation_ && !is_returning_) {
+		// 移動処理
+		Move();
+		// ジャンプ処理
+		Jump();
+		// 二段ジャンプ時の継続回転
+		if (jump_count_ == 2) {
+			transform_.rotate.x += jump_rotate_speed_ * kDeltaTime;
+		}
 
-	// 移動処理
-	Move();
-	// ジャンプ処理
-	Jump();
-	// 二段ジャンプ時の継続回転
-	if (jump_count_ == 2) {
-		transform_.rotate.x += jump_rotate_speed_ * kDeltaTime;
+		// 攻撃入力判定
+		if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+			Attack();
+		}
+		// 回避処理
+		Dodge();
+		// レティクルの座標・状態更新
+		ReticleUpdate();
 	}
-
-	// 攻撃入力判定
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
-		Attack();
-	}
-	// 回避処理
-	Dodge();
 
 	//ダメージ時色変化
 	if (damage_color_timer_ > 0.0f) {
@@ -101,9 +105,6 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
-
-	// レティクルの座標・状態更新
-	ReticleUpdate();
 
 	object_->Update();
 

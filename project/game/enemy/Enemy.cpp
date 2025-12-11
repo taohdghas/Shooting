@@ -19,7 +19,7 @@ void Enemy::Update() {
 	if (is_dead_) {
 		return;
 	}
-	/*
+	
 	// スプライン移動がある場合のみ処理
 	if (!relativeVectors_.empty()) {
 
@@ -46,7 +46,7 @@ void Enemy::Update() {
 			railProgress_ -= 1.0f;
 		}
 	}
-	*/
+	
 	// 弾の更新とデスフラグ判定（デッドならリストから削除）
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
 		(*it)->Update();
