@@ -8222,6 +8222,7 @@ void Enemy::Initialize(MyEngine::Object3dBase* object3d_base) {
 
 // 毎フレームの更新処理
 void Enemy::Update() {
+	//デスならスキップ
 	if (is_dead_) {
 		return;
 	}
