@@ -8636,7 +8636,7 @@ void Enemy::Update() {
 	if (is_dead_) {
 		return;
 	}
-
+	/*
 	// スプライン移動がある場合のみ処理
 	if (!relativeVectors_.empty()) {
 
@@ -8650,19 +8650,20 @@ void Enemy::Update() {
 		float t = prog - currentIndex;
 
 		// 相対移動量
-		Vector3 move = relativeVectors_[currentIndex] * (railSpeed_ * delta_time_);
+		Vector3 move = relativeVectors_[currentIndex] * (railSpeed_ * kDeltaTime);
 
 		// 現在の段階の動きだけを加算する
 		transform_.translate += move;
 
 		// 進行度を進める
-		railProgress_ += (railSpeed_ * delta_time_) / totalLength;
+		railProgress_ += (railSpeed_ * kDeltaTime) / totalLength;
 
 		// 1サイクル終わったら progress を戻す
 		if (railProgress_ > 1.0f) {
 			railProgress_ -= 1.0f;
 		}
 	}
+	*/
 	// 弾の更新とデスフラグ判定（デッドならリストから削除）
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
 		(*it)->Update();
@@ -8678,7 +8679,7 @@ void Enemy::Update() {
 
 	// ダメージスケール処理
 	if (damage_scale_timer_ > 0.0f) {
-		damage_scale_timer_ -= delta_time_;
+		damage_scale_timer_ -= kDeltaTime;
 
 		// 拡大してから戻る
 		float t = (damage_scale_timer_ / damage_scale_duration_);
@@ -8691,7 +8692,7 @@ void Enemy::Update() {
 
 	// ダメージ時の色変更タイマー処理
 	if (damage_color_timer_ > 0.0f) {
-		damage_color_timer_ -= delta_time_;
+		damage_color_timer_ -= kDeltaTime;
 		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
 	} else {
 		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
@@ -8734,7 +8735,7 @@ void Enemy::Laser() {
 	fire_timer++;
 
 	// 発射間隔未満なら発射しない
-	if (fire_timer < k_fire_interval_) {
+	if (fire_timer < kFireInterval) {
 		return;
 	}
 
@@ -8743,12 +8744,12 @@ void Enemy::Laser() {
 	float distance = Math::Length(to_player);
 
 	// 一定距離以上なら発射しない
-	if (distance > fire_distance_) {
+	if (distance > kFireDistance) {
 		return;
 	}
 
 	// プレイヤーのZ座標＋定数より手前なら発射しない
-	if (transform_.translate.z < player_->GetTranslate().z + attack_stop_distance_z_) {
+	if (transform_.translate.z < player_->GetTranslate().z + kAttackStopDistanceZ) {
 		return;
 	}
 
@@ -8777,9 +8778,9 @@ void Enemy::OnCollision() {
 void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
 	// スケール演出タイマーセット
-	damage_scale_timer_ = damage_scale_duration_;
+	damage_scale_timer_ = kDamageScaleDuration;
 	// ダメージ色タイマーセット
-	damage_color_timer_ = damage_color_duration_;
+	damage_color_timer_ = kDamageColorDuration;
 	if (hp_ <= 0) {
 		hp_ = 0;
 		OnCollision(); // HP0で死亡処理
@@ -8931,6 +8932,12 @@ public:
     const Vector3& GetPosition() const { return transform_.translate; }
 
     /// <summary>
+   /// 弾の攻撃力を取得する。
+   /// </summary>
+   /// <returns>攻撃力（ダメージ量）。</returns>
+    int GetAttack() const { return attack_; }
+
+    /// <summary>
     /// コリジョンや描画に用いる半径を取得する。
     /// </summary>
     float GetRadius() const { return radius_; }
@@ -9001,6 +9008,8 @@ private:
     bool is_death_particle_ = false;
     // 現在のHP
     int hp_ = 10;
+    //攻撃力
+    uint32_t attack_ = 5;
     // 弾発射タイマーのカウント
     int fire_timer_count_ = 0;
     // 弾発射タイマーの間隔管理
@@ -9010,15 +9019,17 @@ private:
     // OBB計算などに使う寸法（立方体の一辺など）
     float dimensions_ = 2.0f;
     // 弾発射のインターバル（フレーム数）
-    static const int k_fire_interval_ = 80;
+    static const int kFireInterval = 80;
     // プレイヤーへの発射有効距離
-    const float fire_distance_ = 25.0f;
+    const float kFireDistance = 25.0f;
     // Z方向の攻撃停止距離
-    const float attack_stop_distance_z_ = 6.0f;
+    const float kAttackStopDistanceZ = 6.0f;
     // 1フレームあたりの時間（秒）
-    const float delta_time_ = 1.0f / 60.0f;
+    const float kDeltaTime = 1.0f / 60.0f;
     // ダメージ色の持続時間（秒）
-    const float damage_color_duration_ = 0.1f;
+    const float kDamageColorDuration = 0.1f;
+    // ダメージスケール演出の時間
+    const float kDamageScaleDuration = 0.08f;
     // ダメージ色の残り時間
     float damage_color_timer_ = 0.0f;
     // レールが閉じているかどうか
@@ -9416,8 +9427,7 @@ void CollisionManager::CheckPlayerEnemyBody(Player* player, Enemy* enemy) {
     OBB playerOBB = player->GetOBB();
     OBB enemyOBB = enemy->GetOBB();
     if (Math::IsCollisionOBB(playerOBB, enemyOBB)) {
-        player->OnCollision();
-        enemy->OnCollision();
+        player->TakeDamage(enemy->GetAttack());
     }
 }
 
@@ -10376,6 +10386,14 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 	// 回避処理
 	Dodge();
 
+	//ダメージ時色変化
+	if (damage_color_timer_ > 0.0f) {
+		damage_color_timer_ -= kDeltaTime;
+		object_->SetColor({ 1.0f, 0.1961f, 0.0f, 1.0f });
+	} else {
+		object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+
 	// Transform情報をObject3dへ反映
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
@@ -10834,7 +10852,6 @@ private:
 	float radius_ = 1.0f;
 	//ジャンプ速度
 	float jump_velocity_ = 0.0f;
-
 	//HP
 	int hp_ = 100;
 	//ジャンプ回数
