@@ -74,37 +74,31 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// - 初回呼び出し時に内部でインスタンスを生成して返す。
         /// </summary>
         static ParticleManager* GetInstance();
 
         /// <summary>
         /// 初期化する。
-        /// - 各種ポインタを保存、PSO を生成し、マテリアル／乱数生成器を初期化する。
         /// </summary>
         void Initialize(DirectXBase* directx_base, SrvManager* srv_manager, Camera* camera);
 
         /// <summary>
         /// 終了処理を行う。
-        /// - シングルトンインスタンスを破棄する。
         /// </summary>
         void Finalize();
 
         /// <summary>
         /// シーン終了時に呼ぶクリア処理。
-        /// - 登録済みのパーティクルグループをすべて削除する。
         /// </summary>
         void Clear();
 
         /// <summary>
         /// 毎フレーム更新処理を行う。
-        /// - 各パーティクルの寿命・物理更新、インスタンシングデータ更新を行う。
         /// </summary>
         void Update();
 
         /// <summary>
-        /// 描画処理を行う。
-        /// - 各グループについて頂点バッファ・マテリアル・テクスチャ・インスタンスSRV を設定して描画。
+        /// 描画処理を行う
         /// </summary>
         void Draw();
 
@@ -155,13 +149,7 @@ namespace MyEngine {
 
         /// <summary>
         /// 頂点バッファリソースを生成し、データをマッピング・コピーする。
-        /// - 指定した頂点配列からGPUリソースを作成し、バッファビューと書き込みポインタをセットする。
         /// </summary>
-        /// <param name="directx_base">DirectX基盤クラスのポインタ。</param>
-        /// <param name="vertices">頂点データ配列。</param>
-        /// <param name="vertex_resource">生成された頂点バッファリソース（出力）。</param>
-        /// <param name="vertex_buffer_view">頂点バッファビュー（出力）。</param>
-        /// <param name="vertex_data">マッピングされた頂点データ書き込み用ポインタ（出力）。</param>
         void CreateAndMapVertexBuffer(
             DirectXBase* directx_base,
             const std::vector<VertexData>& vertices,

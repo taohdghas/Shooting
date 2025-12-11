@@ -13,22 +13,16 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// スプライトを初期化する。
-		/// テクスチャを読み込み、SRV を確保し、頂点・インデックス・マテリアル等の GPU リソースを作成する。
 		/// </summary>
-		/// <param name="sprite_base">描画共通設定を提供する <c>SpriteBase</c> のインスタンス。</param>
-		/// <param name="texture_file_path">読み込むテクスチャのファイルパス。</param>
 		void Initialize(SpriteBase* sprite_base, const std::string& texture_file_path);
 
 		/// <summary>
-		/// 毎フレームの更新処理を行う。
-		/// - 座標変換行列を作成し、必要に応じて GPU 上のバッファへ書き込む。
-		/// - テクスチャやサイズ変更があれば調整を行う。
+		/// 毎フレームの更新処理を行う
 		/// </summary>
 		void Update();
 
 		/// <summary>
 		/// スプライトを描画する。
-		/// - 描画共通設定を行い、頂点・インデックス・マテリアルを用いて描画コマンドを発行する。
 		/// </summary>
 		void Draw();
 
@@ -74,15 +68,25 @@ namespace MyEngine {
 		SpriteBase* sprite_base_ = nullptr;
 		SrvManager* srv_manager_ = nullptr;
 
+		/// <summary>
 		// 頂点データ作成
+		/// </summary>
 		void VertexDataCreate();
+		/// <summary>
 		// インデックス作成
+		/// </summary>
 		void IndexCreate();
+		/// <summary>
 		// マテリアル作成
+		/// </summary>
 		void MaterialCreate();
+		/// <summary>
 		// 座標変換行列データ作成
+		/// </summary>
 		void TransformationCreate();
+		/// <summary>
 		// テクスチャサイズをイメージに合わせる
+		/// </summary>
 		void AdjustTextureSize();
 
 		// バッファリソース

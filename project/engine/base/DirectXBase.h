@@ -27,44 +27,36 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
-        /// 必要に応じて内部で単一インスタンスを生成して返す想定。
         /// </summary>
         static DirectXBase* GetInstance();
 
         /// <summary>
         /// 初期化を行う。
-        /// WindowsAPI の情報を受け取り、DirectX デバイスやスワップチェイン等の初期化を行う。
         /// </summary>
-        /// <param name="windowsAPI">ウィンドウ関連情報を提供する WindowsAPI のポインタ。</param>
         void Initialize(WindowsApi* windows_api);
 
         /// <summary>
         /// 終了処理を行う。
-        /// 確保したリソースやデバイス、デスクリプタヒープなどを解放する。
         /// </summary>
         void Finalize();
 
         /// <summary>
         /// 描画開始前の共通処理を行う。
-        /// - コマンドリストの準備、レンダーターゲットの遷移などを行う。
         /// </summary>
         void PreDraw();
 
         /// <summary>
         /// 描画終了後の共通処理を行う。
-        /// - コマンドリストのクローズ、キューへの送信、フレーム同期などを行う。
         /// </summary>
         void PostDraw();
 
         /// <summary>
         /// レンダーテクスチャへ描画する際の前処理を行う。
-        /// - レンダーターゲットの切り替えやクリアなどを行う。
         /// </summary>
         void PreDrawRenderTexture();
 
         /// <summary>
         /// レンダーテクスチャの内容をスワップチェインに描画する処理を行う。
-        /// - フルスクリーン合成やシェーダリソースからの描画を想定。
         /// </summary>
         void DrawRenderTextureToScreen();
 
@@ -75,11 +67,7 @@ namespace MyEngine {
 
         /// <summary>
         /// テクスチャデータを GPU に転送するユーティリティ。
-        /// - 提供された ScratchImage のミップデータを指定テクスチャリソースへアップロードする。
         /// </summary>
-        /// <param name="texture">アップロード先のテクスチャリソース（ComPtr）。</param>
-        /// <param name="mipImages">アップロードするイメージデータ。</param>
-        /// <returns>アップロード済みのテクスチャリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(
             Microsoft::WRL::ComPtr<ID3D12Resource> texture,
             const DirectX::ScratchImage& mip_images);
@@ -87,10 +75,6 @@ namespace MyEngine {
         /// <summary>
         /// デスクリプタヒープを生成する。
         /// </summary>
-        /// <param name="heapType">ヒープの種類（SRV/RTV/DSV/etc）。</param>
-        /// <param name="numDescriptors">要素数。</param>
-        /// <param name="shaderVisivle">シェーダから見えるヒープにするか。</param>
-        /// <returns>生成したデスクリプタヒープ（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
             D3D12_DESCRIPTOR_HEAP_TYPE heap_type,
             UINT num_descriptors,
@@ -99,10 +83,6 @@ namespace MyEngine {
         /// <summary>
         /// 深度ステンシル用テクスチャリソースを生成する。
         /// </summary>
-        /// <param name="device">使用する D3D12Device。</param>
-        /// <param name="width">幅。</param>
-        /// <param name="height">高さ。</param>
-        /// <returns>生成した深度ステンシルリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(
             Microsoft::WRL::ComPtr<ID3D12Device> device,
             int32_t width, int32_t height);
@@ -110,36 +90,23 @@ namespace MyEngine {
         /// <summary>
         /// シェーダーファイルをコンパイルする。
         /// </summary>
-        /// <param name="filePath">コンパイルするシェーダファイルのパス（ワイド文字列）。</param>
-        /// <param name="profile">ターゲットプロファイル（例: L"ps_6_0"）。</param>
-        /// <returns>コンパイル済みバイナリを保持する IDxcBlob（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
             const std::wstring& file_path, const wchar_t* profile);
 
         /// <summary>
         /// 汎用バッファリソースを生成する。
         /// </summary>
-        /// <param name="sizeInBytes">バッファサイズ（バイト）。</param>
-        /// <returns>生成したバッファリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t size_in_bytes);
 
         /// <summary>
         /// テクスチャリソースを生成する。
         /// </summary>
-        /// <param name="metadata">テクスチャのメタデータ（DirectXTex の TexMetadata）。</param>
-        /// <returns>生成したテクスチャリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(
             const DirectX::TexMetadata& metadata);
 
         /// <summary>
         /// レンダーテクスチャ用のリソースを生成する。
         /// </summary>
-        /// <param name="device">使用する D3D12Device。</param>
-        /// <param name="width">幅。</param>
-        /// <param name="height">高さ。</param>
-        /// <param name="format">ピクセルフォーマット。</param>
-        /// <param name="clearColor">クリアカラー。</param>
-        /// <returns>生成したレンダーテクスチャリソース（ComPtr）。</returns>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(
             Microsoft::WRL::ComPtr<ID3D12Device> device,
             uint32_t width, uint32_t height,
@@ -149,21 +116,17 @@ namespace MyEngine {
         /// <summary>
         /// テクスチャファイルを読み込んで ScratchImage として返すユーティリティ。
         /// </summary>
-        /// <param name="filePath">読み込むテクスチャファイルのパス。</param>
-        /// <returns>読み込んだイメージデータ。</returns>
         static DirectX::ScratchImage LoadTexture(const std::string& file_path);
 
     public:
         /// <summary>
         /// デバイスを取得する。
         /// </summary>
-        /// <returns>ID3D12Device の ComPtr。</returns>
         Microsoft::WRL::ComPtr<ID3D12Device> GetDevice() { return device_; }
 
         /// <summary>
         /// コマンドリストを取得する。
         /// </summary>
-        /// <returns>ID3D12GraphicsCommandList の ComPtr。</returns>
         Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return command_list_; }
 
         /// <summary>

@@ -19,130 +19,133 @@ class Player
 {
 public:
 	/// <summary>
-	/// コンストラクタ。
-	/// - メンバのデフォルト初期化を行う。
+	/// コンストラクタ
 	/// </summary>
 	Player();
 
 	/// <summary>
-	/// デストラクタ。
-	/// - 保持しているリソース（ユニークポインタ等）は自動で破棄される。
+	/// デストラクタ
 	/// </summary>
 	~Player();
+
 	/// <summary>
-	/// 初期化する。
-	/// - 引数の <c>Object3dBase*</c> を保持し、内部の <c>Object3d</c> を生成・初期化する。
-	/// - モデルを "player/player.obj" に設定しライトを無効化、初期スケール・位置を設定する。
-	/// - レティクル用スプライトを生成して初期設定する（サイズ・アンカーポイント等）。
+	/// 初期化
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
+
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
-	/// - 死亡時は早期リターンする。
-	/// - クールダウン／タイマー類の更新、弾や内部オブジェクトの更新、移動・ジャンプ・回避・攻撃処理を順に行う。
-	/// - レティクルの更新と弾リストの更新もここで行う。
+	/// 更新
 	/// </summary>
 	void Update(bool is_start_animation_, bool is_returning_);
+
 	/// <summary>
-	/// 描画処理を行う。
-	/// - 死亡時は描画を行わない。
-	/// - 内部の <c>Object3d</c> と保持する弾を描画する。
+	/// 描画
 	/// </summary>
 	void Draw();
+
 	/// <summary>
-	/// レティクル（照準）の描画を行う。
-	/// - レティクル用スプライトの描画呼び出しを行う。
+	/// レティクル描画
 	/// </summary>
 	void ReticleDraw();
+
 	/// <summary>
-	/// 移動処理を行う。
-	/// - 入力（A/D）に応じた左右移動、座標クランプ（画面境界）を適用する。
+	/// 移動
 	/// </summary>
 	void Move();
+
 	/// <summary>
-	/// ジャンプ処理を行う。
-	/// - 入力によりジャンプを開始し、重力・着地判定・二段ジャンプ管理を行う。
+	/// ジャンプ
 	/// </summary>
 	void Jump();
+
 	/// <summary>
-	/// 攻撃（弾発射）を行う。
-	/// - レティクルのスクリーン位置をワールド空間のレイに変換し、その方向へ弾を生成して発射する。
-	/// - 攻撃クールタイム管理を行う。
+	/// 攻撃
 	/// </summary>
 	void Attack();
+
 	/// <summary>
-	/// 回避処理を行う。
-	/// - 回避中は回転演出と時間管理を行い、クールダウンを適用する。
-	/// - 回避コマンド（キー入力）で回避を開始する。
+	/// 回避
 	/// </summary>
 	void Dodge();
+
 	/// <summary>
-	/// レティクルの更新を行う。
-	/// - 入力でスクリーン上のレティクル位置を移動し、スプライト位置を更新する。
+	/// レティクル更新
 	/// </summary>
 	void ReticleUpdate();
+
 	/// <summary>
-	/// 衝突時コールバック。
-	/// - プレイヤーの死亡フラグを立てる等の処理を行う。
+	/// 衝突時処理
 	/// </summary>
 	void OnCollision();
+
 	/// <summary>
-	/// HP を減少させる。
-	/// - 無敵時間や回避状態をチェックし、ダメージ適用後に無敵タイマー・色変化タイマーを設定する。
-	/// - HP が 0 以下になったら <c>OnCollision()</c> を呼ぶ。
+	/// ダメージ処理
 	/// </summary>
-	/// <param name="damage">与えるダメージ量。</param>
 	void TakeDamage(int damage);
+
 	/// <summary>
-	/// デバッグ表示を行う（ImGui を使用）。
-	/// - HP / トランスフォーム / 回避状態などのインスペクションと一部操作を行える。
+	/// デバッグ表示
 	/// </summary>
 	void Debug();
+
 	/// <summary>
-	/// OBB（Oriented Bounding Box）を取得する。
-	/// - 現在の Transform とモデル寸法から OBB を計算して返す。
+	/// OBB取得
 	/// </summary>
-	/// <returns>計算された OBB。</returns>
 	OBB GetOBB() const;
+
 	/// <summary>
-	/// 死亡フラグを取得する。
+	/// 死亡判定
 	/// </summary>
-	/// <returns>デッドであれば true を返す。</returns>
 	bool IsDead() const { return is_dead_; }
-public:
-	///Getter/// 
-	//スケール取得
-	const Vector3& GetScale() const { return transform_.scale; }
-	//回転取得
-	const Vector3& GetRotate() const { return transform_.rotate; }
-	//位置取得
-	const Vector3& GetTranslate() const { return transform_.translate; }
+
 	/// <summary>
-	/// HPを取得する
+	/// スケール取得
+	/// </summary>
+	const Vector3& GetScale() const { return transform_.scale; }
+
+	/// <summary>
+	/// 回転取得
+	/// </summary>
+	const Vector3& GetRotate() const { return transform_.rotate; }
+
+	/// <summary>
+	/// 位置取得
+	/// </summary>
+	const Vector3& GetTranslate() const { return transform_.translate; }
+
+	/// <summary>
+	/// HP取得
 	/// </summary>
 	int GetHP() const { return hp_; }
 
 	/// <summary>
-	/// 衝突判定等で用いる半径を取得する。
+	/// 半径取得
 	/// </summary>
 	float GetRadius() const { return radius_; }
+
 	/// <summary>
-	/// 保持しているプレイヤー弾のリストを取得する（読み取り専用）。
+	/// 弾リスト取得
 	/// </summary>
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
 
-	///Setter/// 
-	/// <summary>スケールを設定する。</summary>
-	void SetScale(const Vector3& scale) { transform_.scale = scale; }
-	/// <summary>回転を設定する。</summary>
-	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-	/// <summary>座標を設定する。</summary>
-	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 	/// <summary>
-	/// プラットフォームを設定する。
-	/// - プレイヤーが乗る地面（Platform）のポインタを保持する
+	/// スケール設定
 	/// </summary>
-	/// <param name="platform">設定する Platform クラスのポインタ。</param>
+	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+
+	/// <summary>
+	/// 回転設定
+	/// </summary>
+	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
+
+	/// <summary>
+	/// 座標設定
+	/// </summary>
+	void SetTranslate(const Vector3& position) { transform_.translate = position; }
+
+	/// <summary>
+	/// プラットフォーム設定
+	/// </summary>
 	void SetPlatform(Platform* platform) { platform_ = platform; }
 
 private:

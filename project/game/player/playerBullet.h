@@ -9,42 +9,30 @@ class PlayerBullet
 {
 public:
 	/// <summary>
-	/// 初期化する。
-	/// - 引数の <c>Object3dBase*</c> を保持し、内部で <c>Object3d</c> を生成・初期化する。
-	/// - モデルは "player/playerbullet.obj" を設定し、スケール等の初期値を与える。
-	/// - 寿命タイマー（death_timer_）を <c>kLifeTime</c> にセットする。
+	/// 初期化する
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
 	/// 毎フレーム更新する。
-	/// - デスフラグが立っていれば処理を行わない。
-	/// - 速度に従い位置を更新し、寿命タイマーをデクリメントして寿命切れならデッドにする。
-	/// - 内部の <c>Object3d</c> に対して位置を反映し、<c>Update()</c> を呼ぶ。
 	/// </summary>
 	void Update();
 
 	/// <summary>
 	/// 描画を行う。
-	/// - デスフラグが立っている場合は描画を行わない。
-	/// - それ以外では内部の <c>Object3d::Draw()</c> を呼ぶ。
 	/// </summary>
 	void Draw();
 	/// <summary>
 	/// 衝突時コールバック。
-	/// - 衝突を受けた際に呼び出され、デスフラグを立てる等の処理を行う。
 	/// </summary>
 	void OnCollision();
 	/// <summary>
 	/// OBB（Oriented Bounding Box）を取得する。
-	/// - 現在のトランスフォーム（位置・回転・スケール）と内部寸法から OBB を構築して返す。
 	/// </summary>
-	/// <returns>計算された OBB。</returns>
 	OBB GetOBB() const;
 	/// <summary>
 	/// デスフラグが立っているかを取得する。
 	/// </summary>
-	/// <returns>デッドなら true を返す。</returns>
 	bool IsDead() const { return is_dead_; }
 public:
 	///Getter///
@@ -67,7 +55,6 @@ public:
 	void SetPosition(const Vector3& position) { transform_.translate = position; }
 	/// <summary>
 	/// 弾の速度を設定する。
-	/// - Update() でこの速度を用いて位置が更新される。
 	/// </summary>
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 private:

@@ -28,40 +28,33 @@ class GameScene : public  MyEngine::BaseScene
 public:
 	/// <summary>
 	/// シーン初期化処理。
-	/// - オーディオの初期化、必要モデルの読み込み、パーティクルグループ作成を行う。
-	/// - カメラ（およびレールカメラ）の生成と CameraManager への登録を行い、Object3dBase のデフォルトカメラを設定する。
-	/// - Skybox／Platform／CollisionManager 等を初期化し、JsonManager からレベルデータを読み込んでプレイヤー・敵を生成・配置する。
-	/// - フェード（FadeIn）を開始し、最初のフレームの入力をクリアする。
 	/// </summary>
 	void Initialize() override;
 	/// <summary>
 	/// シーン終了処理。
-	/// - ParticleManager のクリア、CameraManager と Audio の終了処理を呼び出してリソースを解放する。
 	/// </summary>
 	void Finalize() override;
 	/// <summary>
 	/// 毎フレーム更新処理。
-	/// - カメラ（およびレールカメラ）／プレイヤー／敵／Skybox／Platform／パーティクル等を更新する。
-	/// - 衝突判定（敵ごとに CollisionManager::CheckPECollisions を呼ぶ）を行い、敵死亡時にデスパーティクルを発生させる。
-	/// - プレイヤー死亡や特定キー入力によるシーン遷移判定を行い、フェード更新やデバッグ呼出しを行う。
 	/// </summary>
 	void Update() override;
 	/// <summary>
 	/// 描画処理。
-	/// - Object3d 系の共通描画設定を行い、プレイヤー・敵・Skybox・Platform・パーティクルを描画する。
-	/// - Sprite 系の共通描画設定を行った上でプレイヤーのレティクルを描画し、フェードを最後に描画する。
 	/// </summary>
 	void Draw() override;
 	/// <summary>
 	/// デバッグ表示処理（ImGui）。
-	/// - Camera や Player / Enemy / Platform / Skybox のパラメータを ImGui で調整・表示する。
-	/// - 実行中は Update 内から呼び出される。
 	/// </summary>
 	void Debug() override;
 
-	//追従カメラ
+	/// <summary>
+	/// 追従カメラ
+	///	</summary>	
 	void FollowCamera();
-	//スタート演出 
+
+	/// <summary>
+	/// スタート演出 
+	/// </summary>
 	void StartAnimation();
 
 	/// <summary>
