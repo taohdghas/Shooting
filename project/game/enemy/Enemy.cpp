@@ -19,7 +19,7 @@ void Enemy::Update() {
 	if (is_dead_) {
 		return;
 	}
-
+	/*
 	// スプライン移動がある場合のみ処理
 	if (!relativeVectors_.empty()) {
 
@@ -33,19 +33,20 @@ void Enemy::Update() {
 		float t = prog - currentIndex;
 
 		// 相対移動量
-		Vector3 move = relativeVectors_[currentIndex] * (railSpeed_ * delta_time_);
+		Vector3 move = relativeVectors_[currentIndex] * (railSpeed_ * kDeltaTime);
 
 		// 現在の段階の動きだけを加算する
 		transform_.translate += move;
 
 		// 進行度を進める
-		railProgress_ += (railSpeed_ * delta_time_) / totalLength;
+		railProgress_ += (railSpeed_ * kDeltaTime) / totalLength;
 
 		// 1サイクル終わったら progress を戻す
 		if (railProgress_ > 1.0f) {
 			railProgress_ -= 1.0f;
 		}
 	}
+	*/
 	// 弾の更新とデスフラグ判定（デッドならリストから削除）
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
 		(*it)->Update();
@@ -61,7 +62,7 @@ void Enemy::Update() {
 
 	// ダメージスケール処理
 	if (damage_scale_timer_ > 0.0f) {
-		damage_scale_timer_ -= delta_time_;
+		damage_scale_timer_ -= kDeltaTime;
 
 		// 拡大してから戻る
 		float t = (damage_scale_timer_ / damage_scale_duration_);
@@ -74,7 +75,7 @@ void Enemy::Update() {
 
 	// ダメージ時の色変更タイマー処理
 	if (damage_color_timer_ > 0.0f) {
-		damage_color_timer_ -= delta_time_;
+		damage_color_timer_ -= kDeltaTime;
 		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
 	} else {
 		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
@@ -117,7 +118,7 @@ void Enemy::Laser() {
 	fire_timer++;
 
 	// 発射間隔未満なら発射しない
-	if (fire_timer < k_fire_interval_) {
+	if (fire_timer < kFireInterval) {
 		return;
 	}
 
@@ -126,12 +127,12 @@ void Enemy::Laser() {
 	float distance = Math::Length(to_player);
 
 	// 一定距離以上なら発射しない
-	if (distance > fire_distance_) {
+	if (distance > kFireDistance) {
 		return;
 	}
 
 	// プレイヤーのZ座標＋定数より手前なら発射しない
-	if (transform_.translate.z < player_->GetTranslate().z + attack_stop_distance_z_) {
+	if (transform_.translate.z < player_->GetTranslate().z + kAttackStopDistanceZ) {
 		return;
 	}
 
@@ -160,9 +161,9 @@ void Enemy::OnCollision() {
 void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
 	// スケール演出タイマーセット
-	damage_scale_timer_ = damage_scale_duration_;
+	damage_scale_timer_ = kDamageScaleDuration;
 	// ダメージ色タイマーセット
-	damage_color_timer_ = damage_color_duration_;
+	damage_color_timer_ = kDamageColorDuration;
 	if (hp_ <= 0) {
 		hp_ = 0;
 		OnCollision(); // HP0で死亡処理

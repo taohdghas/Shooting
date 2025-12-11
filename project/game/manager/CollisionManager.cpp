@@ -44,8 +44,7 @@ void CollisionManager::CheckPlayerEnemyBody(Player* player, Enemy* enemy) {
     OBB playerOBB = player->GetOBB();
     OBB enemyOBB = enemy->GetOBB();
     if (Math::IsCollisionOBB(playerOBB, enemyOBB)) {
-        player->OnCollision();
-        enemy->OnCollision();
+        player->TakeDamage(enemy->GetAttack());
     }
 }
 

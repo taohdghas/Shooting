@@ -86,6 +86,12 @@ public:
     const Vector3& GetPosition() const { return transform_.translate; }
 
     /// <summary>
+   /// 弾の攻撃力を取得する。
+   /// </summary>
+   /// <returns>攻撃力（ダメージ量）。</returns>
+    int GetAttack() const { return attack_; }
+
+    /// <summary>
     /// コリジョンや描画に用いる半径を取得する。
     /// </summary>
     float GetRadius() const { return radius_; }
@@ -156,6 +162,8 @@ private:
     bool is_death_particle_ = false;
     // 現在のHP
     int hp_ = 10;
+    //攻撃力
+    uint32_t attack_ = 5;
     // 弾発射タイマーのカウント
     int fire_timer_count_ = 0;
     // 弾発射タイマーの間隔管理
@@ -165,15 +173,17 @@ private:
     // OBB計算などに使う寸法（立方体の一辺など）
     float dimensions_ = 2.0f;
     // 弾発射のインターバル（フレーム数）
-    static const int k_fire_interval_ = 80;
+    static const int kFireInterval = 80;
     // プレイヤーへの発射有効距離
-    const float fire_distance_ = 25.0f;
+    const float kFireDistance = 25.0f;
     // Z方向の攻撃停止距離
-    const float attack_stop_distance_z_ = 6.0f;
+    const float kAttackStopDistanceZ = 6.0f;
     // 1フレームあたりの時間（秒）
-    const float delta_time_ = 1.0f / 60.0f;
+    const float kDeltaTime = 1.0f / 60.0f;
     // ダメージ色の持続時間（秒）
-    const float damage_color_duration_ = 0.1f;
+    const float kDamageColorDuration = 0.1f;
+    // ダメージスケール演出の時間
+    const float kDamageScaleDuration = 0.08f;
     // ダメージ色の残り時間
     float damage_color_timer_ = 0.0f;
     // レールが閉じているかどうか

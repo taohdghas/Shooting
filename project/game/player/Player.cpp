@@ -89,6 +89,14 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 	// 回避処理
 	Dodge();
 
+	//ダメージ時色変化
+	if (damage_color_timer_ > 0.0f) {
+		damage_color_timer_ -= kDeltaTime;
+		object_->SetColor({ 1.0f, 0.1961f, 0.0f, 1.0f });
+	} else {
+		object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+
 	// Transform情報をObject3dへ反映
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);

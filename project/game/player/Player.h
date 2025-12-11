@@ -187,7 +187,6 @@ private:
 	float radius_ = 1.0f;
 	//ジャンプ速度
 	float jump_velocity_ = 0.0f;
-
 	//HP
 	int hp_ = 100;
 	//ジャンプ回数
