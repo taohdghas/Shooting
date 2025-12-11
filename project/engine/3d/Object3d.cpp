@@ -1,5 +1,6 @@
 #include "Object3d.h"
 #include "Object3dBase.h"
+#include "DirectXBase.h"
 #include "MyMath.h"
 #include "TextureManager.h"
 #include "Model.h"
@@ -15,7 +16,8 @@ namespace MyEngine {
 		this->object3d_base_ = object3dBase;
 		this->camera_ = object3d_base_->GetDefaultCamera();
 
-		// 各種バッファリソースの生成（座標変換・ライト・カメラなど）
+		// 各種バッファリソースの生成
+		MaterialCreate();
 		TransformationCreate();
 		DirectionalLightCreate();
 		CameraDataCreate();
@@ -32,7 +34,11 @@ namespace MyEngine {
 		model_data_ = model_->GetModelData();
 
 		// モデルにライティング有効・無効を反映
-		model_->SetEnableLighting(enable_lighting_);
+		//model_->SetEnableLighting(enable_lighting_);
+
+		if (material_data_) {
+			material_data_->enableLighting = enable_lighting_ ? 1 : 0;
+		}
 
 		// Transform からワールド行列を作成
 		Matrix4x4 worldMatrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
@@ -60,6 +66,9 @@ namespace MyEngine {
 		// 各種リソースをコマンドリストにバインド（描画準備）
 		object3d_base_->GetDxBase()->GetCommandList()->SetGraphicsRootSignature(object3d_base_->GetRootSignature());
 		object3d_base_->GetDxBase()->GetCommandList()->SetPipelineState(object3d_base_->GetGraphicsPipelineState());
+
+		// Material（マテリアルCBuffer）
+		object3d_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
 
 		// Transform（行列系CBuffer）
 		object3d_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformation_matrix_resource_->GetGPUVirtualAddress());
@@ -111,12 +120,34 @@ namespace MyEngine {
 	void Object3d::SetModel(const std::string& filePath) {
 		// 指定ファイルパスのモデルを検索してセット
 		model_ = ModelManager::GetInstance()->FindModel(filePath);
+
+		// マテリアルデータをObject3d側にコピー
+		if (model_ && material_data_) {
+			Material mat = model_->GetMaterialCopy(); // コピーを取得
+			*material_data_ = mat; // Object3d 側のマテリアルCBにコピー
+		}
 	}
 
 	void Object3d::SetColor(const Vector4& color) {
+		/*
 		if (model_) {
 			model_->SetColor(color);
 		}
+		*/
+		if (material_data_) {
+			material_data_->color = color;
+		}
+	}
+
+	// マテリアル作成
+	void Object3d::MaterialCreate() {
+		// マテリアルリソースの生成と初期化
+		material_resource_ = DirectXBase::GetInstance()->CreateBufferResource(sizeof(Material));
+		material_resource_->Map(0, nullptr, reinterpret_cast<void**>(&material_data_));
+		material_data_->color = { 1,1,1,1 };
+		material_data_->enableLighting = false;
+		material_data_->uvTransform = Math::MakeIdentity4x4();
+		material_data_->shininess = 40.0f;
 	}
 
 	// 座標変換行列データ作成

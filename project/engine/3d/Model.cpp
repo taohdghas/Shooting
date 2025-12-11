@@ -32,13 +32,29 @@ namespace MyEngine {
 		model_base_->GetDxBase()->GetCommandList()->IASetVertexBuffers(0, 1, &vertex_buffer_view_);
 
 		// マテリアルの定数バッファを設定（ルートパラメータ0）
-		model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
+		//model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
 
 		// テクスチャSRVのディスクリプタテーブルを設定（ルートパラメータ2）
 		model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(model_data_.material.textureFilePath));
 
 		// DrawCall発行（頂点数分のインスタンスを描画）
 		model_base_->GetDxBase()->GetCommandList()->DrawInstanced(UINT(model_data_.vertices.size()), 1, 0, 0);
+	}
+
+	// マテリアル情報のコピーを取得
+	Material Model::GetMaterialCopy() const {
+
+		Material mat{};
+		if (material_data_) {
+			mat = *material_data_; 
+		} else {
+			// 保険：デフォルト値
+			mat.color = Vector4{ 1,1,1,1 };
+			mat.enableLighting = 0;
+			mat.uvTransform = Math::MakeIdentity4x4();
+			mat.shininess = 40.0f;
+		}
+		return mat;
 	}
 
 	// 頂点データ作成

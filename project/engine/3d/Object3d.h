@@ -121,6 +121,14 @@ namespace MyEngine {
 		const Vector3& GetTranslate() const { return transform_.translate; }
 
 	private:
+
+		/// <summary>
+		/// マテリアル情報を作成・初期化する。
+		/// - マテリアル用のGPUリソースを確保し、初期値や色情報、ライティング設定などを設定する。
+		/// - material_data_ ポインタを初期化し、描画時に利用できる状態にする。
+		/// </summary>
+		void MaterialCreate();
+
 		/// <summary>
 		/// 座標変換行列データを作成する。
 		/// - スケール・回転・平行移動を組み合わせてトランスフォーム行列を構築し、GPU 用バッファへ書き込む処理を行う。

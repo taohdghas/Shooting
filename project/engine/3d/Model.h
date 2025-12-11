@@ -28,6 +28,14 @@ namespace MyEngine {
 		/// </summary>
 		void Draw();
 
+
+		/// <summary>
+		/// マテリアル情報のコピーを取得する。
+		/// 内部で保持している Material の値をコピーして返す（外部から直接編集できないようにする）。
+		/// </summary>
+		/// <returns>Material 構造体のコピー。</returns>
+		Material GetMaterialCopy() const;
+
 		/// <summary>
 		/// モデルデータを取得する。
 		/// ModelData の const 参照を返す（コピーは行わない）。

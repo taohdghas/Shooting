@@ -46,8 +46,6 @@ void Enemy::Update() {
 			railProgress_ -= 1.0f;
 		}
 	}
-
-
 	// 弾の更新とデスフラグ判定（デッドならリストから削除）
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
 		(*it)->Update();
@@ -61,18 +59,31 @@ void Enemy::Update() {
 	// 攻撃処理（レーザー発射判定）
 	Laser();
 
-	// Transform情報をObject3dへ反映
-	object_->SetScale(transform_.scale);
-	object_->SetRotate(transform_.rotate);
-	object_->SetTranslate(transform_.translate);
+	// ダメージスケール処理
+	if (damage_scale_timer_ > 0.0f) {
+		damage_scale_timer_ -= delta_time_;
+
+		// 拡大してから戻る
+		float t = (damage_scale_timer_ / damage_scale_duration_);
+		float scaleRate = 1.0f + 0.5f * t;
+
+		transform_.scale = default_scale_ * scaleRate;
+	} else {
+		transform_.scale = default_scale_;
+	}
 
 	// ダメージ時の色変更タイマー処理
 	if (damage_color_timer_ > 0.0f) {
 		damage_color_timer_ -= delta_time_;
-		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f }); // ダメージ色
+		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
 	} else {
 		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 	}
+
+	// Transform情報をObject3dへ反映
+	object_->SetScale(transform_.scale);
+	object_->SetRotate(transform_.rotate);
+	object_->SetTranslate(transform_.translate);
 
 	object_->Update();
 
@@ -148,7 +159,10 @@ void Enemy::OnCollision() {
 // ダメージ処理
 void Enemy::TakeDamage(int damage) {
 	hp_ -= damage;
-	damage_color_timer_ = damage_color_duration_; // ダメージ色タイマーセット
+	// スケール演出タイマーセット
+	damage_scale_timer_ = damage_scale_duration_;
+	// ダメージ色タイマーセット
+	damage_color_timer_ = damage_color_duration_;
 	if (hp_ <= 0) {
 		hp_ = 0;
 		OnCollision(); // HP0で死亡処理
