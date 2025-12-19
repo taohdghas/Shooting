@@ -128,9 +128,9 @@ private:
 	// 敵が発射した弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	// 移動用レール（スプライン）の制御点リスト
-	std::vector<Vector3> railPoints_;
+	std::vector<Vector3> rail_points_;
 	// レール移動時の相対ベクトル（補間用など）
-	std::vector<Vector3> relativeVectors_;
+	std::vector<Vector3> relative_vectors_;
 	// 移動速度ベクトル
 	Vector3 velocity_ = { 0.0f, 0.0f };
 	// 通常時のスケールを保存
@@ -180,9 +180,12 @@ private:
 	// レール上の進行度（0.0～1.0）
 	float rail_progress_ = 0.0f;
 	// レール移動速度
-	float rail_speed_ = 0.225f;
+	float rail_speed_ = 7.0f;
 	// ダメージスケール演出の時間
 	float damage_scale_duration_ = 0.08f;
 	// 現在のスケール演出の残り時間
 	float damage_scale_timer_ = 0.0f;
+	// レール全体の長さ
+	float rail_total_length_ = 0.0f;
+
 };
