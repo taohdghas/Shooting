@@ -8255,24 +8255,24 @@ void Enemy::Update() {
 	}
 	
 	// スプライン移動がある場合のみ処理
-	if (!railPoints_.empty())
+	if (!rail_points_.empty())
 	{
-		rail_progress_ += rail_speed_ * kDeltaTime;
+		// レール進行度を更新
+		rail_progress_ += (rail_speed_ / rail_total_length_) * kDeltaTime;
 
 		// 周回判定
 		if (rail_progress_ >= 1.0f)
 		{
 			rail_progress_ -= 1.0f;
-
-			// 累積オフセットに1周分を加算
 			rail_accumulated_ += rail_lap_offset_;
 		}
 
-		Vector3 railPos = EvaluateRailPosition(rail_progress_);
-		Vector3 offset = railPos - rail_start_point_;
+
+		Vector3 rail_pos_ = EvaluateRailPosition(rail_progress_);
+		Vector3 offset_ = rail_pos_ - rail_start_point_;
 		// 最終的な座標を設定
 		transform_.translate =
-			rail_base_position_ + rail_accumulated_ + offset;
+			rail_base_position_ + rail_accumulated_ + offset_;
 	}
 
 	
@@ -8422,7 +8422,7 @@ void Enemy::Debug(int id) {
 // レール上の位置を評価する
 Vector3 Enemy::EvaluateRailPosition(float progress)
 {
-	size_t pointCount = railPoints_.size();
+	size_t pointCount = rail_points_.size();
 
 	float scaled = progress * (pointCount - 1);
 	size_t index = (size_t)scaled;
@@ -8435,10 +8435,10 @@ Vector3 Enemy::EvaluateRailPosition(float progress)
 	size_t i3 = min(index + 2, pointCount - 1);
 
 	return Math::CatmullRom(
-		railPoints_[i0],
-		railPoints_[i1],
-		railPoints_[i2],
-		railPoints_[i3],
+		rail_points_[i0],
+		rail_points_[i1],
+		rail_points_[i2],
+		rail_points_[i3],
 		t
 	);
 }
@@ -8462,17 +8462,39 @@ OBB Enemy::GetOBB() const {
 //敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定する
 void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed)
 {
-	railPoints_ = controlPoints;
+	rail_points_ = controlPoints;
 	rail_closed_ = closed;
 
+	// 進行度リセット
 	rail_progress_ = 0.0f;
-	
-	rail_base_position_ = transform_.translate;
-	rail_start_point_ = controlPoints.front();
-	rail_lap_offset_ = controlPoints.back() - controlPoints.front();
 
-	rail_accumulated_ = { 0, 0, 0 };
+	// 現在位置をレールの基準にする
+	rail_base_position_ = transform_.translate;
+
+	// レールの開始点
+	rail_start_point_ = controlPoints.front();
+
+	// 周回時のオフセット
+	rail_lap_offset_ = controlPoints.back() - controlPoints.front();
+	rail_accumulated_ = { 0.0f, 0.0f, 0.0f };
+
+	// レール全長の計算
+	rail_total_length_ = 0.0f;
+
+	for (size_t i = 1; i < controlPoints.size(); ++i)
+	{
+		Vector3 diff = controlPoints[i] - controlPoints[i - 1];
+		rail_total_length_ += Math::Length(diff);
+	}
+
+	// 閉じたレールなら最後→最初も加算
+	if (rail_closed_ && controlPoints.size() >= 2)
+	{
+		Vector3 diff = controlPoints.front() - controlPoints.back();
+		rail_total_length_ += Math::Length(diff);
+	}
 }
+
 
 
 
@@ -8609,9 +8631,9 @@ private:
 	// 敵が発射した弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	// 移動用レール（スプライン）の制御点リスト
-	std::vector<Vector3> railPoints_;
+	std::vector<Vector3> rail_points_;
 	// レール移動時の相対ベクトル（補間用など）
-	std::vector<Vector3> relativeVectors_;
+	std::vector<Vector3> relative_vectors_;
 	// 移動速度ベクトル
 	Vector3 velocity_ = { 0.0f, 0.0f };
 	// 通常時のスケールを保存
@@ -8661,11 +8683,14 @@ private:
 	// レール上の進行度（0.0～1.0）
 	float rail_progress_ = 0.0f;
 	// レール移動速度
-	float rail_speed_ = 0.225f;
+	float rail_speed_ = 7.0f;
 	// ダメージスケール演出の時間
 	float damage_scale_duration_ = 0.08f;
 	// 現在のスケール演出の残り時間
 	float damage_scale_timer_ = 0.0f;
+	// レール全体の長さ
+	float rail_total_length_ = 0.0f;
+
 };
 
 
