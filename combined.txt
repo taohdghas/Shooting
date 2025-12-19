@@ -7184,6 +7184,24 @@ namespace Math {
 		result.z = v1.x * v2.y - v1.y * v2.x;
 		return result;
 	}
+	//CatmullRom補間
+	Vector3 Math::CatmullRom(
+		const Vector3& p0,
+		const Vector3& p1,
+		const Vector3& p2,
+		const Vector3& p3,
+		float t)
+	{
+		float t2 = t * t;
+		float t3 = t2 * t;
+
+		return
+			(p1 * 2.0f +
+				(p2 - p0) * t +
+				(p0 * 2.0f - p1 * 5.0f + p2 * 4.0f - p3) * t2 +
+				(-p0 + p1 * 3.0f - p2 * 3.0f + p3) * t3) * 0.5f;
+	}
+
 	//座標ベクトル変換
 	Vector4 Math::Transform(const Vector4& v, const Matrix4x4& m) {
 		return {
@@ -7623,6 +7641,12 @@ inline Vector3& operator+=(Vector3& v1, const Vector3& v2) {
 inline Vector3 operator-(const Vector3& v1, const Vector3& v2) {
     return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 }
+/// <summary>
+/// Vector3 の単項マイナス（符号反転）
+/// </summary>
+inline Vector3 operator-(const Vector3& v) {
+    return { -v.x, -v.y, -v.z };
+}
 
 /// <summary>
 /// Vector3から別のベクトルを減算して更新
@@ -7708,6 +7732,9 @@ namespace Math {
 
     /// <summary>2つのベクトルの外積を計算</summary>
     Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
+	/// <summary>Catmull-Rom補間</summary>
+    Vector3 CatmullRom(const Vector3& p0, const Vector3& p1,const Vector3& p2,const Vector3& p3,float t);
 
     /// <summary>座標ベクトル(Vector4)を行列で変換</summary>
     Vector4 Transform(const Vector4& v, const Matrix4x4& m);
@@ -8228,31 +8255,26 @@ void Enemy::Update() {
 	}
 	
 	// スプライン移動がある場合のみ処理
-	if (!relativeVectors_.empty()) {
+	if (!railPoints_.empty())
+	{
+		rail_progress_ += rail_speed_ * kDeltaTime;
 
-		size_t segmentCount = relativeVectors_.size();
-		float totalLength = (float)segmentCount;
-		float prog = railProgress_ * totalLength;
+		// 周回判定
+		if (rail_progress_ >= 1.0f)
+		{
+			rail_progress_ -= 1.0f;
 
-		size_t currentIndex = (size_t)prog;
-		if (currentIndex >= segmentCount) currentIndex = segmentCount - 1;
-
-		float t = prog - currentIndex;
-
-		// 相対移動量
-		Vector3 move = relativeVectors_[currentIndex] * (railSpeed_ * kDeltaTime);
-
-		// 現在の段階の動きだけを加算する
-		transform_.translate += move;
-
-		// 進行度を進める
-		railProgress_ += (railSpeed_ * kDeltaTime) / totalLength;
-
-		// 1サイクル終わったら progress を戻す
-		if (railProgress_ > 1.0f) {
-			railProgress_ -= 1.0f;
+			// 累積オフセットに1周分を加算
+			rail_accumulated_ += rail_lap_offset_;
 		}
+
+		Vector3 railPos = EvaluateRailPosition(rail_progress_);
+		Vector3 offset = railPos - rail_start_point_;
+		// 最終的な座標を設定
+		transform_.translate =
+			rail_base_position_ + rail_accumulated_ + offset;
 	}
+
 	
 	// 弾の更新とデスフラグ判定（デッドならリストから削除）
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
@@ -8397,6 +8419,30 @@ void Enemy::Debug(int id) {
 #endif
 }
 
+// レール上の位置を評価する
+Vector3 Enemy::EvaluateRailPosition(float progress)
+{
+	size_t pointCount = railPoints_.size();
+
+	float scaled = progress * (pointCount - 1);
+	size_t index = (size_t)scaled;
+	float t = scaled - index;
+
+	// 範囲安全化
+	size_t i0 = (index == 0) ? index : index - 1;
+	size_t i1 = index;
+	size_t i2 = min(index + 1, pointCount - 1);
+	size_t i3 = min(index + 2, pointCount - 1);
+
+	return Math::CatmullRom(
+		railPoints_[i0],
+		railPoints_[i1],
+		railPoints_[i2],
+		railPoints_[i3],
+		t
+	);
+}
+
 // OBB（当たり判定用の回転付きボックス）取得
 OBB Enemy::GetOBB() const {
 	OBB obb;
@@ -8413,22 +8459,21 @@ OBB Enemy::GetOBB() const {
 
 	return obb;
 }
-
-void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed) {
+//敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定する
+void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed)
+{
 	railPoints_ = controlPoints;
-	railClosed_ = false;   
+	rail_closed_ = closed;
 
-	// 最初の位置にセット
-	transform_.translate = controlPoints[0];
+	rail_progress_ = 0.0f;
+	
+	rail_base_position_ = transform_.translate;
+	rail_start_point_ = controlPoints.front();
+	rail_lap_offset_ = controlPoints.back() - controlPoints.front();
 
-	// 相対移動ベクトルを作成
-	relativeVectors_.clear();
-	for (size_t i = 0; i < controlPoints.size() - 1; i++) {
-		relativeVectors_.push_back(controlPoints[i + 1] - controlPoints[i]);
-	}
-
-	railProgress_ = 0.0f;
+	rail_accumulated_ = { 0, 0, 0 };
 }
+
 
 
 ============================================================
@@ -8480,6 +8525,11 @@ public:
 	/// デバッグ UI を表示する（ImGui を使用）
 	/// </summary>
 	void Debug(int id);
+
+	/// <summary>
+	/// レール上の位置を評価する。
+	/// </summary>
+	Vector3 EvaluateRailPosition(float progress);
 
 	/// <summary>
 	/// OBB（Oriented Bounding Box）を取得する。
@@ -8566,12 +8616,22 @@ private:
 	Vector3 velocity_ = { 0.0f, 0.0f };
 	// 通常時のスケールを保存
 	Vector3 default_scale_ = { 0.5f, 0.5f, 0.5f };
+	// レール移動用基準位置
+	Vector3 rail_base_position_;  
+	// レール移動用開始点
+	Vector3 rail_start_point_;    
+	// レール移動用1周分のオフセット
+	Vector3 rail_lap_offset_;   
+	// レール移動時の累積オフセット
+	Vector3 rail_accumulated_; 
 	// 現在の色（ダメージ時の色変化など）
 	Vector4 color_;
 	// 死亡フラグ
 	bool is_dead_ = false;
 	// 死亡時パーティクル発生フラグ
 	bool is_death_particle_ = false;
+	// レールが閉じているかどうか
+	bool rail_closed_ = false;
 	// 現在のHP
 	int hp_ = 10;
 	//攻撃力
@@ -8598,12 +8658,10 @@ private:
 	const float kDamageScaleDuration = 0.08f;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
-	// レールが閉じているかどうか
-	bool railClosed_ = false;
 	// レール上の進行度（0.0～1.0）
-	float railProgress_ = 0.0f;
+	float rail_progress_ = 0.0f;
 	// レール移動速度
-	float railSpeed_ = 0.8f;
+	float rail_speed_ = 0.225f;
 	// ダメージスケール演出の時間
 	float damage_scale_duration_ = 0.08f;
 	// 現在のスケール演出の残り時間
