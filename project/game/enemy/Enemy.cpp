@@ -9,7 +9,6 @@ void Enemy::Initialize(MyEngine::Object3dBase* object3d_base) {
 
 	object_->SetModel("enemy/enemy.obj");
 
-	// ===== 雑魚敵ステータス =====
 	hp_ = 10;
 	attack_ = 5;
 	radius_ = 1.0f;
@@ -22,14 +21,15 @@ void Enemy::Initialize(MyEngine::Object3dBase* object3d_base) {
 
 // 更新
 void Enemy::Update() {
+	//デスしたらスキップ
 	if (is_dead_) {
 		return;
 	}
 
-	// ===== レール移動 =====
+	//レール移動
 	if (!rail_points_.empty()) {
 		rail_progress_ += (rail_speed_ / rail_total_length_) * kDeltaTime;
-
+		// 閉じたレールの場合ループ
 		if (rail_progress_ >= 1.0f) {
 			rail_progress_ -= 1.0f;
 			rail_accumulated_ += rail_lap_offset_;
@@ -41,7 +41,7 @@ void Enemy::Update() {
 			rail_base_position_ + rail_accumulated_ + offset;
 	}
 
-	// ===== 弾更新 =====
+	//弾更新
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
 		(*it)->Update();
 		if ((*it)->IsDead()) {
@@ -51,13 +51,13 @@ void Enemy::Update() {
 		}
 	}
 
-	// ===== 攻撃 =====
+	//攻撃
 	Laser();
 
-	// ===== 共通更新 =====
+	//共通更新
 	EnemyBase::Update();
 
-	// 弾の再更新（描画順維持用）
+	//弾の再更新
 	for (const auto& bullet : bullets_) {
 		bullet->Update();
 	}
@@ -68,7 +68,7 @@ void Enemy::Draw() {
 	if (is_dead_) {
 		return;
 	}
-
+	//共通描画
 	EnemyBase::Draw();
 
 	for (const auto& bullet : bullets_) {
@@ -86,15 +86,15 @@ void Enemy::Laser() {
 	if (fire_timer_ < kFireInterval) {
 		return;
 	}
-
+	// プレイヤーまでのベクトルと距離を取得
 	Vector3 to_player =
 		Math::Subtract(player_->GetTranslate(), transform_.translate);
 	float distance = Math::Length(to_player);
-
+	// 一定距離以上離れている場合は攻撃しない
 	if (distance > kFireDistance) {
 		return;
 	}
-
+	// Z軸が近すぎる場合は攻撃しない
 	if (transform_.translate.z <
 		player_->GetTranslate().z + kAttackStopDistanceZ) {
 		return;

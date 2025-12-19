@@ -91,30 +91,36 @@ public:
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
 protected:
-	// ===== 共通リソース =====
+	//Dオブジェクト	
 	MyEngine::Object3dBase* object3d_base_ = nullptr;
+	//敵オブジェクト
 	std::unique_ptr<MyEngine::Object3d> object_;
-
+	//座標
 	Transform transform_;
+	//プレイヤーへの参照
 	Player* player_ = nullptr;
-
-	// ===== ステータス（派生クラスで設定）=====
+	//HP
 	int hp_ = 1;
+	//攻撃力
 	int attack_ = 1;
+	//半径
 	float radius_ = 1.0f;
+	//寸法
 	float dimensions_ = 1.0f;
-
-	// ===== 状態 =====
+	//死亡フラグ
 	bool is_dead_ = false;
+	//死亡時パーティクル発生フラグ
 	bool is_death_particle_ = false;
-
-	// ===== ダメージ演出 =====
+	//ダメージ表現スケール
 	Vector3 default_scale_ = { 1.0f, 1.0f, 1.0f };
+	//ダメージ表現タイマー
 	float damage_color_timer_ = 0.0f;
+	//ダメージ表現スケールタイマー
 	float damage_scale_timer_ = 0.0f;
-
-	// ===== 定数 =====
+	//フレーム時間
 	const float kDeltaTime = 1.0f / 60.0f;
+	//ダメージ表現時間
 	const float kDamageColorDuration = 0.1f;
+	//ダメージスケール表現時間
 	const float kDamageScaleDuration = 0.08f;
 };

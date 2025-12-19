@@ -10,7 +10,7 @@ void EnemyBase::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->Initialize(object3d_base_);
 	object_->SetLight(false);
 
-	// 派生クラスで scale / translate / model を設定する想定
+	// 派生クラスで設定
 	transform_.scale = default_scale_;
 }
 
