@@ -25,6 +25,12 @@ inline Vector3& operator+=(Vector3& v1, const Vector3& v2) {
 inline Vector3 operator-(const Vector3& v1, const Vector3& v2) {
     return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 }
+/// <summary>
+/// Vector3 の単項マイナス（符号反転）
+/// </summary>
+inline Vector3 operator-(const Vector3& v) {
+    return { -v.x, -v.y, -v.z };
+}
 
 /// <summary>
 /// Vector3から別のベクトルを減算して更新
@@ -110,6 +116,9 @@ namespace Math {
 
     /// <summary>2つのベクトルの外積を計算</summary>
     Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
+	/// <summary>Catmull-Rom補間</summary>
+    Vector3 CatmullRom(const Vector3& p0, const Vector3& p1,const Vector3& p2,const Vector3& p3,float t);
 
     /// <summary>座標ベクトル(Vector4)を行列で変換</summary>
     Vector4 Transform(const Vector4& v, const Matrix4x4& m);

@@ -46,6 +46,11 @@ public:
 	void Debug(int id);
 
 	/// <summary>
+	/// レール上の位置を評価する。
+	/// </summary>
+	Vector3 EvaluateRailPosition(float progress);
+
+	/// <summary>
 	/// OBB（Oriented Bounding Box）を取得する。
 	/// </summary>
 	OBB GetOBB() const;
@@ -130,12 +135,22 @@ private:
 	Vector3 velocity_ = { 0.0f, 0.0f };
 	// 通常時のスケールを保存
 	Vector3 default_scale_ = { 0.5f, 0.5f, 0.5f };
+	// レール移動用基準位置
+	Vector3 rail_base_position_;  
+	// レール移動用開始点
+	Vector3 rail_start_point_;    
+	// レール移動用1周分のオフセット
+	Vector3 rail_lap_offset_;   
+	// レール移動時の累積オフセット
+	Vector3 rail_accumulated_; 
 	// 現在の色（ダメージ時の色変化など）
 	Vector4 color_;
 	// 死亡フラグ
 	bool is_dead_ = false;
 	// 死亡時パーティクル発生フラグ
 	bool is_death_particle_ = false;
+	// レールが閉じているかどうか
+	bool rail_closed_ = false;
 	// 現在のHP
 	int hp_ = 10;
 	//攻撃力
@@ -162,12 +177,10 @@ private:
 	const float kDamageScaleDuration = 0.08f;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
-	// レールが閉じているかどうか
-	bool railClosed_ = false;
 	// レール上の進行度（0.0～1.0）
-	float railProgress_ = 0.0f;
+	float rail_progress_ = 0.0f;
 	// レール移動速度
-	float railSpeed_ = 0.8f;
+	float rail_speed_ = 0.225f;
 	// ダメージスケール演出の時間
 	float damage_scale_duration_ = 0.08f;
 	// 現在のスケール演出の残り時間

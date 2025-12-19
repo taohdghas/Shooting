@@ -91,6 +91,24 @@ namespace Math {
 		result.z = v1.x * v2.y - v1.y * v2.x;
 		return result;
 	}
+	//CatmullRom補間
+	Vector3 Math::CatmullRom(
+		const Vector3& p0,
+		const Vector3& p1,
+		const Vector3& p2,
+		const Vector3& p3,
+		float t)
+	{
+		float t2 = t * t;
+		float t3 = t2 * t;
+
+		return
+			(p1 * 2.0f +
+				(p2 - p0) * t +
+				(p0 * 2.0f - p1 * 5.0f + p2 * 4.0f - p3) * t2 +
+				(-p0 + p1 * 3.0f - p2 * 3.0f + p3) * t3) * 0.5f;
+	}
+
 	//座標ベクトル変換
 	Vector4 Math::Transform(const Vector4& v, const Matrix4x4& m) {
 		return {

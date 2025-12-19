@@ -22,31 +22,26 @@ void Enemy::Update() {
 	}
 	
 	// スプライン移動がある場合のみ処理
-	if (!relativeVectors_.empty()) {
+	if (!railPoints_.empty())
+	{
+		rail_progress_ += rail_speed_ * kDeltaTime;
 
-		size_t segmentCount = relativeVectors_.size();
-		float totalLength = (float)segmentCount;
-		float prog = railProgress_ * totalLength;
+		// 周回判定
+		if (rail_progress_ >= 1.0f)
+		{
+			rail_progress_ -= 1.0f;
 
-		size_t currentIndex = (size_t)prog;
-		if (currentIndex >= segmentCount) currentIndex = segmentCount - 1;
-
-		float t = prog - currentIndex;
-
-		// 相対移動量
-		Vector3 move = relativeVectors_[currentIndex] * (railSpeed_ * kDeltaTime);
-
-		// 現在の段階の動きだけを加算する
-		transform_.translate += move;
-
-		// 進行度を進める
-		railProgress_ += (railSpeed_ * kDeltaTime) / totalLength;
-
-		// 1サイクル終わったら progress を戻す
-		if (railProgress_ > 1.0f) {
-			railProgress_ -= 1.0f;
+			// 累積オフセットに1周分を加算
+			rail_accumulated_ += rail_lap_offset_;
 		}
+
+		Vector3 railPos = EvaluateRailPosition(rail_progress_);
+		Vector3 offset = railPos - rail_start_point_;
+		// 最終的な座標を設定
+		transform_.translate =
+			rail_base_position_ + rail_accumulated_ + offset;
 	}
+
 	
 	// 弾の更新とデスフラグ判定（デッドならリストから削除）
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
@@ -191,6 +186,30 @@ void Enemy::Debug(int id) {
 #endif
 }
 
+// レール上の位置を評価する
+Vector3 Enemy::EvaluateRailPosition(float progress)
+{
+	size_t pointCount = railPoints_.size();
+
+	float scaled = progress * (pointCount - 1);
+	size_t index = (size_t)scaled;
+	float t = scaled - index;
+
+	// 範囲安全化
+	size_t i0 = (index == 0) ? index : index - 1;
+	size_t i1 = index;
+	size_t i2 = min(index + 1, pointCount - 1);
+	size_t i3 = min(index + 2, pointCount - 1);
+
+	return Math::CatmullRom(
+		railPoints_[i0],
+		railPoints_[i1],
+		railPoints_[i2],
+		railPoints_[i3],
+		t
+	);
+}
+
 // OBB（当たり判定用の回転付きボックス）取得
 OBB Enemy::GetOBB() const {
 	OBB obb;
@@ -207,19 +226,18 @@ OBB Enemy::GetOBB() const {
 
 	return obb;
 }
-
-void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed) {
+//敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定する
+void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed)
+{
 	railPoints_ = controlPoints;
-	railClosed_ = false;   
+	rail_closed_ = closed;
 
-	// 最初の位置にセット
-	transform_.translate = controlPoints[0];
+	rail_progress_ = 0.0f;
+	
+	rail_base_position_ = transform_.translate;
+	rail_start_point_ = controlPoints.front();
+	rail_lap_offset_ = controlPoints.back() - controlPoints.front();
 
-	// 相対移動ベクトルを作成
-	relativeVectors_.clear();
-	for (size_t i = 0; i < controlPoints.size() - 1; i++) {
-		relativeVectors_.push_back(controlPoints[i + 1] - controlPoints[i]);
-	}
-
-	railProgress_ = 0.0f;
+	rail_accumulated_ = { 0, 0, 0 };
 }
+
