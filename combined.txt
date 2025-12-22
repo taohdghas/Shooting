@@ -8443,23 +8443,23 @@ Vector3 Enemy::EvaluateRailPosition(float progress)
 	);
 }
 
-// OBB（当たり判定用の回転付きボックス）取得
+// OBB取得
 OBB Enemy::GetOBB() const {
 	OBB obb;
 	obb.center = transform_.translate;
 
-	// 回転行列から各軸ベクトルを算出・正規化
 	Matrix4x4 rot_mat = Math::MakeRotateMatrix(transform_.rotate);
-	obb.orientations[0] = Math::Normalize({ rot_mat.m[0][0], rot_mat.m[1][0], rot_mat.m[2][0] }); // X軸
-	obb.orientations[1] = Math::Normalize({ rot_mat.m[0][1], rot_mat.m[1][1], rot_mat.m[2][1] }); // Y軸
-	obb.orientations[2] = Math::Normalize({ rot_mat.m[0][2], rot_mat.m[1][2], rot_mat.m[2][2] }); // Z軸
+	obb.orientations[0] = Math::Normalize({ rot_mat.m[0][0], rot_mat.m[1][0], rot_mat.m[2][0] });
+	obb.orientations[1] = Math::Normalize({ rot_mat.m[0][1], rot_mat.m[1][1], rot_mat.m[2][1] });
+	obb.orientations[2] = Math::Normalize({ rot_mat.m[0][2], rot_mat.m[1][2], rot_mat.m[2][2] });
 
-	// スケールと寸法からサイズ算出
-	obb.size = (transform_.scale * dimensions_) * 0.5f;
+	obb.size.x = transform_.scale.x * dimensions_.x * 0.5f;
+	obb.size.y = transform_.scale.y * dimensions_.y * 0.5f;
+	obb.size.z = transform_.scale.z * dimensions_.z * 0.5f;
 
 	return obb;
 }
-//敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定する
+//敵の移動用レールを設定する
 void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed)
 {
 	rail_points_ = controlPoints;
@@ -8646,6 +8646,8 @@ private:
 	Vector3 rail_lap_offset_;   
 	// レール移動時の累積オフセット
 	Vector3 rail_accumulated_; 
+	//寸法
+	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
 	// 現在の色（ダメージ時の色変化など）
 	Vector4 color_;
 	// 死亡フラグ
@@ -8664,8 +8666,6 @@ private:
 	int fire_timer_ = 0;
 	// コリジョンや描画に使う半径
 	float radius_ = 1.0f;
-	// OBB計算などに使う寸法（立方体の一辺など）
-	float dimensions_ = 2.0f;
 	// 弾発射のインターバル（フレーム数）
 	static const int kFireInterval = 80;
 	// プレイヤーへの発射有効距離
@@ -8740,14 +8740,14 @@ OBB EnemyBullet::GetOBB() const {
     OBB obb;
     obb.center = transform_.translate;
 
-    // 回転行列から各軸ベクトルを算出・正規化
-    Matrix4x4 rotMat = Math::MakeRotateMatrix(transform_.rotate);
-    obb.orientations[0] = Math::Normalize({ rotMat.m[0][0], rotMat.m[1][0], rotMat.m[2][0] }); // X軸
-    obb.orientations[1] = Math::Normalize({ rotMat.m[0][1], rotMat.m[1][1], rotMat.m[2][1] }); // Y軸
-    obb.orientations[2] = Math::Normalize({ rotMat.m[0][2], rotMat.m[1][2], rotMat.m[2][2] }); // Z軸
+    Matrix4x4 rot_mat = Math::MakeRotateMatrix(transform_.rotate);
+    obb.orientations[0] = Math::Normalize({ rot_mat.m[0][0], rot_mat.m[1][0], rot_mat.m[2][0] });
+    obb.orientations[1] = Math::Normalize({ rot_mat.m[0][1], rot_mat.m[1][1], rot_mat.m[2][1] });
+    obb.orientations[2] = Math::Normalize({ rot_mat.m[0][2], rot_mat.m[1][2], rot_mat.m[2][2] });
 
-    // スケールと寸法からサイズ算出
-    obb.size = (transform_.scale * dimensions_) * 0.5f;
+    obb.size.x = transform_.scale.x * dimensions_.x * 0.5f;
+    obb.size.y = transform_.scale.y * dimensions_.y * 0.5f;
+    obb.size.z = transform_.scale.z * dimensions_.z * 0.5f;
 
     return obb;
 }
@@ -8831,10 +8831,10 @@ private:
     Transform transform_;
     //速度
     Vector3 velocity_;
+    //モデルの寸法
+	Vector3 dimensions_ = { 0.2f,0.2f,0.2f };
     //半径
     float radius_ = 0.1f;
-    //モデルの寸法
-    float dimensions_ = 0.2f;
     //攻撃力
     uint32_t attack_ = 5;
     //デスフラグ
@@ -10232,14 +10232,14 @@ OBB Player::GetOBB() const {
 	OBB obb;
 	obb.center = transform_.translate;
 
-	// 回転行列から各軸ベクトルを算出・正規化
 	Matrix4x4 rot_mat = Math::MakeRotateMatrix(transform_.rotate);
-	obb.orientations[0] = Math::Normalize({ rot_mat.m[0][0], rot_mat.m[1][0], rot_mat.m[2][0] }); // X軸
-	obb.orientations[1] = Math::Normalize({ rot_mat.m[0][1], rot_mat.m[1][1], rot_mat.m[2][1] }); // Y軸
-	obb.orientations[2] = Math::Normalize({ rot_mat.m[0][2], rot_mat.m[1][2], rot_mat.m[2][2] }); // Z軸
+	obb.orientations[0] = Math::Normalize({ rot_mat.m[0][0], rot_mat.m[1][0], rot_mat.m[2][0] });
+	obb.orientations[1] = Math::Normalize({ rot_mat.m[0][1], rot_mat.m[1][1], rot_mat.m[2][1] });
+	obb.orientations[2] = Math::Normalize({ rot_mat.m[0][2], rot_mat.m[1][2], rot_mat.m[2][2] });
 
-	// スケールと寸法からサイズ算出
-	obb.size = (transform_.scale * dimensions_) * 0.5f;
+	obb.size.x = transform_.scale.x * dimensions_.x * 0.5f;
+	obb.size.y = transform_.scale.y * dimensions_.y * 0.5f;
+	obb.size.z = transform_.scale.z * dimensions_.z * 0.5f;
 
 	return obb;
 }
@@ -10418,6 +10418,8 @@ private:
 	Vector3 reticle_offset_{ 0.0f, 0.0f, 10.0f };
 	//前フレームのプラットフォーム位置
 	Vector3 prev_platform_pos_ = { 0, 0, 0 };
+	//モデルの寸法
+	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
 	//色
 	Vector4 color_;
 	//回避方向
@@ -10432,8 +10434,6 @@ private:
 	bool is_invincible_ = false;
 	//追従プラットフォーム初期化フラグ
 	bool is_following_platform_initialized_ = false;
-	//モデルの寸法
-	float dimensions_ = 2.0f;
 	//プレイヤーの移動速度
 	float speed_ = 0.1f;
 	//プレイヤーの半径
@@ -10547,14 +10547,14 @@ OBB PlayerBullet::GetOBB() const {
 	OBB obb;
 	obb.center = transform_.translate;
 
-	// 回転行列から各軸ベクトルを算出・正規化
 	Matrix4x4 rot_mat = Math::MakeRotateMatrix(transform_.rotate);
-	obb.orientations[0] = Math::Normalize({ rot_mat.m[0][0], rot_mat.m[1][0], rot_mat.m[2][0] }); // X軸
-	obb.orientations[1] = Math::Normalize({ rot_mat.m[0][1], rot_mat.m[1][1], rot_mat.m[2][1] }); // Y軸
-	obb.orientations[2] = Math::Normalize({ rot_mat.m[0][2], rot_mat.m[1][2], rot_mat.m[2][2] }); // Z軸
+	obb.orientations[0] = Math::Normalize({ rot_mat.m[0][0], rot_mat.m[1][0], rot_mat.m[2][0] });
+	obb.orientations[1] = Math::Normalize({ rot_mat.m[0][1], rot_mat.m[1][1], rot_mat.m[2][1] });
+	obb.orientations[2] = Math::Normalize({ rot_mat.m[0][2], rot_mat.m[1][2], rot_mat.m[2][2] });
 
-	// スケールと寸法からサイズ算出
-	obb.size = (transform_.scale * dimensions_) * 0.5f;
+	obb.size.x = transform_.scale.x * dimensions_.x * 0.5f;
+	obb.size.y = transform_.scale.y * dimensions_.y * 0.5f;
+	obb.size.z = transform_.scale.z * dimensions_.z * 0.5f;
 
 	return obb;
 }
@@ -10628,15 +10628,16 @@ private:
 	Transform transform_;
 	//速度
 	Vector3 velocity_;
+	//モデルの寸法
+	Vector3 dimensions_ = { 0.2f,0.2f,0.2f };
 	//寿命
 	static const uint32_t kLifeTime = 60 * 5;
 	//デスタイマー
 	int death_timer_;
 	//デスフラグ
 	bool is_dead_ = false;
+	//半径
 	float radius_ = 0.1f;
-	//モデルの寸法
-	float dimensions_ = 0.2f;
 	uint32_t attack_ = 5;
 };
 
