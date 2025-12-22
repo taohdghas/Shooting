@@ -63,14 +63,15 @@ private:
 	Transform transform_;
 	//速度
 	Vector3 velocity_;
+	//モデルの寸法
+	Vector3 dimensions_ = { 0.2f,0.2f,0.2f };
 	//寿命
 	static const uint32_t kLifeTime = 60 * 5;
 	//デスタイマー
 	int death_timer_;
 	//デスフラグ
 	bool is_dead_ = false;
+	//半径
 	float radius_ = 0.1f;
-	//モデルの寸法
-	float dimensions_ = 0.2f;
 	uint32_t attack_ = 5;
 };

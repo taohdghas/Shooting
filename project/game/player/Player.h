@@ -168,6 +168,8 @@ private:
 	Vector3 reticle_offset_{ 0.0f, 0.0f, 10.0f };
 	//前フレームのプラットフォーム位置
 	Vector3 prev_platform_pos_ = { 0, 0, 0 };
+	//モデルの寸法
+	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
 	//色
 	Vector4 color_;
 	//回避方向
@@ -182,8 +184,6 @@ private:
 	bool is_invincible_ = false;
 	//追従プラットフォーム初期化フラグ
 	bool is_following_platform_initialized_ = false;
-	//モデルの寸法
-	float dimensions_ = 2.0f;
 	//プレイヤーの移動速度
 	float speed_ = 0.1f;
 	//プレイヤーの半径

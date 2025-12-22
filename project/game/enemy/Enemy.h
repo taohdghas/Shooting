@@ -143,6 +143,8 @@ private:
 	Vector3 rail_lap_offset_;   
 	// レール移動時の累積オフセット
 	Vector3 rail_accumulated_; 
+	//寸法
+	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
 	// 現在の色（ダメージ時の色変化など）
 	Vector4 color_;
 	// 死亡フラグ
@@ -161,8 +163,6 @@ private:
 	int fire_timer_ = 0;
 	// コリジョンや描画に使う半径
 	float radius_ = 1.0f;
-	// OBB計算などに使う寸法（立方体の一辺など）
-	float dimensions_ = 2.0f;
 	// 弾発射のインターバル（フレーム数）
 	static const int kFireInterval = 80;
 	// プレイヤーへの発射有効距離

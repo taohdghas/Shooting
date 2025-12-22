@@ -73,10 +73,10 @@ private:
     Transform transform_;
     //速度
     Vector3 velocity_;
+    //モデルの寸法
+	Vector3 dimensions_ = { 0.2f,0.2f,0.2f };
     //半径
     float radius_ = 0.1f;
-    //モデルの寸法
-    float dimensions_ = 0.2f;
     //攻撃力
     uint32_t attack_ = 5;
     //デスフラグ
