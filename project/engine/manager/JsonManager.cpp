@@ -74,6 +74,17 @@ namespace MyEngine {
                 enemy_spawn.fileName = object_json["file_name"].get<std::string>();
                 ReadTransform(object_json["transform"], enemy_spawn.translation, enemy_spawn.rotation, enemy_spawn.scaling);
                 level_data->enemies.push_back(enemy_spawn);
+            } else if (type.compare("BossSpawn") == 0) {
+                BossSpawnData boss_spawn{};
+                boss_spawn.name = object_json["name"].get<std::string>();
+                boss_spawn.fileName = object_json["file_name"].get<std::string>();
+                ReadTransform(
+                    object_json["transform"],
+                    boss_spawn.translation,
+                    boss_spawn.rotation,
+                    boss_spawn.scaling
+                );
+                level_data->bosses.push_back(boss_spawn);
             }
 
             // 子オブジェクトを再帰的に処理する予定

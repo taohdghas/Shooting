@@ -7,9 +7,8 @@
 void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
 	EnemyBase::Initialize(object3d_base);
 
-	//object_->SetModel("enemy/boss1.obj");
+	object_->SetModel("boss/boss.obj");
 
-	// ===== ボス専用ステータス =====
 	hp_ = 300;
 	attack_ = 20;
 	radius_ = 3.0f;
@@ -29,15 +28,6 @@ void Boss1::Update() {
 	//共通処理
 	EnemyBase::Update();
 
-	// 弾更新
-	for (auto it = bullets_.begin(); it != bullets_.end();) {
-		(*it)->Update();
-		if ((*it)->IsDead()) {
-			it = bullets_.erase(it);
-		} else {
-			++it;
-		}
-	}
 }
 
 // 描画
@@ -47,10 +37,6 @@ void Boss1::Draw() {
 	}
 
 	EnemyBase::Draw();
-
-	for (const auto& bullet : bullets_) {
-		bullet->Draw();
-	}
 }
 
 // デバッグ

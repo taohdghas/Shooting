@@ -17,6 +17,7 @@ void GameScene::Initialize() {
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("boss/boss.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("platform/platform.obj");
 
@@ -83,6 +84,13 @@ void GameScene::Initialize() {
 		enemies_.push_back(std::move(newEnemy));
 	}
 
+	//ボス1生成・初期化
+	for (auto& bossData : level_data_->bosses) {
+		boss1_ = std::make_unique<Boss1>();
+		boss1_->Initialize(MyEngine::Object3dBase::GetInstance());
+		boss1_->SetTranslate(bossData.translation);
+	}
+
 	// フェードの初期化・開始
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -143,6 +151,12 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 	}
+
+	//ボスの更新
+    if (boss1_) {
+		boss1_->Update();
+	}
+
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
@@ -189,6 +203,10 @@ void GameScene::Draw() {
 		for (auto& enemy : enemies_) {
 			enemy->Draw();
 		}
+	}
+	//ボスの描画
+	if (boss1_) {
+		boss1_->Draw();
 	}
 	// 天球（Skybox）の描画
 	skybox_->Draw();

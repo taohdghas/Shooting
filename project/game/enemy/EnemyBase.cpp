@@ -9,9 +9,6 @@ void EnemyBase::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_ = std::make_unique<MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetLight(false);
-
-	// 派生クラスで設定
-	transform_.scale = default_scale_;
 }
 
 // 毎フレーム更新
