@@ -105,9 +105,9 @@ private:
 	// 攻撃対象となるプレイヤーのポインタ
 	Player* player_;
 	// 通常時のスケールを保存
-	Vector3 default_scale_ = { 4.0f, 3.0f, 2.0f };
+	Vector3 default_scale_ = { 1.0f, 1.0f, 1.0f };
 	//寸法
-	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
+	Vector3 dimensions_ = { 4.0f,3.0f,2.0f };
 	// 死亡フラグ
 	bool is_dead_ = false;
 	// 死亡時パーティクル発生フラグ
