@@ -169,6 +169,20 @@ struct EnemySpawnData {
 	std::vector<EnemyRailData> rails;
 };
 
+// ボスキャラの生成データ
+struct BossSpawnData {
+	std::string name;
+	// ファイル名
+	std::string fileName;
+	// 平行移動
+	Vector3 translation;
+	// 回転角
+	Vector3 rotation;
+	// スケーリング
+	Vector3 scaling;
+};
+
+
 // レベルデータ
 struct LevelData {
 	// オブジェクト1個分のデータ
@@ -185,4 +199,6 @@ struct LevelData {
 	std::vector<PlayerSpawnData>players;
 	// 敵配列
 	std::vector<EnemySpawnData>enemies;
+	// ボス配列
+	std::vector<BossSpawnData> bosses;
 };

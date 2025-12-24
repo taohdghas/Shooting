@@ -17,6 +17,7 @@ void GameScene::Initialize() {
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("boss/boss.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("platform/platform.obj");
 
@@ -83,6 +84,24 @@ void GameScene::Initialize() {
 		enemies_.push_back(std::move(newEnemy));
 	}
 
+	// ボス生成・初期化
+	if (!level_data_->bosses.empty()) {
+
+		//ボスは1体想定
+		const auto& bossData = level_data_->bosses[0];
+
+		boss_ = std::make_unique<Boss1>();
+		boss_->Initialize(MyEngine::Object3dBase::GetInstance());
+
+		//座標設定
+		boss_->SetTranslate(bossData.translation);
+
+		//プレイヤー参照を渡す
+		boss_->SetPlayer(player_.get());
+	}
+
+
+
 	// フェードの初期化・開始
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -140,9 +159,13 @@ void GameScene::Update() {
 	// 敵の更新
 	if (!is_start_animation_ && !is_returning_) {
 		for (auto& enemy : enemies_) {
+			collision_manager_->CheckPlayerBpssCollisions(player_.get(), boss_.get());
 			enemy->Update();
 		}
 	}
+	// ボスの更新
+	boss_->Update();
+
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
@@ -190,6 +213,8 @@ void GameScene::Draw() {
 			enemy->Draw();
 		}
 	}
+	// ボスの描画
+	boss_->Draw();
 	// 天球（Skybox）の描画
 	skybox_->Draw();
 	// プラットフォームの描画
