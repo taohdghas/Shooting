@@ -57,6 +57,13 @@ void Boss1::Update() {
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
 
+	// 弾発射タイマー
+	fire_timer_++;
+	if (fire_timer_ >= kFireInterval) {
+		FireDoubleHeightShot();
+		fire_timer_ = 0;
+	}
+
 	// 弾の再更新
 	for (const auto& bullet : bullets_) {
 		bullet->Update();
@@ -74,6 +81,36 @@ void Boss1::Draw() {
 		bullet->Draw();
 	}
 }
+///二段高さショット発射
+void Boss1::FireDoubleHeightShot() {
+	// 高さ（ジャンプ用）
+	float yOffsets[] = { -0.5f, 0.8f };
+
+	// 横方向スプレッド
+	float xOffsets[] = { -1.2f, 0.0f, 1.2f };
+
+	for (float yOffset : yOffsets) {
+		for (float xOffset : xOffsets) {
+			auto bullet = std::make_unique<EnemyBullet>();
+			bullet->Initialize(object3d_base_);
+
+			// 発射位置（ボス基準）
+			bullet->SetTranslate({
+				transform_.translate.x + xOffset,
+				transform_.translate.y + yOffset,
+				transform_.translate.z
+				});
+
+			// 常に手前へ
+			bullet->SetVelocity({ 0.0f, 0.0f, -0.35f });
+
+			bullets_.push_back(std::move(bullet));
+		}
+	}
+}
+
+
+
 //衝突時コールバック
 void Boss1::OnCollision() {
 	is_dead_ = true;

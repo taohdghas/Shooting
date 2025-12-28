@@ -22,6 +22,10 @@ class Boss1
 	/// </summary>
 	void Draw();
 	/// <summary>
+	/// 二段高さショットを発射する。
+	/// </summary>
+	void FireDoubleHeightShot();
+	/// <summary>
 	/// 衝突時のコールバック。
 	/// </summary>
 	void OnCollision();
@@ -112,7 +116,9 @@ private:
 	bool is_dead_ = false;
 	// 死亡時パーティクル発生フラグ
 	bool is_death_particle_ = false;
-		// 現在のHP
+	//発射間隔
+	static const int kFireInterval = 120;
+	//現在のHP
 	int hp_ = 10;
 	//攻撃力
 	int attack_ = 5;
