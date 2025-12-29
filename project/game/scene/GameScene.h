@@ -27,6 +27,12 @@
 class GameScene : public  MyEngine::BaseScene
 {
 public:
+	//ゲームフェーズ
+	enum class GamePhase {
+		Stage,     // 通常進行
+		BossBattle // ボス戦
+	};
+
 	/// <summary>
 	/// シーン初期化処理。
 	/// </summary>
@@ -69,6 +75,8 @@ public:
 	void ToGameOver();
 
 private:
+	//ゲームフェーズ
+	GamePhase game_phase_ = GamePhase::Stage;
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 	//敵
@@ -108,6 +116,8 @@ private:
 
 	//Δtを定義（定数）
 	const float kDeltaTime = 1.0f / 60.0f;
+	//ボストリガーZ座標
+	const float kBossTriggerZ = 150.0f;
 	//ゲームオーバーシーン遷移フラグ
 	bool is_to_game_over_ = false;
 	//撃破演出が始まったか

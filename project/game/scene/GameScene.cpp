@@ -138,6 +138,23 @@ void GameScene::Update() {
 	// 追従カメラ
 	FollowCamera();
 
+	// ゲームフェーズごとの処理
+	if (game_phase_ == GamePhase::Stage) {
+		// ボストリガー到達判定
+		if (platform_->GetTranslate().z >= kBossTriggerZ) {
+			game_phase_ = GamePhase::BossBattle;
+
+			// スクロール停止
+			platform_->Stop();
+
+			// プレイヤー追従解除
+			player_->SetFollowPlatform(false);
+
+			// カメラ追従解除
+			is_following_initialized_ = false;
+		}
+	}
+
 	// 敵ごとの衝突判定・デスパーティクル処理
 	for (auto& enemy : enemies_) {
 		collision_manager_->CheckPlayerEnemyCollisions(player_.get(), enemy.get());
@@ -164,7 +181,7 @@ void GameScene::Update() {
 		}
 	}
 	// ボスの更新
-	if (!is_start_animation_ && !is_returning_) {
+	if (game_phase_ == GamePhase::BossBattle) {
 		boss_->Update();
 	}
 	// Skyboxの更新
@@ -214,7 +231,7 @@ void GameScene::Draw() {
 			enemy->Draw();
 		}
 	}
-	if (!is_start_animation_ && !is_returning_) {
+	if (game_phase_ == GamePhase::BossBattle) {
 		// ボスの描画
 		boss_->Draw();
 	}
@@ -275,6 +292,11 @@ void GameScene::FollowCamera() {
 
 	// スタート演出中は追従しない
 	if (is_start_animation_ || is_returning_) {
+		is_following_initialized_ = false;
+		return;
+	}
+	// ボス戦中は追従しない
+	if (game_phase_ != GamePhase::Stage) {
 		is_following_initialized_ = false;
 		return;
 	}

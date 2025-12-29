@@ -148,6 +148,11 @@ public:
 	/// </summary>
 	void SetPlatform(Platform* platform) { platform_ = platform; }
 
+	/// <summary>
+	/// プラットフォーム追従設定
+	/// </summary>
+	void SetFollowPlatform(bool flag) { is_follow_platform_ = flag; }
+
 private:
 	MyEngine::Object3dBase* object3d_base_;
 	MyEngine::Camera* camera_;
@@ -184,6 +189,8 @@ private:
 	bool is_invincible_ = false;
 	//追従プラットフォーム初期化フラグ
 	bool is_following_platform_initialized_ = false;
+	//プラットフォーム追従フラグ
+	bool is_follow_platform_ = true;
 	//プレイヤーの移動速度
 	float speed_ = 0.1f;
 	//プレイヤーの半径

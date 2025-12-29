@@ -28,6 +28,16 @@ public:
 	void Debug();
 
 	/// <summary>
+	/// 移動を停止する。
+	/// </summary>
+	void Stop() { is_stopped_ = true; }
+
+	/// <summary>
+	/// 移動が停止しているかを取得する。
+	/// </summary>
+	bool IsStopped() const { return is_stopped_; }
+
+	/// <summary>
 	/// トランスフォーム（平行移動）を取得する。
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
@@ -41,8 +51,11 @@ private:
 	MyEngine::Object3dBase* object3d_base_;
 	Transform transform_;
 	std::unique_ptr< MyEngine::Object3d> object_;
-	// 奥方向移動速度
-	float move_speed_z_ = 0.1f;
 	//煙パーティクルエミッター
 	MyEngine::ParticleEmitter smoke_emitter_;
+	// 奥方向移動速度
+	float move_speed_z_ = 0.1f;
+	// 停止フラグ
+	bool is_stopped_ = false;
+
 };
