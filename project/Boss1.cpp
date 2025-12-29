@@ -109,8 +109,6 @@ void Boss1::FireDoubleHeightShot() {
 	}
 }
 
-
-
 //衝突時コールバック
 void Boss1::OnCollision() {
 	is_dead_ = true;
