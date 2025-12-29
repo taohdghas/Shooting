@@ -164,8 +164,9 @@ void GameScene::Update() {
 		}
 	}
 	// ボスの更新
-	boss_->Update();
-
+	if (!is_start_animation_ && !is_returning_) {
+		boss_->Update();
+	}
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
@@ -213,8 +214,10 @@ void GameScene::Draw() {
 			enemy->Draw();
 		}
 	}
-	// ボスの描画
-	boss_->Draw();
+	if (!is_start_animation_ && !is_returning_) {
+		// ボスの描画
+		boss_->Draw();
+	}
 	// 天球（Skybox）の描画
 	skybox_->Draw();
 	// プラットフォームの描画
