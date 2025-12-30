@@ -98,9 +98,9 @@ void GameScene::Initialize() {
 
 		//プレイヤー参照を渡す
 		boss_->SetPlayer(player_.get());
+		//出現位置を保存
+		boss_spawn_position_ = boss_->GetPosition();
 	}
-
-
 
 	// フェードの初期化・開始
 	fade_ = std::make_unique<Fade>();
@@ -141,18 +141,19 @@ void GameScene::Update() {
 	// ゲームフェーズごとの処理
 	if (game_phase_ == GamePhase::Stage) {
 		// ボストリガー到達判定
-		if (platform_->GetTranslate().z >= kBossTriggerZ) {
+		if (is_boss_spawned_) {
+			return;
+		}
+
+		if (IsBossSpawnCondition()) {
+			is_boss_spawned_ = true;
 			game_phase_ = GamePhase::BossBattle;
 
-			// スクロール停止
 			platform_->Stop();
-
-			// プレイヤー追従解除
 			player_->SetFollowPlatform(false);
-
-			// カメラ追従解除
 			is_following_initialized_ = false;
 		}
+
 	}
 
 	// 敵ごとの衝突判定・デスパーティクル処理
@@ -176,13 +177,13 @@ void GameScene::Update() {
 	// 敵の更新
 	if (!is_start_animation_ && !is_returning_) {
 		for (auto& enemy : enemies_) {
-			collision_manager_->CheckPlayerBpssCollisions(player_.get(), boss_.get());
 			enemy->Update();
 		}
 	}
 	// ボスの更新
 	if (game_phase_ == GamePhase::BossBattle) {
 		boss_->Update();
+		collision_manager_->CheckPlayerBossCollisions(player_.get(), boss_.get());
 	}
 	// Skyboxの更新
 	skybox_->Update();
@@ -458,4 +459,11 @@ void GameScene::ToGameOver() {
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()) {
 		MyEngine::SceneManager::GetInstance()->ChangeScene("OVER");
 	}
+}
+
+bool GameScene::IsBossSpawnCondition() {
+	float dz = std::abs(
+		player_->GetTranslate().z - boss_spawn_position_.z
+	);
+	return dz <= kBossSpawnDistance;
 }

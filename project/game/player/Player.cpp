@@ -28,7 +28,6 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 
 // 毎フレームの更新処理
 void Player::Update(bool is_start_animation_, bool is_returning_) {
-	//デスの場合スキップ
 
 	//攻撃クールタイム
 	if (attack_cooldown_ > 0) {

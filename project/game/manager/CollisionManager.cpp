@@ -60,7 +60,7 @@ void CollisionManager::CheckPlayerEnemyBody(Player* player, Enemy* enemy) {
 }
 
 /// プレイヤーとボスと各弾の衝突判定を行う。
-void CollisionManager::CheckPlayerBpssCollisions(Player* player, Boss1* boss) {
+void CollisionManager::CheckPlayerBossCollisions(Player* player, Boss1* boss) {
     if (!player || !boss) {
         return;
     }

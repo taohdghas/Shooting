@@ -36,7 +36,7 @@ public:
 	/// <summary>
     /// プレイヤーとボスと各弾の衝突判定を行う。
     /// </summary>
-	void CheckPlayerBpssCollisions(Player* player, Boss1*boss);
+	void CheckPlayerBossCollisions(Player* player, Boss1*boss);
 
 	/// <summary>
 	/// プレイヤー弾とボスの当たり判定を行う。

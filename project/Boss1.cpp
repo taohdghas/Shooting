@@ -63,11 +63,6 @@ void Boss1::Update() {
 		FireDoubleHeightShot();
 		fire_timer_ = 0;
 	}
-
-	// 弾の再更新
-	for (const auto& bullet : bullets_) {
-		bullet->Update();
-	}
 }
 //描画
 void Boss1::Draw() {
@@ -83,7 +78,7 @@ void Boss1::Draw() {
 }
 ///二段高さショット発射
 void Boss1::FireDoubleHeightShot() {
-	// 高さ（ジャンプ用）
+	// 高さ
 	float yOffsets[] = { -0.5f, 0.8f };
 
 	// 横方向スプレッド
@@ -103,7 +98,7 @@ void Boss1::FireDoubleHeightShot() {
 
 			// 常に手前へ
 			bullet->SetVelocity({ 0.0f, 0.0f, -0.35f });
-
+			bullet->Update();
 			bullets_.push_back(std::move(bullet));
 		}
 	}

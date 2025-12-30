@@ -117,7 +117,7 @@ private:
 	// 死亡時パーティクル発生フラグ
 	bool is_death_particle_ = false;
 	//発射間隔
-	static const int kFireInterval = 120;
+	static const int kFireInterval = 250;
 	//現在のHP
 	int hp_ = 10;
 	//攻撃力

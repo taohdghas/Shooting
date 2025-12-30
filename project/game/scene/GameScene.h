@@ -74,6 +74,7 @@ public:
 	/// </summary>
 	void ToGameOver();
 
+	bool IsBossSpawnCondition();
 private:
 	//ゲームフェーズ
 	GamePhase game_phase_ = GamePhase::Stage;
@@ -101,7 +102,8 @@ private:
 	std::unique_ptr<Ui>ui_;
 	//レベルデータ
 	LevelData* level_data_ = nullptr;
-
+	//ボス出現位置
+	Vector3 boss_spawn_position_;
 	//撃破演出回転軸
 	Vector3 death_rotation_axis_ = { 1.0f, 0.0f, 0.0f };
 	//撃破演出速度
@@ -118,10 +120,14 @@ private:
 	const float kDeltaTime = 1.0f / 60.0f;
 	//ボストリガーZ座標
 	const float kBossTriggerZ = 150.0f;
+	//ボス出現距離オフセット
+	const float kBossSpawnDistance = 40.0f;
 	//ゲームオーバーシーン遷移フラグ
 	bool is_to_game_over_ = false;
 	//撃破演出が始まったか
 	bool is_death_motion_started_ = false;
+	//ボスが出現したか
+	bool is_boss_spawned_ = false;
 	//撃破演出経過時間タイマー
 	float death_timer_ = 0.0f;
 	//撃破演出回転速度
