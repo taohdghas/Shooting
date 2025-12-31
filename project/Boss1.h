@@ -97,6 +97,10 @@ public:
 	/// デスパーティクル発生フラグを設定する。
 	/// </summary>
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
+
+	void SetDefaultScale(const Vector3& scale) {
+		default_scale_ = scale;
+	}
 private:
 	// 3Dオブジェクト共通設定へのポインタ
 	MyEngine::Object3dBase* object3d_base_;
@@ -109,7 +113,7 @@ private:
 	// 攻撃対象となるプレイヤーのポインタ
 	Player* player_;
 	// 通常時のスケールを保存
-	Vector3 default_scale_ = { 1.0f, 1.0f, 1.0f };
+	Vector3 default_scale_ = { 2.0f, 2.0f, 2.0f };
 	//寸法
 	Vector3 dimensions_ = { 4.0f,3.0f,2.0f };
 	// 死亡フラグ

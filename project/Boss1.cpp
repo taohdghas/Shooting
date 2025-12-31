@@ -10,8 +10,7 @@ void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->Initialize(object3d_base_);
 	object_->SetModel("boss/boss.obj");
 	object_->SetLight(false);
-	transform_.scale = { 0.5f, 0.5f, 0.5f };
-	transform_.translate = { 0.0f, 3.0f, 20.0f };
+	transform_.scale = { 2.0f, 2.0f, 2.0f };
 }
 
 //更新

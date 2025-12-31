@@ -94,6 +94,8 @@ void GameScene::Initialize() {
 		boss_->Initialize(MyEngine::Object3dBase::GetInstance());
 
 		//座標設定
+		boss_->SetScale(bossData.scaling);
+		boss_->SetDefaultScale(bossData.scaling);
 		boss_->SetTranslate(bossData.translation);
 
 		//プレイヤー参照を渡す
@@ -115,7 +117,6 @@ void GameScene::Initialize() {
 	// 最初の1フレーム入力を無視
 	MyEngine::Input::GetInstance()->ClearInput();
 }
-
 
 // ゲームシーンの終了処理
 void GameScene::Finalize() {
