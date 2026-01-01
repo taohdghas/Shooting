@@ -274,6 +274,8 @@ void GameScene::Debug() {
 	for (int i = 0; i < enemies_.size(); ++i) {
 		enemies_[i]->Debug(i);
 	}
+	// ボスのデバッグ表示
+	boss_->Debug();
 	// プラットフォームのデバッグ表示
 	platform_->Debug();
 	// Skyboxのデバッグ表示

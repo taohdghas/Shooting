@@ -120,8 +120,6 @@ namespace Math {
 	/// <summary>Catmull-Rom補間</summary>
     Vector3 CatmullRom(const Vector3& p0, const Vector3& p1,const Vector3& p2,const Vector3& p3,float t);
 
-    Vector3 RotateY(const Vector3& v, float angle);
-
     /// <summary>座標ベクトル(Vector4)を行列で変換</summary>
     Vector4 Transform(const Vector4& v, const Matrix4x4& m);
 

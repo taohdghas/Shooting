@@ -76,58 +76,32 @@ void Boss1::Draw() {
 	}
 }
 ///二段高さショット発射
-void Boss1::FireDoubleHeightShot()
-{
-	if (!player_) {
-		return;
-	}
-
+void Boss1::FireDoubleHeightShot() {
+	// 高さ
 	float yOffsets[] = { -0.5f, 0.8f };
 
-	// 左・中央・右
-	float angleOffsets[] = {
-		-0.2f,
-		 0.0f,
-		 0.2f
-	};
+	// 横方向スプレッド
+	float xOffsets[] = { -1.2f, 0.0f, 1.2f };
 
-	const float bulletSpeed = 0.35f;
-
-	Vector3 playerPos = player_->GetTranslate();
-
-	for (float yOffset : yOffsets)
-	{
-		for (float angle : angleOffsets)
-		{
-			Vector3 spawnPos{
-				transform_.translate.x,
-				transform_.translate.y + yOffset,
-				transform_.translate.z
-			};
-
-			// XZ平面のみで方向を作る
-			Vector3 dir{
-				playerPos.x - spawnPos.x,
-				0.0f,
-				playerPos.z - spawnPos.z
-			};
-
-			dir = Math::Normalize(dir);
-
-			// スプレッド
-			dir = Math::RotateY(dir, angle);
-
+	for (float yOffset : yOffsets) {
+		for (float xOffset : xOffsets) {
 			auto bullet = std::make_unique<EnemyBullet>();
 			bullet->Initialize(object3d_base_);
-			bullet->SetTranslate(spawnPos);
-			bullet->SetVelocity(dir * bulletSpeed);
-			bullet->Update();
 
+			// 発射位置（ボス基準）
+			bullet->SetTranslate({
+				transform_.translate.x + xOffset,
+				transform_.translate.y + yOffset,
+				transform_.translate.z
+				});
+
+			// 常に手前へ
+			bullet->SetVelocity({ 0.0f, 0.0f, -0.35f });
+			bullet->Update();
 			bullets_.push_back(std::move(bullet));
 		}
 	}
 }
-
 
 //衝突時コールバック
 void Boss1::OnCollision() {
@@ -148,7 +122,16 @@ void Boss1::TakeDamage(uint32_t damage) {
 }
 //デバッグ用ImGui表示
 void Boss1::Debug() {
+#ifdef USE_IMGUI
+	if (ImGui::TreeNode("Boss1")) {
+		ImGui::DragInt("Boss1Hp", &hp_, 1);
+		ImGui::DragFloat3("Boss1Scale", &transform_.scale.x, 0.1f);
+		ImGui::DragFloat3("Boss1Rotate", &transform_.rotate.x, 0.1f);
+		ImGui::DragFloat3("Boss1Translate", &transform_.translate.x, 0.1f);
 
+		ImGui::TreePop();
+	}
+#endif
 }
 // OBB取得
 OBB Boss1::GetOBB() const {

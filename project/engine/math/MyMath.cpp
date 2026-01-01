@@ -109,19 +109,6 @@ namespace Math {
 				(-p0 + p1 * 3.0f - p2 * 3.0f + p3) * t3) * 0.5f;
 	}
 
-	Vector3 Math::RotateY(const Vector3& v, float angle)
-	{
-		float cosA = cosf(angle);
-		float sinA = sinf(angle);
-
-		return {
-			v.x * cosA + v.z * sinA,
-			v.y,
-		   -v.x * sinA + v.z * cosA
-		};
-	}
-
-
 	//座標ベクトル変換
 	Vector4 Math::Transform(const Vector4& v, const Matrix4x4& m) {
 		return {
