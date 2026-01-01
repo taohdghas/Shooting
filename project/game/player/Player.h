@@ -114,6 +114,11 @@ public:
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
+	/// 速度取得
+	/// </summary>
+	const Vector3& GetVelocity() const { return velocity_; }
+
+	/// <summary>
 	/// HP取得
 	/// </summary>
 	int GetHP() const { return hp_; }
@@ -169,6 +174,8 @@ private:
 	//画面上の位置
 	Vector2 reticle_screen_pos_{ 640.0f, 360.0f };
 	Vector2 reticle_pos_ = { 640.0f, 360.0f };
+	//プレイヤーの移動速度
+	Vector3 velocity_{ 0.0f, 0.0f, 0.0f };
 	//レティクルのオフセット
 	Vector3 reticle_offset_{ 0.0f, 0.0f, 10.0f };
 	//前フレームのプラットフォーム位置
@@ -191,8 +198,6 @@ private:
 	bool is_following_platform_initialized_ = false;
 	//プラットフォーム追従フラグ
 	bool is_follow_platform_ = true;
-	//プレイヤーの移動速度
-	float speed_ = 0.1f;
 	//プレイヤーの半径
 	float radius_ = 1.0f;
 	//ジャンプ速度

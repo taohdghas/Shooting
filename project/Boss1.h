@@ -98,6 +98,9 @@ public:
 	/// </summary>
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
+	/// <summary>
+	/// 通常時のスケールを設定する。
+	/// </summary>
 	void SetDefaultScale(const Vector3& scale) {
 		default_scale_ = scale;
 	}

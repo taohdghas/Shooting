@@ -134,23 +134,25 @@ void Player::ReticleDraw() {
 
 // プレイヤーの移動処理
 void Player::Move() {
-	Vector3 new_pos = transform_.translate;
+    // X方向のみ速度を初期化
+    velocity_.x = 0.0f;
 
-	// 左右移動入力
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
-		new_pos.x -= speed_;
-	}
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
-		new_pos.x += speed_;
-	}
+    // キー入力によるX方向の速度設定
+    if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
+        velocity_.x = -0.1f;
+    }
+    if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
+        velocity_.x = 0.1f;
+    }
 
-	// 移動範囲制限
-	new_pos.x = std::clamp(new_pos.x, kGroundMinX, kGroundMaxX);
-	if (new_pos.y < kGroundMinY) {
-		new_pos.y = kGroundMinY;
-	}
+    // 位置更新（
+    transform_.translate.x += velocity_.x;
 
-	transform_.translate = new_pos;
+    // 移動範囲制限
+    transform_.translate.x = std::clamp(transform_.translate.x, kGroundMinX, kGroundMaxX);
+    if (transform_.translate.y < kGroundMinY) {
+        transform_.translate.y = kGroundMinY;
+    }
 }
 
 // ジャンプ処理

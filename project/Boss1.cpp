@@ -76,32 +76,58 @@ void Boss1::Draw() {
 	}
 }
 ///二段高さショット発射
-void Boss1::FireDoubleHeightShot() {
-	// 高さ
+void Boss1::FireDoubleHeightShot()
+{
+	if (!player_) {
+		return;
+	}
+
 	float yOffsets[] = { -0.5f, 0.8f };
 
-	// 横方向スプレッド
-	float xOffsets[] = { -1.2f, 0.0f, 1.2f };
+	// 左・中央・右
+	float angleOffsets[] = {
+		-0.2f,
+		 0.0f,
+		 0.2f
+	};
 
-	for (float yOffset : yOffsets) {
-		for (float xOffset : xOffsets) {
-			auto bullet = std::make_unique<EnemyBullet>();
-			bullet->Initialize(object3d_base_);
+	const float bulletSpeed = 0.35f;
 
-			// 発射位置（ボス基準）
-			bullet->SetTranslate({
-				transform_.translate.x + xOffset,
+	Vector3 playerPos = player_->GetTranslate();
+
+	for (float yOffset : yOffsets)
+	{
+		for (float angle : angleOffsets)
+		{
+			Vector3 spawnPos{
+				transform_.translate.x,
 				transform_.translate.y + yOffset,
 				transform_.translate.z
-				});
+			};
 
-			// 常に手前へ
-			bullet->SetVelocity({ 0.0f, 0.0f, -0.35f });
+			// XZ平面のみで方向を作る
+			Vector3 dir{
+				playerPos.x - spawnPos.x,
+				0.0f,
+				playerPos.z - spawnPos.z
+			};
+
+			dir = Math::Normalize(dir);
+
+			// スプレッド
+			dir = Math::RotateY(dir, angle);
+
+			auto bullet = std::make_unique<EnemyBullet>();
+			bullet->Initialize(object3d_base_);
+			bullet->SetTranslate(spawnPos);
+			bullet->SetVelocity(dir * bulletSpeed);
 			bullet->Update();
+
 			bullets_.push_back(std::move(bullet));
 		}
 	}
 }
+
 
 //衝突時コールバック
 void Boss1::OnCollision() {
