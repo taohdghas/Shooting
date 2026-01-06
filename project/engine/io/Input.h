@@ -49,6 +49,21 @@ namespace MyEngine {
         /// </summary>
         bool IsKeyTriggered(BYTE key_code);
 
+        /// <summary>
+        /// マウス左ボタンが押されているか
+        /// </summary>
+        bool IsMouseLeftPressed();
+
+        /// <summary>
+        /// マウス左ボタンがトリガーか
+        /// </summary>
+        bool IsMouseLeftTriggered();
+
+        /// <summary>
+        /// マウスのクライアント座標を取得
+        /// </summary>
+        POINT GetMousePosition();
+
     public:
         Input() = default;
         ~Input() = default;
@@ -66,5 +81,10 @@ namespace MyEngine {
         ComPtr<IDirectInput8> direct_input_;
         // WindowsAPI
         WindowsApi* windows_api_ = nullptr;
+
+		// マウス左ボタンの前回状態
+        bool mouse_left_prev_ = false;
+		// マウス左ボタンの現在状態
+        bool mouse_left_curr_ = false;
     };
 }

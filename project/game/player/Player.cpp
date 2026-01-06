@@ -86,7 +86,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 		}
 
 		// 攻撃入力判定
-		if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+		if (MyEngine::Input::GetInstance()->IsMouseLeftTriggered()) {
 			Attack();
 		}
 		// 回避処理
@@ -272,19 +272,20 @@ void Player::Dodge() {
 
 // レティクル（照準）の座標更新
 void Player::ReticleUpdate() {
-	const float move_speed = 10.0f;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_LEFT))  reticle_screen_pos_.x -= move_speed;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) reticle_screen_pos_.x += move_speed;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_UP))    reticle_screen_pos_.y -= move_speed;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_DOWN))  reticle_screen_pos_.y += move_speed;
+	POINT mousePos = MyEngine::Input::GetInstance()->GetMousePosition();
 
-	// 画面端制限
+	// マウス座標をVector2へ
+	reticle_screen_pos_.x = static_cast<float>(mousePos.x);
+	reticle_screen_pos_.y = static_cast<float>(mousePos.y);
+
+	// 画面外防止
 	reticle_screen_pos_.x = std::clamp(reticle_screen_pos_.x, 0.0f, 1280.0f);
 	reticle_screen_pos_.y = std::clamp(reticle_screen_pos_.y, 0.0f, 720.0f);
 
 	reticle_->SetPosition(reticle_screen_pos_);
 	reticle_->Update();
 }
+
 
 // 衝突時コールバック（死亡フラグを立てる）
 void Player::OnCollision() {
