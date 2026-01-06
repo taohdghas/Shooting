@@ -219,9 +219,9 @@ private:
 	//地面の最小Y移動
 	const float kGroundMinY = -3.0f;
 	//地面の最小X移動
-	const float kGroundMinX = -4.0f;
+	const float kGroundMinX = -3.5f;
 	//地面の最大X移動
-	const float kGroundMaxX = 4.0f;
+	const float kGroundMaxX = 3.5f;
 	//重力
 	const float gravity_ = -0.01f;
 	//ジャンプ力

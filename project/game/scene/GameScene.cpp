@@ -197,6 +197,10 @@ void GameScene::Update() {
 		particle->Update();
 	}
 
+	if (boss_->IsDead()) {
+		is_to_game_clear_ = true;
+	}
+
 	if (player_->IsDead()) {
 		is_to_game_over_ = true;
 	}
@@ -205,9 +209,11 @@ void GameScene::Update() {
 		is_to_game_over_ = true;
 	}
 
-	if (!is_to_game_over_) {
+	if (is_to_game_clear_) {
 		ToGameClear();
-	} else {
+	}
+
+	if (is_to_game_over_) {
 		ToGameOver();
 	}
 
@@ -389,8 +395,7 @@ void GameScene::ToGameClear() {
 		fade_->End();
 	}
 	// フェードアウト開始
-	if (fade_->GetState() == Fade::State::None &&
-		MyEngine::Input::GetInstance()->IsKeyPressed(DIK_C))
+	if (fade_->GetState() == Fade::State::None)
 	{
 		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 	}

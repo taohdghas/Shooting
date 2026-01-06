@@ -14,8 +14,10 @@ void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
 	// 乱数エンジン初期化
 	std::random_device rd;
 	random_engine_ = std::mt19937(rd());
-
+	// 初期変換情報設定
 	target_position_ = transform_.translate;
+	// 最初の移動目標決定
+	fire_interval_current_ = DecideFireInterval();
 }
 
 //更新
@@ -83,6 +85,33 @@ void Boss1::Update() {
 
 	}
 
+	// 扇状拡散の遅延処理
+	if (is_fan_shot_pending_) {
+		fan_shot_delay_timer_++;
+
+		if (fan_shot_delay_timer_ >= kFanShotDelay) {
+			FireFanShot();
+			is_fan_shot_pending_ = false;
+			fan_shot_delay_timer_ = 0;
+		}
+	}
+	fire_timer_++;
+
+	if (fire_timer_ >= fire_interval_current_) {
+
+		// 通常攻撃
+		FireDoubleHeightShot();
+
+		//体力が特定数値以下で攻撃追加
+		if (hp_ <= 12 && !is_fan_shot_pending_) {
+			is_fan_shot_pending_ = true;
+		}
+
+		// 次の発射間隔を再決定
+		fire_interval_current_ = DecideFireInterval();
+
+		fire_timer_ = 0;
+	}
 
 	// ダメージスケール処理
 	if (damage_scale_timer_ > 0.0f) {
@@ -109,13 +138,6 @@ void Boss1::Update() {
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
 	object_->Update();
-
-	// 弾発射タイマー
-	fire_timer_++;
-	if (fire_timer_ >= kFireInterval) {
-		FireDoubleHeightShot();
-		fire_timer_ = 0;
-	}
 }
 //描画
 void Boss1::Draw() {
@@ -135,9 +157,9 @@ void Boss1::FireDoubleHeightShot() {
 		return;
 	}
 
-	// 高さ
+	//高さ
 	float yOffsets[] = { -0.5f, 0.8f };
-	// 横方向
+	//横方向
 	float xOffsets[] = { -1.2f, 0.0f, 1.2f };
 
 	const float bulletSpeed = 0.35f;
@@ -164,7 +186,7 @@ void Boss1::FireDoubleHeightShot() {
 		baseDir.z /= length;
 	}
 
-	// 全弾で同じ方向を使う
+	//全弾で同じ方向を使う
 	Vector3 velocity{
 		baseDir.x * bulletSpeed,
 		baseDir.y * bulletSpeed,
@@ -217,6 +239,86 @@ void Boss1::DecideNextTarget() {
 		}
 	}
 	target_position_ = newTarget;
+}
+/// 扇状拡散ショット発射
+void Boss1::FireFanShot()
+{
+	if (!player_) {
+		return;
+	}
+
+	// 弾数と拡散角度
+	const int kBulletCount = 7;
+	const float kSpreadAngle = 20.0f; 
+	const float bulletSpeed = 0.35f;
+
+	Vector3 bossPos = transform_.translate;
+	Vector3 playerPos = player_->GetTranslate();
+
+	// 中央方向
+	Vector3 baseDir{
+		playerPos.x - bossPos.x,
+		playerPos.y - bossPos.y,
+		playerPos.z - bossPos.z
+	};
+
+	float length = std::sqrt(
+		baseDir.x * baseDir.x +
+		baseDir.y * baseDir.y +
+		baseDir.z * baseDir.z
+	);
+
+	if (length == 0.0f) {
+		return;
+	}
+
+	baseDir.x /= length;
+	baseDir.y /= length;
+	baseDir.z /= length;
+
+	// 角度刻み
+	float angleStep = (kSpreadAngle * 2.0f) / (kBulletCount - 1);
+
+	for (int i = 0; i < kBulletCount; ++i) {
+		float angle = -kSpreadAngle + angleStep * i;
+
+		// ラジアン変換
+		float rad = angle * (3.14159265f / 180.0f);
+
+		// Y軸回転
+		Vector3 dir{
+			baseDir.x * std::cos(rad) - baseDir.z * std::sin(rad),
+			baseDir.y,
+			baseDir.x * std::sin(rad) + baseDir.z * std::cos(rad)
+		};
+
+		auto bullet = std::make_unique<EnemyBullet>();
+		bullet->Initialize(object3d_base_);
+		bullet->SetTranslate(bossPos);
+		bullet->SetVelocity({
+			dir.x * bulletSpeed,
+			dir.y * bulletSpeed,
+			dir.z * bulletSpeed
+			});
+
+		bullet->Update();
+		bullets_.push_back(std::move(bullet));
+	}
+}
+///弾発射間隔決定
+int Boss1::DecideFireInterval()
+{
+	// HPが多い間は固定
+	if (hp_ > 12) {
+		return kFireInterval;
+	}
+
+	// HP12以下：必ず早くなる範囲でランダム
+	const int minInterval = 80;
+	const int maxInterval = 120;
+
+	std::uniform_int_distribution<int> dist(minInterval, maxInterval);
+	return dist(random_engine_);
 }
 
 //衝突時コールバック

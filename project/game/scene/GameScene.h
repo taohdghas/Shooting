@@ -122,6 +122,8 @@ private:
 	const float kBossTriggerZ = 150.0f;
 	//ボス出現距離オフセット
 	const float kBossSpawnDistance = 20.0f;
+	//ゲームクリアシーン遷移フラグ
+	bool is_to_game_clear_ = false;
 	//ゲームオーバーシーン遷移フラグ
 	bool is_to_game_over_ = false;
 	//撃破演出が始まったか
