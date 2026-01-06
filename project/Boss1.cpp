@@ -10,7 +10,12 @@ void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->Initialize(object3d_base_);
 	object_->SetModel("boss/boss.obj");
 	object_->SetLight(false);
-	transform_.scale = { 2.0f, 2.0f, 2.0f };
+
+	// 乱数エンジン初期化
+	std::random_device rd;
+	random_engine_ = std::mt19937(rd());
+
+	target_position_ = transform_.translate;
 }
 
 //更新
@@ -20,7 +25,7 @@ void Boss1::Update() {
 		return;
 	}
 
-	// 弾の更新とデスフラグ判定（デッドならリストから削除）
+	// 弾の更新とデスフラグ判定
 	for (auto it = bullets_.begin(); it != bullets_.end();) {
 		(*it)->Update();
 		if ((*it)->IsDead()) {
@@ -29,6 +34,55 @@ void Boss1::Update() {
 			++it;
 		}
 	}
+
+	Vector3 toTarget{
+	target_position_.x - transform_.translate.x,
+	target_position_.y - transform_.translate.y,
+	0.0f
+	};
+
+	float distance = std::sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
+
+	if (distance < arrive_threshold_) {
+		DecideNextTarget();
+	} else {
+		// 正規化
+		toTarget.x /= distance;
+		toTarget.y /= distance;
+
+		// 目標速度
+		Vector3 desiredVelocity{
+			toTarget.x * max_speed_,
+			toTarget.y * max_speed_,
+			0.0f
+		};
+
+		// 現在速度 → 目標速度へ補間
+		velocity_.x += (desiredVelocity.x - velocity_.x) * acceleration_ * kDeltaTime;
+		velocity_.y += (desiredVelocity.y - velocity_.y) * acceleration_ * kDeltaTime;
+
+		//速度減衰
+		velocity_.x *= velocity_damping_;
+		velocity_.y *= velocity_damping_;
+
+
+		// 移動
+		transform_.translate.x += velocity_.x * kDeltaTime;
+		transform_.translate.y += velocity_.y * kDeltaTime;
+
+		// 浮遊の揺らぎ
+		float_time_ += kDeltaTime;
+
+		// 揺らぎ量
+		float swayX = std::sin(float_time_ * 1.3f) * 0.05f;
+		float swayY = std::sin(float_time_ * 0.9f) * 0.08f;
+
+		// 位置に加算
+		transform_.translate.x += swayX;
+		transform_.translate.y += swayY;
+
+	}
+
 
 	// ダメージスケール処理
 	if (damage_scale_timer_ > 0.0f) {
@@ -77,30 +131,92 @@ void Boss1::Draw() {
 }
 ///二段高さショット発射
 void Boss1::FireDoubleHeightShot() {
+	if (!player_) {
+		return;
+	}
+
 	// 高さ
 	float yOffsets[] = { -0.5f, 0.8f };
-
-	// 横方向スプレッド
+	// 横方向
 	float xOffsets[] = { -1.2f, 0.0f, 1.2f };
+
+	const float bulletSpeed = 0.35f;
+
+	//ボス中心 →プレイヤー
+	Vector3 bossPos = transform_.translate;
+	Vector3 playerPos = player_->GetTranslate();
+
+	Vector3 baseDir{
+		playerPos.x - bossPos.x,
+		playerPos.y - bossPos.y,
+		playerPos.z - bossPos.z
+	};
+
+	float length = std::sqrt(
+		baseDir.x * baseDir.x +
+		baseDir.y * baseDir.y +
+		baseDir.z * baseDir.z
+	);
+
+	if (length != 0.0f) {
+		baseDir.x /= length;
+		baseDir.y /= length;
+		baseDir.z /= length;
+	}
+
+	// 全弾で同じ方向を使う
+	Vector3 velocity{
+		baseDir.x * bulletSpeed,
+		baseDir.y * bulletSpeed,
+		baseDir.z * bulletSpeed
+	};
 
 	for (float yOffset : yOffsets) {
 		for (float xOffset : xOffsets) {
+
 			auto bullet = std::make_unique<EnemyBullet>();
 			bullet->Initialize(object3d_base_);
 
-			// 発射位置（ボス基準）
+			// 発射位置
 			bullet->SetTranslate({
-				transform_.translate.x + xOffset,
-				transform_.translate.y + yOffset,
-				transform_.translate.z
+				bossPos.x + xOffset,
+				bossPos.y + yOffset,
+				bossPos.z
 				});
 
-			// 常に手前へ
-			bullet->SetVelocity({ 0.0f, 0.0f, -0.35f });
+			// 同一方向・直進
+			bullet->SetVelocity(velocity);
+
 			bullet->Update();
 			bullets_.push_back(std::move(bullet));
 		}
 	}
+}
+
+/// 次の移動目標を決定
+void Boss1::DecideNextTarget() {
+	Vector3 newTarget;
+	const int maxTry = 10;
+
+	for (int i = 0; i < maxTry; ++i) {
+		newTarget.x = RandomFloat(-7.0f, 7.0f);
+		newTarget.y = RandomFloat(0.3f, 3.0f);
+		newTarget.z = transform_.translate.z;
+
+		Vector3 diff{
+			newTarget.x - transform_.translate.x,
+			newTarget.y - transform_.translate.y,
+			0.0f
+		};
+
+		float dist = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+
+		if (dist >= min_target_distance_) {
+			target_position_ = newTarget;
+			return;
+		}
+	}
+	target_position_ = newTarget;
 }
 
 //衝突時コールバック
@@ -133,6 +249,7 @@ void Boss1::Debug() {
 	}
 #endif
 }
+
 // OBB取得
 OBB Boss1::GetOBB() const {
 	OBB obb;
@@ -148,4 +265,9 @@ OBB Boss1::GetOBB() const {
 	obb.size.z = transform_.scale.z * dimensions_.z * 0.5f;
 
 	return obb;
+}
+// min から max の範囲で乱数の浮動小数点数を生成
+float Boss1::RandomFloat(float min, float max) {
+	std::uniform_real_distribution<float> dist(min, max);
+	return dist(random_engine_);
 }

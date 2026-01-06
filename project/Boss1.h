@@ -3,6 +3,7 @@
 #include "Object3dBase.h"
 #include "Transform.h"
 #include "EnemyBullet.h"
+#include <random>
 
 //前方宣言
 class Player;
@@ -10,27 +11,33 @@ class Boss1
 {
   public:
 	/// <summary>
-	/// 初期化する。
+	/// 初期化
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
+	/// 更新処理
 	/// </summary>
 	void Update();
 	/// <summary>
-	/// 描画を行う。
+	/// 描画
 	/// </summary>
 	void Draw();
 	/// <summary>
-	/// 二段高さショットを発射する。
+	/// 二段高さショットを発射する
 	/// </summary>
 	void FireDoubleHeightShot();
+
 	/// <summary>
-	/// 衝突時のコールバック。
+	/// 次の移動目標を決定する
+	/// </summary>
+	void DecideNextTarget();
+
+	/// <summary>
+	/// 衝突時のコールバック
 	/// </summary>
 	void OnCollision();
 	/// <summary>
-	/// HP を減少させる。
+	/// HP を減少させる
 	/// </summary>
 	void TakeDamage(uint32_t damage);
 	/// <summary>
@@ -38,9 +45,13 @@ class Boss1
 	/// </summary>
 	void Debug();
 	/// <summary>
-	/// OBB（Oriented Bounding Box）を取得する。
+	/// OBB（Oriented Bounding Box）を取得する
 	/// </summary>
 	OBB GetOBB() const;
+	/// <summary>
+	/// min から max の範囲で乱数の浮動小数点数を生成する
+	/// </summary>
+	float RandomFloat(float min, float max);
 
 	/// <summary>
 	/// 死亡フラグが立っているか判定する。
@@ -111,6 +122,8 @@ private:
 	std::unique_ptr<MyEngine::Object3d> object_;
 	// 敵が発射した弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	// 乱数生成器（Boss専用）
+	std::mt19937 random_engine_;
 	// 敵のワールド変換情報（位置・回転・スケール）
 	Transform transform_;
 	// 攻撃対象となるプレイヤーのポインタ
@@ -119,6 +132,10 @@ private:
 	Vector3 default_scale_ = { 2.0f, 2.0f, 2.0f };
 	//寸法
 	Vector3 dimensions_ = { 4.0f,3.0f,2.0f };
+	// 移動目標
+	Vector3 target_position_;   
+	// 速度
+	Vector3 velocity_{ 0.0f, 0.0f, 0.0f };
 	// 死亡フラグ
 	bool is_dead_ = false;
 	// 死亡時パーティクル発生フラグ
@@ -147,5 +164,19 @@ private:
 	float damage_scale_duration_ = 0.08f;
 	// 現在のスケール演出の残り時間
 	float damage_scale_timer_ = 0.0f;
+	//移動速度
+	float move_speed_ = 2.0f;
+	// 到着判定の閾値
+	float arrive_threshold_ = 0.2f;
+	// 最大速度
+	float max_speed_ = 4.0f;
+	// 追従の滑らかさ
+	float acceleration_ = 10.0f;
+	// 浮遊用タイマー
+	float float_time_ = 0.0f;
+	// 速度減衰率（浮遊感用）
+	float velocity_damping_ = 0.96f;
+	// 次の目標までの最小距離
+	float min_target_distance_ = 2.5f;
 };
 
