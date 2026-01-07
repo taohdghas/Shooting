@@ -22,6 +22,11 @@ class Boss1
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	/// <summary
+	/// 移動
+	/// </summary>
+	void Move();
 	/// <summary>
 	/// 二段高さショットを発射する
 	/// </summary>
@@ -122,9 +127,7 @@ public:
 	/// <summary>
 	/// 通常時のスケールを設定する。
 	/// </summary>
-	void SetDefaultScale(const Vector3& scale) {
-		default_scale_ = scale;
-	}
+	void SetDefaultScale(const Vector3& scale) {default_scale_ = scale;}
 private:
 	// 3Dオブジェクト共通設定へのポインタ
 	MyEngine::Object3dBase* object3d_base_;
@@ -157,7 +160,7 @@ private:
 	// ディレイ時間
 	static const int kFanShotDelay = 30;
 	//現在のHP
-	int hp_ = 20;
+	int hp_ = 150;
 	//攻撃力
 	int attack_ = 5;
 	// 弾発射タイマーのカウント
@@ -176,6 +179,8 @@ private:
 	const float kDamageColorDuration = 0.1f;
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
+	//ボス強化体力値
+	const float kEnragedHP = 70.0f;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
 	// ダメージスケール演出の時間
@@ -196,5 +201,10 @@ private:
 	float velocity_damping_ = 0.96f;
 	// 次の目標までの最小距離
 	float min_target_distance_ = 2.5f;
+	// 2段目通常攻撃用
+	bool is_second_shot_pending_ = false;
+	int second_shot_delay_timer_ = 0;
+	static const int kSecondShotDelay = 15; // 0.25秒くらい
+
 };
 

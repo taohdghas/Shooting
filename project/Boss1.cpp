@@ -37,53 +37,8 @@ void Boss1::Update() {
 		}
 	}
 
-	Vector3 toTarget{
-	target_position_.x - transform_.translate.x,
-	target_position_.y - transform_.translate.y,
-	0.0f
-	};
-
-	float distance = std::sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
-
-	if (distance < arrive_threshold_) {
-		DecideNextTarget();
-	} else {
-		// 正規化
-		toTarget.x /= distance;
-		toTarget.y /= distance;
-
-		// 目標速度
-		Vector3 desiredVelocity{
-			toTarget.x * max_speed_,
-			toTarget.y * max_speed_,
-			0.0f
-		};
-
-		// 現在速度 → 目標速度へ補間
-		velocity_.x += (desiredVelocity.x - velocity_.x) * acceleration_ * kDeltaTime;
-		velocity_.y += (desiredVelocity.y - velocity_.y) * acceleration_ * kDeltaTime;
-
-		//速度減衰
-		velocity_.x *= velocity_damping_;
-		velocity_.y *= velocity_damping_;
-
-
-		// 移動
-		transform_.translate.x += velocity_.x * kDeltaTime;
-		transform_.translate.y += velocity_.y * kDeltaTime;
-
-		// 浮遊の揺らぎ
-		float_time_ += kDeltaTime;
-
-		// 揺らぎ量
-		float swayX = std::sin(float_time_ * 1.3f) * 0.05f;
-		float swayY = std::sin(float_time_ * 0.9f) * 0.08f;
-
-		// 位置に加算
-		transform_.translate.x += swayX;
-		transform_.translate.y += swayY;
-
-	}
+	//移動
+	Move();
 
 	// 扇状拡散の遅延処理
 	if (is_fan_shot_pending_) {
@@ -99,25 +54,39 @@ void Boss1::Update() {
 
 	if (fire_timer_ >= fire_interval_current_) {
 
-		// 通常攻撃
+		// 1段目
 		FireDoubleHeightShot();
 
-		//体力が特定数値以下で攻撃追加
-		if (hp_ <= 12 && !is_fan_shot_pending_) {
+		// 2段目予約
+		is_second_shot_pending_ = true;
+
+		// HP減少時の扇状弾
+		if (hp_ <= kEnragedHP && !is_fan_shot_pending_) {
 			is_fan_shot_pending_ = true;
 		}
 
-		// 次の発射間隔を再決定
 		fire_interval_current_ = DecideFireInterval();
-
 		fire_timer_ = 0;
 	}
 
-	// ダメージスケール処理
+
+	// 2段目通常攻撃の遅延処理
+	if (is_second_shot_pending_) {
+		second_shot_delay_timer_++;
+
+		if (second_shot_delay_timer_ >= kSecondShotDelay) {
+			FireDoubleHeightShot(); // もう一回
+			is_second_shot_pending_ = false;
+			second_shot_delay_timer_ = 0;
+		}
+	}
+
+
+	//ダメージスケール処理
 	if (damage_scale_timer_ > 0.0f) {
 		damage_scale_timer_ -= kDeltaTime;
 
-		// 拡大してから戻る
+		//拡大してから拡縮
 		float t = (damage_scale_timer_ / damage_scale_duration_);
 		float scaleRate = 1.0f + 0.5f * t;
 
@@ -126,7 +95,7 @@ void Boss1::Update() {
 		transform_.scale = default_scale_;
 	}
 
-	// ダメージ時の色変更タイマー処理
+	//ダメージ時の色変更タイマー処理
 	if (damage_color_timer_ > 0.0f) {
 		damage_color_timer_ -= kDeltaTime;
 		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
@@ -151,69 +120,115 @@ void Boss1::Draw() {
 		bullet->Draw();
 	}
 }
+//移動
+void Boss1::Move() {
+	Vector3 toTarget{
+	target_position_.x - transform_.translate.x,
+	target_position_.y - transform_.translate.y,
+	0.0f
+	};
+
+	float distance = std::sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
+
+	if (distance < arrive_threshold_) {
+		DecideNextTarget();
+	} else {
+		//正規化
+		toTarget.x /= distance;
+		toTarget.y /= distance;
+
+		//目標速度
+		Vector3 desiredVelocity{
+			toTarget.x * max_speed_,
+			toTarget.y * max_speed_,
+			0.0f
+		};
+
+		// 現在速度から目標速度へ補間
+		velocity_.x += (desiredVelocity.x - velocity_.x) * acceleration_ * kDeltaTime;
+		velocity_.y += (desiredVelocity.y - velocity_.y) * acceleration_ * kDeltaTime;
+
+		//速度減衰
+		velocity_.x *= velocity_damping_;
+		velocity_.y *= velocity_damping_;
+
+
+		// 移動
+		transform_.translate.x += velocity_.x * kDeltaTime;
+		transform_.translate.y += velocity_.y * kDeltaTime;
+
+		// 浮遊の揺らぎ
+		float_time_ += kDeltaTime;
+
+		// 揺らぎ量
+		float swayX = std::sin(float_time_ * 1.3f) * 0.05f;
+		float swayY = std::sin(float_time_ * 0.9f) * 0.08f;
+
+		// 位置に加算
+		transform_.translate.x += swayX;
+		transform_.translate.y += swayY;
+	}
+}
+
 ///二段高さショット発射
 void Boss1::FireDoubleHeightShot() {
 	if (!player_) {
 		return;
 	}
 
-	//高さ
-	float yOffsets[] = { -0.5f, 0.8f };
-	//横方向
-	float xOffsets[] = { -1.2f, 0.0f, 1.2f };
+	// 高さ
+	float yOffsets[] = { -0.5f, 0.8f ,2.1f };
+	// 横方向
+	float xOffsets[] = { -5.4f, -4.2f, -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f, 4.2f, 5.4f };
 
-	const float bulletSpeed = 0.35f;
+	const float bulletSpeed = 0.7f;
 
-	//ボス中心 →プレイヤー
 	Vector3 bossPos = transform_.translate;
 	Vector3 playerPos = player_->GetTranslate();
-
-	Vector3 baseDir{
-		playerPos.x - bossPos.x,
-		playerPos.y - bossPos.y,
-		playerPos.z - bossPos.z
-	};
-
-	float length = std::sqrt(
-		baseDir.x * baseDir.x +
-		baseDir.y * baseDir.y +
-		baseDir.z * baseDir.z
-	);
-
-	if (length != 0.0f) {
-		baseDir.x /= length;
-		baseDir.y /= length;
-		baseDir.z /= length;
-	}
-
-	//全弾で同じ方向を使う
-	Vector3 velocity{
-		baseDir.x * bulletSpeed,
-		baseDir.y * bulletSpeed,
-		baseDir.z * bulletSpeed
-	};
 
 	for (float yOffset : yOffsets) {
 		for (float xOffset : xOffsets) {
 
+			//発射位置にランダム性を追加
+			Vector3 spawnPos{
+				bossPos.x + xOffset + RandomFloat(-10.0f, 10.0f),
+				bossPos.y + yOffset + RandomFloat(-4.0f, 4.0f),
+				bossPos.z
+			};
+
+			// 弾ごとにプレイヤーを狙う
+			Vector3 dir{
+				playerPos.x - spawnPos.x,
+				playerPos.y - spawnPos.y,
+				playerPos.z - spawnPos.z
+			};
+
+			float length = std::sqrt(
+				dir.x * dir.x +
+				dir.y * dir.y +
+				dir.z * dir.z
+			);
+
+			if (length == 0.0f) continue;
+
+			dir.x /= length;
+			dir.y /= length;
+			dir.z /= length;
+
 			auto bullet = std::make_unique<EnemyBullet>();
 			bullet->Initialize(object3d_base_);
-
-			// 発射位置
-			bullet->SetTranslate({
-				bossPos.x + xOffset,
-				bossPos.y + yOffset,
-				bossPos.z
+			bullet->SetTranslate(spawnPos);
+			bullet->SetVelocity({
+				dir.x * bulletSpeed,
+				dir.y * bulletSpeed,
+				dir.z * bulletSpeed
 				});
 
-			// 同一方向・直進
-			bullet->SetVelocity(velocity);
-
-			bullet->Update();
 			bullets_.push_back(std::move(bullet));
 		}
 	}
 }
+
 
 /// 次の移動目標を決定
 void Boss1::DecideNextTarget() {
@@ -309,13 +324,13 @@ void Boss1::FireFanShot()
 int Boss1::DecideFireInterval()
 {
 	// HPが多い間は固定
-	if (hp_ > 12) {
+	if (hp_ > kEnragedHP) {
 		return kFireInterval;
 	}
 
 	// HP12以下：必ず早くなる範囲でランダム
-	const int minInterval = 80;
-	const int maxInterval = 120;
+	const int minInterval = 70;
+	const int maxInterval = 100;
 
 	std::uniform_int_distribution<int> dist(minInterval, maxInterval);
 	return dist(random_engine_);

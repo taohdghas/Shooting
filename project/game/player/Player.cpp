@@ -86,7 +86,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 		}
 
 		// 攻撃入力判定
-		if (MyEngine::Input::GetInstance()->IsMouseLeftTriggered()) {
+		if (MyEngine::Input::GetInstance()->IsMouseLeftPressed()) {
 			Attack();
 		}
 		// 回避処理
