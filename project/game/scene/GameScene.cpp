@@ -135,16 +135,16 @@ void GameScene::Update() {
 	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 
 	// 一時停止フラグ切り替え
-	if (!is_start_animation_ && !is_returning_&& MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_P)) {
+	if (!is_start_animation_ && !is_returning_&& MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_Q)) {
 		is_game_pause_ = !is_game_pause_;
 	}
-
+	// UIに一時停止フラグをセット
 	ui_->SetOperationGuide(is_game_pause_);
 
 	// UIの更新
 	ui_->Update();
 
-	// ゲーム一時停止中は以降の更新処理をスキップ
+	// ゲーム一時停止中は更新処理をスキップ
 	if (is_game_pause_) {
 		return;
 	}
@@ -170,7 +170,6 @@ void GameScene::Update() {
 			player_->SetFollowPlatform(false);
 			is_following_initialized_ = false;
 		}
-
 	}
 
 	// 敵ごとの衝突判定・デスパーティクル処理
@@ -212,23 +211,23 @@ void GameScene::Update() {
 	for (auto& particle : particle_emitters_) {
 		particle->Update();
 	}
-
+	//ボス撃破でゲームクリアフラグオン
 	if (boss_->IsDead()) {
 		is_to_game_clear_ = true;
 	}
-
+	//プレイヤー撃破でゲームオーバーフラグオン
 	if (player_->IsDead()) {
 		is_to_game_over_ = true;
 	}
-
+	// デバッグ用：Rキーでゲームオーバー
 	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_R)) {
 		is_to_game_over_ = true;
 	}
-
+	// ゲームクリアシーンへ遷移
 	if (is_to_game_clear_) {
 		ToGameClear();
 	}
-
+	// ゲームオーバーシーンへ遷移
 	if (is_to_game_over_) {
 		ToGameOver();
 	}
