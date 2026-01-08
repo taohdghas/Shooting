@@ -18,6 +18,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "Boss1.h"
 #include "Skybox.h"
 #include "Platform.h"
 #include "Ui.h"
@@ -26,6 +27,12 @@
 class GameScene : public  MyEngine::BaseScene
 {
 public:
+	//ゲームフェーズ
+	enum class GamePhase {
+		Stage,     // 通常進行
+		BossBattle // ボス戦
+	};
+
 	/// <summary>
 	/// シーン初期化処理。
 	/// </summary>
@@ -67,11 +74,16 @@ public:
 	/// </summary>
 	void ToGameOver();
 
+	bool IsBossSpawnCondition();
 private:
+	//ゲームフェーズ
+	GamePhase game_phase_ = GamePhase::Stage;
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 	//敵
 	std::vector<std::unique_ptr<Enemy>> enemies_;
+	//ボス
+	std::unique_ptr<Boss1>boss_;
 	//Skybox
 	std::unique_ptr<Skybox> skybox_;
 	//プラットフォーム
@@ -90,7 +102,8 @@ private:
 	std::unique_ptr<Ui>ui_;
 	//レベルデータ
 	LevelData* level_data_ = nullptr;
-
+	//ボス出現位置
+	Vector3 boss_spawn_position_;
 	//撃破演出回転軸
 	Vector3 death_rotation_axis_ = { 1.0f, 0.0f, 0.0f };
 	//撃破演出速度
@@ -105,10 +118,18 @@ private:
 
 	//Δtを定義（定数）
 	const float kDeltaTime = 1.0f / 60.0f;
+	//ボストリガーZ座標
+	const float kBossTriggerZ = 150.0f;
+	//ボス出現距離オフセット
+	const float kBossSpawnDistance = 20.0f;
+	//ゲームクリアシーン遷移フラグ
+	bool is_to_game_clear_ = false;
 	//ゲームオーバーシーン遷移フラグ
 	bool is_to_game_over_ = false;
 	//撃破演出が始まったか
 	bool is_death_motion_started_ = false;
+	//ボスが出現したか
+	bool is_boss_spawned_ = false;
 	//撃破演出経過時間タイマー
 	float death_timer_ = 0.0f;
 	//撃破演出回転速度

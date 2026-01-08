@@ -16,8 +16,12 @@ void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
 	smoke_emitter_.Initialize("platformsmoke");
 }
 
-// 毎フレームの更新処理（Transform情報をObject3dへ反映）
+// 毎フレームの更新処理
 void Platform::Update(bool is_start_animation_, bool is_returning_) {
+	//停止中は動かない
+	if (is_stopped_) {
+		return;
+	}
 	//スタート演出中は動かない
 	if (is_start_animation_ || is_returning_) {
 		object_->SetScale(transform_.scale);
@@ -46,7 +50,7 @@ void Platform::Draw() {
 	object_->Draw();
 }
 
-// デバッグ用ImGui表示（Transformのパラメータ調整）
+// デバッグ用ImGui表示
 void Platform::Debug() {
 #ifdef USE_IMGUI
 	if (ImGui::TreeNodeEx("Platform", ImGuiTreeNodeFlags_DefaultOpen)) {

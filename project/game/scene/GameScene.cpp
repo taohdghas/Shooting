@@ -17,6 +17,7 @@ void GameScene::Initialize() {
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("boss/boss.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("platform/platform.obj");
 
@@ -83,6 +84,26 @@ void GameScene::Initialize() {
 		enemies_.push_back(std::move(newEnemy));
 	}
 
+	// ボス生成・初期化
+	if (!level_data_->bosses.empty()) {
+
+		//ボスは1体想定
+		const auto& bossData = level_data_->bosses[0];
+
+		boss_ = std::make_unique<Boss1>();
+		boss_->Initialize(MyEngine::Object3dBase::GetInstance());
+
+		//座標設定
+		boss_->SetScale(bossData.scaling);
+		boss_->SetDefaultScale(bossData.scaling);
+		boss_->SetTranslate(bossData.translation);
+
+		//プレイヤー参照を渡す
+		boss_->SetPlayer(player_.get());
+		//出現位置を保存
+		boss_spawn_position_ = boss_->GetPosition();
+	}
+
 	// フェードの初期化・開始
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -96,7 +117,6 @@ void GameScene::Initialize() {
 	// 最初の1フレーム入力を無視
 	MyEngine::Input::GetInstance()->ClearInput();
 }
-
 
 // ゲームシーンの終了処理
 void GameScene::Finalize() {
@@ -118,6 +138,24 @@ void GameScene::Update() {
 
 	// 追従カメラ
 	FollowCamera();
+
+	// ゲームフェーズごとの処理
+	if (game_phase_ == GamePhase::Stage) {
+		// ボストリガー到達判定
+		if (is_boss_spawned_) {
+			return;
+		}
+
+		if (IsBossSpawnCondition()) {
+			is_boss_spawned_ = true;
+			game_phase_ = GamePhase::BossBattle;
+
+			platform_->Stop();
+			player_->SetFollowPlatform(false);
+			is_following_initialized_ = false;
+		}
+
+	}
 
 	// 敵ごとの衝突判定・デスパーティクル処理
 	for (auto& enemy : enemies_) {
@@ -143,6 +181,11 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 	}
+	// ボスの更新
+	if (game_phase_ == GamePhase::BossBattle) {
+		boss_->Update();
+		collision_manager_->CheckPlayerBossCollisions(player_.get(), boss_.get());
+	}
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
@@ -154,6 +197,10 @@ void GameScene::Update() {
 		particle->Update();
 	}
 
+	if (boss_->IsDead()) {
+		is_to_game_clear_ = true;
+	}
+
 	if (player_->IsDead()) {
 		is_to_game_over_ = true;
 	}
@@ -162,9 +209,11 @@ void GameScene::Update() {
 		is_to_game_over_ = true;
 	}
 
-	if (!is_to_game_over_) {
+	if (is_to_game_clear_) {
 		ToGameClear();
-	} else {
+	}
+
+	if (is_to_game_over_) {
 		ToGameOver();
 	}
 
@@ -189,6 +238,10 @@ void GameScene::Draw() {
 		for (auto& enemy : enemies_) {
 			enemy->Draw();
 		}
+	}
+	if (game_phase_ == GamePhase::BossBattle) {
+		// ボスの描画
+		boss_->Draw();
 	}
 	// 天球（Skybox）の描画
 	skybox_->Draw();
@@ -227,6 +280,8 @@ void GameScene::Debug() {
 	for (int i = 0; i < enemies_.size(); ++i) {
 		enemies_[i]->Debug(i);
 	}
+	// ボスのデバッグ表示
+	boss_->Debug();
 	// プラットフォームのデバッグ表示
 	platform_->Debug();
 	// Skyboxのデバッグ表示
@@ -247,6 +302,11 @@ void GameScene::FollowCamera() {
 
 	// スタート演出中は追従しない
 	if (is_start_animation_ || is_returning_) {
+		is_following_initialized_ = false;
+		return;
+	}
+	// ボス戦中は追従しない
+	if (game_phase_ != GamePhase::Stage) {
 		is_following_initialized_ = false;
 		return;
 	}
@@ -335,8 +395,7 @@ void GameScene::ToGameClear() {
 		fade_->End();
 	}
 	// フェードアウト開始
-	if (fade_->GetState() == Fade::State::None &&
-		MyEngine::Input::GetInstance()->IsKeyPressed(DIK_C))
+	if (fade_->GetState() == Fade::State::None)
 	{
 		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
@@ -408,4 +467,11 @@ void GameScene::ToGameOver() {
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()) {
 		MyEngine::SceneManager::GetInstance()->ChangeScene("OVER");
 	}
+}
+
+bool GameScene::IsBossSpawnCondition() {
+	float dz = std::abs(
+		player_->GetTranslate().z - boss_spawn_position_.z
+	);
+	return dz <= kBossSpawnDistance;
 }

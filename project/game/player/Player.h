@@ -114,6 +114,11 @@ public:
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
+	/// 速度取得
+	/// </summary>
+	const Vector3& GetVelocity() const { return velocity_; }
+
+	/// <summary>
 	/// HP取得
 	/// </summary>
 	int GetHP() const { return hp_; }
@@ -148,6 +153,11 @@ public:
 	/// </summary>
 	void SetPlatform(Platform* platform) { platform_ = platform; }
 
+	/// <summary>
+	/// プラットフォーム追従設定
+	/// </summary>
+	void SetFollowPlatform(bool flag) { is_follow_platform_ = flag; }
+
 private:
 	MyEngine::Object3dBase* object3d_base_;
 	MyEngine::Camera* camera_;
@@ -164,6 +174,8 @@ private:
 	//画面上の位置
 	Vector2 reticle_screen_pos_{ 640.0f, 360.0f };
 	Vector2 reticle_pos_ = { 640.0f, 360.0f };
+	//プレイヤーの移動速度
+	Vector3 velocity_{ 0.0f, 0.0f, 0.0f };
 	//レティクルのオフセット
 	Vector3 reticle_offset_{ 0.0f, 0.0f, 10.0f };
 	//前フレームのプラットフォーム位置
@@ -184,8 +196,8 @@ private:
 	bool is_invincible_ = false;
 	//追従プラットフォーム初期化フラグ
 	bool is_following_platform_initialized_ = false;
-	//プレイヤーの移動速度
-	float speed_ = 0.1f;
+	//プラットフォーム追従フラグ
+	bool is_follow_platform_ = true;
 	//プレイヤーの半径
 	float radius_ = 1.0f;
 	//ジャンプ速度
@@ -207,9 +219,9 @@ private:
 	//地面の最小Y移動
 	const float kGroundMinY = -3.0f;
 	//地面の最小X移動
-	const float kGroundMinX = -4.0f;
+	const float kGroundMinX = -3.5f;
 	//地面の最大X移動
-	const float kGroundMaxX = 4.0f;
+	const float kGroundMaxX = 3.5f;
 	//重力
 	const float gravity_ = -0.01f;
 	//ジャンプ力

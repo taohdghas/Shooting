@@ -28,7 +28,6 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 
 // 毎フレームの更新処理
 void Player::Update(bool is_start_animation_, bool is_returning_) {
-	//デスの場合スキップ
 
 	//攻撃クールタイム
 	if (attack_cooldown_ > 0) {
@@ -53,20 +52,23 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 
 	// スタート演出中は追従しない
 	if (!is_start_animation_ && !is_returning_ && platform_) {
-		//追従初回フレームで前フレーム位置を初期化
-		if (!is_following_platform_initialized_) {
+		// プラットフォーム追従処理
+		if (is_follow_platform_) {
+			//追従初回フレームで前フレーム位置を初期化
+			if (!is_following_platform_initialized_) {
+				prev_platform_pos_ = platform_->GetTranslate();
+				is_following_platform_initialized_ = true;
+			}
+
+			// プラットフォームの移動量
+			Vector3 platformDelta = platform_->GetTranslate() - prev_platform_pos_;
 			prev_platform_pos_ = platform_->GetTranslate();
-			is_following_platform_initialized_ = true;
+
+			//Z方向追従
+			Vector3 pos = transform_.translate;
+			pos.z += platformDelta.z;
+			transform_.translate = pos;
 		}
-
-		// プラットフォームの移動量
-		Vector3 platformDelta = platform_->GetTranslate() - prev_platform_pos_;
-		prev_platform_pos_ = platform_->GetTranslate();
-
-		//Z方向追従
-		Vector3 pos = transform_.translate;
-		pos.z += platformDelta.z;
-		transform_.translate = pos;
 	} else {
 		//スタート演出中初期化リセット
 		is_following_platform_initialized_ = false;
@@ -84,7 +86,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 		}
 
 		// 攻撃入力判定
-		if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+		if (MyEngine::Input::GetInstance()->IsMouseLeftPressed()) {
 			Attack();
 		}
 		// 回避処理
@@ -132,23 +134,25 @@ void Player::ReticleDraw() {
 
 // プレイヤーの移動処理
 void Player::Move() {
-	Vector3 new_pos = transform_.translate;
+    // X方向のみ速度を初期化
+    velocity_.x = 0.0f;
 
-	// 左右移動入力
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
-		new_pos.x -= speed_;
-	}
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
-		new_pos.x += speed_;
-	}
+    // キー入力によるX方向の速度設定
+    if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
+        velocity_.x = -0.1f;
+    }
+    if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
+        velocity_.x = 0.1f;
+    }
 
-	// 移動範囲制限
-	new_pos.x = std::clamp(new_pos.x, kGroundMinX, kGroundMaxX);
-	if (new_pos.y < kGroundMinY) {
-		new_pos.y = kGroundMinY;
-	}
+    // 位置更新（
+    transform_.translate.x += velocity_.x;
 
-	transform_.translate = new_pos;
+    // 移動範囲制限
+    transform_.translate.x = std::clamp(transform_.translate.x, kGroundMinX, kGroundMaxX);
+    if (transform_.translate.y < kGroundMinY) {
+        transform_.translate.y = kGroundMinY;
+    }
 }
 
 // ジャンプ処理
@@ -268,19 +272,20 @@ void Player::Dodge() {
 
 // レティクル（照準）の座標更新
 void Player::ReticleUpdate() {
-	const float move_speed = 10.0f;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_LEFT))  reticle_screen_pos_.x -= move_speed;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) reticle_screen_pos_.x += move_speed;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_UP))    reticle_screen_pos_.y -= move_speed;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_DOWN))  reticle_screen_pos_.y += move_speed;
+	POINT mousePos = MyEngine::Input::GetInstance()->GetMousePosition();
 
-	// 画面端制限
+	// マウス座標をVector2へ
+	reticle_screen_pos_.x = static_cast<float>(mousePos.x);
+	reticle_screen_pos_.y = static_cast<float>(mousePos.y);
+
+	// 画面外防止
 	reticle_screen_pos_.x = std::clamp(reticle_screen_pos_.x, 0.0f, 1280.0f);
 	reticle_screen_pos_.y = std::clamp(reticle_screen_pos_.y, 0.0f, 720.0f);
 
 	reticle_->SetPosition(reticle_screen_pos_);
 	reticle_->Update();
 }
+
 
 // 衝突時コールバック（死亡フラグを立てる）
 void Player::OnCollision() {
