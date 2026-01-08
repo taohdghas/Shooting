@@ -3,6 +3,7 @@
 #include "CameraManager.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
+#include "Input.h"
 
 // ゲームシーンの初期化処理ad
 void GameScene::Initialize() {
@@ -133,6 +134,21 @@ void GameScene::Update() {
 	// カメラの更新
 	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 
+	// 一時停止フラグ切り替え
+	if (!is_start_animation_ && !is_returning_&& MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_P)) {
+		is_game_pause_ = !is_game_pause_;
+	}
+
+	ui_->SetOperationGuide(is_game_pause_);
+
+	// UIの更新
+	ui_->Update();
+
+	// ゲーム一時停止中は以降の更新処理をスキップ
+	if (is_game_pause_) {
+		return;
+	}
+
 	// スタート演出
 	StartAnimation();
 
@@ -145,7 +161,7 @@ void GameScene::Update() {
 		if (is_boss_spawned_) {
 			return;
 		}
-
+		// ボス出現条件判定
 		if (IsBossSpawnCondition()) {
 			is_boss_spawned_ = true;
 			game_phase_ = GamePhase::BossBattle;
@@ -219,9 +235,6 @@ void GameScene::Update() {
 
 	// フェードの更新
 	fade_->Update();
-
-	// UIの更新
-	ui_->Update();
 
 	// デバッグ表示
 	Debug();
@@ -468,7 +481,7 @@ void GameScene::ToGameOver() {
 		MyEngine::SceneManager::GetInstance()->ChangeScene("OVER");
 	}
 }
-
+// ボス出現条件判定
 bool GameScene::IsBossSpawnCondition() {
 	float dz = std::abs(
 		player_->GetTranslate().z - boss_spawn_position_.z

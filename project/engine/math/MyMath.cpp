@@ -22,12 +22,19 @@ double easeInOutQuad(double x) {
 namespace Math {
 	//長さ
 	float Math::Length(const Vector3& v) {
-
 		return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 	}
 	//内積
 	float Math::Dot(const Vector3& v1, const Vector3& v2) {
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+	}
+	//乗算(Vector同士)
+	Vector2 Math::Multiply(const Vector2& v1, const Vector2& v2) {
+		return { v1.x * v2.x, v1.y * v2.y };
+	}
+	//乗算(Vectorｘscaler)
+	Vector2 Math::MultiplyScalar(const Vector2& v, const float scalar) {
+		return { v.x * scalar, v.y * scalar };
 	}
 	//加算
 	Vector3 Math::Add(const Vector3& v1, const Vector3& v2) {
@@ -46,7 +53,7 @@ namespace Math {
 		result.z = v.z / length;
 		return result;
 	}
-	//積(Vector同士)
+	//乗算(Vector同士)
 	Vector3 Math::Multiply(const Vector3& v1, const Vector3& v2) {
 		Vector3 result{};
 		result.x = v1.x * v2.x;
@@ -54,7 +61,7 @@ namespace Math {
 		result.z = v1.z * v2.z;
 		return result;
 	}
-	//積(Vectorｘscaler)
+	//乗算(Vectorｘscaler)
 	Vector3 Math::MultiplyScalar(const Vector3& v, const float scalar) {
 		Vector3 result{};
 		result.x = v.x * scalar;

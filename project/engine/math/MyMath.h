@@ -93,6 +93,12 @@ namespace Math {
     /// <summary>2つのベクトルの内積を計算する</summary>
     float Dot(const Vector3& v1, const Vector3& v2);
 
+	/// <summary>2つのベクトルの加算</summary>
+    Vector2 Multiply(const Vector2& v1, const Vector2& v2);
+
+	/// <summary>ベクトルとスカラー値の掛け算</summary>
+	Vector2 MultiplyScalar(const Vector2& v, const float scalar);
+
     /// <summary>2つのベクトルの加算</summary>
     Vector3 Add(const Vector3& v1, const Vector3& v2);
 
