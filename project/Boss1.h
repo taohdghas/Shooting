@@ -23,10 +23,16 @@ class Boss1
 	/// </summary>
 	void Draw();
 
-	/// <summary
+	/// <summary>
 	/// 移動
 	/// </summary>
 	void Move();
+
+	/// <summary>
+	///  攻撃
+	/// </summary>
+	void Attack();
+
 	/// <summary>
 	/// 二段高さショットを発射する
 	/// </summary>
@@ -41,11 +47,6 @@ class Boss1
     /// 扇状拡散ショットを発射する
     /// </summary>
 	void FireFanShot();
-
-	/// <summary>
-	/// 弾発射間隔を決定する
-	///	</summary>
-	int DecideFireInterval();
 
 	/// <summary>
 	/// 衝突時のコールバック
@@ -63,10 +64,21 @@ class Boss1
 	/// OBB（Oriented Bounding Box）を取得する
 	/// </summary>
 	OBB GetOBB() const;
+
+	/// <summary>
+	/// 弾発射間隔を決定する
+	///	</summary>
+	int DecideFireInterval();
+
 	/// <summary>
 	/// min から max の範囲で乱数の浮動小数点数を生成する
 	/// </summary>
 	float RandomFloat(float min, float max);
+
+	/// <summary>
+	/// タイマーの共通関数
+	/// </summary>
+	bool UpdateDelayTimer(int& timer, int threshold);
 
 	/// <summary>
 	/// 死亡フラグが立っているか判定する。

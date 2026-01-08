@@ -40,47 +40,8 @@ void Boss1::Update() {
 	//移動
 	Move();
 
-	// 扇状拡散の遅延処理
-	if (is_fan_shot_pending_) {
-		fan_shot_delay_timer_++;
-
-		if (fan_shot_delay_timer_ >= kFanShotDelay) {
-			FireFanShot();
-			is_fan_shot_pending_ = false;
-			fan_shot_delay_timer_ = 0;
-		}
-	}
-	fire_timer_++;
-
-	if (fire_timer_ >= fire_interval_current_) {
-
-		// 1段目
-		FireDoubleHeightShot();
-
-		// 2段目予約
-		is_second_shot_pending_ = true;
-
-		// HP減少時の扇状弾
-		if (hp_ <= kEnragedHP && !is_fan_shot_pending_) {
-			is_fan_shot_pending_ = true;
-		}
-
-		fire_interval_current_ = DecideFireInterval();
-		fire_timer_ = 0;
-	}
-
-
-	// 2段目通常攻撃の遅延処理
-	if (is_second_shot_pending_) {
-		second_shot_delay_timer_++;
-
-		if (second_shot_delay_timer_ >= kSecondShotDelay) {
-			FireDoubleHeightShot(); // もう一回
-			is_second_shot_pending_ = false;
-			second_shot_delay_timer_ = 0;
-		}
-	}
-
+	//攻撃
+	Attack();
 
 	//ダメージスケール処理
 	if (damage_scale_timer_ > 0.0f) {
@@ -113,9 +74,10 @@ void Boss1::Draw() {
 	if (is_dead_) {
 		return;
 	}
+	//本体の描画
 	object_->Draw();
 
-	// 弾の描画
+	//弾の描画
 	for (const auto& bullet : bullets_) {
 		bullet->Draw();
 	}
@@ -128,14 +90,13 @@ void Boss1::Move() {
 	0.0f
 	};
 
-	float distance = std::sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
+	float distance = Math::Length(toTarget);
 
 	if (distance < arrive_threshold_) {
 		DecideNextTarget();
 	} else {
 		//正規化
-		toTarget.x /= distance;
-		toTarget.y /= distance;
+		toTarget = Math::Normalize(toTarget);
 
 		//目標速度
 		Vector3 desiredVelocity{
@@ -167,6 +128,29 @@ void Boss1::Move() {
 		// 位置に加算
 		transform_.translate.x += swayX;
 		transform_.translate.y += swayY;
+	}
+}
+
+//攻撃
+void Boss1::Attack() {
+	// 扇状拡散の遅延処理
+	if (is_fan_shot_pending_ && UpdateDelayTimer(fan_shot_delay_timer_, kFanShotDelay)) {
+		FireFanShot();
+		is_fan_shot_pending_ = false;
+	}
+	// 通常攻撃
+	if (UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
+		FireDoubleHeightShot();
+		is_second_shot_pending_ = true;
+		if (hp_ <= kEnragedHP && !is_fan_shot_pending_) {
+			is_fan_shot_pending_ = true;
+		}
+		fire_interval_current_ = DecideFireInterval();
+	}
+	// 2段目通常攻撃の遅延処理
+	if (is_second_shot_pending_ && UpdateDelayTimer(second_shot_delay_timer_, kSecondShotDelay)) {
+		FireDoubleHeightShot();
+		is_second_shot_pending_ = false;
 	}
 }
 
@@ -203,17 +187,9 @@ void Boss1::FireDoubleHeightShot() {
 				playerPos.z - spawnPos.z
 			};
 
-			float length = std::sqrt(
-				dir.x * dir.x +
-				dir.y * dir.y +
-				dir.z * dir.z
-			);
+			if (Math::Length(dir) == 0.0f) continue;
 
-			if (length == 0.0f) continue;
-
-			dir.x /= length;
-			dir.y /= length;
-			dir.z /= length;
+			dir = Math::Normalize(dir);
 
 			auto bullet = std::make_unique<EnemyBullet>();
 			bullet->Initialize(object3d_base_);
@@ -228,7 +204,6 @@ void Boss1::FireDoubleHeightShot() {
 		}
 	}
 }
-
 
 /// 次の移動目標を決定
 void Boss1::DecideNextTarget() {
@@ -246,7 +221,7 @@ void Boss1::DecideNextTarget() {
 			0.0f
 		};
 
-		float dist = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+		float dist = Math::Length(diff);
 
 		if (dist >= min_target_distance_) {
 			target_position_ = newTarget;
@@ -277,19 +252,12 @@ void Boss1::FireFanShot()
 		playerPos.z - bossPos.z
 	};
 
-	float length = std::sqrt(
-		baseDir.x * baseDir.x +
-		baseDir.y * baseDir.y +
-		baseDir.z * baseDir.z
-	);
-
-	if (length == 0.0f) {
+	if (Math::Length(baseDir) == 0.0f) {
 		return;
 	}
 
-	baseDir.x /= length;
-	baseDir.y /= length;
-	baseDir.z /= length;
+	baseDir = Math::Normalize(baseDir);
+
 
 	// 角度刻み
 	float angleStep = (kSpreadAngle * 2.0f) / (kBulletCount - 1);
@@ -319,21 +287,6 @@ void Boss1::FireFanShot()
 		bullet->Update();
 		bullets_.push_back(std::move(bullet));
 	}
-}
-///弾発射間隔決定
-int Boss1::DecideFireInterval()
-{
-	// HPが多い間は固定
-	if (hp_ > kEnragedHP) {
-		return kFireInterval;
-	}
-
-	// HP12以下：必ず早くなる範囲でランダム
-	const int minInterval = 70;
-	const int maxInterval = 100;
-
-	std::uniform_int_distribution<int> dist(minInterval, maxInterval);
-	return dist(random_engine_);
 }
 
 //衝突時コールバック
@@ -383,8 +336,35 @@ OBB Boss1::GetOBB() const {
 
 	return obb;
 }
+
+///弾発射間隔決定
+int Boss1::DecideFireInterval()
+{
+	// HPが多い間は固定
+	if (hp_ > kEnragedHP) {
+		return kFireInterval;
+	}
+
+	// HP12以下：必ず早くなる範囲でランダム
+	const int minInterval = 70;
+	const int maxInterval = 100;
+
+	std::uniform_int_distribution<int> dist(minInterval, maxInterval);
+	return dist(random_engine_);
+}
+
 // min から max の範囲で乱数の浮動小数点数を生成
 float Boss1::RandomFloat(float min, float max) {
 	std::uniform_real_distribution<float> dist(min, max);
 	return dist(random_engine_);
+}
+
+//タイマーの共通関数
+bool Boss1::UpdateDelayTimer(int& timer, int threshold) {
+	timer++;
+	if (timer >= threshold) {
+		timer = 0;
+		return true;
+	}
+	return false;
 }
