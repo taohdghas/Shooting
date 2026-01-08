@@ -1,6 +1,8 @@
 ### 🌳 Codebase File Tree (Excluding ignored directories)
 
 └── project/
+    ├── Boss1.cpp
+    ├── Boss1.h
     ├── CG2 directX.vcxproj
     ├── CG2 directX.vcxproj.filters
     ├── Lib/
@@ -136,6 +138,607 @@
 
 
 ============================================================
+File Path: project/Boss1.cpp
+============================================================
+#include "Boss1.h"
+#include "Player.h"
+#include "ImGuiManager.h"
+#include "MyMath.h"
+
+// 初期化処理
+void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
+	object3d_base_ = object3d_base;
+	object_ = std::make_unique<MyEngine::Object3d>();
+	object_->Initialize(object3d_base_);
+	object_->SetModel("boss/boss.obj");
+	object_->SetLight(false);
+
+	// 乱数エンジン初期化
+	std::random_device rd;
+	random_engine_ = std::mt19937(rd());
+	// 初期変換情報設定
+	target_position_ = transform_.translate;
+	// 最初の移動目標決定
+	fire_interval_current_ = DecideFireInterval();
+}
+
+//更新
+void Boss1::Update() {
+	//デスならスキップ
+	if (is_dead_) {
+		return;
+	}
+
+	// 弾の更新とデスフラグ判定
+	for (auto it = bullets_.begin(); it != bullets_.end();) {
+		(*it)->Update();
+		if ((*it)->IsDead()) {
+			it = bullets_.erase(it);
+		} else {
+			++it;
+		}
+	}
+
+	//移動
+	Move();
+
+	//攻撃
+	Attack();
+
+	//ダメージスケール処理
+	if (damage_scale_timer_ > 0.0f) {
+		damage_scale_timer_ -= kDeltaTime;
+
+		//拡大してから拡縮
+		float t = (damage_scale_timer_ / damage_scale_duration_);
+		float scaleRate = 1.0f + 0.5f * t;
+
+		transform_.scale = default_scale_ * scaleRate;
+	} else {
+		transform_.scale = default_scale_;
+	}
+
+	//ダメージ時の色変更タイマー処理
+	if (damage_color_timer_ > 0.0f) {
+		damage_color_timer_ -= kDeltaTime;
+		object_->SetColor({ 0.8745f, 0.2274f, 0.2274f, 1.0f });
+	} else {
+		object_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+
+	object_->SetScale(transform_.scale);
+	object_->SetRotate(transform_.rotate);
+	object_->SetTranslate(transform_.translate);
+	object_->Update();
+}
+//描画
+void Boss1::Draw() {
+	if (is_dead_) {
+		return;
+	}
+	//本体の描画
+	object_->Draw();
+
+	//弾の描画
+	for (const auto& bullet : bullets_) {
+		bullet->Draw();
+	}
+}
+//移動
+void Boss1::Move() {
+	Vector3 toTarget{
+	target_position_.x - transform_.translate.x,
+	target_position_.y - transform_.translate.y,
+	0.0f
+	};
+
+	float distance = Math::Length(toTarget);
+
+	if (distance < arrive_threshold_) {
+		DecideNextTarget();
+	} else {
+		//正規化
+		toTarget = Math::Normalize(toTarget);
+
+		//目標速度
+		Vector3 desiredVelocity{
+			toTarget.x * max_speed_,
+			toTarget.y * max_speed_,
+			0.0f
+		};
+
+		// 現在速度から目標速度へ補間
+		velocity_.x += (desiredVelocity.x - velocity_.x) * acceleration_ * kDeltaTime;
+		velocity_.y += (desiredVelocity.y - velocity_.y) * acceleration_ * kDeltaTime;
+
+		//速度減衰
+		velocity_.x *= velocity_damping_;
+		velocity_.y *= velocity_damping_;
+
+
+		// 移動
+		transform_.translate.x += velocity_.x * kDeltaTime;
+		transform_.translate.y += velocity_.y * kDeltaTime;
+
+		// 浮遊の揺らぎ
+		float_time_ += kDeltaTime;
+
+		// 揺らぎ量
+		float swayX = std::sin(float_time_ * 1.3f) * 0.05f;
+		float swayY = std::sin(float_time_ * 0.9f) * 0.08f;
+
+		// 位置に加算
+		transform_.translate.x += swayX;
+		transform_.translate.y += swayY;
+	}
+}
+
+//攻撃
+void Boss1::Attack() {
+	// 扇状拡散の遅延処理
+	if (is_fan_shot_pending_ && UpdateDelayTimer(fan_shot_delay_timer_, kFanShotDelay)) {
+		FireFanShot();
+		is_fan_shot_pending_ = false;
+	}
+	// 通常攻撃
+	if (UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
+		FireDoubleHeightShot();
+		is_second_shot_pending_ = true;
+		if (hp_ <= kEnragedHP && !is_fan_shot_pending_) {
+			is_fan_shot_pending_ = true;
+		}
+		fire_interval_current_ = DecideFireInterval();
+	}
+	// 2段目通常攻撃の遅延処理
+	if (is_second_shot_pending_ && UpdateDelayTimer(second_shot_delay_timer_, kSecondShotDelay)) {
+		FireDoubleHeightShot();
+		is_second_shot_pending_ = false;
+	}
+}
+
+///二段高さショット発射
+void Boss1::FireDoubleHeightShot() {
+	if (!player_) {
+		return;
+	}
+
+	// 高さ
+	float yOffsets[] = { -0.5f, 0.8f ,2.1f };
+	// 横方向
+	float xOffsets[] = { -5.4f, -4.2f, -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f, 4.2f, 5.4f };
+
+	const float bulletSpeed = 0.7f;
+
+	Vector3 bossPos = transform_.translate;
+	Vector3 playerPos = player_->GetTranslate();
+
+	for (float yOffset : yOffsets) {
+		for (float xOffset : xOffsets) {
+
+			//発射位置にランダム性を追加
+			Vector3 spawnPos{
+				bossPos.x + xOffset + RandomFloat(-10.0f, 10.0f),
+				bossPos.y + yOffset + RandomFloat(-4.0f, 4.0f),
+				bossPos.z
+			};
+
+			// 弾ごとにプレイヤーを狙う
+			Vector3 dir{
+				playerPos.x - spawnPos.x,
+				playerPos.y - spawnPos.y,
+				playerPos.z - spawnPos.z
+			};
+
+			if (Math::Length(dir) == 0.0f) continue;
+
+			dir = Math::Normalize(dir);
+
+			auto bullet = std::make_unique<EnemyBullet>();
+			bullet->Initialize(object3d_base_);
+			bullet->SetTranslate(spawnPos);
+			bullet->SetVelocity({
+				dir.x * bulletSpeed,
+				dir.y * bulletSpeed,
+				dir.z * bulletSpeed
+				});
+
+			bullets_.push_back(std::move(bullet));
+		}
+	}
+}
+
+/// 次の移動目標を決定
+void Boss1::DecideNextTarget() {
+	Vector3 newTarget;
+	const int maxTry = 10;
+
+	for (int i = 0; i < maxTry; ++i) {
+		newTarget.x = RandomFloat(-7.0f, 7.0f);
+		newTarget.y = RandomFloat(0.3f, 3.0f);
+		newTarget.z = transform_.translate.z;
+
+		Vector3 diff{
+			newTarget.x - transform_.translate.x,
+			newTarget.y - transform_.translate.y,
+			0.0f
+		};
+
+		float dist = Math::Length(diff);
+
+		if (dist >= min_target_distance_) {
+			target_position_ = newTarget;
+			return;
+		}
+	}
+	target_position_ = newTarget;
+}
+/// 扇状拡散ショット発射
+void Boss1::FireFanShot()
+{
+	if (!player_) {
+		return;
+	}
+
+	// 弾数と拡散角度
+	const int kBulletCount = 7;
+	const float kSpreadAngle = 20.0f; 
+	const float bulletSpeed = 0.35f;
+
+	Vector3 bossPos = transform_.translate;
+	Vector3 playerPos = player_->GetTranslate();
+
+	// 中央方向
+	Vector3 baseDir{
+		playerPos.x - bossPos.x,
+		playerPos.y - bossPos.y,
+		playerPos.z - bossPos.z
+	};
+
+	if (Math::Length(baseDir) == 0.0f) {
+		return;
+	}
+
+	baseDir = Math::Normalize(baseDir);
+
+
+	// 角度刻み
+	float angleStep = (kSpreadAngle * 2.0f) / (kBulletCount - 1);
+
+	for (int i = 0; i < kBulletCount; ++i) {
+		float angle = -kSpreadAngle + angleStep * i;
+
+		// ラジアン変換
+		float rad = angle * (3.14159265f / 180.0f);
+
+		// Y軸回転
+		Vector3 dir{
+			baseDir.x * std::cos(rad) - baseDir.z * std::sin(rad),
+			baseDir.y,
+			baseDir.x * std::sin(rad) + baseDir.z * std::cos(rad)
+		};
+
+		auto bullet = std::make_unique<EnemyBullet>();
+		bullet->Initialize(object3d_base_);
+		bullet->SetTranslate(bossPos);
+		bullet->SetVelocity({
+			dir.x * bulletSpeed,
+			dir.y * bulletSpeed,
+			dir.z * bulletSpeed
+			});
+
+		bullet->Update();
+		bullets_.push_back(std::move(bullet));
+	}
+}
+
+//衝突時コールバック
+void Boss1::OnCollision() {
+	is_dead_ = true;
+	is_death_particle_ = true;
+}
+//ダメージ処理
+void Boss1::TakeDamage(uint32_t damage) {
+	hp_ -= damage;
+	// スケール演出タイマーセット
+	damage_scale_timer_ = kDamageScaleDuration;
+	// ダメージ色タイマーセット
+	damage_color_timer_ = kDamageColorDuration;
+	if (hp_ <= 0) {
+		hp_ = 0;
+		OnCollision(); // HP0で死亡処理
+	}
+}
+//デバッグ用ImGui表示
+void Boss1::Debug() {
+#ifdef USE_IMGUI
+	if (ImGui::TreeNode("Boss1")) {
+		ImGui::DragInt("Boss1Hp", &hp_, 1);
+		ImGui::DragFloat3("Boss1Scale", &transform_.scale.x, 0.1f);
+		ImGui::DragFloat3("Boss1Rotate", &transform_.rotate.x, 0.1f);
+		ImGui::DragFloat3("Boss1Translate", &transform_.translate.x, 0.1f);
+
+		ImGui::TreePop();
+	}
+#endif
+}
+
+// OBB取得
+OBB Boss1::GetOBB() const {
+	OBB obb;
+	obb.center = transform_.translate;
+
+	Matrix4x4 rot_mat = Math::MakeRotateMatrix(transform_.rotate);
+	obb.orientations[0] = Math::Normalize({ rot_mat.m[0][0], rot_mat.m[1][0], rot_mat.m[2][0] });
+	obb.orientations[1] = Math::Normalize({ rot_mat.m[0][1], rot_mat.m[1][1], rot_mat.m[2][1] });
+	obb.orientations[2] = Math::Normalize({ rot_mat.m[0][2], rot_mat.m[1][2], rot_mat.m[2][2] });
+
+	obb.size.x = transform_.scale.x * dimensions_.x * 0.5f;
+	obb.size.y = transform_.scale.y * dimensions_.y * 0.5f;
+	obb.size.z = transform_.scale.z * dimensions_.z * 0.5f;
+
+	return obb;
+}
+
+///弾発射間隔決定
+int Boss1::DecideFireInterval()
+{
+	// HPが多い間は固定
+	if (hp_ > kEnragedHP) {
+		return kFireInterval;
+	}
+
+	// HP12以下：必ず早くなる範囲でランダム
+	const int minInterval = 70;
+	const int maxInterval = 100;
+
+	std::uniform_int_distribution<int> dist(minInterval, maxInterval);
+	return dist(random_engine_);
+}
+
+// min から max の範囲で乱数の浮動小数点数を生成
+float Boss1::RandomFloat(float min, float max) {
+	std::uniform_real_distribution<float> dist(min, max);
+	return dist(random_engine_);
+}
+
+//タイマーの共通関数
+bool Boss1::UpdateDelayTimer(int& timer, int threshold) {
+	timer++;
+	if (timer >= threshold) {
+		timer = 0;
+		return true;
+	}
+	return false;
+}
+
+============================================================
+File Path: project/Boss1.h
+============================================================
+#pragma once
+#include "Object3d.h"
+#include "Object3dBase.h"
+#include "Transform.h"
+#include "EnemyBullet.h"
+#include <random>
+
+//前方宣言
+class Player;
+class Boss1
+{
+  public:
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize(MyEngine::Object3dBase* object3d_base);
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	void Update();
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw();
+
+	/// <summary>
+	/// 移動
+	/// </summary>
+	void Move();
+
+	/// <summary>
+	///  攻撃
+	/// </summary>
+	void Attack();
+
+	/// <summary>
+	/// 二段高さショットを発射する
+	/// </summary>
+	void FireDoubleHeightShot();
+
+	/// <summary>
+	/// 次の移動目標を決定する
+	/// </summary>
+	void DecideNextTarget();
+
+	/// <summary>
+    /// 扇状拡散ショットを発射する
+    /// </summary>
+	void FireFanShot();
+
+	/// <summary>
+	/// 衝突時のコールバック
+	/// </summary>
+	void OnCollision();
+	/// <summary>
+	/// HP を減少させる
+	/// </summary>
+	void TakeDamage(uint32_t damage);
+	/// <summary>
+	/// デバッグ UI を表示する（ImGui を使用）
+	/// </summary>
+	void Debug();
+	/// <summary>
+	/// OBB（Oriented Bounding Box）を取得する
+	/// </summary>
+	OBB GetOBB() const;
+
+	/// <summary>
+	/// 弾発射間隔を決定する
+	///	</summary>
+	int DecideFireInterval();
+
+	/// <summary>
+	/// min から max の範囲で乱数の浮動小数点数を生成する
+	/// </summary>
+	float RandomFloat(float min, float max);
+
+	/// <summary>
+	/// タイマーの共通関数
+	/// </summary>
+	bool UpdateDelayTimer(int& timer, int threshold);
+
+	/// <summary>
+	/// 死亡フラグが立っているか判定する。
+	/// </summary>
+	bool IsDead() const { return is_dead_; }
+
+	/// <summary>
+	/// 死亡時のパーティクル発生フラグが立っているか判定する。
+	/// </summary>
+	bool IsDeathParticle() const { return is_death_particle_; }
+public:
+	/// <summary>
+	/// 現在の位置（Transform.translate）を取得する。
+	/// </summary>
+	const Vector3& GetPosition() const { return transform_.translate; }
+
+	/// <summary>
+	/// 弾の攻撃力を取得する。
+	/// </summary>
+	int GetAttack() const { return attack_; }
+
+	/// <summary>
+	/// コリジョンや描画に用いる半径を取得する。
+	/// </summary>
+	float GetRadius() const { return radius_; }
+
+	/// <summary>
+	/// 所有する弾リストを取得する（読み取り専用）。
+	/// </summary>
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() const { return bullets_; }
+
+	/// <summary>
+	/// スケールを設定する。
+	/// </summary>
+	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+
+	/// <summary>
+	/// 回転を設定する。
+	/// </summary>
+	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
+
+	/// <summary>
+	/// 座標を設定する。
+	/// </summary>
+	void SetTranslate(const Vector3& position) { transform_.translate = position; }
+
+	/// <summary>
+	/// 対象プレイヤーのポインタを設定する。
+	/// - 攻撃判定や追従に利用される。
+	/// </summary>
+	void SetPlayer(Player* player) { player_ = player; }
+
+	/// <summary>
+	/// デスパーティクル発生フラグを設定する。
+	/// </summary>
+	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
+
+	/// <summary>
+	/// 通常時のスケールを設定する。
+	/// </summary>
+	void SetDefaultScale(const Vector3& scale) {default_scale_ = scale;}
+private:
+	// 3Dオブジェクト共通設定へのポインタ
+	MyEngine::Object3dBase* object3d_base_;
+	// 敵本体の3Dオブジェクト
+	std::unique_ptr<MyEngine::Object3d> object_;
+	// 敵が発射した弾のリスト
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	// 乱数生成器（Boss専用）
+	std::mt19937 random_engine_;
+	// 敵のワールド変換情報（位置・回転・スケール）
+	Transform transform_;
+	// 攻撃対象となるプレイヤーのポインタ
+	Player* player_;
+	// 通常時のスケールを保存
+	Vector3 default_scale_ = { 2.0f, 2.0f, 2.0f };
+	//寸法
+	Vector3 dimensions_ = { 4.0f,3.0f,2.0f };
+	// 移動目標
+	Vector3 target_position_;   
+	// 速度
+	Vector3 velocity_{ 0.0f, 0.0f, 0.0f };
+	// 死亡フラグ
+	bool is_dead_ = false;
+	// 死亡時パーティクル発生フラグ
+	bool is_death_particle_ = false;
+	// 扇状拡散用ディレイ
+	bool is_fan_shot_pending_ = false;
+	//発射間隔
+	static const int kFireInterval = 200;
+	// ディレイ時間
+	static const int kFanShotDelay = 30;
+	//現在のHP
+	int hp_ = 150;
+	//攻撃力
+	int attack_ = 5;
+	// 弾発射タイマーのカウント
+	int fire_timer_count_ = 0;
+	// 弾発射タイマーの間隔管理
+	int fire_timer_ = 0;
+	// 扇状拡散ショット用ディレイタイマー
+	int fan_shot_delay_timer_ = 0;
+	// 次の弾発射までの間隔
+	int fire_interval_current_ = kFireInterval;
+	// コリジョンや描画に使う半径
+	float radius_ = 1.0f;
+	// 1フレームあたりの時間（秒）
+	const float kDeltaTime = 1.0f / 60.0f;
+	// ダメージ色の持続時間（秒）
+	const float kDamageColorDuration = 0.1f;
+	// ダメージスケール演出の時間
+	const float kDamageScaleDuration = 0.08f;
+	//ボス強化体力値
+	const float kEnragedHP = 70.0f;
+	// ダメージ色の残り時間
+	float damage_color_timer_ = 0.0f;
+	// ダメージスケール演出の時間
+	float damage_scale_duration_ = 0.08f;
+	// 現在のスケール演出の残り時間
+	float damage_scale_timer_ = 0.0f;
+	//移動速度
+	float move_speed_ = 2.0f;
+	// 到着判定の閾値
+	float arrive_threshold_ = 0.2f;
+	// 最大速度
+	float max_speed_ = 4.0f;
+	// 追従の滑らかさ
+	float acceleration_ = 10.0f;
+	// 浮遊用タイマー
+	float float_time_ = 0.0f;
+	// 速度減衰率（浮遊感用）
+	float velocity_damping_ = 0.96f;
+	// 次の目標までの最小距離
+	float min_target_distance_ = 2.5f;
+	// 2段目通常攻撃用
+	bool is_second_shot_pending_ = false;
+	int second_shot_delay_timer_ = 0;
+	static const int kSecondShotDelay = 15; // 0.25秒くらい
+
+};
+
+
+
+============================================================
 File Path: project/CG2 directX.vcxproj
 ============================================================
 <?xml version="1.0" encoding="utf-8"?>
@@ -151,6 +754,7 @@ File Path: project/CG2 directX.vcxproj
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Boss1.cpp" />
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -223,6 +827,7 @@ File Path: project/CG2 directX.vcxproj
     <ClCompile Include="game\ui\Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Boss1.h" />
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
     <ClInclude Include="game\object\GameClearObject.h" />
@@ -818,6 +1423,9 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClCompile Include="game\ui\Ui.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Boss1.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -1004,6 +1612,9 @@ File Path: project/CG2 directX.vcxproj.filters
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="game\ui\Ui.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss1.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -5188,77 +5799,97 @@ File Path: project/engine/io/Input.cpp
 
 namespace MyEngine {
 
-    std::unique_ptr<Input> Input::instance_ = nullptr;
+	std::unique_ptr<Input> Input::instance_ = nullptr;
 
-    // シングルトンインスタンス取得
-    Input* Input::GetInstance() {
-        if (!instance_) {
-            instance_ = std::make_unique<Input>();
-        }
-        return instance_.get();
-    }
+	// シングルトンインスタンス取得
+	Input* Input::GetInstance() {
+		if (!instance_) {
+			instance_ = std::make_unique<Input>();
+		}
+		return instance_.get();
+	}
+	//初期化
+	void Input::Initialize(WindowsApi* windows_api) {
+		// 外部から渡されたWinAPIインスタンスを保持
+		windows_api_ = windows_api;
 
-    void Input::Initialize(WindowsApi* windows_api) {
-        // 外部から渡されたWinAPIインスタンスを保持
-        windows_api_ = windows_api;
+		HRESULT result;
 
-        HRESULT result;
+		// DirectInputインスタンス生成
+		result = DirectInput8Create(
+			windows_api_->GetHinstance(),
+			DIRECTINPUT_VERSION,
+			IID_IDirectInput8,
+			reinterpret_cast<void**>(direct_input_.GetAddressOf()),
+			nullptr
+		);
+		assert(SUCCEEDED(result));
 
-        // DirectInputインスタンス生成
-        result = DirectInput8Create(
-            windows_api_->GetHinstance(),
-            DIRECTINPUT_VERSION,
-            IID_IDirectInput8,
-            reinterpret_cast<void**>(direct_input_.GetAddressOf()),
-            nullptr
-        );
-        assert(SUCCEEDED(result));
+		// キーボードデバイス生成
+		result = direct_input_->CreateDevice(GUID_SysKeyboard, keyboard_device_.GetAddressOf(), NULL);
+		assert(SUCCEEDED(result));
 
-        // キーボードデバイス生成
-        result = direct_input_->CreateDevice(GUID_SysKeyboard, keyboard_device_.GetAddressOf(), NULL);
-        assert(SUCCEEDED(result));
+		// 入力データ形式を設定（標準キーボード形式）
+		result = keyboard_device_->SetDataFormat(&c_dfDIKeyboard);
+		assert(SUCCEEDED(result));
 
-        // 入力データ形式を設定（標準キーボード形式）
-        result = keyboard_device_->SetDataFormat(&c_dfDIKeyboard);
-        assert(SUCCEEDED(result));
+		// 排他制御レベルの設定（フォアグラウンド＋非排他＋Winキー無効）
+		result = keyboard_device_->SetCooperativeLevel(
+			windows_api_->GetHwnd(),
+			DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY
+		);
+		assert(SUCCEEDED(result));
+	}
+	//終了
+	void Input::Finalize() {
+		// 必要な終了処理
+		instance_.reset();
+	}
+	//更新
+	void Input::Update() {
+		// 前回のキー入力状態を保存
+		memcpy(prev_key_state_, key_state_, sizeof(key_state_));
 
-        // 排他制御レベルの設定（フォアグラウンド＋非排他＋Winキー無効）
-        result = keyboard_device_->SetCooperativeLevel(
-            windows_api_->GetHwnd(),
-            DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY
-        );
-        assert(SUCCEEDED(result));
-    }
+		// キーボード入力取得
+		keyboard_device_->Acquire();
+		keyboard_device_->GetDeviceState(sizeof(key_state_), key_state_);
 
-    void Input::Finalize() {
-        // 必要な終了処理
-        instance_.reset();
-    }
+		// マウス左ボタン状態取得
+		mouse_left_prev_ = mouse_left_curr_;
+		mouse_left_curr_ = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+	}
 
-    void Input::Update() {
-        // 前回のキー入力状態を保存
-        memcpy(prev_key_state_, key_state_, sizeof(key_state_));
-
-        // キーボードデバイスから最新の入力状態を取得
-        keyboard_device_->Acquire();
-        keyboard_device_->GetDeviceState(sizeof(key_state_), key_state_);
-    }
-
-    void Input::ClearInput() {
-        // キー状態配列をゼロクリア
-        memset(key_state_, 0, sizeof(key_state_));
-        memset(prev_key_state_, 0, sizeof(prev_key_state_));
-    }
-
-    bool Input::IsKeyPressed(BYTE key_code) {
-        // 指定キーが押されていれば true
-        return key_state_[key_code] != 0;
-    }
-
-    bool Input::IsKeyTriggered(BYTE key_code) {
-        // 指定キーが押された瞬間（前回は押されていなかった）なら true
-        return prev_key_state_[key_code] == 0 && key_state_[key_code] != 0;
-    }
+	/// 1フレーム分の入力をクリアする
+	void Input::ClearInput() {
+		// キー状態配列をゼロクリア
+		memset(key_state_, 0, sizeof(key_state_));
+		memset(prev_key_state_, 0, sizeof(prev_key_state_));
+	}
+	/// 指定キーが押されているかをチェックする
+	bool Input::IsKeyPressed(BYTE key_code) {
+		// 指定キーが押されていれば true
+		return key_state_[key_code] != 0;
+	}
+	/// 指定キーがトリガーかをチェックする
+	bool Input::IsKeyTriggered(BYTE key_code) {
+		// 指定キーが押された瞬間（前回は押されていなかった）なら true
+		return prev_key_state_[key_code] == 0 && key_state_[key_code] != 0;
+	}
+	/// マウス左ボタンが押されているか
+	bool Input::IsMouseLeftPressed() {
+		return mouse_left_curr_;
+	}
+	/// マウス左ボタンがトリガーか
+	bool Input::IsMouseLeftTriggered() {
+		return !mouse_left_prev_ && mouse_left_curr_;
+	}
+	/// マウスのクライアント座標を取得
+	POINT Input::GetMousePosition() {
+		POINT cursorPos{};
+		GetCursorPos(&cursorPos);                 
+		ScreenToClient(windows_api_->GetHwnd(), &cursorPos); 
+		return cursorPos;
+	}
 }
 
 ============================================================
@@ -5315,6 +5946,21 @@ namespace MyEngine {
         /// </summary>
         bool IsKeyTriggered(BYTE key_code);
 
+        /// <summary>
+        /// マウス左ボタンが押されているか
+        /// </summary>
+        bool IsMouseLeftPressed();
+
+        /// <summary>
+        /// マウス左ボタンがトリガーか
+        /// </summary>
+        bool IsMouseLeftTriggered();
+
+        /// <summary>
+        /// マウスのクライアント座標を取得
+        /// </summary>
+        POINT GetMousePosition();
+
     public:
         Input() = default;
         ~Input() = default;
@@ -5332,6 +5978,11 @@ namespace MyEngine {
         ComPtr<IDirectInput8> direct_input_;
         // WindowsAPI
         WindowsApi* windows_api_ = nullptr;
+
+		// マウス左ボタンの前回状態
+        bool mouse_left_prev_ = false;
+		// マウス左ボタンの現在状態
+        bool mouse_left_curr_ = false;
     };
 }
 
@@ -5708,6 +6359,20 @@ namespace MyEngine {
                 enemy_spawn.fileName = object_json["file_name"].get<std::string>();
                 ReadTransform(object_json["transform"], enemy_spawn.translation, enemy_spawn.rotation, enemy_spawn.scaling);
                 level_data->enemies.push_back(enemy_spawn);
+            } else if (type.compare("BossSpawn") == 0) {
+                BossSpawnData boss_spawn{};
+
+                boss_spawn.name = object_json["name"].get<std::string>();
+                boss_spawn.fileName = object_json["file_name"].get<std::string>();
+
+                ReadTransform(
+                    object_json["transform"],
+                    boss_spawn.translation,
+                    boss_spawn.rotation,
+                    boss_spawn.scaling
+                );
+
+                level_data->bosses.push_back(boss_spawn);
             }
 
             // 子オブジェクトを再帰的に処理する予定
@@ -7960,6 +8625,20 @@ struct EnemySpawnData {
 	std::vector<EnemyRailData> rails;
 };
 
+// ボスキャラの生成データ
+struct BossSpawnData {
+	std::string name;
+	// ファイル名
+	std::string fileName;
+	// 平行移動
+	Vector3 translation;
+	// 回転角
+	Vector3 rotation;
+	// スケーリング
+	Vector3 scaling;
+};
+
+
 // レベルデータ
 struct LevelData {
 	// オブジェクト1個分のデータ
@@ -7976,6 +8655,8 @@ struct LevelData {
 	std::vector<PlayerSpawnData>players;
 	// 敵配列
 	std::vector<EnemySpawnData>enemies;
+	// ボス配列
+	std::vector<BossSpawnData> bosses;
 };
 
 ============================================================
@@ -8752,7 +9433,6 @@ OBB EnemyBullet::GetOBB() const {
     return obb;
 }
 
-
 ============================================================
 File Path: project/game/enemy/EnemyBullet.h
 ============================================================
@@ -9005,10 +9685,21 @@ File Path: project/game/manager/CollisionManager.cpp
 #include "MyMath.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Boss1.h"
 #include "PlayerBullet.h"
 #include "EnemyBullet.h"
 
-// --- プレイヤー弾と敵の当たり判定処理を関数化 ---
+// プレイヤーと敵の当たり判定処理
+void CollisionManager::CheckPlayerEnemyCollisions(Player* player, Enemy* enemy) {
+    if (!player || !enemy) {
+        return;
+    }
+    CheckPlayerBulletsToEnemy(player, enemy);
+    CheckEnemyBulletsToPlayer(player, enemy);
+    CheckPlayerEnemyBody(player, enemy);
+}
+
+//プレイヤー弾と敵の当たり判定処理を関数化
 void CollisionManager::CheckPlayerBulletsToEnemy(Player* player, Enemy* enemy) {
     const auto& playerBullets = player->GetBullets();
     if (!enemy->IsDead()) {
@@ -9027,7 +9718,7 @@ void CollisionManager::CheckPlayerBulletsToEnemy(Player* player, Enemy* enemy) {
     }
 }
 
-// --- 敵弾とプレイヤーの当たり判定処理を関数化 ---
+//敵弾とプレイヤーの当たり判定処理を関数化
 void CollisionManager::CheckEnemyBulletsToPlayer(Player* player, Enemy* enemy) {
     const auto& enemyBullets = enemy->GetBullets();
     OBB playerOBB = player->GetOBB();
@@ -9041,7 +9732,7 @@ void CollisionManager::CheckEnemyBulletsToPlayer(Player* player, Enemy* enemy) {
     }
 }
 
-// --- プレイヤー本体と敵本体の当たり判定処理を関数化 ---
+//プレイヤー本体と敵本体の当たり判定処理を関数化
 void CollisionManager::CheckPlayerEnemyBody(Player* player, Enemy* enemy) {
     OBB playerOBB = player->GetOBB();
     OBB enemyOBB = enemy->GetOBB();
@@ -9050,16 +9741,57 @@ void CollisionManager::CheckPlayerEnemyBody(Player* player, Enemy* enemy) {
     }
 }
 
-// プレイヤーと敵の当たり判定処理
-void CollisionManager::CheckPlayerEnemyCollisions(Player* player, Enemy* enemy) {
-    if (!player || !enemy) {
+/// プレイヤーとボスと各弾の衝突判定を行う。
+void CollisionManager::CheckPlayerBossCollisions(Player* player, Boss1* boss) {
+    if (!player || !boss) {
         return;
     }
-    CheckPlayerBulletsToEnemy(player, enemy);
-    CheckEnemyBulletsToPlayer(player, enemy);
-    CheckPlayerEnemyBody(player, enemy);
+	CheckPlayerBulletsToBoss(player, boss);
+	CheckBossBulletsToPlayer(player, boss);
+	CheckPlayerBossBody(player, boss);
 }
 
+/// プレイヤー弾とボスの当たり判定を行う。
+void CollisionManager::CheckPlayerBulletsToBoss(Player* player, Boss1* boss) {
+    const auto& playerBullets = player->GetBullets();
+    if (!boss->IsDead()) {
+        for (const auto& bullet : playerBullets) {
+            if (bullet->IsDead()) continue;
+            OBB bulletOBB = bullet->GetOBB();
+            OBB bossOBB = boss->GetOBB();
+            if (Math::IsCollisionOBB(bulletOBB, bossOBB)) {
+                boss->TakeDamage(bullet->GetAttack());
+                bullet->OnCollision();
+                if (boss->IsDead()) {
+                    boss->SetIsDeathParticle(true);
+                }
+            }
+        }
+    }
+}
+
+/// ボス弾とプレイヤーの当たり判定を行う。
+void CollisionManager::CheckBossBulletsToPlayer(Player* player, Boss1* boss) {
+    const auto& bossBullets = boss->GetBullets();
+    OBB playerOBB = player->GetOBB();
+    for (const auto& bullet : bossBullets) {
+        if (bullet->IsDead()) continue;
+        OBB bossbulletOBB = bullet->GetOBB();
+        if (Math::IsCollisionOBB(bossbulletOBB, playerOBB)) {
+            player->TakeDamage(bullet->GetAttack());
+            bullet->OnCollision();
+        }
+    }
+}
+
+/// プレイヤー本体とボス本体の当たり判定を行う。
+void CollisionManager::CheckPlayerBossBody(Player* player, Boss1* boss) {
+    OBB playerOBB = player->GetOBB();
+    OBB bossOBB = boss->GetOBB();
+    if (Math::IsCollisionOBB(playerOBB, bossOBB)) {
+        player->TakeDamage(boss->GetAttack());
+    }
+}
 
 ============================================================
 File Path: project/game/manager/CollisionManager.h
@@ -9072,31 +9804,52 @@ File Path: project/game/manager/CollisionManager.h
 // 前方宣言
 class Player;
 class Enemy;
+class Boss1;
 class PlayerBullet;
 class EnemyBullet;
 
 // 衝突管理クラス
 class CollisionManager {
 public:
-    /// <summary>
-    /// プレイヤーと敵（および各弾）の衝突判定を行う。
-    /// </summary>
-    void CheckPlayerEnemyCollisions(Player* player, Enemy* enemy);
+	/// <summary>
+	/// プレイヤーと敵（および各弾）の衝突判定を行う。
+	/// </summary>
+	void CheckPlayerEnemyCollisions(Player* player, Enemy* enemy);
 
-    /// <summary>
-    /// プレイヤー弾と敵の当たり判定を行う。
-    /// </summary>
-    void CheckPlayerBulletsToEnemy(Player* player, Enemy* enemy);
+	/// <summary>
+	/// プレイヤー弾と敵の当たり判定を行う。
+	/// </summary>
+	void CheckPlayerBulletsToEnemy(Player* player, Enemy* enemy);
 
-    /// <summary>
-    /// 敵弾とプレイヤーの当たり判定を行う。
-    /// </summary>
-    void CheckEnemyBulletsToPlayer(Player* player, Enemy* enemy);
+	/// <summary>
+	/// 敵弾とプレイヤーの当たり判定を行う。
+	/// </summary>
+	void CheckEnemyBulletsToPlayer(Player* player, Enemy* enemy);
 
-    /// <summary>
-    /// プレイヤー本体と敵本体の当たり判定を行う。
+	/// <summary>
+	/// プレイヤー本体と敵本体の当たり判定を行う。
+	/// </summary>
+	void CheckPlayerEnemyBody(Player* player, Enemy* enemy);
+
+	/// <summary>
+    /// プレイヤーとボスと各弾の衝突判定を行う。
     /// </summary>
-    void CheckPlayerEnemyBody(Player* player, Enemy* enemy);
+	void CheckPlayerBossCollisions(Player* player, Boss1*boss);
+
+	/// <summary>
+	/// プレイヤー弾とボスの当たり判定を行う。
+	/// </summary>
+	void CheckPlayerBulletsToBoss(Player* player,Boss1*boss);
+
+	/// <summary>
+	/// ボス弾とプレイヤーの当たり判定を行う。
+	/// </summary>
+	void CheckBossBulletsToPlayer(Player* player, Boss1*boss);
+
+	/// <summary>
+	/// プレイヤー本体とボス本体の当たり判定を行う。
+	/// </summary>
+	void CheckPlayerBossBody(Player* player, Boss1*boss);
 
 private:
 };
@@ -9780,8 +10533,12 @@ void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
 	smoke_emitter_.Initialize("platformsmoke");
 }
 
-// 毎フレームの更新処理（Transform情報をObject3dへ反映）
+// 毎フレームの更新処理
 void Platform::Update(bool is_start_animation_, bool is_returning_) {
+	//停止中は動かない
+	if (is_stopped_) {
+		return;
+	}
 	//スタート演出中は動かない
 	if (is_start_animation_ || is_returning_) {
 		object_->SetScale(transform_.scale);
@@ -9810,7 +10567,7 @@ void Platform::Draw() {
 	object_->Draw();
 }
 
-// デバッグ用ImGui表示（Transformのパラメータ調整）
+// デバッグ用ImGui表示
 void Platform::Debug() {
 #ifdef USE_IMGUI
 	if (ImGui::TreeNodeEx("Platform", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -9856,6 +10613,16 @@ public:
 	void Debug();
 
 	/// <summary>
+	/// 移動を停止する。
+	/// </summary>
+	void Stop() { is_stopped_ = true; }
+
+	/// <summary>
+	/// 移動が停止しているかを取得する。
+	/// </summary>
+	bool IsStopped() const { return is_stopped_; }
+
+	/// <summary>
 	/// トランスフォーム（平行移動）を取得する。
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
@@ -9869,10 +10636,13 @@ private:
 	MyEngine::Object3dBase* object3d_base_;
 	Transform transform_;
 	std::unique_ptr< MyEngine::Object3d> object_;
-	// 奥方向移動速度
-	float move_speed_z_ = 0.1f;
 	//煙パーティクルエミッター
 	MyEngine::ParticleEmitter smoke_emitter_;
+	// 奥方向移動速度
+	float move_speed_z_ = 0.1f;
+	// 停止フラグ
+	bool is_stopped_ = false;
+
 };
 
 
@@ -9909,7 +10679,6 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 
 // 毎フレームの更新処理
 void Player::Update(bool is_start_animation_, bool is_returning_) {
-	//デスの場合スキップ
 
 	//攻撃クールタイム
 	if (attack_cooldown_ > 0) {
@@ -9934,20 +10703,23 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 
 	// スタート演出中は追従しない
 	if (!is_start_animation_ && !is_returning_ && platform_) {
-		//追従初回フレームで前フレーム位置を初期化
-		if (!is_following_platform_initialized_) {
+		// プラットフォーム追従処理
+		if (is_follow_platform_) {
+			//追従初回フレームで前フレーム位置を初期化
+			if (!is_following_platform_initialized_) {
+				prev_platform_pos_ = platform_->GetTranslate();
+				is_following_platform_initialized_ = true;
+			}
+
+			// プラットフォームの移動量
+			Vector3 platformDelta = platform_->GetTranslate() - prev_platform_pos_;
 			prev_platform_pos_ = platform_->GetTranslate();
-			is_following_platform_initialized_ = true;
+
+			//Z方向追従
+			Vector3 pos = transform_.translate;
+			pos.z += platformDelta.z;
+			transform_.translate = pos;
 		}
-
-		// プラットフォームの移動量
-		Vector3 platformDelta = platform_->GetTranslate() - prev_platform_pos_;
-		prev_platform_pos_ = platform_->GetTranslate();
-
-		//Z方向追従
-		Vector3 pos = transform_.translate;
-		pos.z += platformDelta.z;
-		transform_.translate = pos;
 	} else {
 		//スタート演出中初期化リセット
 		is_following_platform_initialized_ = false;
@@ -9965,7 +10737,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 		}
 
 		// 攻撃入力判定
-		if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+		if (MyEngine::Input::GetInstance()->IsMouseLeftPressed()) {
 			Attack();
 		}
 		// 回避処理
@@ -10013,23 +10785,25 @@ void Player::ReticleDraw() {
 
 // プレイヤーの移動処理
 void Player::Move() {
-	Vector3 new_pos = transform_.translate;
+    // X方向のみ速度を初期化
+    velocity_.x = 0.0f;
 
-	// 左右移動入力
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
-		new_pos.x -= speed_;
-	}
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
-		new_pos.x += speed_;
-	}
+    // キー入力によるX方向の速度設定
+    if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
+        velocity_.x = -0.1f;
+    }
+    if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
+        velocity_.x = 0.1f;
+    }
 
-	// 移動範囲制限
-	new_pos.x = std::clamp(new_pos.x, kGroundMinX, kGroundMaxX);
-	if (new_pos.y < kGroundMinY) {
-		new_pos.y = kGroundMinY;
-	}
+    // 位置更新（
+    transform_.translate.x += velocity_.x;
 
-	transform_.translate = new_pos;
+    // 移動範囲制限
+    transform_.translate.x = std::clamp(transform_.translate.x, kGroundMinX, kGroundMaxX);
+    if (transform_.translate.y < kGroundMinY) {
+        transform_.translate.y = kGroundMinY;
+    }
 }
 
 // ジャンプ処理
@@ -10149,19 +10923,20 @@ void Player::Dodge() {
 
 // レティクル（照準）の座標更新
 void Player::ReticleUpdate() {
-	const float move_speed = 10.0f;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_LEFT))  reticle_screen_pos_.x -= move_speed;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) reticle_screen_pos_.x += move_speed;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_UP))    reticle_screen_pos_.y -= move_speed;
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_DOWN))  reticle_screen_pos_.y += move_speed;
+	POINT mousePos = MyEngine::Input::GetInstance()->GetMousePosition();
 
-	// 画面端制限
+	// マウス座標をVector2へ
+	reticle_screen_pos_.x = static_cast<float>(mousePos.x);
+	reticle_screen_pos_.y = static_cast<float>(mousePos.y);
+
+	// 画面外防止
 	reticle_screen_pos_.x = std::clamp(reticle_screen_pos_.x, 0.0f, 1280.0f);
 	reticle_screen_pos_.y = std::clamp(reticle_screen_pos_.y, 0.0f, 720.0f);
 
 	reticle_->SetPosition(reticle_screen_pos_);
 	reticle_->Update();
 }
+
 
 // 衝突時コールバック（死亡フラグを立てる）
 void Player::OnCollision() {
@@ -10364,6 +11139,11 @@ public:
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
+	/// 速度取得
+	/// </summary>
+	const Vector3& GetVelocity() const { return velocity_; }
+
+	/// <summary>
 	/// HP取得
 	/// </summary>
 	int GetHP() const { return hp_; }
@@ -10398,6 +11178,11 @@ public:
 	/// </summary>
 	void SetPlatform(Platform* platform) { platform_ = platform; }
 
+	/// <summary>
+	/// プラットフォーム追従設定
+	/// </summary>
+	void SetFollowPlatform(bool flag) { is_follow_platform_ = flag; }
+
 private:
 	MyEngine::Object3dBase* object3d_base_;
 	MyEngine::Camera* camera_;
@@ -10414,6 +11199,8 @@ private:
 	//画面上の位置
 	Vector2 reticle_screen_pos_{ 640.0f, 360.0f };
 	Vector2 reticle_pos_ = { 640.0f, 360.0f };
+	//プレイヤーの移動速度
+	Vector3 velocity_{ 0.0f, 0.0f, 0.0f };
 	//レティクルのオフセット
 	Vector3 reticle_offset_{ 0.0f, 0.0f, 10.0f };
 	//前フレームのプラットフォーム位置
@@ -10434,8 +11221,8 @@ private:
 	bool is_invincible_ = false;
 	//追従プラットフォーム初期化フラグ
 	bool is_following_platform_initialized_ = false;
-	//プレイヤーの移動速度
-	float speed_ = 0.1f;
+	//プラットフォーム追従フラグ
+	bool is_follow_platform_ = true;
 	//プレイヤーの半径
 	float radius_ = 1.0f;
 	//ジャンプ速度
@@ -10457,9 +11244,9 @@ private:
 	//地面の最小Y移動
 	const float kGroundMinY = -3.0f;
 	//地面の最小X移動
-	const float kGroundMinX = -4.0f;
+	const float kGroundMinX = -3.5f;
 	//地面の最大X移動
-	const float kGroundMaxX = 4.0f;
+	const float kGroundMaxX = 3.5f;
 	//重力
 	const float gravity_ = -0.01f;
 	//ジャンプ力
@@ -11088,6 +11875,7 @@ void GameScene::Initialize() {
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("boss/boss.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("platform/platform.obj");
 
@@ -11154,6 +11942,26 @@ void GameScene::Initialize() {
 		enemies_.push_back(std::move(newEnemy));
 	}
 
+	// ボス生成・初期化
+	if (!level_data_->bosses.empty()) {
+
+		//ボスは1体想定
+		const auto& bossData = level_data_->bosses[0];
+
+		boss_ = std::make_unique<Boss1>();
+		boss_->Initialize(MyEngine::Object3dBase::GetInstance());
+
+		//座標設定
+		boss_->SetScale(bossData.scaling);
+		boss_->SetDefaultScale(bossData.scaling);
+		boss_->SetTranslate(bossData.translation);
+
+		//プレイヤー参照を渡す
+		boss_->SetPlayer(player_.get());
+		//出現位置を保存
+		boss_spawn_position_ = boss_->GetPosition();
+	}
+
 	// フェードの初期化・開始
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -11167,7 +11975,6 @@ void GameScene::Initialize() {
 	// 最初の1フレーム入力を無視
 	MyEngine::Input::GetInstance()->ClearInput();
 }
-
 
 // ゲームシーンの終了処理
 void GameScene::Finalize() {
@@ -11189,6 +11996,24 @@ void GameScene::Update() {
 
 	// 追従カメラ
 	FollowCamera();
+
+	// ゲームフェーズごとの処理
+	if (game_phase_ == GamePhase::Stage) {
+		// ボストリガー到達判定
+		if (is_boss_spawned_) {
+			return;
+		}
+
+		if (IsBossSpawnCondition()) {
+			is_boss_spawned_ = true;
+			game_phase_ = GamePhase::BossBattle;
+
+			platform_->Stop();
+			player_->SetFollowPlatform(false);
+			is_following_initialized_ = false;
+		}
+
+	}
 
 	// 敵ごとの衝突判定・デスパーティクル処理
 	for (auto& enemy : enemies_) {
@@ -11214,6 +12039,11 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 	}
+	// ボスの更新
+	if (game_phase_ == GamePhase::BossBattle) {
+		boss_->Update();
+		collision_manager_->CheckPlayerBossCollisions(player_.get(), boss_.get());
+	}
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
@@ -11225,6 +12055,10 @@ void GameScene::Update() {
 		particle->Update();
 	}
 
+	if (boss_->IsDead()) {
+		is_to_game_clear_ = true;
+	}
+
 	if (player_->IsDead()) {
 		is_to_game_over_ = true;
 	}
@@ -11233,9 +12067,11 @@ void GameScene::Update() {
 		is_to_game_over_ = true;
 	}
 
-	if (!is_to_game_over_) {
+	if (is_to_game_clear_) {
 		ToGameClear();
-	} else {
+	}
+
+	if (is_to_game_over_) {
 		ToGameOver();
 	}
 
@@ -11260,6 +12096,10 @@ void GameScene::Draw() {
 		for (auto& enemy : enemies_) {
 			enemy->Draw();
 		}
+	}
+	if (game_phase_ == GamePhase::BossBattle) {
+		// ボスの描画
+		boss_->Draw();
 	}
 	// 天球（Skybox）の描画
 	skybox_->Draw();
@@ -11298,6 +12138,8 @@ void GameScene::Debug() {
 	for (int i = 0; i < enemies_.size(); ++i) {
 		enemies_[i]->Debug(i);
 	}
+	// ボスのデバッグ表示
+	boss_->Debug();
 	// プラットフォームのデバッグ表示
 	platform_->Debug();
 	// Skyboxのデバッグ表示
@@ -11318,6 +12160,11 @@ void GameScene::FollowCamera() {
 
 	// スタート演出中は追従しない
 	if (is_start_animation_ || is_returning_) {
+		is_following_initialized_ = false;
+		return;
+	}
+	// ボス戦中は追従しない
+	if (game_phase_ != GamePhase::Stage) {
 		is_following_initialized_ = false;
 		return;
 	}
@@ -11406,8 +12253,7 @@ void GameScene::ToGameClear() {
 		fade_->End();
 	}
 	// フェードアウト開始
-	if (fade_->GetState() == Fade::State::None &&
-		MyEngine::Input::GetInstance()->IsKeyPressed(DIK_C))
+	if (fade_->GetState() == Fade::State::None)
 	{
 		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
@@ -11481,6 +12327,12 @@ void GameScene::ToGameOver() {
 	}
 }
 
+bool GameScene::IsBossSpawnCondition() {
+	float dz = std::abs(
+		player_->GetTranslate().z - boss_spawn_position_.z
+	);
+	return dz <= kBossSpawnDistance;
+}
 
 ============================================================
 File Path: project/game/scene/GameScene.h
@@ -11505,6 +12357,7 @@ File Path: project/game/scene/GameScene.h
 
 #include "Player.h"
 #include "Enemy.h"
+#include "Boss1.h"
 #include "Skybox.h"
 #include "Platform.h"
 #include "Ui.h"
@@ -11513,6 +12366,12 @@ File Path: project/game/scene/GameScene.h
 class GameScene : public  MyEngine::BaseScene
 {
 public:
+	//ゲームフェーズ
+	enum class GamePhase {
+		Stage,     // 通常進行
+		BossBattle // ボス戦
+	};
+
 	/// <summary>
 	/// シーン初期化処理。
 	/// </summary>
@@ -11554,11 +12413,16 @@ public:
 	/// </summary>
 	void ToGameOver();
 
+	bool IsBossSpawnCondition();
 private:
+	//ゲームフェーズ
+	GamePhase game_phase_ = GamePhase::Stage;
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 	//敵
 	std::vector<std::unique_ptr<Enemy>> enemies_;
+	//ボス
+	std::unique_ptr<Boss1>boss_;
 	//Skybox
 	std::unique_ptr<Skybox> skybox_;
 	//プラットフォーム
@@ -11577,7 +12441,8 @@ private:
 	std::unique_ptr<Ui>ui_;
 	//レベルデータ
 	LevelData* level_data_ = nullptr;
-
+	//ボス出現位置
+	Vector3 boss_spawn_position_;
 	//撃破演出回転軸
 	Vector3 death_rotation_axis_ = { 1.0f, 0.0f, 0.0f };
 	//撃破演出速度
@@ -11592,10 +12457,18 @@ private:
 
 	//Δtを定義（定数）
 	const float kDeltaTime = 1.0f / 60.0f;
+	//ボストリガーZ座標
+	const float kBossTriggerZ = 150.0f;
+	//ボス出現距離オフセット
+	const float kBossSpawnDistance = 20.0f;
+	//ゲームクリアシーン遷移フラグ
+	bool is_to_game_clear_ = false;
 	//ゲームオーバーシーン遷移フラグ
 	bool is_to_game_over_ = false;
 	//撃破演出が始まったか
 	bool is_death_motion_started_ = false;
+	//ボスが出現したか
+	bool is_boss_spawned_ = false;
 	//撃破演出経過時間タイマー
 	float death_timer_ = 0.0f;
 	//撃破演出回転速度
