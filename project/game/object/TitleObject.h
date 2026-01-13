@@ -43,6 +43,8 @@ public:
 
 	void MenuDecision();
 
+	void UpdateHowto();
+
 	void ResetMenuResult() { menu_result_ = MenuResult::None; }
 
 	/// <summary>
@@ -70,10 +72,10 @@ private:
 	std::unique_ptr<MyEngine::Sprite> howto_sprite_;
 	// プレイヤーオブジェクトTransform
 	Transform player_obj_transform_;
-	// 通常時スケール
-	Vector2 normal_size_ = { 1.0f, 1.0f };
-	// 選択時スケール
-	Vector2 select_size_ = { 1.2f, 1.2f };
+	Vector2 start_size_;
+	Vector2 howto_size_;
+	Vector2 exit_size_;
+
 	// Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	// playerObj回転速度
@@ -100,14 +102,12 @@ private:
 	float jump_timer_ = 0.0f;
 	// 二段ジャンプ時回転速度
 	float jump_rotate_speed_ = 180.0f;
+	float howto_scale_ = 0.0f;
 	// ジャンプカウント
 	int jump_count_ = 0;
 	// ジャンプ中か
 	bool is_jumping_ = false;
 	// 操作説明が開いているか
 	bool is_howto_open_ = false;
-	// α値
-	float alpha_ = 1.0f;
-	// α値タイマー
-	float alpha_timer_ = 0.0f;
+	bool is_show_howto_ = false;
 };

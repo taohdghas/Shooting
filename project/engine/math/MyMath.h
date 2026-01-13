@@ -3,6 +3,13 @@
 #include <corecrt_math.h>
 
 /// <summary>
+/// Vector2とスカラー値の掛け算
+/// </summary>
+inline Vector2 operator*(const Vector2& v, float s) {
+    return { v.x * s, v.y * s};
+}
+
+/// <summary>
 /// Vector3同士の加算
 /// </summary>
 inline Vector3 operator+(const Vector3& v1, const Vector3& v2) {
