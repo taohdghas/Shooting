@@ -51,11 +51,12 @@ void TitleObject::Initialize() {
 }
 
 // 毎フレームの更新処理
-void TitleObject::Update() {
-    // タイトルオブジェクトの更新
+void TitleObject::Update()
+{
+    scale_timer_ += kDeltaTime;
+
     title_->Update();
 
-    // プレイヤーオブジェクトの演出
     PlayerObjDirection();
 
     menu_start_->Update();
@@ -63,21 +64,37 @@ void TitleObject::Update() {
     menu_exit_->Update();
     howto_sprite_->Update();
 
-    input_timer_++;
-
     UpdateHowto();
 
+
+    auto input = MyEngine::Input::GetInstance();
+
+    // マウスが乗っている項目取得
+    int hover = GetMouseHoverIndex();
+    select_index_ = hover;
+
+    // 拡縮
+    MenuSizeUpdate();
+
     if (!is_show_howto_) {
-        MenuSelectUpdate();
-        MenuSizeUpdate();
-        MenuDecision();
+
+        // クリック決定
+        if (hover != -1 && input->IsMouseLeftTriggered()) {
+            switch (hover) {
+            case 0: menu_result_ = MenuResult::Start; break;
+            case 1: is_show_howto_ = true; break;
+            case 2: menu_result_ = MenuResult::Exit; break;
+            }
+        }
+
     } else {
-        // 操作説明中は SPACE で戻る
-        if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_Q)) {
+        // 操作説明中クリックで戻る
+        if (input->IsKeyPressed(DIK_Q)) {
             is_show_howto_ = false;
         }
     }
 }
+
 
 // 描画処理
 void TitleObject::Draw() {
@@ -163,21 +180,24 @@ void TitleObject::MenuSelectUpdate() {
     if (select_index_ > 2) select_index_ = 0;
 }
 
-void TitleObject::MenuSizeUpdate() {
+void TitleObject::MenuSizeUpdate()
+{
+    float scale = 1.0f + sinf(scale_timer_ * 5.0f) * 0.1f;
 
     menu_start_->SetSize(start_size_);
     menu_howto_->SetSize(howto_size_);
     menu_exit_->SetSize(exit_size_);
 
     if (select_index_ == 0)
-        menu_start_->SetSize(start_size_ * 1.2f);
+        menu_start_->SetSize({ start_size_.x * scale, start_size_.y * scale });
 
     if (select_index_ == 1)
-        menu_howto_->SetSize(howto_size_ * 1.2f);
+        menu_howto_->SetSize({ howto_size_.x * scale, howto_size_.y * scale });
 
     if (select_index_ == 2)
-        menu_exit_->SetSize(exit_size_ * 1.2f);
+        menu_exit_->SetSize({ exit_size_.x * scale, exit_size_.y * scale });
 }
+
 
 
 void TitleObject::MenuDecision() {
@@ -319,4 +339,35 @@ void TitleObject::Debug() {
 
     ImGui::End();
 #endif
+}
+
+bool TitleObject::IsMouseOnSprite(MyEngine::Sprite* sprite)
+{
+    POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
+
+    Vector2 pos = sprite->GetPosition();
+    Vector2 size = sprite->GetSize();
+
+    // 中心座標 → 左上に変換
+    Vector2 leftTop = {
+        pos.x - size.x * 0.5f,
+        pos.y - size.y * 0.5f
+    };
+
+    if (mouse.x >= leftTop.x && mouse.x <= leftTop.x + size.x &&
+        mouse.y >= leftTop.y && mouse.y <= leftTop.y + size.y) {
+        return true;
+    }
+
+    return false;
+}
+
+
+int TitleObject::GetMouseHoverIndex()
+{
+    if (IsMouseOnSprite(menu_start_.get())) return 0;
+    if (IsMouseOnSprite(menu_howto_.get())) return 1;
+    if (IsMouseOnSprite(menu_exit_.get()))  return 2;
+
+    return -1;
 }

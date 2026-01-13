@@ -51,6 +51,10 @@ public:
 	/// デバッグ用UIを表示する。
 	/// </summary>
 	void Debug();
+	
+	int GetMouseHoverIndex();
+
+	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
 	MenuResult GetMenuResult() const { return menu_result_; }
 
@@ -103,11 +107,12 @@ private:
 	// 二段ジャンプ時回転速度
 	float jump_rotate_speed_ = 180.0f;
 	float howto_scale_ = 0.0f;
+	// 選択中メニュー拡縮用タイマー
+	float scale_timer_ = 0.0f;
 	// ジャンプカウント
 	int jump_count_ = 0;
 	// ジャンプ中か
 	bool is_jumping_ = false;
-	// 操作説明が開いているか
-	bool is_howto_open_ = false;
+
 	bool is_show_howto_ = false;
 };
