@@ -8,6 +8,13 @@
 // タイトルオブジェクト
 class TitleObject {
 public:
+
+	enum class MenuResult {
+		None,
+		Start,
+		Exit
+	};
+
 	/// <summary>
 	/// タイトル画面に登場する全オブジェクトの初期化を行う
 	/// </summary>
@@ -23,35 +30,66 @@ public:
 	/// </summary>
 	void Draw();
 
+	void DrawSprite();
+
 	/// <summary>
 	/// プレイヤーオブジェクトの演出処理を行う
 	/// </summary>
 	void PlayerObjDirection();
+
+	void MenuSelectUpdate();
+
+	void MenuSizeUpdate();
+
+	void MenuDecision();
+
+	void ResetMenuResult() { menu_result_ = MenuResult::None; }
 
 	/// <summary>
 	/// デバッグ用UIを表示する。
 	/// </summary>
 	void Debug();
 
+	MenuResult GetMenuResult() const { return menu_result_; }
+
 private:
+	MenuResult menu_result_ = MenuResult::None;
 	// タイトルのオブジェクト
 	std::unique_ptr< MyEngine::Object3d> title_;
 	// pushspaceのオブジェクト
 	std::unique_ptr< MyEngine::Object3d> push_space_;
 	// プレイヤーオブジェクト
 	std::unique_ptr< MyEngine::Object3d> player_obj_;
+	//スタート項目スプライト
+	std::unique_ptr< MyEngine::Sprite> menu_start_;
+	//操作説明項目スプライト
+	std::unique_ptr< MyEngine::Sprite> menu_howto_;
+	//終了項目スプライト
+	std::unique_ptr< MyEngine::Sprite> menu_exit_;
+	//操作説明スプライト
+	std::unique_ptr<MyEngine::Sprite> howto_sprite_;
 	// プレイヤーオブジェクトTransform
 	Transform player_obj_transform_;
+	// 通常時スケール
+	Vector2 normal_size_ = { 1.0f, 1.0f };
+	// 選択時スケール
+	Vector2 select_size_ = { 1.2f, 1.2f };
 	// Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	// playerObj回転速度
 	const float kRotateSpeed = 0.5f;
+    // 入力受付間隔
+	const float kInputInterval = 10.0f;
 	// ジャンプの速度
 	float jump_velocity_ = 0.0f;
 	// ジャンプの力
 	float jump_power_ = 0.12f;
 	// 最大ジャンプ数
 	const int kMaxJumpCount = 2;
+	// 選択中メニューインデックス
+	int select_index_ = 0; 
+	// 入力受付間隔タイマー
+	float input_timer_ = 0.0f;
 	// 重力
 	float gravity_ = -0.01f;
 	// 地面
@@ -66,6 +104,8 @@ private:
 	int jump_count_ = 0;
 	// ジャンプ中か
 	bool is_jumping_ = false;
+	// 操作説明が開いているか
+	bool is_howto_open_ = false;
 	// α値
 	float alpha_ = 1.0f;
 	// α値タイマー

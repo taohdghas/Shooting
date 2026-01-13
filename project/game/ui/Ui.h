@@ -43,6 +43,8 @@ public:
 private:
 	// HPバー
 	std::unique_ptr<MyEngine::Sprite> hp_bar_;
+	//ポーズ
+	std::unique_ptr<MyEngine::Sprite> pause_;
 	//操作説明
 	std::unique_ptr<MyEngine::Sprite> operation_guide_;
 	// プレイヤーへのポインタ

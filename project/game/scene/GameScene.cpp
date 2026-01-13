@@ -135,7 +135,7 @@ void GameScene::Update() {
 	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 
 	// 一時停止フラグ切り替え
-	if (!is_start_animation_ && !is_returning_&& MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_Q)) {
+	if (!is_start_animation_ && !is_returning_ && MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_Q)) {
 		is_game_pause_ = !is_game_pause_;
 	}
 	// UIに一時停止フラグをセット
@@ -143,6 +143,9 @@ void GameScene::Update() {
 
 	// UIの更新
 	ui_->Update();
+
+	// デバッグ表示
+	Debug();
 
 	// ゲーム一時停止中は更新処理をスキップ
 	if (is_game_pause_) {
@@ -235,8 +238,6 @@ void GameScene::Update() {
 	// フェードの更新
 	fade_->Update();
 
-	// デバッグ表示
-	Debug();
 }
 
 // 描画処理
@@ -304,6 +305,9 @@ void GameScene::Debug() {
 		ImGui::DragFloat3("Translate", &trans.translate.x, 0.1f, -1000.0f, 1000.0f);
 		ImGui::TreePop();
 	}
+	//UIのデバック表示
+	ui_->Debug();
+
 	ImGui::End();
 #endif
 }
