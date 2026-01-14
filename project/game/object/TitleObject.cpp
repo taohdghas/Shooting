@@ -110,7 +110,6 @@ void TitleObject::DrawSprite() {
         howto_sprite_->Draw();
     }
 }
-
 // プレイヤーオブジェクトの演出（回転・ジャンプ処理）
 void TitleObject::PlayerObjDirection() {
     // プレイヤーオブジェクトの回転
