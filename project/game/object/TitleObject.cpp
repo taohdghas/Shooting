@@ -21,17 +21,17 @@ void TitleObject::Initialize() {
     player_obj_transform_.scale = { 0.5f, 0.5f, 0.5f };
     player_obj_transform_.rotate = { 0.0f, -0.5f, 0.0f };
     player_obj_transform_.translate = { -1.3f, -0.5f, -4.8f };
-
+	// メニュー項目スプライト生成・初期化
     menu_start_ = std::make_unique<MyEngine::Sprite>();
     menu_start_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/start.png");
     menu_start_->SetPosition({ 700, 380 });
 	menu_start_->SetSize({150,100});
-
+	// 操作説明項目スプライト
     menu_howto_ = std::make_unique<MyEngine::Sprite>();
     menu_howto_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/howto.png");
     menu_howto_->SetPosition({ 693, 505 });
 	menu_howto_->SetSize({ 200,80 });
-
+	// 終了項目スプライト
     menu_exit_ = std::make_unique<MyEngine::Sprite>();
     menu_exit_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/exit.png");
     menu_exit_->SetPosition({ 699, 607 });
@@ -44,28 +44,28 @@ void TitleObject::Initialize() {
     howto_sprite_->SetPosition({ 640, 360 });
 	howto_sprite_->SetSize({ 0, 0 });
 
+	// メニュー項目の元サイズ保存
     start_size_ = { 150,100 };
     howto_size_ = { 200,80 };
     exit_size_ = { 150,80 };
-
 }
 
 // 毎フレームの更新処理
 void TitleObject::Update()
 {
+	// 拡縮用タイマー更新
     scale_timer_ += kDeltaTime;
 
     title_->Update();
-
+	// プレイヤーオブジェクトの演出処理
     PlayerObjDirection();
 
     menu_start_->Update();
     menu_howto_->Update();
     menu_exit_->Update();
     howto_sprite_->Update();
-
+	// 操作説明表示の更新
     UpdateHowto();
-
 
     auto input = MyEngine::Input::GetInstance();
 
@@ -95,13 +95,12 @@ void TitleObject::Update()
     }
 }
 
-
 // 描画処理
 void TitleObject::Draw() {
     title_->Draw();
     player_obj_->Draw();
 }
-
+// メニュー項目スプライトの描画処理
 void TitleObject::DrawSprite() {
     menu_start_->Draw();
     menu_howto_->Draw();
@@ -160,26 +159,7 @@ void TitleObject::PlayerObjDirection() {
     player_obj_->SetTranslate(player_obj_transform_.translate);
     player_obj_->Update();
 }
-
-void TitleObject::MenuSelectUpdate() {
-    if (input_timer_ < kInputInterval) return;
-
-    auto input = MyEngine::Input::GetInstance();
-
-    if (input->IsKeyPressed(DIK_W) || input->IsKeyPressed(DIK_UP)) {
-        select_index_--;
-        input_timer_ = 0.0f;
-    }
-
-    if (input->IsKeyPressed(DIK_S) || input->IsKeyPressed(DIK_DOWN)) {
-        select_index_++;
-        input_timer_ = 0.0f;
-    }
-
-    if (select_index_ < 0) select_index_ = 2;
-    if (select_index_ > 2) select_index_ = 0;
-}
-
+// メニュー項目スプライトの拡縮処理
 void TitleObject::MenuSizeUpdate()
 {
     float scale = 1.0f + sinf(scale_timer_ * 5.0f) * 0.1f;
@@ -197,27 +177,7 @@ void TitleObject::MenuSizeUpdate()
     if (select_index_ == 2)
         menu_exit_->SetSize({ exit_size_.x * scale, exit_size_.y * scale });
 }
-
-
-
-void TitleObject::MenuDecision() {
-    if (!MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) return;
-
-    switch (select_index_) {
-    case 0: // 始める
-        menu_result_ = MenuResult::Start;
-        break;
-
-    case 1: // 操作説明
-        is_show_howto_ = true;
-        break;
-
-    case 2: // 終了
-        menu_result_ = MenuResult::Exit;
-        break;
-    }
-}
-
+// 操作説明表示の更新
 void TitleObject::UpdateHowto() {
     const float speed = 0.07f;
 
@@ -237,7 +197,7 @@ void TitleObject::UpdateHowto() {
     howto_sprite_->Update();
 }
 
-// デバッグ表示（ImGuiによるパラメータ調整）
+// デバッグ表示（
 void TitleObject::Debug() {
 #ifdef USE_IMGUI
     ImGui::Begin("TitleObject SetUp");
@@ -341,28 +301,23 @@ void TitleObject::Debug() {
 #endif
 }
 
+// スプライト上にマウスが乗っているか
 bool TitleObject::IsMouseOnSprite(MyEngine::Sprite* sprite)
 {
     POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
 
-    Vector2 pos = sprite->GetPosition();
-    Vector2 size = sprite->GetSize();
+    Vector2 pos = sprite->GetPosition(); // 左上
+    Vector2 size = sprite->GetSize();     // 幅・高さ
 
-    // 中心座標 → 左上に変換
-    Vector2 leftTop = {
-        pos.x - size.x * 0.5f,
-        pos.y - size.y * 0.5f
-    };
-
-    if (mouse.x >= leftTop.x && mouse.x <= leftTop.x + size.x &&
-        mouse.y >= leftTop.y && mouse.y <= leftTop.y + size.y) {
+    if (mouse.x >= pos.x && mouse.x <= pos.x + size.x &&
+        mouse.y >= pos.y && mouse.y <= pos.y + size.y) {
         return true;
     }
 
     return false;
 }
 
-
+// マウスが乗っているメニュー項目のインデックスを取得
 int TitleObject::GetMouseHoverIndex()
 {
     if (IsMouseOnSprite(menu_start_.get())) return 0;

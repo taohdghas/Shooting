@@ -8,7 +8,7 @@
 // タイトルオブジェクト
 class TitleObject {
 public:
-
+	/// メニュー選択結果
 	enum class MenuResult {
 		None,
 		Start,
@@ -16,49 +16,67 @@ public:
 	};
 
 	/// <summary>
-	/// タイトル画面に登場する全オブジェクトの初期化を行う
+	/// 初期化
 	/// </summary>
 	void Initialize();
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う
+	/// 更新
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// タイトル、PUSH SPACE、プレイヤーモデルを描画する。
+	/// タイトル、PUSH SPACE、プレイヤーモデルを描画
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// メニュー項目スプライトを描画
+	/// </summary>
 	void DrawSprite();
 
 	/// <summary>
-	/// プレイヤーオブジェクトの演出処理を行う
+	/// プレイヤーオブジェクトの演出処理
 	/// </summary>
 	void PlayerObjDirection();
 
-	void MenuSelectUpdate();
-
+	/// <summary>
+	/// メニュー項目の拡縮処理
+	/// </summary>
 	void MenuSizeUpdate();
 
-	void MenuDecision();
-
+	/// <summary>
+	/// 操作説明表示の更新
+	/// </summary>
 	void UpdateHowto();
 
+	/// <summary>
+	/// メニュー選択結果リセット
+	/// </summary>
 	void ResetMenuResult() { menu_result_ = MenuResult::None; }
 
 	/// <summary>
-	/// デバッグ用UIを表示する。
+	/// デバッグ用UIを表示
 	/// </summary>
 	void Debug();
 	
+	/// <summary>
+	/// マウスが乗っているメニュー項目のインデックスを取得
+	///	</summary>
 	int GetMouseHoverIndex();
 
+	/// <summary>
+	/// スプライト上にマウスが乗っているか
+	/// </summary>
 	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
+	/// <summary>
+	/// メニュー選択結果を取得
+	/// </summary>
 	MenuResult GetMenuResult() const { return menu_result_; }
 
 private:
+	// メニュー選択結果
 	MenuResult menu_result_ = MenuResult::None;
 	// タイトルのオブジェクト
 	std::unique_ptr< MyEngine::Object3d> title_;
@@ -76,10 +94,10 @@ private:
 	std::unique_ptr<MyEngine::Sprite> howto_sprite_;
 	// プレイヤーオブジェクトTransform
 	Transform player_obj_transform_;
+	//メニュー項目の元サイズ保存
 	Vector2 start_size_;
 	Vector2 howto_size_;
 	Vector2 exit_size_;
-
 	// Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	// playerObj回転速度
@@ -113,6 +131,6 @@ private:
 	int jump_count_ = 0;
 	// ジャンプ中か
 	bool is_jumping_ = false;
-
+	// 操作説明表示中か
 	bool is_show_howto_ = false;
 };
