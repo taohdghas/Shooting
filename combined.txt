@@ -7780,12 +7780,19 @@ double easeInOutQuad(double x) {
 namespace Math {
 	//長さ
 	float Math::Length(const Vector3& v) {
-
 		return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 	}
 	//内積
 	float Math::Dot(const Vector3& v1, const Vector3& v2) {
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+	}
+	//乗算(Vector同士)
+	Vector2 Math::Multiply(const Vector2& v1, const Vector2& v2) {
+		return { v1.x * v2.x, v1.y * v2.y };
+	}
+	//乗算(Vectorｘscaler)
+	Vector2 Math::MultiplyScalar(const Vector2& v, const float scalar) {
+		return { v.x * scalar, v.y * scalar };
 	}
 	//加算
 	Vector3 Math::Add(const Vector3& v1, const Vector3& v2) {
@@ -7804,7 +7811,7 @@ namespace Math {
 		result.z = v.z / length;
 		return result;
 	}
-	//積(Vector同士)
+	//乗算(Vector同士)
 	Vector3 Math::Multiply(const Vector3& v1, const Vector3& v2) {
 		Vector3 result{};
 		result.x = v1.x * v2.x;
@@ -7812,7 +7819,7 @@ namespace Math {
 		result.z = v1.z * v2.z;
 		return result;
 	}
-	//積(Vectorｘscaler)
+	//乗算(Vectorｘscaler)
 	Vector3 Math::MultiplyScalar(const Vector3& v, const float scalar) {
 		Vector3 result{};
 		result.x = v.x * scalar;
@@ -8284,6 +8291,13 @@ File Path: project/engine/math/MyMath.h
 #include <corecrt_math.h>
 
 /// <summary>
+/// Vector2とスカラー値の掛け算
+/// </summary>
+inline Vector2 operator*(const Vector2& v, float s) {
+    return { v.x * s, v.y * s};
+}
+
+/// <summary>
 /// Vector3同士の加算
 /// </summary>
 inline Vector3 operator+(const Vector3& v1, const Vector3& v2) {
@@ -8373,6 +8387,12 @@ namespace Math {
 
     /// <summary>2つのベクトルの内積を計算する</summary>
     float Dot(const Vector3& v1, const Vector3& v2);
+
+	/// <summary>2つのベクトルの加算</summary>
+    Vector2 Multiply(const Vector2& v1, const Vector2& v2);
+
+	/// <summary>ベクトルとスカラー値の掛け算</summary>
+	Vector2 MultiplyScalar(const Vector2& v, const float scalar);
 
     /// <summary>2つのベクトルの加算</summary>
     Vector3 Add(const Vector3& v1, const Vector3& v2);
@@ -10274,7 +10294,11 @@ private:
 File Path: project/game/object/TitleObject.cpp
 ============================================================
 #include "TitleObject.h"
+#include "SpriteBase.h"
+#include "Input.h"
+#include "MyMath.h"
 #include "ImGuiManager.h"
+#include <algorithm>
 
 // タイトル画面用オブジェクトの初期化処理
 void TitleObject::Initialize() {
@@ -10285,13 +10309,6 @@ void TitleObject::Initialize() {
     title_->SetScale({ 1.2f, 1.2f, 1.2f });
     title_->SetTranslate({ -1.2f, 0.8f, 1.0f });
 
-    // pushspaceのオブジェクト生成・初期化
-    push_space_ = std::make_unique< MyEngine::Object3d>();
-    push_space_->Initialize(MyEngine::Object3dBase::GetInstance());
-    push_space_->SetModel("pushspace.obj");
-    push_space_->SetScale({ 0.5f, 0.5f, 0.5f });
-    push_space_->SetTranslate({ 1.1f, -1.5f, 1.0f });
-
     // プレイヤーオブジェクト（外見のみ）生成・初期化
     player_obj_ = std::make_unique< MyEngine::Object3d>();
     player_obj_->Initialize(MyEngine::Object3dBase::GetInstance());
@@ -10299,30 +10316,95 @@ void TitleObject::Initialize() {
     player_obj_transform_.scale = { 0.5f, 0.5f, 0.5f };
     player_obj_transform_.rotate = { 0.0f, -0.5f, 0.0f };
     player_obj_transform_.translate = { -1.3f, -0.5f, -4.8f };
+	// メニュー項目スプライト生成・初期化
+    menu_start_ = std::make_unique<MyEngine::Sprite>();
+    menu_start_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/start.png");
+    menu_start_->SetPosition({ 700, 380 });
+	menu_start_->SetSize({150,100});
+	// 操作説明項目スプライト
+    menu_howto_ = std::make_unique<MyEngine::Sprite>();
+    menu_howto_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/howto.png");
+    menu_howto_->SetPosition({ 693, 505 });
+	menu_howto_->SetSize({ 200,80 });
+	// 終了項目スプライト
+    menu_exit_ = std::make_unique<MyEngine::Sprite>();
+    menu_exit_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/exit.png");
+    menu_exit_->SetPosition({ 699, 607 });
+	menu_exit_->SetSize({ 150,80 });
+
+    // 操作説明
+    howto_sprite_ = std::make_unique<MyEngine::Sprite>();
+    howto_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/operation.png");
+    howto_sprite_->SetAnchorPoint({ 0.5f, 0.5f });
+    howto_sprite_->SetPosition({ 640, 360 });
+	howto_sprite_->SetSize({ 0, 0 });
+
+	// メニュー項目の元サイズ保存
+    start_size_ = { 150,100 };
+    howto_size_ = { 200,80 };
+    exit_size_ = { 150,80 };
 }
 
 // 毎フレームの更新処理
-void TitleObject::Update() {
-    // タイトルオブジェクトの更新
+void TitleObject::Update()
+{
+	// 拡縮用タイマー更新
+    scale_timer_ += kDeltaTime;
+
     title_->Update();
-
-    // pushspaceの点滅演出（アルファ値を周期的に変化させる）
-    alpha_timer_ += kDeltaTime;
-    alpha_ = (sinf(alpha_timer_ * 3.0f) * 0.5f) + 0.5f;
-    push_space_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });
-    push_space_->Update();
-
-    // プレイヤーオブジェクトの演出（回転・ジャンプ処理）
+	// プレイヤーオブジェクトの演出処理
     PlayerObjDirection();
+
+    menu_start_->Update();
+    menu_howto_->Update();
+    menu_exit_->Update();
+    howto_sprite_->Update();
+	// 操作説明表示の更新
+    UpdateHowto();
+
+    auto input = MyEngine::Input::GetInstance();
+
+    // マウスが乗っている項目取得
+    int hover = GetMouseHoverIndex();
+    select_index_ = hover;
+
+    // 拡縮
+    MenuSizeUpdate();
+
+    if (!is_show_howto_) {
+
+        // クリック決定
+        if (hover != -1 && input->IsMouseLeftTriggered()) {
+            switch (hover) {
+            case 0: menu_result_ = MenuResult::Start; break;
+            case 1: is_show_howto_ = true; break;
+            case 2: menu_result_ = MenuResult::Exit; break;
+            }
+        }
+
+    } else {
+        // 操作説明中クリックで戻る
+        if (input->IsKeyPressed(DIK_Q)) {
+            is_show_howto_ = false;
+        }
+    }
 }
 
 // 描画処理
 void TitleObject::Draw() {
     title_->Draw();
-    push_space_->Draw();
     player_obj_->Draw();
 }
+// メニュー項目スプライトの描画処理
+void TitleObject::DrawSprite() {
+    menu_start_->Draw();
+    menu_howto_->Draw();
+    menu_exit_->Draw();
 
+    if (howto_scale_ > 0.0f) {
+        howto_sprite_->Draw();
+    }
+}
 // プレイヤーオブジェクトの演出（回転・ジャンプ処理）
 void TitleObject::PlayerObjDirection() {
     // プレイヤーオブジェクトの回転
@@ -10371,8 +10453,45 @@ void TitleObject::PlayerObjDirection() {
     player_obj_->SetTranslate(player_obj_transform_.translate);
     player_obj_->Update();
 }
+// メニュー項目スプライトの拡縮処理
+void TitleObject::MenuSizeUpdate()
+{
+    float scale = 1.0f + sinf(scale_timer_ * 5.0f) * 0.1f;
 
-// デバッグ表示（ImGuiによるパラメータ調整）
+    menu_start_->SetSize(start_size_);
+    menu_howto_->SetSize(howto_size_);
+    menu_exit_->SetSize(exit_size_);
+
+    if (select_index_ == 0)
+        menu_start_->SetSize({ start_size_.x * scale, start_size_.y * scale });
+
+    if (select_index_ == 1)
+        menu_howto_->SetSize({ howto_size_.x * scale, howto_size_.y * scale });
+
+    if (select_index_ == 2)
+        menu_exit_->SetSize({ exit_size_.x * scale, exit_size_.y * scale });
+}
+// 操作説明表示の更新
+void TitleObject::UpdateHowto() {
+    const float speed = 0.07f;
+
+    if (is_show_howto_) {
+        howto_scale_ += speed;
+    } else {
+        howto_scale_ -= speed;
+    }
+
+    howto_scale_ = std::clamp(howto_scale_, 0.0f, 1.0f);
+
+    float eased = static_cast<float>(easeOutQuad(howto_scale_));
+
+    Vector2 baseSize = { 600.0f, 600.0f };
+    howto_sprite_->SetSize(Math::MultiplyScalar(baseSize, eased));
+
+    howto_sprite_->Update();
+}
+
+// デバッグ表示（
 void TitleObject::Debug() {
 #ifdef USE_IMGUI
     ImGui::Begin("TitleObject SetUp");
@@ -10429,8 +10548,77 @@ void TitleObject::Debug() {
         player_obj_transform_.translate = { player_translate[0], player_translate[1], player_translate[2] };
     }
 
+    ImGui::Separator();
+    ImGui::Text("Sprites");
+
+    // menu_start_
+    auto start_pos = menu_start_->GetPosition();
+    auto start_size = menu_start_->GetSize();
+    if (ImGui::DragFloat2("Start Pos", &start_pos.x, 1.0f)) {
+        menu_start_->SetPosition(start_pos);
+    }
+    if (ImGui::DragFloat2("Start Size", &start_size.x, 1.0f)) {
+        menu_start_->SetSize(start_size);
+    }
+
+    // menu_howto_
+    auto howto_pos = menu_howto_->GetPosition();
+    auto howto_size = menu_howto_->GetSize();
+    if (ImGui::DragFloat2("HowTo Pos", &howto_pos.x, 1.0f)) {
+        menu_howto_->SetPosition(howto_pos);
+    }
+    if (ImGui::DragFloat2("HowTo Size", &howto_size.x, 1.0f)) {
+        menu_howto_->SetSize(howto_size);
+    }
+
+    // menu_exit_
+    auto exit_pos = menu_exit_->GetPosition();
+    auto exit_size = menu_exit_->GetSize();
+    if (ImGui::DragFloat2("Exit Pos", &exit_pos.x, 1.0f)) {
+        menu_exit_->SetPosition(exit_pos);
+    }
+    if (ImGui::DragFloat2("Exit Size", &exit_size.x, 1.0f)) {
+        menu_exit_->SetSize(exit_size);
+    }
+
+    // howto_sprite_
+    auto howto_sprite_pos = howto_sprite_->GetPosition();
+    auto howto_sprite_size = howto_sprite_->GetSize();
+    if (ImGui::DragFloat2("HowToSprite Pos", &howto_sprite_pos.x, 1.0f)) {
+        howto_sprite_->SetPosition(howto_sprite_pos);
+    }
+    if (ImGui::DragFloat2("HowToSprite Size", &howto_sprite_size.x, 1.0f)) {
+        howto_sprite_->SetSize(howto_sprite_size);
+    }
+
     ImGui::End();
 #endif
+}
+
+// スプライト上にマウスが乗っているか
+bool TitleObject::IsMouseOnSprite(MyEngine::Sprite* sprite)
+{
+    POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
+
+    Vector2 pos = sprite->GetPosition(); // 左上
+    Vector2 size = sprite->GetSize();     // 幅・高さ
+
+    if (mouse.x >= pos.x && mouse.x <= pos.x + size.x &&
+        mouse.y >= pos.y && mouse.y <= pos.y + size.y) {
+        return true;
+    }
+
+    return false;
+}
+
+// マウスが乗っているメニュー項目のインデックスを取得
+int TitleObject::GetMouseHoverIndex()
+{
+    if (IsMouseOnSprite(menu_start_.get())) return 0;
+    if (IsMouseOnSprite(menu_howto_.get())) return 1;
+    if (IsMouseOnSprite(menu_exit_.get()))  return 2;
+
+    return -1;
 }
 
 
@@ -10447,50 +10635,112 @@ File Path: project/game/object/TitleObject.h
 // タイトルオブジェクト
 class TitleObject {
 public:
+	/// メニュー選択結果
+	enum class MenuResult {
+		None,
+		Start,
+		Exit
+	};
+
 	/// <summary>
-	/// タイトル画面に登場する全オブジェクトの初期化を行う
+	/// 初期化
 	/// </summary>
 	void Initialize();
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う
+	/// 更新
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// タイトル、PUSH SPACE、プレイヤーモデルを描画する。
+	/// タイトル、PUSH SPACE、プレイヤーモデルを描画
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// プレイヤーオブジェクトの演出処理を行う
+	/// メニュー項目スプライトを描画
+	/// </summary>
+	void DrawSprite();
+
+	/// <summary>
+	/// プレイヤーオブジェクトの演出処理
 	/// </summary>
 	void PlayerObjDirection();
 
 	/// <summary>
-	/// デバッグ用UIを表示する。
+	/// メニュー項目の拡縮処理
+	/// </summary>
+	void MenuSizeUpdate();
+
+	/// <summary>
+	/// 操作説明表示の更新
+	/// </summary>
+	void UpdateHowto();
+
+	/// <summary>
+	/// メニュー選択結果リセット
+	/// </summary>
+	void ResetMenuResult() { menu_result_ = MenuResult::None; }
+
+	/// <summary>
+	/// デバッグ用UIを表示
 	/// </summary>
 	void Debug();
+	
+	/// <summary>
+	/// マウスが乗っているメニュー項目のインデックスを取得
+	///	</summary>
+	int GetMouseHoverIndex();
+
+	/// <summary>
+	/// スプライト上にマウスが乗っているか
+	/// </summary>
+	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
+
+	/// <summary>
+	/// メニュー選択結果を取得
+	/// </summary>
+	MenuResult GetMenuResult() const { return menu_result_; }
 
 private:
+	// メニュー選択結果
+	MenuResult menu_result_ = MenuResult::None;
 	// タイトルのオブジェクト
 	std::unique_ptr< MyEngine::Object3d> title_;
 	// pushspaceのオブジェクト
 	std::unique_ptr< MyEngine::Object3d> push_space_;
 	// プレイヤーオブジェクト
 	std::unique_ptr< MyEngine::Object3d> player_obj_;
+	//スタート項目スプライト
+	std::unique_ptr< MyEngine::Sprite> menu_start_;
+	//操作説明項目スプライト
+	std::unique_ptr< MyEngine::Sprite> menu_howto_;
+	//終了項目スプライト
+	std::unique_ptr< MyEngine::Sprite> menu_exit_;
+	//操作説明スプライト
+	std::unique_ptr<MyEngine::Sprite> howto_sprite_;
 	// プレイヤーオブジェクトTransform
 	Transform player_obj_transform_;
+	//メニュー項目の元サイズ保存
+	Vector2 start_size_;
+	Vector2 howto_size_;
+	Vector2 exit_size_;
 	// Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	// playerObj回転速度
 	const float kRotateSpeed = 0.5f;
+    // 入力受付間隔
+	const float kInputInterval = 10.0f;
 	// ジャンプの速度
 	float jump_velocity_ = 0.0f;
 	// ジャンプの力
 	float jump_power_ = 0.12f;
 	// 最大ジャンプ数
 	const int kMaxJumpCount = 2;
+	// 選択中メニューインデックス
+	int select_index_ = 0; 
+	// 入力受付間隔タイマー
+	float input_timer_ = 0.0f;
 	// 重力
 	float gravity_ = -0.01f;
 	// 地面
@@ -10501,14 +10751,15 @@ private:
 	float jump_timer_ = 0.0f;
 	// 二段ジャンプ時回転速度
 	float jump_rotate_speed_ = 180.0f;
+	float howto_scale_ = 0.0f;
+	// 選択中メニュー拡縮用タイマー
+	float scale_timer_ = 0.0f;
 	// ジャンプカウント
 	int jump_count_ = 0;
 	// ジャンプ中か
 	bool is_jumping_ = false;
-	// α値
-	float alpha_ = 1.0f;
-	// α値タイマー
-	float alpha_timer_ = 0.0f;
+	// 操作説明表示中か
+	bool is_show_howto_ = false;
 };
 
 
@@ -11861,6 +12112,7 @@ File Path: project/game/scene/GameScene.cpp
 #include "CameraManager.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
+#include "Input.h"
 
 // ゲームシーンの初期化処理ad
 void GameScene::Initialize() {
@@ -11991,6 +12243,24 @@ void GameScene::Update() {
 	// カメラの更新
 	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 
+	// 一時停止フラグ切り替え
+	if (!is_start_animation_ && !is_returning_ && MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_Q)) {
+		is_game_pause_ = !is_game_pause_;
+	}
+	// UIに一時停止フラグをセット
+	ui_->SetOperationGuide(is_game_pause_);
+
+	// UIの更新
+	ui_->Update();
+
+	// デバッグ表示
+	Debug();
+
+	// ゲーム一時停止中は更新処理をスキップ
+	if (is_game_pause_) {
+		return;
+	}
+
 	// スタート演出
 	StartAnimation();
 
@@ -12003,7 +12273,7 @@ void GameScene::Update() {
 		if (is_boss_spawned_) {
 			return;
 		}
-
+		// ボス出現条件判定
 		if (IsBossSpawnCondition()) {
 			is_boss_spawned_ = true;
 			game_phase_ = GamePhase::BossBattle;
@@ -12012,7 +12282,6 @@ void GameScene::Update() {
 			player_->SetFollowPlatform(false);
 			is_following_initialized_ = false;
 		}
-
 	}
 
 	// 敵ごとの衝突判定・デスパーティクル処理
@@ -12054,23 +12323,23 @@ void GameScene::Update() {
 	for (auto& particle : particle_emitters_) {
 		particle->Update();
 	}
-
+	//ボス撃破でゲームクリアフラグオン
 	if (boss_->IsDead()) {
 		is_to_game_clear_ = true;
 	}
-
+	//プレイヤー撃破でゲームオーバーフラグオン
 	if (player_->IsDead()) {
 		is_to_game_over_ = true;
 	}
-
+	// デバッグ用：Rキーでゲームオーバー
 	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_R)) {
 		is_to_game_over_ = true;
 	}
-
+	// ゲームクリアシーンへ遷移
 	if (is_to_game_clear_) {
 		ToGameClear();
 	}
-
+	// ゲームオーバーシーンへ遷移
 	if (is_to_game_over_) {
 		ToGameOver();
 	}
@@ -12078,11 +12347,6 @@ void GameScene::Update() {
 	// フェードの更新
 	fade_->Update();
 
-	// UIの更新
-	ui_->Update();
-
-	// デバッグ表示
-	Debug();
 }
 
 // 描画処理
@@ -12150,6 +12414,9 @@ void GameScene::Debug() {
 		ImGui::DragFloat3("Translate", &trans.translate.x, 0.1f, -1000.0f, 1000.0f);
 		ImGui::TreePop();
 	}
+	//UIのデバック表示
+	ui_->Debug();
+
 	ImGui::End();
 #endif
 }
@@ -12326,7 +12593,7 @@ void GameScene::ToGameOver() {
 		MyEngine::SceneManager::GetInstance()->ChangeScene("OVER");
 	}
 }
-
+// ボス出現条件判定
 bool GameScene::IsBossSpawnCondition() {
 	float dz = std::abs(
 		player_->GetTranslate().z - boss_spawn_position_.z
@@ -12373,23 +12640,23 @@ public:
 	};
 
 	/// <summary>
-	/// シーン初期化処理。
+	/// 初期化
 	/// </summary>
 	void Initialize() override;
 	/// <summary>
-	/// シーン終了処理。
+	/// 終了
 	/// </summary>
 	void Finalize() override;
 	/// <summary>
-	/// 毎フレーム更新処理。
+	/// 更新
 	/// </summary>
 	void Update() override;
 	/// <summary>
-	/// 描画処理。
+	/// 描画
 	/// </summary>
 	void Draw() override;
 	/// <summary>
-	/// デバッグ表示処理（ImGui）。
+	/// デバッグ表示処
 	/// </summary>
 	void Debug() override;
 
@@ -12404,15 +12671,18 @@ public:
 	void StartAnimation();
 
 	/// <summary>
-	/// ゲームクリアシーンへ遷移する。
+	/// ゲームクリアシーンへ遷移
 	/// </summary>
 	void ToGameClear();
 
 	/// <summary>
-	/// ゲームオーバーシーンへ遷移する。
+	/// ゲームオーバーシーンへ遷移
 	/// </summary>
 	void ToGameOver();
 
+	/// <summary>
+	/// ボス出現条件を判定
+	/// </summary>
 	bool IsBossSpawnCondition();
 private:
 	//ゲームフェーズ
@@ -12461,6 +12731,22 @@ private:
 	const float kBossTriggerZ = 150.0f;
 	//ボス出現距離オフセット
 	const float kBossSpawnDistance = 20.0f;
+	//1回転にかかる時間 
+	const float totalRotationTime = 5.0f;
+	//角速度 
+	const float rotationSpeed = 1.0f;
+	//収束に書ける時間 
+	const float oneRotation = 2.0f * 3.14159f;
+	//撃破演出経過時間タイマー
+	float death_timer_ = 0.0f;
+	//撃破演出回転速度
+	float death_rotation_speed_ = 5.0f;
+	//重力加速度
+	float gravity_ = 0.015f;
+	//Zオフセット
+	float z_offset_ = 0.0f;
+	//カメラ回転タイマー
+	float camera_rotate_timer_ = 0.0f;
 	//ゲームクリアシーン遷移フラグ
 	bool is_to_game_clear_ = false;
 	//ゲームオーバーシーン遷移フラグ
@@ -12469,28 +12755,14 @@ private:
 	bool is_death_motion_started_ = false;
 	//ボスが出現したか
 	bool is_boss_spawned_ = false;
-	//撃破演出経過時間タイマー
-	float death_timer_ = 0.0f;
-	//撃破演出回転速度
-	float death_rotation_speed_ = 5.0f;
-	//重力加速度
-	float gravity_ = 0.015f;
-	//1回転にかかる時間 
-	const float totalRotationTime = 5.0f;
-	//角速度 
-	const float rotationSpeed = 1.0f;
-	//収束に書ける時間 
-	const float oneRotation = 2.0f * 3.14159f;
 	//スタート演出フラグ
 	bool is_start_animation_ = true;
 	//リターン演出フラグ
 	bool is_returning_ = false;
 	//カメラ追従初期化フラグ
 	bool is_following_initialized_ = false;
-	//Zオフセット
-	float z_offset_ = 0.0f;
-	//カメラ回転タイマー
-	float camera_rotate_timer_ = 0.0f;
+	//ゲーム一時停止フラグ
+	bool is_game_pause_ = false;
 };
 
 
@@ -12647,6 +12919,8 @@ void TitleScene::Draw() {
 	// 共通描画設定
 	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
 
+	title_object_->DrawSprite();
+
 	// フェード描画
 	fade_->Draw();
 }
@@ -12689,14 +12963,22 @@ void TitleScene::SceneChange() {
 		fade_->End();
 	}
 
-	// スペースキー押下でフェードアウト開始
-	if (fade_->GetState() == Fade::State::None && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+	auto result = title_object_->GetMenuResult();
+
+	// 「始める」が選ばれた時だけフェードアウト
+	if (fade_->GetState() == Fade::State::None &&
+		result == TitleObject::MenuResult::Start) {
+
 		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 
 	// フェードアウト終了後にゲームシーンへ遷移
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()) {
 		MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
+	}
+	// 「終了」は即 exe を落とす（フェードなし）
+	if (result == TitleObject::MenuResult::Exit) {
+		PostQuitMessage(0);
 	}
 }
 
@@ -13010,42 +13292,102 @@ File Path: project/game/ui/Ui.cpp
 #include "Ui.h"
 #include "SpriteBase.h"
 #include "Input.h"
+#include "MyMath.h"
 #include "ImGuiManager.h"
 #include <algorithm>
 
 //初期化
 void Ui::Initialize()
 {
-    hPBar_ = std::make_unique<MyEngine::Sprite>();
-    hPBar_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/hpbar.png");
-    hPBar_->SetSize({ 200, 20 });
-    hPBar_->SetPosition({ 50, 50 });
+	//HPバーの初期化
+    hp_bar_ = std::make_unique<MyEngine::Sprite>();
+    hp_bar_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/hpbar.png");
+    hp_bar_->SetSize({ 200, 20 });
+    hp_bar_->SetPosition({ 50, 50 });
+
+	//ポーズの初期化
+	pause_ = std::make_unique<MyEngine::Sprite>();
+	pause_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/pause.png");
+    pause_->SetSize({ 300,60 });
+	pause_->SetPosition({ 1000, 20 });
+
+	//操作説明画面の初期化
+    operation_guide_ = std::make_unique<MyEngine::Sprite>();
+    operation_guide_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/operation.png");
+    operation_guide_->SetPosition({ 640, 360 }); 
+    operation_guide_->SetSize({ 600, 600 });
+	operation_guide_->SetAnchorPoint({ 0.5f, 0.5f });
 }
 //更新
 void Ui::Update()
 {
+	//HPバー処理
     UpdateHPBar();
-    hPBar_->Update();
+    //操作説明画面処理
+	UpdateOperationGuide();
+    //ポーズ更新
+	pause_->Update();
+    //HPバー更新
+    hp_bar_->Update();
 }
 //描画
 void Ui::Draw()
 {
-    hPBar_->Draw();
+	//HPバー描画
+    hp_bar_->Draw();
+
+	//ポーズ描画
+	pause_->Draw();
+
+	//操作説明画面描画
+    if (operation_scale_ > 0.01f) {
+        operation_guide_->Draw();
+    }
 }
 //デバック
 void Ui::Debug()
 {
 #ifdef USE_IMGUI
-    Vector2 position = hPBar_->GetPosition();
-    Vector2 size = hPBar_->GetSize();
+    Vector2 position = hp_bar_->GetPosition();
+    Vector2 size = hp_bar_->GetSize();
 
     if (ImGui::Begin("HPBar Debug")) {
         if (ImGui::TreeNode("HPBar")) {
             ImGui::DragFloat2("Position", &position.x, 1.0f);
             ImGui::DragFloat2("Size", &size.x, 1.0f);
 
-            hPBar_->SetPosition(position);
-            hPBar_->SetSize(size);
+            hp_bar_->SetPosition(position);
+            hp_bar_->SetSize(size);
+
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode("Pause")) {
+            Vector2 pause_pos = pause_->GetPosition();
+            Vector2 pause_size = pause_->GetSize();
+
+            ImGui::DragFloat2("Position", &pause_pos.x, 1.0f);
+            ImGui::DragFloat2("Size", &pause_size.x, 1.0f);
+
+            pause_->SetPosition(pause_pos);
+            pause_->SetSize(pause_size);
+
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode("Operation Guide")) {
+            // SRT取得
+            Vector2 op_pos = operation_guide_->GetPosition();
+            Vector2 op_size = operation_guide_->GetSize();
+            float op_rot = operation_guide_->GetRotation();
+
+            // IMGUIで編集
+            ImGui::DragFloat2("Position", &op_pos.x, 1.0f);
+            ImGui::DragFloat2("Size", &op_size.x, 1.0f);
+            ImGui::DragFloat("Rotation", &op_rot, 0.01f);
+
+            // 反映
+            operation_guide_->SetPosition(op_pos);
+            operation_guide_->SetSize(op_size);
+            operation_guide_->SetRotation(op_rot);
 
             ImGui::TreePop();
         }
@@ -13056,19 +13398,42 @@ void Ui::Debug()
 //HPバー更新
 void Ui::UpdateHPBar() {
 
-    // 現在のHPを取得
+    //現在のHPを取得
     float currentHP = static_cast<float>(player_->GetHP());
 
-    // HPの割合
+    //HPの割合
     constexpr float maxHPValue = 100.0f;
     float hpRatio = std::clamp(currentHP / maxHPValue, 0.0f, 1.0f);
 
-    // 最大サイズ
+    //最大サイズ
     Vector2 maxSize = { 200.0f, 20.0f };
 
-    // HP割合に応じて横幅を調整
-    hPBar_->SetSize({ maxSize.x * hpRatio, maxSize.y });
+    //HP割合に応じて横幅を調整
+    hp_bar_->SetSize({ maxSize.x * hpRatio, maxSize.y });
 }
+//操作説明画面処理
+void Ui::UpdateOperationGuide()
+{
+    const float speed = 0.07f;
+    
+	//スケール更新
+    if (is_show_operation_) {
+        operation_scale_ += speed;
+    } else {
+        operation_scale_ -= speed;
+    }
+
+	//範囲制限
+    operation_scale_ = std::clamp(operation_scale_, 0.0f, 1.0f);
+	//イージング適用
+    float eased = static_cast<float>(easeOutQuad(operation_scale_));
+
+    Vector2 baseSize = { 600.0f, 600.0f };
+    operation_guide_->SetSize(Math::MultiplyScalar(baseSize,eased));
+
+    operation_guide_->Update();
+}
+
 
 ============================================================
 File Path: project/game/ui/Ui.h
@@ -13101,14 +13466,33 @@ public:
 	/// HPバー更新
 	/// </summary>
 	void UpdateHPBar();
+     /// <summary>
+     /// 操作説明画面処理
+     /// </summary>
+	void UpdateOperationGuide();
 public:
 	/// <summary>
 	/// プレイヤーをセット
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
+
+	/// <summary>
+	/// 操作説明画面表示設定
+	/// </summary>
+	void SetOperationGuide(bool flag) { is_show_operation_ = flag; }
 private:
-	std::unique_ptr<MyEngine::Sprite> hPBar_;
+	// HPバー
+	std::unique_ptr<MyEngine::Sprite> hp_bar_;
+	//ポーズ
+	std::unique_ptr<MyEngine::Sprite> pause_;
+	//操作説明
+	std::unique_ptr<MyEngine::Sprite> operation_guide_;
+	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
+	//操作説明画面のスケール
+	float operation_scale_ = 0.0f;
+	//操作説明画面が出ているか
+	bool is_show_operation_ = false;
 };
 
 ============================================================
