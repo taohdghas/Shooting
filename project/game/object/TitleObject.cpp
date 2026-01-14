@@ -1,5 +1,9 @@
 #include "TitleObject.h"
+#include "SpriteBase.h"
+#include "Input.h"
+#include "MyMath.h"
 #include "ImGuiManager.h"
+#include <algorithm>
 
 // タイトル画面用オブジェクトの初期化処理
 void TitleObject::Initialize() {
@@ -10,13 +14,6 @@ void TitleObject::Initialize() {
     title_->SetScale({ 1.2f, 1.2f, 1.2f });
     title_->SetTranslate({ -1.2f, 0.8f, 1.0f });
 
-    // pushspaceのオブジェクト生成・初期化
-    push_space_ = std::make_unique< MyEngine::Object3d>();
-    push_space_->Initialize(MyEngine::Object3dBase::GetInstance());
-    push_space_->SetModel("pushspace.obj");
-    push_space_->SetScale({ 0.5f, 0.5f, 0.5f });
-    push_space_->SetTranslate({ 1.1f, -1.5f, 1.0f });
-
     // プレイヤーオブジェクト（外見のみ）生成・初期化
     player_obj_ = std::make_unique< MyEngine::Object3d>();
     player_obj_->Initialize(MyEngine::Object3dBase::GetInstance());
@@ -24,30 +21,95 @@ void TitleObject::Initialize() {
     player_obj_transform_.scale = { 0.5f, 0.5f, 0.5f };
     player_obj_transform_.rotate = { 0.0f, -0.5f, 0.0f };
     player_obj_transform_.translate = { -1.3f, -0.5f, -4.8f };
+	// メニュー項目スプライト生成・初期化
+    menu_start_ = std::make_unique<MyEngine::Sprite>();
+    menu_start_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/start.png");
+    menu_start_->SetPosition({ 700, 380 });
+	menu_start_->SetSize({150,100});
+	// 操作説明項目スプライト
+    menu_howto_ = std::make_unique<MyEngine::Sprite>();
+    menu_howto_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/howto.png");
+    menu_howto_->SetPosition({ 693, 505 });
+	menu_howto_->SetSize({ 200,80 });
+	// 終了項目スプライト
+    menu_exit_ = std::make_unique<MyEngine::Sprite>();
+    menu_exit_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/exit.png");
+    menu_exit_->SetPosition({ 699, 607 });
+	menu_exit_->SetSize({ 150,80 });
+
+    // 操作説明
+    howto_sprite_ = std::make_unique<MyEngine::Sprite>();
+    howto_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/operation.png");
+    howto_sprite_->SetAnchorPoint({ 0.5f, 0.5f });
+    howto_sprite_->SetPosition({ 640, 360 });
+	howto_sprite_->SetSize({ 0, 0 });
+
+	// メニュー項目の元サイズ保存
+    start_size_ = { 150,100 };
+    howto_size_ = { 200,80 };
+    exit_size_ = { 150,80 };
 }
 
 // 毎フレームの更新処理
-void TitleObject::Update() {
-    // タイトルオブジェクトの更新
+void TitleObject::Update()
+{
+	// 拡縮用タイマー更新
+    scale_timer_ += kDeltaTime;
+
     title_->Update();
-
-    // pushspaceの点滅演出（アルファ値を周期的に変化させる）
-    alpha_timer_ += kDeltaTime;
-    alpha_ = (sinf(alpha_timer_ * 3.0f) * 0.5f) + 0.5f;
-    push_space_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });
-    push_space_->Update();
-
-    // プレイヤーオブジェクトの演出（回転・ジャンプ処理）
+	// プレイヤーオブジェクトの演出処理
     PlayerObjDirection();
+
+    menu_start_->Update();
+    menu_howto_->Update();
+    menu_exit_->Update();
+    howto_sprite_->Update();
+	// 操作説明表示の更新
+    UpdateHowto();
+
+    auto input = MyEngine::Input::GetInstance();
+
+    // マウスが乗っている項目取得
+    int hover = GetMouseHoverIndex();
+    select_index_ = hover;
+
+    // 拡縮
+    MenuSizeUpdate();
+
+    if (!is_show_howto_) {
+
+        // クリック決定
+        if (hover != -1 && input->IsMouseLeftTriggered()) {
+            switch (hover) {
+            case 0: menu_result_ = MenuResult::Start; break;
+            case 1: is_show_howto_ = true; break;
+            case 2: menu_result_ = MenuResult::Exit; break;
+            }
+        }
+
+    } else {
+        // 操作説明中クリックで戻る
+        if (input->IsKeyPressed(DIK_Q)) {
+            is_show_howto_ = false;
+        }
+    }
 }
 
 // 描画処理
 void TitleObject::Draw() {
     title_->Draw();
-    push_space_->Draw();
     player_obj_->Draw();
 }
+// メニュー項目スプライトの描画処理
+void TitleObject::DrawSprite() {
+    menu_start_->Draw();
+    menu_howto_->Draw();
+    menu_exit_->Draw();
 
+    if (howto_scale_ > 0.0f) {
+        howto_sprite_->Draw();
+    }
+}
 // プレイヤーオブジェクトの演出（回転・ジャンプ処理）
 void TitleObject::PlayerObjDirection() {
     // プレイヤーオブジェクトの回転
@@ -96,8 +158,45 @@ void TitleObject::PlayerObjDirection() {
     player_obj_->SetTranslate(player_obj_transform_.translate);
     player_obj_->Update();
 }
+// メニュー項目スプライトの拡縮処理
+void TitleObject::MenuSizeUpdate()
+{
+    float scale = 1.0f + sinf(scale_timer_ * 5.0f) * 0.1f;
 
-// デバッグ表示（ImGuiによるパラメータ調整）
+    menu_start_->SetSize(start_size_);
+    menu_howto_->SetSize(howto_size_);
+    menu_exit_->SetSize(exit_size_);
+
+    if (select_index_ == 0)
+        menu_start_->SetSize({ start_size_.x * scale, start_size_.y * scale });
+
+    if (select_index_ == 1)
+        menu_howto_->SetSize({ howto_size_.x * scale, howto_size_.y * scale });
+
+    if (select_index_ == 2)
+        menu_exit_->SetSize({ exit_size_.x * scale, exit_size_.y * scale });
+}
+// 操作説明表示の更新
+void TitleObject::UpdateHowto() {
+    const float speed = 0.07f;
+
+    if (is_show_howto_) {
+        howto_scale_ += speed;
+    } else {
+        howto_scale_ -= speed;
+    }
+
+    howto_scale_ = std::clamp(howto_scale_, 0.0f, 1.0f);
+
+    float eased = static_cast<float>(easeOutQuad(howto_scale_));
+
+    Vector2 baseSize = { 600.0f, 600.0f };
+    howto_sprite_->SetSize(Math::MultiplyScalar(baseSize, eased));
+
+    howto_sprite_->Update();
+}
+
+// デバッグ表示（
 void TitleObject::Debug() {
 #ifdef USE_IMGUI
     ImGui::Begin("TitleObject SetUp");
@@ -154,6 +253,75 @@ void TitleObject::Debug() {
         player_obj_transform_.translate = { player_translate[0], player_translate[1], player_translate[2] };
     }
 
+    ImGui::Separator();
+    ImGui::Text("Sprites");
+
+    // menu_start_
+    auto start_pos = menu_start_->GetPosition();
+    auto start_size = menu_start_->GetSize();
+    if (ImGui::DragFloat2("Start Pos", &start_pos.x, 1.0f)) {
+        menu_start_->SetPosition(start_pos);
+    }
+    if (ImGui::DragFloat2("Start Size", &start_size.x, 1.0f)) {
+        menu_start_->SetSize(start_size);
+    }
+
+    // menu_howto_
+    auto howto_pos = menu_howto_->GetPosition();
+    auto howto_size = menu_howto_->GetSize();
+    if (ImGui::DragFloat2("HowTo Pos", &howto_pos.x, 1.0f)) {
+        menu_howto_->SetPosition(howto_pos);
+    }
+    if (ImGui::DragFloat2("HowTo Size", &howto_size.x, 1.0f)) {
+        menu_howto_->SetSize(howto_size);
+    }
+
+    // menu_exit_
+    auto exit_pos = menu_exit_->GetPosition();
+    auto exit_size = menu_exit_->GetSize();
+    if (ImGui::DragFloat2("Exit Pos", &exit_pos.x, 1.0f)) {
+        menu_exit_->SetPosition(exit_pos);
+    }
+    if (ImGui::DragFloat2("Exit Size", &exit_size.x, 1.0f)) {
+        menu_exit_->SetSize(exit_size);
+    }
+
+    // howto_sprite_
+    auto howto_sprite_pos = howto_sprite_->GetPosition();
+    auto howto_sprite_size = howto_sprite_->GetSize();
+    if (ImGui::DragFloat2("HowToSprite Pos", &howto_sprite_pos.x, 1.0f)) {
+        howto_sprite_->SetPosition(howto_sprite_pos);
+    }
+    if (ImGui::DragFloat2("HowToSprite Size", &howto_sprite_size.x, 1.0f)) {
+        howto_sprite_->SetSize(howto_sprite_size);
+    }
+
     ImGui::End();
 #endif
+}
+
+// スプライト上にマウスが乗っているか
+bool TitleObject::IsMouseOnSprite(MyEngine::Sprite* sprite)
+{
+    POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
+
+    Vector2 pos = sprite->GetPosition(); // 左上
+    Vector2 size = sprite->GetSize();     // 幅・高さ
+
+    if (mouse.x >= pos.x && mouse.x <= pos.x + size.x &&
+        mouse.y >= pos.y && mouse.y <= pos.y + size.y) {
+        return true;
+    }
+
+    return false;
+}
+
+// マウスが乗っているメニュー項目のインデックスを取得
+int TitleObject::GetMouseHoverIndex()
+{
+    if (IsMouseOnSprite(menu_start_.get())) return 0;
+    if (IsMouseOnSprite(menu_howto_.get())) return 1;
+    if (IsMouseOnSprite(menu_exit_.get()))  return 2;
+
+    return -1;
 }

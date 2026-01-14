@@ -34,23 +34,23 @@ public:
 	};
 
 	/// <summary>
-	/// シーン初期化処理。
+	/// 初期化
 	/// </summary>
 	void Initialize() override;
 	/// <summary>
-	/// シーン終了処理。
+	/// 終了
 	/// </summary>
 	void Finalize() override;
 	/// <summary>
-	/// 毎フレーム更新処理。
+	/// 更新
 	/// </summary>
 	void Update() override;
 	/// <summary>
-	/// 描画処理。
+	/// 描画
 	/// </summary>
 	void Draw() override;
 	/// <summary>
-	/// デバッグ表示処理（ImGui）。
+	/// デバッグ表示処
 	/// </summary>
 	void Debug() override;
 
@@ -65,15 +65,18 @@ public:
 	void StartAnimation();
 
 	/// <summary>
-	/// ゲームクリアシーンへ遷移する。
+	/// ゲームクリアシーンへ遷移
 	/// </summary>
 	void ToGameClear();
 
 	/// <summary>
-	/// ゲームオーバーシーンへ遷移する。
+	/// ゲームオーバーシーンへ遷移
 	/// </summary>
 	void ToGameOver();
 
+	/// <summary>
+	/// ボス出現条件を判定
+	/// </summary>
 	bool IsBossSpawnCondition();
 private:
 	//ゲームフェーズ
@@ -122,6 +125,22 @@ private:
 	const float kBossTriggerZ = 150.0f;
 	//ボス出現距離オフセット
 	const float kBossSpawnDistance = 20.0f;
+	//1回転にかかる時間 
+	const float totalRotationTime = 5.0f;
+	//角速度 
+	const float rotationSpeed = 1.0f;
+	//収束に書ける時間 
+	const float oneRotation = 2.0f * 3.14159f;
+	//撃破演出経過時間タイマー
+	float death_timer_ = 0.0f;
+	//撃破演出回転速度
+	float death_rotation_speed_ = 5.0f;
+	//重力加速度
+	float gravity_ = 0.015f;
+	//Zオフセット
+	float z_offset_ = 0.0f;
+	//カメラ回転タイマー
+	float camera_rotate_timer_ = 0.0f;
 	//ゲームクリアシーン遷移フラグ
 	bool is_to_game_clear_ = false;
 	//ゲームオーバーシーン遷移フラグ
@@ -130,26 +149,12 @@ private:
 	bool is_death_motion_started_ = false;
 	//ボスが出現したか
 	bool is_boss_spawned_ = false;
-	//撃破演出経過時間タイマー
-	float death_timer_ = 0.0f;
-	//撃破演出回転速度
-	float death_rotation_speed_ = 5.0f;
-	//重力加速度
-	float gravity_ = 0.015f;
-	//1回転にかかる時間 
-	const float totalRotationTime = 5.0f;
-	//角速度 
-	const float rotationSpeed = 1.0f;
-	//収束に書ける時間 
-	const float oneRotation = 2.0f * 3.14159f;
 	//スタート演出フラグ
 	bool is_start_animation_ = true;
 	//リターン演出フラグ
 	bool is_returning_ = false;
 	//カメラ追従初期化フラグ
 	bool is_following_initialized_ = false;
-	//Zオフセット
-	float z_offset_ = 0.0f;
-	//カメラ回転タイマー
-	float camera_rotate_timer_ = 0.0f;
+	//ゲーム一時停止フラグ
+	bool is_game_pause_ = false;
 };

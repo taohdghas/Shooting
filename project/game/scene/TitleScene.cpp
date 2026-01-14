@@ -77,6 +77,8 @@ void TitleScene::Draw() {
 	// 共通描画設定
 	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
 
+	title_object_->DrawSprite();
+
 	// フェード描画
 	fade_->Draw();
 }
@@ -119,13 +121,21 @@ void TitleScene::SceneChange() {
 		fade_->End();
 	}
 
-	// スペースキー押下でフェードアウト開始
-	if (fade_->GetState() == Fade::State::None && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
+	auto result = title_object_->GetMenuResult();
+
+	// 「始める」が選ばれた時だけフェードアウト
+	if (fade_->GetState() == Fade::State::None &&
+		result == TitleObject::MenuResult::Start) {
+
 		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 	}
 
 	// フェードアウト終了後にゲームシーンへ遷移
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()) {
 		MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
+	}
+	// 「終了」は即 exe を落とす（フェードなし）
+	if (result == TitleObject::MenuResult::Exit) {
+		PostQuitMessage(0);
 	}
 }

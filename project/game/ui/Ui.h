@@ -26,12 +26,31 @@ public:
 	/// HPバー更新
 	/// </summary>
 	void UpdateHPBar();
+     /// <summary>
+     /// 操作説明画面処理
+     /// </summary>
+	void UpdateOperationGuide();
 public:
 	/// <summary>
 	/// プレイヤーをセット
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
+
+	/// <summary>
+	/// 操作説明画面表示設定
+	/// </summary>
+	void SetOperationGuide(bool flag) { is_show_operation_ = flag; }
 private:
-	std::unique_ptr<MyEngine::Sprite> hPBar_;
+	// HPバー
+	std::unique_ptr<MyEngine::Sprite> hp_bar_;
+	//ポーズ
+	std::unique_ptr<MyEngine::Sprite> pause_;
+	//操作説明
+	std::unique_ptr<MyEngine::Sprite> operation_guide_;
+	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
+	//操作説明画面のスケール
+	float operation_scale_ = 0.0f;
+	//操作説明画面が出ているか
+	bool is_show_operation_ = false;
 };

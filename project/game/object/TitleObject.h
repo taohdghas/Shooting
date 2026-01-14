@@ -8,50 +8,112 @@
 // タイトルオブジェクト
 class TitleObject {
 public:
+	/// メニュー選択結果
+	enum class MenuResult {
+		None,
+		Start,
+		Exit
+	};
+
 	/// <summary>
-	/// タイトル画面に登場する全オブジェクトの初期化を行う
+	/// 初期化
 	/// </summary>
 	void Initialize();
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う
+	/// 更新
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// タイトル、PUSH SPACE、プレイヤーモデルを描画する。
+	/// タイトル、PUSH SPACE、プレイヤーモデルを描画
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// プレイヤーオブジェクトの演出処理を行う
+	/// メニュー項目スプライトを描画
+	/// </summary>
+	void DrawSprite();
+
+	/// <summary>
+	/// プレイヤーオブジェクトの演出処理
 	/// </summary>
 	void PlayerObjDirection();
 
 	/// <summary>
-	/// デバッグ用UIを表示する。
+	/// メニュー項目の拡縮処理
+	/// </summary>
+	void MenuSizeUpdate();
+
+	/// <summary>
+	/// 操作説明表示の更新
+	/// </summary>
+	void UpdateHowto();
+
+	/// <summary>
+	/// メニュー選択結果リセット
+	/// </summary>
+	void ResetMenuResult() { menu_result_ = MenuResult::None; }
+
+	/// <summary>
+	/// デバッグ用UIを表示
 	/// </summary>
 	void Debug();
+	
+	/// <summary>
+	/// マウスが乗っているメニュー項目のインデックスを取得
+	///	</summary>
+	int GetMouseHoverIndex();
+
+	/// <summary>
+	/// スプライト上にマウスが乗っているか
+	/// </summary>
+	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
+
+	/// <summary>
+	/// メニュー選択結果を取得
+	/// </summary>
+	MenuResult GetMenuResult() const { return menu_result_; }
 
 private:
+	// メニュー選択結果
+	MenuResult menu_result_ = MenuResult::None;
 	// タイトルのオブジェクト
 	std::unique_ptr< MyEngine::Object3d> title_;
 	// pushspaceのオブジェクト
 	std::unique_ptr< MyEngine::Object3d> push_space_;
 	// プレイヤーオブジェクト
 	std::unique_ptr< MyEngine::Object3d> player_obj_;
+	//スタート項目スプライト
+	std::unique_ptr< MyEngine::Sprite> menu_start_;
+	//操作説明項目スプライト
+	std::unique_ptr< MyEngine::Sprite> menu_howto_;
+	//終了項目スプライト
+	std::unique_ptr< MyEngine::Sprite> menu_exit_;
+	//操作説明スプライト
+	std::unique_ptr<MyEngine::Sprite> howto_sprite_;
 	// プレイヤーオブジェクトTransform
 	Transform player_obj_transform_;
+	//メニュー項目の元サイズ保存
+	Vector2 start_size_;
+	Vector2 howto_size_;
+	Vector2 exit_size_;
 	// Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	// playerObj回転速度
 	const float kRotateSpeed = 0.5f;
+    // 入力受付間隔
+	const float kInputInterval = 10.0f;
 	// ジャンプの速度
 	float jump_velocity_ = 0.0f;
 	// ジャンプの力
 	float jump_power_ = 0.12f;
 	// 最大ジャンプ数
 	const int kMaxJumpCount = 2;
+	// 選択中メニューインデックス
+	int select_index_ = 0; 
+	// 入力受付間隔タイマー
+	float input_timer_ = 0.0f;
 	// 重力
 	float gravity_ = -0.01f;
 	// 地面
@@ -62,12 +124,13 @@ private:
 	float jump_timer_ = 0.0f;
 	// 二段ジャンプ時回転速度
 	float jump_rotate_speed_ = 180.0f;
+	float howto_scale_ = 0.0f;
+	// 選択中メニュー拡縮用タイマー
+	float scale_timer_ = 0.0f;
 	// ジャンプカウント
 	int jump_count_ = 0;
 	// ジャンプ中か
 	bool is_jumping_ = false;
-	// α値
-	float alpha_ = 1.0f;
-	// α値タイマー
-	float alpha_timer_ = 0.0f;
+	// 操作説明表示中か
+	bool is_show_howto_ = false;
 };
