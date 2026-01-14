@@ -47,6 +47,21 @@ private:
 	std::unique_ptr<MyEngine::Sprite> pause_;
 	//操作説明
 	std::unique_ptr<MyEngine::Sprite> operation_guide_;
+	//AKey
+	std::unique_ptr<MyEngine::Sprite> a_key_sprite_;
+	//DKey
+	std::unique_ptr<MyEngine::Sprite> d_key_sprite_;
+	//FKey
+	std::unique_ptr<MyEngine::Sprite> f_key_sprite_;
+	//WKey
+	std::unique_ptr<MyEngine::Sprite> w_key_sprite_;
+	//SpaceKey
+	std::unique_ptr<MyEngine::Sprite> space_key_sprite_;
+	//マウス左スプライト
+	std::unique_ptr<MyEngine::Sprite> mouse_left_sprite_;
+	//マウス移動スプライト
+	std::unique_ptr<MyEngine::Sprite> mouse_move_sprite_;
+
 	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
 	//操作説明画面のスケール

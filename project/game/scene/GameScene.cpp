@@ -12,8 +12,6 @@ void GameScene::Initialize() {
 	MyEngine::Audio::GetInstance()->Initialize();
 
 	// モデルの読み込み
-	MyEngine::ModelManager::GetInstance()->LoadModel("plane.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("axis.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");

@@ -44,7 +44,6 @@ void Ui::Draw()
 {
 	//HPバー描画
     hp_bar_->Draw();
-
 	//ポーズ描画
 	pause_->Draw();
 

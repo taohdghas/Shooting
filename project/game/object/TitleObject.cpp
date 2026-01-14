@@ -23,23 +23,23 @@ void TitleObject::Initialize() {
     player_obj_transform_.translate = { -1.3f, -0.5f, -4.8f };
 	// メニュー項目スプライト生成・初期化
     menu_start_ = std::make_unique<MyEngine::Sprite>();
-    menu_start_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/start.png");
+    menu_start_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/start.png");
     menu_start_->SetPosition({ 700, 380 });
 	menu_start_->SetSize({150,100});
 	// 操作説明項目スプライト
     menu_howto_ = std::make_unique<MyEngine::Sprite>();
-    menu_howto_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/howto.png");
+    menu_howto_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/howto.png");
     menu_howto_->SetPosition({ 693, 505 });
 	menu_howto_->SetSize({ 200,80 });
 	// 終了項目スプライト
     menu_exit_ = std::make_unique<MyEngine::Sprite>();
-    menu_exit_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/exit.png");
+    menu_exit_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/exit.png");
     menu_exit_->SetPosition({ 699, 607 });
 	menu_exit_->SetSize({ 150,80 });
 
     // 操作説明
     howto_sprite_ = std::make_unique<MyEngine::Sprite>();
-    howto_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/titlescene/operation.png");
+    howto_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/operation.png");
     howto_sprite_->SetAnchorPoint({ 0.5f, 0.5f });
     howto_sprite_->SetPosition({ 640, 360 });
 	howto_sprite_->SetSize({ 0, 0 });
