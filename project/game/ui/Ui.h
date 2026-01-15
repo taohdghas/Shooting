@@ -2,9 +2,25 @@
 #include "Sprite.h"
 #include "Struct.h"
 #include "Player.h"
+#include <unordered_map>
+#include <memory>
+
 
 class Ui
 {
+public:
+	// スプライトの種類
+	enum class SpriteType {
+		HpBar,
+		Pause,
+		OperationGuide,
+		KeyA,
+		KeyD,
+		KeyF,
+		KeyW,
+		MouseLeft,
+		MouseMove,
+	};
 public:
 	/// <summary>
 	/// UIの初期化
@@ -30,7 +46,18 @@ public:
      /// 操作説明画面処理
      /// </summary>
 	void UpdateOperationGuide();
+	/// <summary>
+	/// スプライト作成
+	/// </summary>
+	void CreateSprite(SpriteType type,const char* path,const Vector2& pos,
+		const Vector2& size,const Vector2& anchor = { 0,0 });
+
 public:
+	/// <summary>
+	/// スプライト取得
+	/// </summary>
+	MyEngine::Sprite* Get(SpriteType type);
+
 	/// <summary>
 	/// プレイヤーをセット
 	/// </summary>
@@ -41,27 +68,8 @@ public:
 	/// </summary>
 	void SetOperationGuide(bool flag) { is_show_operation_ = flag; }
 private:
-	// HPバー
-	std::unique_ptr<MyEngine::Sprite> hp_bar_;
-	//ポーズ
-	std::unique_ptr<MyEngine::Sprite> pause_;
-	//操作説明
-	std::unique_ptr<MyEngine::Sprite> operation_guide_;
-	//AKey
-	std::unique_ptr<MyEngine::Sprite> a_key_sprite_;
-	//DKey
-	std::unique_ptr<MyEngine::Sprite> d_key_sprite_;
-	//FKey
-	std::unique_ptr<MyEngine::Sprite> f_key_sprite_;
-	//WKey
-	std::unique_ptr<MyEngine::Sprite> w_key_sprite_;
-	//SpaceKey
-	std::unique_ptr<MyEngine::Sprite> space_key_sprite_;
-	//マウス左スプライト
-	std::unique_ptr<MyEngine::Sprite> mouse_left_sprite_;
-	//マウス移動スプライト
-	std::unique_ptr<MyEngine::Sprite> mouse_move_sprite_;
-
+	// スプライト格納用マップ
+	std::unordered_map<SpriteType, std::unique_ptr<MyEngine::Sprite>> sprites_;
 	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
 	//操作説明画面のスケール
