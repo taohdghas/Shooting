@@ -7,137 +7,132 @@
 
 //初期化
 void Ui::Initialize()
-{
-	//HPバーの初期化
-    hp_bar_ = std::make_unique<MyEngine::Sprite>();
-    hp_bar_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/hpbar.png");
-    hp_bar_->SetSize({ 200, 20 });
-    hp_bar_->SetPosition({ 50, 50 });
-
-	//ポーズの初期化
-	pause_ = std::make_unique<MyEngine::Sprite>();
-	pause_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/pause.png");
-    pause_->SetSize({ 300,60 });
-	pause_->SetPosition({ 1000, 20 });
-
-	//操作説明画面の初期化
-    operation_guide_ = std::make_unique<MyEngine::Sprite>();
-    operation_guide_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/operation.png");
-    operation_guide_->SetPosition({ 640, 360 }); 
-    operation_guide_->SetSize({ 600, 600 });
-	operation_guide_->SetAnchorPoint({ 0.5f, 0.5f });
+{   //HPバー作成
+    CreateSprite(SpriteType::HpBar, "resources/ui/hpbar.png", { 50,50 }, { 200,20 });
+	//ポーズ表示作成
+    CreateSprite(SpriteType::Pause,"resources/ui/pause.png", { 1000,20 }, { 300,60 });
+	//操作説明画面作成
+    CreateSprite(SpriteType::OperationGuide,"resources/ui/operation.png", { 640,360 }, { 600,600 }, { 0.5f,0.5f });
+	//各キー説明作成
+    CreateSprite(SpriteType::KeyA, "resources/ui/keyboard_a.png", { 440,500 }, { 50,50 });
+	//Dキー
+    CreateSprite(SpriteType::KeyD, "resources/ui/keyboard_d.png", { 540,500 }, { 50,50 });
+	//Fキー
+    CreateSprite(SpriteType::KeyF,"resources/ui/keyboard_f.png", { 640,500 }, { 50,50 });
+	//Wキー
+    CreateSprite(SpriteType::KeyW, "resources/ui/keyboard_w.png", { 490,450 }, { 50,50 });
+	//左クリック
+    CreateSprite(SpriteType::MouseLeft, "resources/ui/mouse_left.png", { 740,500 }, { 50,50 });
+	//マウス移動
+    CreateSprite(SpriteType::MouseMove,"resources/ui/mouse_move.png", { 840,500 }, { 50,50 });
 }
 //更新
 void Ui::Update()
 {
-	//HPバー処理
+	//HPバー更新
     UpdateHPBar();
-    //操作説明画面処理
-	UpdateOperationGuide();
-    //ポーズ更新
-	pause_->Update();
-    //HPバー更新
-    hp_bar_->Update();
+	//操作説明画面更新
+    UpdateOperationGuide();
+
+	//スプライト更新
+    for (auto& [type, sprite] : sprites_) {
+        sprite->Update();
+    }
 }
 //描画
 void Ui::Draw()
 {
-	//HPバー描画
-    hp_bar_->Draw();
-	//ポーズ描画
-	pause_->Draw();
-
-	//操作説明画面描画
+	//HPバー表示
+    Get(SpriteType::HpBar)->Draw();
+	//ポーズ表示
+    Get(SpriteType::Pause)->Draw();
+	//操作説明画面表示
     if (operation_scale_ > 0.01f) {
-        operation_guide_->Draw();
+        Get(SpriteType::OperationGuide)->Draw();
     }
 }
 //デバック
 void Ui::Debug()
 {
 #ifdef USE_IMGUI
-    Vector2 position = hp_bar_->GetPosition();
-    Vector2 size = hp_bar_->GetSize();
+    if (ImGui::Begin("UI Debug")) {
 
-    if (ImGui::Begin("HPBar Debug")) {
-        if (ImGui::TreeNode("HPBar")) {
-            ImGui::DragFloat2("Position", &position.x, 1.0f);
-            ImGui::DragFloat2("Size", &size.x, 1.0f);
+        for (auto& [type, sprite] : sprites_) {
 
-            hp_bar_->SetPosition(position);
-            hp_bar_->SetSize(size);
+            std::string name = std::to_string(static_cast<int>(type));
+            if (ImGui::TreeNode(name.c_str())) {
 
-            ImGui::TreePop();
-        }
-        if (ImGui::TreeNode("Pause")) {
-            Vector2 pause_pos = pause_->GetPosition();
-            Vector2 pause_size = pause_->GetSize();
+                Vector2 pos = sprite->GetPosition();
+                Vector2 size = sprite->GetSize();
+                float rot = sprite->GetRotation();
 
-            ImGui::DragFloat2("Position", &pause_pos.x, 1.0f);
-            ImGui::DragFloat2("Size", &pause_size.x, 1.0f);
+                ImGui::DragFloat2("Position", &pos.x, 1.0f);
+                ImGui::DragFloat2("Size", &size.x, 1.0f);
+                ImGui::DragFloat("Rotation", &rot, 0.01f);
 
-            pause_->SetPosition(pause_pos);
-            pause_->SetSize(pause_size);
+                sprite->SetPosition(pos);
+                sprite->SetSize(size);
+                sprite->SetRotation(rot);
 
-            ImGui::TreePop();
-        }
-        if (ImGui::TreeNode("Operation Guide")) {
-            // SRT取得
-            Vector2 op_pos = operation_guide_->GetPosition();
-            Vector2 op_size = operation_guide_->GetSize();
-            float op_rot = operation_guide_->GetRotation();
-
-            // IMGUIで編集
-            ImGui::DragFloat2("Position", &op_pos.x, 1.0f);
-            ImGui::DragFloat2("Size", &op_size.x, 1.0f);
-            ImGui::DragFloat("Rotation", &op_rot, 0.01f);
-
-            // 反映
-            operation_guide_->SetPosition(op_pos);
-            operation_guide_->SetSize(op_size);
-            operation_guide_->SetRotation(op_rot);
-
-            ImGui::TreePop();
+                ImGui::TreePop();
+            }
         }
     }
     ImGui::End();
 #endif
 }
 //HPバー更新
-void Ui::UpdateHPBar() {
+void Ui::UpdateHPBar()
+{
+    if (!player_) return;
 
-    //現在のHPを取得
     float currentHP = static_cast<float>(player_->GetHP());
+    constexpr float maxHP = 100.0f;
 
-    //HPの割合
-    constexpr float maxHPValue = 100.0f;
-    float hpRatio = std::clamp(currentHP / maxHPValue, 0.0f, 1.0f);
+    float ratio = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
 
-    //最大サイズ
     Vector2 maxSize = { 200.0f, 20.0f };
-
-    //HP割合に応じて横幅を調整
-    hp_bar_->SetSize({ maxSize.x * hpRatio, maxSize.y });
+    Get(SpriteType::HpBar)->SetSize({ maxSize.x * ratio, maxSize.y });
 }
 //操作説明画面処理
 void Ui::UpdateOperationGuide()
 {
     const float speed = 0.07f;
-    
-	//スケール更新
+    //スケール更新
     if (is_show_operation_) {
         operation_scale_ += speed;
     } else {
         operation_scale_ -= speed;
     }
 
-	//範囲制限
     operation_scale_ = std::clamp(operation_scale_, 0.0f, 1.0f);
-	//イージング適用
+
     float eased = static_cast<float>(easeOutQuad(operation_scale_));
+    Vector2 baseSize = { 600.0f,600.0f };
 
-    Vector2 baseSize = { 600.0f, 600.0f };
-    operation_guide_->SetSize(Math::MultiplyScalar(baseSize,eased));
+    Get(SpriteType::OperationGuide)->SetSize(
+        Math::MultiplyScalar(baseSize, eased)
+    );
+}
+//スプライト作成
+void Ui::CreateSprite(SpriteType type,
+    const char* path,
+    const Vector2& pos,
+    const Vector2& size,
+    const Vector2& anchor)
+{
+    auto sprite = std::make_unique<MyEngine::Sprite>();
+    sprite->Initialize(MyEngine::SpriteBase::GetInstance(), path);
+    sprite->SetPosition(pos);
+    sprite->SetSize(size);
+    sprite->SetAnchorPoint(anchor);
 
-    operation_guide_->Update();
+    sprites_[type] = std::move(sprite);
+}
+///スプライト取得
+MyEngine::Sprite* Ui::Get(SpriteType type)
+{
+    auto it = sprites_.find(type);
+    if (it == sprites_.end()) return nullptr;
+    return it->second.get();
 }
