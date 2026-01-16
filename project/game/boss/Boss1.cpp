@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
+#include "BossStateNormal.h"
 
 // 初期化処理
 void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
@@ -18,6 +19,8 @@ void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
 	target_position_ = transform_.translate;
 	// 最初の移動目標決定
 	fire_interval_current_ = DecideFireInterval();
+
+	ChangeState(std::make_unique<BossStateNormal>());
 }
 
 //更新
@@ -37,11 +40,9 @@ void Boss1::Update() {
 		}
 	}
 
-	//移動
-	Move();
-
-	//攻撃
-	Attack();
+	if (state_) {
+		state_->Update(*this);
+	}
 
 	//ダメージスケール処理
 	if (damage_scale_timer_ > 0.0f) {
@@ -142,9 +143,6 @@ void Boss1::Attack() {
 	if (UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
 		FireDoubleHeightShot();
 		is_second_shot_pending_ = true;
-		if (hp_ <= kEnragedHP && !is_fan_shot_pending_) {
-			is_fan_shot_pending_ = true;
-		}
 		fire_interval_current_ = DecideFireInterval();
 	}
 	// 2段目通常攻撃の遅延処理
@@ -306,6 +304,13 @@ void Boss1::TakeDamage(uint32_t damage) {
 		OnCollision(); // HP0で死亡処理
 	}
 }
+
+void Boss1::ChangeState(std::unique_ptr<BossState> newState) {
+	if (state_) state_->Exit(*this);
+	state_ = std::move(newState);
+	if (state_) state_->Enter(*this);
+}
+
 //デバッグ用ImGui表示
 void Boss1::Debug() {
 #ifdef USE_IMGUI
@@ -344,8 +349,6 @@ int Boss1::DecideFireInterval()
 	if (hp_ > kEnragedHP) {
 		return kFireInterval;
 	}
-
-	// HP12以下：必ず早くなる範囲でランダム
 	const int minInterval = 70;
 	const int maxInterval = 100;
 

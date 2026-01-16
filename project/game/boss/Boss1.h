@@ -3,6 +3,7 @@
 #include "Object3dBase.h"
 #include "Transform.h"
 #include "EnemyBullet.h"
+#include "BossState.h"
 #include <random>
 
 //前方宣言
@@ -56,6 +57,9 @@ class Boss1
 	/// HP を減少させる
 	/// </summary>
 	void TakeDamage(uint32_t damage);
+
+	void ChangeState(std::unique_ptr<BossState> newState);
+
 	/// <summary>
 	/// デバッグ UI を表示する（ImGui を使用）
 	/// </summary>
@@ -101,6 +105,16 @@ public:
 	int GetAttack() const { return attack_; }
 
 	/// <summary>
+	/// 現在のHPを取得する。
+	/// </summary>
+	int GetHP() const { return hp_; }
+
+	/// <summary>
+	/// ボス強化体力値（Enraged HP）を取得する。
+	/// </summary>
+	int GetEnragedHP() const { return kEnragedHP; }
+
+	/// <summary>
 	/// コリジョンや描画に用いる半径を取得する。
 	/// </summary>
 	float GetRadius() const { return radius_; }
@@ -136,11 +150,14 @@ public:
 	/// </summary>
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
+	void SetFanShotPending(bool flag) { is_fan_shot_pending_ = flag; }
+
 	/// <summary>
 	/// 通常時のスケールを設定する。
 	/// </summary>
 	void SetDefaultScale(const Vector3& scale) {default_scale_ = scale;}
 private:
+	std::unique_ptr<BossState> state_;
 	// 3Dオブジェクト共通設定へのポインタ
 	MyEngine::Object3dBase* object3d_base_;
 	// 敵本体の3Dオブジェクト
@@ -192,7 +209,7 @@ private:
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
 	//ボス強化体力値
-	const float kEnragedHP = 70.0f;
+	const int kEnragedHP = 70;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
 	// ダメージスケール演出の時間
@@ -216,7 +233,6 @@ private:
 	// 2段目通常攻撃用
 	bool is_second_shot_pending_ = false;
 	int second_shot_delay_timer_ = 0;
-	static const int kSecondShotDelay = 15; // 0.25秒くらい
+	static const int kSecondShotDelay = 15; 
 
 };
-
