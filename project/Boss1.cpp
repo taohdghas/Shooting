@@ -199,7 +199,7 @@ void Boss1::FireDoubleHeightShot() {
 				dir.y * bulletSpeed,
 				dir.z * bulletSpeed
 				});
-
+			bullet->Update();
 			bullets_.push_back(std::move(bullet));
 		}
 	}
