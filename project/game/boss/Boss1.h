@@ -30,11 +30,6 @@ class Boss1
 	void Move();
 
 	/// <summary>
-	///  攻撃
-	/// </summary>
-	void Attack();
-
-	/// <summary>
 	/// 二段高さショットを発射する
 	/// </summary>
 	void FireDoubleHeightShot();
@@ -150,8 +145,6 @@ public:
 	/// </summary>
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
-	void SetFanShotPending(bool flag) { is_fan_shot_pending_ = flag; }
-
 	/// <summary>
 	/// 通常時のスケールを設定する。
 	/// </summary>
@@ -182,24 +175,14 @@ private:
 	bool is_dead_ = false;
 	// 死亡時パーティクル発生フラグ
 	bool is_death_particle_ = false;
-	// 扇状拡散用ディレイ
-	bool is_fan_shot_pending_ = false;
 	//発射間隔
 	static const int kFireInterval = 200;
-	// ディレイ時間
-	static const int kFanShotDelay = 30;
 	//現在のHP
 	int hp_ = 150;
 	//攻撃力
 	int attack_ = 5;
 	// 弾発射タイマーのカウント
 	int fire_timer_count_ = 0;
-	// 弾発射タイマーの間隔管理
-	int fire_timer_ = 0;
-	// 扇状拡散ショット用ディレイタイマー
-	int fan_shot_delay_timer_ = 0;
-	// 次の弾発射までの間隔
-	int fire_interval_current_ = kFireInterval;
 	// コリジョンや描画に使う半径
 	float radius_ = 1.0f;
 	// 1フレームあたりの時間（秒）
@@ -230,9 +213,4 @@ private:
 	float velocity_damping_ = 0.96f;
 	// 次の目標までの最小距離
 	float min_target_distance_ = 2.5f;
-	// 2段目通常攻撃用
-	bool is_second_shot_pending_ = false;
-	int second_shot_delay_timer_ = 0;
-	static const int kSecondShotDelay = 15; 
-
 };

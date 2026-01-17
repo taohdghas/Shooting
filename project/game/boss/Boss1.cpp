@@ -17,8 +17,6 @@ void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
 	random_engine_ = std::mt19937(rd());
 	// 初期変換情報設定
 	target_position_ = transform_.translate;
-	// 最初の移動目標決定
-	fire_interval_current_ = DecideFireInterval();
 
 	ChangeState(std::make_unique<BossStateNormal>());
 }
@@ -132,26 +130,6 @@ void Boss1::Move() {
 	}
 }
 
-//攻撃
-void Boss1::Attack() {
-	// 扇状拡散の遅延処理
-	if (is_fan_shot_pending_ && UpdateDelayTimer(fan_shot_delay_timer_, kFanShotDelay)) {
-		FireFanShot();
-		is_fan_shot_pending_ = false;
-	}
-	// 通常攻撃
-	if (UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
-		FireDoubleHeightShot();
-		is_second_shot_pending_ = true;
-		fire_interval_current_ = DecideFireInterval();
-	}
-	// 2段目通常攻撃の遅延処理
-	if (is_second_shot_pending_ && UpdateDelayTimer(second_shot_delay_timer_, kSecondShotDelay)) {
-		FireDoubleHeightShot();
-		is_second_shot_pending_ = false;
-	}
-}
-
 ///二段高さショット発射
 void Boss1::FireDoubleHeightShot() {
 	if (!player_) {
@@ -197,7 +175,7 @@ void Boss1::FireDoubleHeightShot() {
 				dir.y * bulletSpeed,
 				dir.z * bulletSpeed
 				});
-
+			bullet->Update();
 			bullets_.push_back(std::move(bullet));
 		}
 	}
