@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
+#include "BossStateNormal.h"
 
 // 初期化処理
 void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
@@ -16,8 +17,8 @@ void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
 	random_engine_ = std::mt19937(rd());
 	// 初期変換情報設定
 	target_position_ = transform_.translate;
-	// 最初の移動目標決定
-	fire_interval_current_ = DecideFireInterval();
+	//状態を通常状態に設定
+	ChangeState(std::make_unique<BossStateNormal>());
 }
 
 //更新
@@ -36,12 +37,10 @@ void Boss1::Update() {
 			++it;
 		}
 	}
-
-	//移動
-	Move();
-
-	//攻撃
-	Attack();
+	//状態更新
+	if (state_) {
+		state_->Update(*this);
+	}
 
 	//ダメージスケール処理
 	if (damage_scale_timer_ > 0.0f) {
@@ -128,29 +127,6 @@ void Boss1::Move() {
 		// 位置に加算
 		transform_.translate.x += swayX;
 		transform_.translate.y += swayY;
-	}
-}
-
-//攻撃
-void Boss1::Attack() {
-	// 扇状拡散の遅延処理
-	if (is_fan_shot_pending_ && UpdateDelayTimer(fan_shot_delay_timer_, kFanShotDelay)) {
-		FireFanShot();
-		is_fan_shot_pending_ = false;
-	}
-	// 通常攻撃
-	if (UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
-		FireDoubleHeightShot();
-		is_second_shot_pending_ = true;
-		if (hp_ <= kEnragedHP && !is_fan_shot_pending_) {
-			is_fan_shot_pending_ = true;
-		}
-		fire_interval_current_ = DecideFireInterval();
-	}
-	// 2段目通常攻撃の遅延処理
-	if (is_second_shot_pending_ && UpdateDelayTimer(second_shot_delay_timer_, kSecondShotDelay)) {
-		FireDoubleHeightShot();
-		is_second_shot_pending_ = false;
 	}
 }
 
@@ -258,7 +234,6 @@ void Boss1::FireFanShot()
 
 	baseDir = Math::Normalize(baseDir);
 
-
 	// 角度刻み
 	float angleStep = (kSpreadAngle * 2.0f) / (kBulletCount - 1);
 
@@ -306,6 +281,13 @@ void Boss1::TakeDamage(uint32_t damage) {
 		OnCollision(); // HP0で死亡処理
 	}
 }
+///状態変更
+void Boss1::ChangeState(std::unique_ptr<BossState> newState) {
+	if (state_) state_->Exit(*this);
+	state_ = std::move(newState);
+	if (state_) state_->Enter(*this);
+}
+
 //デバッグ用ImGui表示
 void Boss1::Debug() {
 #ifdef USE_IMGUI
@@ -344,8 +326,6 @@ int Boss1::DecideFireInterval()
 	if (hp_ > kEnragedHP) {
 		return kFireInterval;
 	}
-
-	// HP12以下：必ず早くなる範囲でランダム
 	const int minInterval = 70;
 	const int maxInterval = 100;
 
