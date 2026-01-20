@@ -138,8 +138,8 @@ namespace MyEngine {
 		Camera* camera_ = nullptr;
 		ModelData model_data_;
 
-		Transform transform_;
-		Transform camera_transform_;
+		Transform transform_ = { 0.0f,0.0f,0.0f };
+		Transform camera_transform_ = { 0.0f,0.0f,0.0f };
 
 		// バッファリソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertex_resource_;

@@ -157,7 +157,7 @@ private:
 	// 現在の状態を表すステート
 	std::unique_ptr<BossState> state_;
 	// 3Dオブジェクト共通設定へのポインタ
-	MyEngine::Object3dBase* object3d_base_;
+	MyEngine::Object3dBase* object3d_base_ = nullptr;
 	// 敵本体の3Dオブジェクト
 	std::unique_ptr<MyEngine::Object3d> object_;
 	// 敵が発射した弾のリスト
@@ -165,15 +165,15 @@ private:
 	// 乱数生成器（Boss専用）
 	std::mt19937 random_engine_;
 	// 敵のワールド変換情報（位置・回転・スケール）
-	Transform transform_;
+	Transform transform_ = {0.0f,0.0f,0.0f};
 	// 攻撃対象となるプレイヤーのポインタ
-	Player* player_;
+	Player* player_ = nullptr;
 	// 通常時のスケールを保存
 	Vector3 default_scale_ = { 2.0f, 2.0f, 2.0f };
 	//寸法
 	Vector3 dimensions_ = { 4.0f,3.0f,2.0f };
 	// 移動目標
-	Vector3 target_position_;   
+	Vector3 target_position_ = {0.0f,0.0f,0.0f};
 	// 速度
 	Vector3 velocity_{ 0.0f, 0.0f, 0.0f };
 	// 死亡フラグ
