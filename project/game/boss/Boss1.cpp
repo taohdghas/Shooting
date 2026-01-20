@@ -258,7 +258,7 @@ void Boss1::FireFanShot()
 			dir.y * bulletSpeed,
 			dir.z * bulletSpeed
 			});
-
+		bullet->SetColor({ 0.2f, 0.6f, 1.0f, 1.0f }); // 青系
 		bullet->Update();
 		bullets_.push_back(std::move(bullet));
 	}

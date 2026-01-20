@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BossStateEnraged.cpp" />
-    <ClCompile Include="BossStateNormal.cpp" />
+    <ClCompile Include="game\boss\BossStateEnraged.cpp" />
+    <ClCompile Include="game\boss\BossStateNormal.cpp" />
     <ClCompile Include="game\boss\Boss1.cpp" />
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -86,8 +86,8 @@
     <ClCompile Include="game\ui\Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BossStateEnraged.h" />
-    <ClInclude Include="BossStateNormal.h" />
+    <ClInclude Include="game\boss\BossStateEnraged.h" />
+    <ClInclude Include="game\boss\BossStateNormal.h" />
     <ClInclude Include="game\boss\Boss1.h" />
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
