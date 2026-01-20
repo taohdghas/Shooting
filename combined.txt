@@ -2392,8 +2392,8 @@ namespace MyEngine {
 		Camera* camera_ = nullptr;
 		ModelData model_data_;
 
-		Transform transform_;
-		Transform camera_transform_;
+		Transform transform_ = { 0.0f,0.0f,0.0f };
+		Transform camera_transform_ = { 0.0f,0.0f,0.0f };
 
 		// バッファリソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertex_resource_;
@@ -9021,7 +9021,7 @@ private:
 	// 現在の状態を表すステート
 	std::unique_ptr<BossState> state_;
 	// 3Dオブジェクト共通設定へのポインタ
-	MyEngine::Object3dBase* object3d_base_;
+	MyEngine::Object3dBase* object3d_base_ = nullptr;
 	// 敵本体の3Dオブジェクト
 	std::unique_ptr<MyEngine::Object3d> object_;
 	// 敵が発射した弾のリスト
@@ -9029,15 +9029,15 @@ private:
 	// 乱数生成器（Boss専用）
 	std::mt19937 random_engine_;
 	// 敵のワールド変換情報（位置・回転・スケール）
-	Transform transform_;
+	Transform transform_ = {0.0f,0.0f,0.0f};
 	// 攻撃対象となるプレイヤーのポインタ
-	Player* player_;
+	Player* player_ = nullptr;
 	// 通常時のスケールを保存
 	Vector3 default_scale_ = { 2.0f, 2.0f, 2.0f };
 	//寸法
 	Vector3 dimensions_ = { 4.0f,3.0f,2.0f };
 	// 移動目標
-	Vector3 target_position_;   
+	Vector3 target_position_ = {0.0f,0.0f,0.0f};
 	// 速度
 	Vector3 velocity_{ 0.0f, 0.0f, 0.0f };
 	// 死亡フラグ
@@ -9532,7 +9532,7 @@ private:
 	//寸法
 	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
 	// 現在の色（ダメージ時の色変化など）
-	Vector4 color_;
+	Vector4 color_ = {1.0f,1.0f,1.0f,1.0f};
 	// 死亡フラグ
 	bool is_dead_ = false;
 	// 死亡時パーティクル発生フラグ
@@ -9573,7 +9573,6 @@ private:
 	float damage_scale_timer_ = 0.0f;
 	// レール全体の長さ
 	float rail_total_length_ = 0.0f;
-
 };
 
 
@@ -9710,9 +9709,9 @@ public:
 private:
     MyEngine::Object3dBase* object3d_base_ = nullptr;
     std::unique_ptr< MyEngine::Object3d> object_;
-    Transform transform_;
+    Transform transform_ = {0.0f,0.0f,0.0f};
     //速度
-    Vector3 velocity_;
+    Vector3 velocity_ = {0.0f,0.0f,0.0f};
     //モデルの寸法
 	Vector3 dimensions_ = { 0.2f,0.2f,0.2f };
     //半径
