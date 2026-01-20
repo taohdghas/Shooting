@@ -17,7 +17,7 @@ void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
 	random_engine_ = std::mt19937(rd());
 	// 初期変換情報設定
 	target_position_ = transform_.translate;
-
+	//状態を通常状態に設定
 	ChangeState(std::make_unique<BossStateNormal>());
 }
 
@@ -37,7 +37,7 @@ void Boss1::Update() {
 			++it;
 		}
 	}
-
+	//状態更新
 	if (state_) {
 		state_->Update(*this);
 	}
@@ -234,7 +234,6 @@ void Boss1::FireFanShot()
 
 	baseDir = Math::Normalize(baseDir);
 
-
 	// 角度刻み
 	float angleStep = (kSpreadAngle * 2.0f) / (kBulletCount - 1);
 
@@ -282,7 +281,7 @@ void Boss1::TakeDamage(uint32_t damage) {
 		OnCollision(); // HP0で死亡処理
 	}
 }
-
+///状態変更
 void Boss1::ChangeState(std::unique_ptr<BossState> newState) {
 	if (state_) state_->Exit(*this);
 	state_ = std::move(newState);

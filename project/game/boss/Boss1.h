@@ -53,12 +53,16 @@ class Boss1
 	/// </summary>
 	void TakeDamage(uint32_t damage);
 
+	/// <summary>
+	/// 状態を変更する
+	/// </summary>
 	void ChangeState(std::unique_ptr<BossState> newState);
 
 	/// <summary>
 	/// デバッグ UI を表示する（ImGui を使用）
 	/// </summary>
 	void Debug();
+
 	/// <summary>
 	/// OBB（Oriented Bounding Box）を取得する
 	/// </summary>
@@ -150,6 +154,7 @@ public:
 	/// </summary>
 	void SetDefaultScale(const Vector3& scale) {default_scale_ = scale;}
 private:
+	// 現在の状態を表すステート
 	std::unique_ptr<BossState> state_;
 	// 3Dオブジェクト共通設定へのポインタ
 	MyEngine::Object3dBase* object3d_base_;
