@@ -146,7 +146,7 @@ private:
 	//寸法
 	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
 	// 現在の色（ダメージ時の色変化など）
-	Vector4 color_;
+	Vector4 color_ = {1.0f,1.0f,1.0f,1.0f};
 	// 死亡フラグ
 	bool is_dead_ = false;
 	// 死亡時パーティクル発生フラグ
@@ -187,5 +187,4 @@ private:
 	float damage_scale_timer_ = 0.0f;
 	// レール全体の長さ
 	float rail_total_length_ = 0.0f;
-
 };

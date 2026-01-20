@@ -70,9 +70,9 @@ public:
 private:
     MyEngine::Object3dBase* object3d_base_ = nullptr;
     std::unique_ptr< MyEngine::Object3d> object_;
-    Transform transform_;
+    Transform transform_ = {0.0f,0.0f,0.0f};
     //速度
-    Vector3 velocity_;
+    Vector3 velocity_ = {0.0f,0.0f,0.0f};
     //モデルの寸法
 	Vector3 dimensions_ = { 0.2f,0.2f,0.2f };
     //半径
