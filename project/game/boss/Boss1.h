@@ -10,6 +10,14 @@
 class Player;
 class Boss1
 {
+public:
+	
+	enum class MoveArea {
+		Left,
+		Center,
+		Right
+	};
+
   public:
 	/// <summary>
 	/// 初期化
@@ -23,7 +31,7 @@ class Boss1
 	/// 描画
 	/// </summary>
 	void Draw();
-
+	
 	/// <summary>
 	/// 移動
 	/// </summary>
@@ -66,7 +74,9 @@ class Boss1
 	/// <summary>
 	/// OBB（Oriented Bounding Box）を取得する
 	/// </summary>
-	OBB GetOBB() const;
+	OBB GetOBB() const; 
+	
+	MoveArea GetMoveArea(float x);
 
 	/// <summary>
 	/// 弾発射間隔を決定する
@@ -154,6 +164,7 @@ public:
 	/// </summary>
 	void SetDefaultScale(const Vector3& scale) {default_scale_ = scale;}
 private:
+	MoveArea current_area_ = MoveArea::Center;
 	// 現在の状態を表すステート
 	std::unique_ptr<BossState> state_;
 	// 3Dオブジェクト共通設定へのポインタ
@@ -183,7 +194,7 @@ private:
 	//発射間隔
 	static const int kFireInterval = 200;
 	//現在のHP
-	int hp_ = 150;
+	int hp_ = 190;
 	//攻撃力
 	int attack_ = 5;
 	// 弾発射タイマーのカウント
@@ -197,7 +208,7 @@ private:
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
 	//ボス強化体力値
-	const int kEnragedHP = 70;
+	const int kEnragedHP = 100;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
 	// ダメージスケール演出の時間
