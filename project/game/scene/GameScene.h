@@ -1,11 +1,5 @@
 #pragma once
-#include "Sprite.h"
-#include "SpriteBase.h"
-#include "Object3d.h"
-#include "Object3dBase.h"
 #include "Audio.h"
-#include "TextureManager.h"
-#include "ModelManager.h"
 #include "ParticleEmitter.h"
 #include "BaseScene.h"
 #include "Camera.h"
@@ -104,7 +98,8 @@ private:
 	//UI
 	std::unique_ptr<Ui>ui_;
 	//レベルデータ
-	LevelData* level_data_ = nullptr;
+	std::unique_ptr<LevelData> level_data_;
+
 	//ボス出現位置
 	Vector3 boss_spawn_position_;
 	//撃破演出回転軸

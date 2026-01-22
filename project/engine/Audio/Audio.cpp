@@ -70,26 +70,23 @@ namespace MyEngine {
 		}
 		if (strncmp(data.id, "data", 4) != 0) { assert(0); }
 
-		// 波形データ本体の読み込み
-		char* p_buffer = new char[data.size];
-		file.read(p_buffer, data.size);
-		file.close();
-
-		// 読み込んだデータをSoundData構造体にまとめる
-		SoundData sound_data = {};
+		// 音声データ本体の読み込み
+		SoundData sound_data{};
 		sound_data.wfex = format.fmt;
-		sound_data.p_buffer = reinterpret_cast<BYTE*>(p_buffer);
-		sound_data.buffer_size = data.size;
+		sound_data.buffer.resize(data.size);
+
+		// 音声データをバッファに読み込む
+		file.read(reinterpret_cast<char*>(sound_data.buffer.data()), data.size);
+		file.close();
 
 		return sound_data;
 	}
 
 	// 音声データ解放
 	void Audio::SoundUnload(SoundData* sound_data) {
-		// バッファメモリの解放と構造体の初期化
-		delete[] sound_data->p_buffer;
-		sound_data->p_buffer = nullptr;
-		sound_data->buffer_size = 0;
+		// バッファの解放
+		sound_data->buffer.clear();
+		sound_data->buffer.shrink_to_fit();
 		sound_data->wfex = {};
 	}
 
@@ -102,8 +99,8 @@ namespace MyEngine {
 
 		// 再生用バッファ情報の設定
 		XAUDIO2_BUFFER buf{};
-		buf.pAudioData = sound_data.p_buffer;
-		buf.AudioBytes = sound_data.buffer_size;
+		buf.pAudioData = sound_data.buffer.data();
+		buf.AudioBytes = static_cast<UINT32>(sound_data.buffer.size());
 		buf.Flags = XAUDIO2_END_OF_STREAM;
 
 		// 再生開始

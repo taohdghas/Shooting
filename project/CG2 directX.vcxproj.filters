@@ -273,7 +273,7 @@
     <ClCompile Include="game\player\Player.cpp">
       <Filter>ソース ファイル\application\player</Filter>
     </ClCompile>
-    <ClCompile Include="game\player\playerBullet.cpp">
+    <ClCompile Include="game\player\PlayerBullet.cpp">
       <Filter>ソース ファイル\application\player</Filter>
     </ClCompile>
     <ClCompile Include="game\scene\GameClearScene.cpp">
@@ -297,9 +297,6 @@
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\WorldTransform.cpp">
-      <Filter>ソース ファイル\engine\math</Filter>
-    </ClCompile>
     <ClCompile Include="game\fade\Fade.cpp">
       <Filter>ソース ファイル\application\fade</Filter>
     </ClCompile>
@@ -321,10 +318,10 @@
     <ClCompile Include="game\boss\Boss1.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="BossStateNormal.cpp">
+    <ClCompile Include="game\boss\BossStateNormal.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="BossStateEnraged.cpp">
+    <ClCompile Include="game\boss\BossStateEnraged.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -473,7 +470,7 @@
     <ClInclude Include="game\player\Player.h">
       <Filter>ヘッダー ファイル\application\player</Filter>
     </ClInclude>
-    <ClInclude Include="game\player\playerBullet.h">
+    <ClInclude Include="game\player\PlayerBullet.h">
       <Filter>ヘッダー ファイル\application\player</Filter>
     </ClInclude>
     <ClInclude Include="game\scene\GameClearScene.h">
@@ -493,9 +490,6 @@
     </ClInclude>
     <ClInclude Include="game\object\TitleObject.h">
       <Filter>ヘッダー ファイル\application\titleobject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\WorldTransform.h">
-      <Filter>ヘッダー ファイル\engine\math</Filter>
     </ClInclude>
     <ClInclude Include="game\fade\Fade.h">
       <Filter>ヘッダー ファイル\application\fade</Filter>
@@ -521,10 +515,10 @@
     <ClInclude Include="game\boss\BossState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="BossStateNormal.h">
+    <ClInclude Include="game\boss\BossStateNormal.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="BossStateEnraged.h">
+    <ClInclude Include="game\boss\BossStateEnraged.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -60,8 +60,6 @@ namespace MyEngine {
     private:
         static std::unique_ptr<WindowsApi> instance_;
 
-        WindowsApi* windows_api_ = nullptr;
-
         // ウインドウハンドル
         HWND hwnd_ = nullptr;
 

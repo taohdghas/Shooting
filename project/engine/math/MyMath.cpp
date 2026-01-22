@@ -2,24 +2,23 @@
 #include "MyMath.h"
 #include <cassert>
 
-// EaseOutQuadイージング関数
-// x（0.0～1.0）に対して加速→減速のカーブを返す
-double easeOutQuad(double x) {
-	// (1-x)^2で減速カーブを作り、1.0から引くことで加速→減速のイージングを実現
-	return 1.0 - (1.0 - x) * (1.0 - x);
-}
-
-// EaseInOutQuadイージング関数
-// x（0.0～1.0）に対して前半は加速、後半は減速のカーブを返す
-double easeInOutQuad(double x) {
-	// xが0.5未満なら加速（前半）、0.5以上なら減速（後半）
-	if (x < 0.5)
-		return 2 * x * x;
-	else
-		return 1 - pow(-2 * x + 2, 2) / 2;
-}
-
 namespace Math {
+	// EaseOutQuadイージング関数
+    // x（0.0～1.0）に対して加速→減速のカーブを返す
+	double Math::easeOutQuad(double x) {
+		// (1-x)^2で減速カーブを作り、1.0から引くことで加速→減速のイージングを実現
+		return 1.0 - (1.0 - x) * (1.0 - x);
+	}
+
+	// EaseInOutQuadイージング関数
+	// x（0.0～1.0）に対して前半は加速、後半は減速のカーブを返す
+	double Math::easeInOutQuad(double x) {
+		// xが0.5未満なら加速（前半）、0.5以上なら減速（後半）
+		if (x < 0.5)
+			return 2 * x * x;
+		else
+			return 1 - pow(-2 * x + 2, 2) / 2;
+	}
 	//長さ
 	float Math::Length(const Vector3& v) {
 		return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
@@ -32,7 +31,7 @@ namespace Math {
 	Vector2 Math::Multiply(const Vector2& v1, const Vector2& v2) {
 		return { v1.x * v2.x, v1.y * v2.y };
 	}
-	//乗算(Vectorｘscaler)
+	//乗算(Vector*scaler)
 	Vector2 Math::MultiplyScalar(const Vector2& v, const float scalar) {
 		return { v.x * scalar, v.y * scalar };
 	}
@@ -61,7 +60,7 @@ namespace Math {
 		result.z = v1.z * v2.z;
 		return result;
 	}
-	//乗算(Vectorｘscaler)
+	//乗算(Vector*scaler)
 	Vector3 Math::MultiplyScalar(const Vector3& v, const float scalar) {
 		Vector3 result{};
 		result.x = v.x * scalar;
@@ -98,8 +97,8 @@ namespace Math {
 		result.z = v1.x * v2.y - v1.y * v2.x;
 		return result;
 	}
-	//CatmullRom補間
-	Vector3 Math::CatmullRom(
+	//CatMullRom補間
+	Vector3 Math::CatMullRom(
 		const Vector3& p0,
 		const Vector3& p1,
 		const Vector3& p2,

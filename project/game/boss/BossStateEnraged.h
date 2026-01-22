@@ -1,7 +1,8 @@
 #pragma once
 #include "BossState.h"
 
-// ボス強化状態クラス
+//ボスの強化状態を表すクラス
+// 通常状態と異なる移動・攻撃パターンを制御する
 class BossStateEnraged : public BossState {
 public:
     /// <summary>
@@ -18,7 +19,7 @@ private:
 	// 発射間隔
     int fire_interval_current_ = 0;
 	// 扇状ショット遅延タイマー
-    int fanShotDelayTimer_ = 0;
+    int fan_shot_delay_timer_ = 0;
 	// 二段ショット遅延タイマー
     int second_shot_delay_timer_ = 0;
 	// 二段ショット発射保留フラグ

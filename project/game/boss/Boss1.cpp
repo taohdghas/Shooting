@@ -1,12 +1,17 @@
 #include "Boss1.h"
 #include "Player.h"
 #include "ImGuiManager.h"
+#include "ModelManager.h"
 #include "MyMath.h"
 #include "BossStateNormal.h"
 
 // 初期化処理
 void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
+	// モデルの読み込み
+	MyEngine::ModelManager::GetInstance()->LoadModel("boss/boss.obj");
+	// Object3dBaseの保存
 	object3d_base_ = object3d_base;
+	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique<MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("boss/boss.obj");
@@ -83,14 +88,16 @@ void Boss1::Draw() {
 }
 //移動
 void Boss1::Move() {
+	//目標へのベクトル
 	Vector3 toTarget{
 	target_position_.x - transform_.translate.x,
 	target_position_.y - transform_.translate.y,
 	0.0f
 	};
-
+	//目標までの距離
 	float distance = Math::Length(toTarget);
 
+	//目標到達判定
 	if (distance < arrive_threshold_) {
 		DecideNextTarget();
 	} else {
@@ -136,18 +143,20 @@ void Boss1::FireDoubleHeightShot() {
 		return;
 	}
 
-	// 高さ
-	float yOffsets[] = { -0.5f, 0.8f ,2.1f };
-	// 横方向
-	float xOffsets[] = { -5.4f, -4.2f, -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f, 4.2f, 5.4f };
+	// 定数化したオフセットを使用
+	constexpr size_t yCount = std::size(kDoubleShotYOffset);
+	constexpr size_t xCount = std::size(kDoubleShotXOffset);
 
 	const float bulletSpeed = 0.7f;
 
 	Vector3 bossPos = transform_.translate;
 	Vector3 playerPos = player_->GetTranslate();
 
-	for (float yOffset : yOffsets) {
-		for (float xOffset : xOffsets) {
+	// 二段に分けて発射
+	for (size_t yIdx = 0; yIdx < yCount; ++yIdx) {
+		float yOffset = kDoubleShotYOffset[yIdx];
+		for (size_t xIdx = 0; xIdx < xCount; ++xIdx) {
+			float xOffset = kDoubleShotXOffset[xIdx];
 
 			//発射位置にランダム性を追加
 			Vector3 spawnPos{
@@ -186,24 +195,29 @@ void Boss1::DecideNextTarget() {
 	Vector3 newTarget;
 	const int maxTry = 10;
 
+	// 十分離れた位置を探す
 	for (int i = 0; i < maxTry; ++i) {
 		newTarget.x = RandomFloat(-7.0f, 7.0f);
 		newTarget.y = RandomFloat(0.3f, 3.0f);
 		newTarget.z = transform_.translate.z;
 
+		// 現在位置からの距離を計算
 		Vector3 diff{
 			newTarget.x - transform_.translate.x,
 			newTarget.y - transform_.translate.y,
 			0.0f
 		};
 
+		// 距離計算
 		float dist = Math::Length(diff);
 
+		// 十分離れていれば決定
 		if (dist >= min_target_distance_) {
 			target_position_ = newTarget;
 			return;
 		}
 	}
+	// 十分離れた位置が見つからなかった場合は最後に決定した位置を使用
 	target_position_ = newTarget;
 }
 /// 扇状拡散ショット発射
@@ -237,6 +251,7 @@ void Boss1::FireFanShot()
 	// 角度刻み
 	float angleStep = (kSpreadAngle * 2.0f) / (kBulletCount - 1);
 
+	// 弾発射ループ
 	for (int i = 0; i < kBulletCount; ++i) {
 		float angle = -kSpreadAngle + angleStep * i;
 
