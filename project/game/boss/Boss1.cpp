@@ -187,7 +187,7 @@ void Boss1::DecideNextTarget() {
 	const int maxTry = 10;
 
 	for (int i = 0; i < maxTry; ++i) {
-		newTarget.x = RandomFloat(-7.0f, 7.0f);
+		newTarget.x = RandomFloat(-6.0f, 6.0f);
 		newTarget.y = RandomFloat(0.0f, 0.1f);
 		newTarget.z = transform_.translate.z;
 

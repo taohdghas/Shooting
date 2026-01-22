@@ -10,14 +10,6 @@
 class Player;
 class Boss1
 {
-public:
-	
-	enum class MoveArea {
-		Left,
-		Center,
-		Right
-	};
-
   public:
 	/// <summary>
 	/// 初期化
@@ -75,8 +67,6 @@ public:
 	/// OBB（Oriented Bounding Box）を取得する
 	/// </summary>
 	OBB GetOBB() const; 
-	
-	MoveArea GetMoveArea(float x);
 
 	/// <summary>
 	/// 弾発射間隔を決定する
@@ -164,7 +154,6 @@ public:
 	/// </summary>
 	void SetDefaultScale(const Vector3& scale) {default_scale_ = scale;}
 private:
-	MoveArea current_area_ = MoveArea::Center;
 	// 現在の状態を表すステート
 	std::unique_ptr<BossState> state_;
 	// 3Dオブジェクト共通設定へのポインタ

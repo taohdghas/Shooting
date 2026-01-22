@@ -14,6 +14,7 @@ void BossStateNormal::Enter(Boss1& boss) {
 void BossStateNormal::Update(Boss1& boss) {
     //移動
     boss.Move();
+
 	// 二段高さショット発射処理
     if (boss.UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
         boss.FireDoubleHeightShot();
