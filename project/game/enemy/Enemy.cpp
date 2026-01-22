@@ -1,11 +1,16 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "ImGuiManager.h"
+#include "ModelManager.h"
 #include "MyMath.h"
 
 // 初期化処理
 void Enemy::Initialize(MyEngine::Object3dBase* object3d_base) {
+	// モデルの読み込み
+	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
+	// Object3dBaseの保存
 	object3d_base_ = object3d_base;
+	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique<MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("enemy/enemy.obj");
@@ -198,10 +203,10 @@ Vector3 Enemy::EvaluateRailPosition(float progress)
 	// 範囲安全化
 	size_t i0 = (index == 0) ? index : index - 1;
 	size_t i1 = index;
-	size_t i2 = min(index + 1, pointCount - 1);
-	size_t i3 = min(index + 2, pointCount - 1);
+	size_t i2 = std::min(index + 1, pointCount - 1);
+	size_t i3 = std::min(index + 2, pointCount - 1);
 
-	return Math::CatmullRom(
+	return Math::CatMullRom(
 		rail_points_[i0],
 		rail_points_[i1],
 		rail_points_[i2],

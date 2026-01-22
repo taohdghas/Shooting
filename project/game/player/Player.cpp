@@ -3,6 +3,7 @@
 #include "MyMath.h"
 #include "ImGuiManager.h"
 #include "CameraManager.h"
+#include "ModelManager.h"
 #include "Platform.h"
 #include <algorithm>
 
@@ -12,7 +13,11 @@ Player::~Player() {}
 
 // プレイヤーの初期化処理
 void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
+	// モデルの読み込み
+	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
+	// Object3dBaseの保存
 	object3d_base_ = object3d_base;
+	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("player/player.obj");

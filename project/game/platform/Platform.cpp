@@ -1,10 +1,15 @@
 #include "Platform.h"
 #include "ImGuiManager.h"
+#include "ModelManager.h"
 #include "MyMath.h"
 
 // プラットフォームの初期化処理
 void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
+	// モデルの読み込み
+	MyEngine::ModelManager::GetInstance()->LoadModel("platform/platform.obj");
+	// Object3dBaseの保存
 	object3d_base_ = object3dbase;
+	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("platform/platform.obj");

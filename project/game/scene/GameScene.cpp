@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "SceneManager.h"
 #include "CameraManager.h"
+#include "Object3dBase.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
 #include "Input.h"
@@ -11,21 +12,8 @@ void GameScene::Initialize() {
 	// サウンド初期化
 	MyEngine::Audio::GetInstance()->Initialize();
 
-	// モデルの読み込み
-	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("boss/boss.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("platform/platform.obj");
-
 	// パーティクルグループの生成
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle", "resources/uvChecker.png", MyEngine::ParticleType::Normal);
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle2", "resources/circle2.png", MyEngine::ParticleType::Normal);
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle3", "resources/gradationLine.png", MyEngine::ParticleType::Ring);
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle4", "resources/gradationLine.png", MyEngine::ParticleType::Cylinder);
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle5", "resources/circle2.png", MyEngine::ParticleType::Explosive);
+	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("enemydestroy", "resources/gradationLine.png", MyEngine::ParticleType::Ring);
 	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("platformsmoke", "resources/circle.png", MyEngine::ParticleType::Smoke);
 
 	//カメラの初期化・設定
@@ -78,8 +66,7 @@ void GameScene::Initialize() {
 			const auto& rail = enemyData.rails[0];
 			newEnemy->SetRail(rail.controlPoints, rail.closed);
 		}
-
-
+	
 		enemies_.push_back(std::move(newEnemy));
 	}
 
@@ -179,7 +166,7 @@ void GameScene::Update() {
 
 		if (enemy->IsDeathParticle()) {
 			auto emitter = std::make_unique< MyEngine::ParticleEmitter>();
-			emitter->Initialize("particle3");
+			emitter->Initialize("enemydestroy");
 			emitter->SetPosition(enemy->GetPosition());
 			emitter->Emit();
 			particle_emitters_.push_back(std::move(emitter));
@@ -349,10 +336,10 @@ void GameScene::StartAnimation() {
 	// Update内
 	if (is_start_animation_) {
 		camera_rotate_timer_ += 1.0f / 60.0f;
-		float t = std::min(camera_rotate_timer_ / totalRotationTime, 1.0f);
+		float t = min(camera_rotate_timer_ / totalRotationTime, 1.0f);
 
 		//イージング適用
-		float easedT = static_cast<float>(easeInOutQuad(t));
+		float easedT = static_cast<float>(Math::easeInOutQuad(t));
 
 		//イージングを反映後角度
 		float angle = easedT * oneRotation * rotationSpeed;
@@ -385,8 +372,8 @@ void GameScene::StartAnimation() {
 
 		//イージングタイマーを更新
 		camera_rotate_timer_ += 1.0f / 60.0f;
-		float t = std::min(camera_rotate_timer_ / 2.0f, 1.0f);
-		float easedT = static_cast<float>(easeInOutQuad(t));
+		float t = min(camera_rotate_timer_ / 2.0f, 1.0f);
+		float easedT = static_cast<float>(Math::easeInOutQuad(t));
 
 		Vector3 newRot;
 		newRot.x = currentRot.x + (targetRot.x - currentRot.x) * easedT * 0.1f;

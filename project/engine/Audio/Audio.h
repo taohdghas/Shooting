@@ -32,8 +32,7 @@ namespace MyEngine {
 	// 音声データ
 	struct SoundData {
 		WAVEFORMATEX wfex;     // 波型フォーマット
-		BYTE* p_buffer;        // バッファの先頭アドレス
-		unsigned int buffer_size; // バッファのサイズ
+		std::vector<BYTE> buffer;    // 音声データバッファ
 	};
 
 	// オーディオクラス
@@ -74,10 +73,17 @@ namespace MyEngine {
 		~Audio() = default;
 
 	private:
+		/// シングルトンインスタンス
 		static std::unique_ptr<Audio> instance_;
+		// XAudio2関連の結果コード
 		HRESULT result_;
+		// XAudio2本体
 		Microsoft::WRL::ComPtr<IXAudio2> x_audio2_;
+		// マスターボイス
 		IXAudio2MasteringVoice* master_voice_ = nullptr;
+		// 読み込んだサウンドデータのリスト
 		std::vector<SoundData> loaded_sounds_;
+
+		std::unique_ptr<BYTE[]>buffer_;
 	};
 }

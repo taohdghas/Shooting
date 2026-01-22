@@ -33,9 +33,6 @@ namespace MyEngine {
 	void Object3d::Update() {
 		model_data_ = model_->GetModelData();
 
-		// モデルにライティング有効・無効を反映
-		//model_->SetEnableLighting(enable_lighting_);
-
 		if (material_data_) {
 			material_data_->enableLighting = enable_lighting_ ? 1 : 0;
 		}
@@ -129,11 +126,8 @@ namespace MyEngine {
 	}
 
 	void Object3d::SetColor(const Vector4& color) {
-		/*
-		if (model_) {
-			model_->SetColor(color);
-		}
-		*/
+	
+		// マテリアルデータの色を設定
 		if (material_data_) {
 			material_data_->color = color;
 		}

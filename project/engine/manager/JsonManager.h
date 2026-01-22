@@ -18,10 +18,10 @@ namespace MyEngine {
         /// <summary>
         /// JSON ファイルを読み込み、LevelData を生成して返す。
         /// </summary>
-        LevelData* LoadJsonFile(const std::string& filename);
+        std::unique_ptr<LevelData> LoadJsonFile(const std::string& filename);
 
         /// <summary>
-        /// JSONのtransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
+        /// JSONからTransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
         /// </summary>
         void ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling);
 

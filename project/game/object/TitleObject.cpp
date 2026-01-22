@@ -188,7 +188,7 @@ void TitleObject::UpdateHowto() {
 
     howto_scale_ = std::clamp(howto_scale_, 0.0f, 1.0f);
 
-    float eased = static_cast<float>(easeOutQuad(howto_scale_));
+    float eased = static_cast<float>(Math::easeOutQuad(howto_scale_));
 
     Vector2 baseSize = { 600.0f, 600.0f };
     howto_sprite_->SetSize(Math::MultiplyScalar(baseSize, eased));
@@ -219,7 +219,7 @@ void TitleObject::Debug() {
 
     ImGui::Separator();
 
-    // pushspaceオブジェクトのパラメータ調整
+    // PushSpaceオブジェクトのパラメータ調整
     static float push_scale[3] = { 0.5f, 0.5f, 0.5f };
     static float push_rotate[3] = { 0.0f, 0.0f, 0.0f };
     static float push_translate[3] = { 1.1f, -1.5f, 1.0f };

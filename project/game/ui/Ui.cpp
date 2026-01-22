@@ -107,7 +107,7 @@ void Ui::UpdateOperationGuide()
 
     operation_scale_ = std::clamp(operation_scale_, 0.0f, 1.0f);
 
-    float eased = static_cast<float>(easeOutQuad(operation_scale_));
+    float eased = static_cast<float>(Math::easeOutQuad(operation_scale_));
     Vector2 baseSize = { 600.0f,600.0f };
 
     Get(SpriteType::OperationGuide)->SetSize(

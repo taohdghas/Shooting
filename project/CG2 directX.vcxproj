@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BossStateEnraged.cpp" />
-    <ClCompile Include="BossStateNormal.cpp" />
+    <ClCompile Include="game\boss\BossStateEnraged.cpp" />
+    <ClCompile Include="game\boss\BossStateNormal.cpp" />
     <ClCompile Include="game\boss\Boss1.cpp" />
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -33,7 +33,7 @@
     <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\DirectXBase.cpp" />
     <ClCompile Include="game\player\Player.cpp" />
-    <ClCompile Include="game\player\playerBullet.cpp" />
+    <ClCompile Include="game\player\PlayerBullet.cpp" />
     <ClCompile Include="engine\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\manager\SceneManager.cpp" />
     <ClCompile Include="game\scene\TitleScene.cpp" />
@@ -81,13 +81,12 @@
     <ClCompile Include="game\skybox\Skybox.cpp" />
     <ClCompile Include="game\object\TitleObject.cpp" />
     <ClCompile Include="game\platform\Platform.cpp" />
-    <ClCompile Include="engine\math\WorldTransform.cpp" />
     <ClCompile Include="game\railcamera\RailCamera.cpp" />
     <ClCompile Include="game\ui\Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BossStateEnraged.h" />
-    <ClInclude Include="BossStateNormal.h" />
+    <ClInclude Include="game\boss\BossStateEnraged.h" />
+    <ClInclude Include="game\boss\BossStateNormal.h" />
     <ClInclude Include="game\boss\Boss1.h" />
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
@@ -107,7 +106,7 @@
     <ClInclude Include="engine\debug\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\base\DirectXBase.h" />
     <ClInclude Include="game\player\Player.h" />
-    <ClInclude Include="game\player\playerBullet.h" />
+    <ClInclude Include="game\player\PlayerBullet.h" />
     <ClInclude Include="engine\scene\SceneFactory.h" />
     <ClInclude Include="engine\manager\SceneManager.h" />
     <ClInclude Include="engine\base\PipeLineStateObject.h" />
@@ -149,7 +148,6 @@
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\base\WindowsAPI.h" />
     <ClInclude Include="game\object\TitleObject.h" />
-    <ClInclude Include="engine\math\WorldTransform.h" />
     <ClInclude Include="game\railcamera\RailCamera.h" />
     <ClInclude Include="game\ui\Ui.h" />
   </ItemGroup>

@@ -65,5 +65,5 @@ private:
 	// JsonManager
 	std::unique_ptr<MyEngine::JsonManager> json_manager_;
 	// レベルデータ
-	LevelData* level_data_ = nullptr;
+	std::unique_ptr<LevelData> level_data_;
 };
