@@ -1,10 +1,6 @@
 ### 🌳 Codebase File Tree (Excluding ignored directories)
 
 └── project/
-    ├── BossStateEnraged.cpp
-    ├── BossStateEnraged.h
-    ├── BossStateNormal.cpp
-    ├── BossStateNormal.h
     ├── CG2 directX.vcxproj
     ├── CG2 directX.vcxproj.filters
     ├── Lib/
@@ -78,9 +74,7 @@
     └── └── ├── Transform.h
     └── └── ├── Vector2.h
     └── └── ├── Vector3.h
-    └── └── ├── Vector4.h
-    └── └── ├── WorldTransform.cpp
-    └── └── └── WorldTransform.h
+    └── └── └── Vector4.h
     └── └── scene/
     └──     ├── AbstractSceneFactory.h
     └──     ├── BaseScene.cpp
@@ -91,7 +85,11 @@
     └── ├── boss/
     └── └── ├── Boss1.cpp
     └── └── ├── Boss1.h
-    └── └── └── BossState.h
+    └── └── ├── BossState.h
+    └── └── ├── BossStateEnraged.cpp
+    └── └── ├── BossStateEnraged.h
+    └── └── ├── BossStateNormal.cpp
+    └── └── └── BossStateNormal.h
     └── ├── enemy/
     └── └── ├── Enemy.cpp
     └── └── ├── Enemy.h
@@ -144,157 +142,6 @@
 
 
 ============================================================
-File Path: project/BossStateEnraged.cpp
-============================================================
-#include "BossStateEnraged.h"
-#include "Boss1.h"
-
-// 状態に入るときの処理
-void BossStateEnraged::Enter(Boss1& boss) {
-    fire_timer_ = 0;
-    second_shot_delay_timer_ = 0;
-    is_second_shot_pending_ = false;
-	// 発射間隔決定
-    fire_interval_current_ = boss.DecideFireInterval();
-
-    isFanShotPending_ = false;
-    fanShotDelayTimer_ = 0;
-}
-// 状態の更新
-void BossStateEnraged::Update(Boss1& boss) {
-	//移動
-    boss.Move();
-
-    // 二段高さショット発射処理
-    if (boss.UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
-        boss.FireDoubleHeightShot();
-        is_second_shot_pending_ = true;
-        fire_interval_current_ = boss.DecideFireInterval();
-    }
-    // 二段ショット遅延処理
-    if (is_second_shot_pending_ &&
-        boss.UpdateDelayTimer(second_shot_delay_timer_, kSecondShotDelay)) {
-        boss.FireDoubleHeightShot();
-        is_second_shot_pending_ = false;
-    }
-	// 扇状ショット発射処理
-    if (!isFanShotPending_) {
-        isFanShotPending_ = true;
-    }
-	// 扇状ショット遅延処理
-    if (isFanShotPending_ &&
-        boss.UpdateDelayTimer(fanShotDelayTimer_, kFanShotDelay)) {
-        boss.FireFanShot();
-        isFanShotPending_ = false;
-    }
-}
-
-============================================================
-File Path: project/BossStateEnraged.h
-============================================================
-#pragma once
-#include "BossState.h"
-
-// ボス強化状態クラス
-class BossStateEnraged : public BossState {
-public:
-    /// <summary>
-	/// 状態に入るときの処理
-    /// </summary>
-    void Enter(Boss1& boss) override;
-    /// <summary>
-	/// 状態の更新
-    /// </summary>
-    void Update(Boss1& boss) override;
-private:
-	// 発射タイマー
-    int fire_timer_ = 0;
-	// 発射間隔
-    int fire_interval_current_ = 0;
-	// 扇状ショット遅延タイマー
-    int fanShotDelayTimer_ = 0;
-	// 二段ショット遅延タイマー
-    int second_shot_delay_timer_ = 0;
-	// 二段ショット発射保留フラグ
-    bool is_second_shot_pending_ = false;
-	// 扇状ショット発射保留フラグ
-    bool isFanShotPending_ = false;
-	// 扇状ショット遅延時間定数
-    static const int kFanShotDelay = 30;
-	// 二段ショット遅延時間定数
-    static const int kSecondShotDelay = 15;
-};
-
-============================================================
-File Path: project/BossStateNormal.cpp
-============================================================
-#include "BossStateNormal.h"
-#include "Boss1.h"
-#include "BossStateEnraged.h"
-
-// 状態に入るときの処理
-void BossStateNormal::Enter(Boss1& boss) {
-    fire_timer_ = 0;
-    second_shot_delay_timer_ = 0;
-    is_second_shot_pending_ = false;
-	// 発射間隔決定
-    fire_interval_current_ = boss.DecideFireInterval();
-}
-// 状態の更新
-void BossStateNormal::Update(Boss1& boss) {
-    //移動
-    boss.Move();
-	// 二段高さショット発射処理
-    if (boss.UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
-        boss.FireDoubleHeightShot();
-        is_second_shot_pending_ = true;
-        fire_interval_current_ = boss.DecideFireInterval();
-    }
-	// 二段ショット遅延処理
-    if (is_second_shot_pending_ &&
-        boss.UpdateDelayTimer(second_shot_delay_timer_, kSecondShotDelay)) {
-        boss.FireDoubleHeightShot();
-        is_second_shot_pending_ = false;
-    }
-
-    // 強化遷移
-    if (boss.GetHP() <= boss.GetEnragedHP()) {
-        boss.ChangeState(std::make_unique<BossStateEnraged>());
-    }
-}
-
-============================================================
-File Path: project/BossStateNormal.h
-============================================================
-#pragma once
-#include "BossState.h"
-
-// ボス通常状態クラス
-class BossStateNormal : public BossState
-{
-public:
-    /// <summary>
-	/// 状態に入るときの処理
-    /// </summary>
-    void Enter(Boss1& boss) override;
-    /// <summary>
-	/// 状態の更新
-    /// </summary>
-    void Update(Boss1& boss) override;
-private:
-	// 発射タイマー
-    int fire_timer_ = 0;
-	// 発射間隔
-    int fire_interval_current_ = 0;
-	// 二段ショット遅延タイマー
-    int second_shot_delay_timer_ = 0;
-	// 二段ショット発射保留フラグ
-    bool is_second_shot_pending_ = false;
-	// 二段ショット遅延時間定数
-    static const int kSecondShotDelay = 15;
-};
-
-============================================================
 File Path: project/CG2 directX.vcxproj
 ============================================================
 <?xml version="1.0" encoding="utf-8"?>
@@ -310,8 +157,8 @@ File Path: project/CG2 directX.vcxproj
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BossStateEnraged.cpp" />
-    <ClCompile Include="BossStateNormal.cpp" />
+    <ClCompile Include="game\boss\BossStateEnraged.cpp" />
+    <ClCompile Include="game\boss\BossStateNormal.cpp" />
     <ClCompile Include="game\boss\Boss1.cpp" />
     <ClCompile Include="engine\scene\BaseScene.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -332,7 +179,7 @@ File Path: project/CG2 directX.vcxproj
     <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\DirectXBase.cpp" />
     <ClCompile Include="game\player\Player.cpp" />
-    <ClCompile Include="game\player\playerBullet.cpp" />
+    <ClCompile Include="game\player\PlayerBullet.cpp" />
     <ClCompile Include="engine\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\manager\SceneManager.cpp" />
     <ClCompile Include="game\scene\TitleScene.cpp" />
@@ -380,13 +227,12 @@ File Path: project/CG2 directX.vcxproj
     <ClCompile Include="game\skybox\Skybox.cpp" />
     <ClCompile Include="game\object\TitleObject.cpp" />
     <ClCompile Include="game\platform\Platform.cpp" />
-    <ClCompile Include="engine\math\WorldTransform.cpp" />
     <ClCompile Include="game\railcamera\RailCamera.cpp" />
     <ClCompile Include="game\ui\Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BossStateEnraged.h" />
-    <ClInclude Include="BossStateNormal.h" />
+    <ClInclude Include="game\boss\BossStateEnraged.h" />
+    <ClInclude Include="game\boss\BossStateNormal.h" />
     <ClInclude Include="game\boss\Boss1.h" />
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\BaseScene.h" />
@@ -406,7 +252,7 @@ File Path: project/CG2 directX.vcxproj
     <ClInclude Include="engine\debug\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\base\DirectXBase.h" />
     <ClInclude Include="game\player\Player.h" />
-    <ClInclude Include="game\player\playerBullet.h" />
+    <ClInclude Include="game\player\PlayerBullet.h" />
     <ClInclude Include="engine\scene\SceneFactory.h" />
     <ClInclude Include="engine\manager\SceneManager.h" />
     <ClInclude Include="engine\base\PipeLineStateObject.h" />
@@ -448,7 +294,6 @@ File Path: project/CG2 directX.vcxproj
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\base\WindowsAPI.h" />
     <ClInclude Include="game\object\TitleObject.h" />
-    <ClInclude Include="engine\math\WorldTransform.h" />
     <ClInclude Include="game\railcamera\RailCamera.h" />
     <ClInclude Include="game\ui\Ui.h" />
   </ItemGroup>
@@ -939,7 +784,7 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClCompile Include="game\player\Player.cpp">
       <Filter>ソース ファイル\application\player</Filter>
     </ClCompile>
-    <ClCompile Include="game\player\playerBullet.cpp">
+    <ClCompile Include="game\player\PlayerBullet.cpp">
       <Filter>ソース ファイル\application\player</Filter>
     </ClCompile>
     <ClCompile Include="game\scene\GameClearScene.cpp">
@@ -963,9 +808,6 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\WorldTransform.cpp">
-      <Filter>ソース ファイル\engine\math</Filter>
-    </ClCompile>
     <ClCompile Include="game\fade\Fade.cpp">
       <Filter>ソース ファイル\application\fade</Filter>
     </ClCompile>
@@ -987,10 +829,10 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClCompile Include="game\boss\Boss1.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="BossStateNormal.cpp">
+    <ClCompile Include="game\boss\BossStateNormal.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="BossStateEnraged.cpp">
+    <ClCompile Include="game\boss\BossStateEnraged.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1139,7 +981,7 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClInclude Include="game\player\Player.h">
       <Filter>ヘッダー ファイル\application\player</Filter>
     </ClInclude>
-    <ClInclude Include="game\player\playerBullet.h">
+    <ClInclude Include="game\player\PlayerBullet.h">
       <Filter>ヘッダー ファイル\application\player</Filter>
     </ClInclude>
     <ClInclude Include="game\scene\GameClearScene.h">
@@ -1159,9 +1001,6 @@ File Path: project/CG2 directX.vcxproj.filters
     </ClInclude>
     <ClInclude Include="game\object\TitleObject.h">
       <Filter>ヘッダー ファイル\application\titleobject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\WorldTransform.h">
-      <Filter>ヘッダー ファイル\engine\math</Filter>
     </ClInclude>
     <ClInclude Include="game\fade\Fade.h">
       <Filter>ヘッダー ファイル\application\fade</Filter>
@@ -1187,10 +1026,10 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClInclude Include="game\boss\BossState.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="BossStateNormal.h">
+    <ClInclude Include="game\boss\BossStateNormal.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="BossStateEnraged.h">
+    <ClInclude Include="game\boss\BossStateEnraged.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2065,9 +1904,6 @@ namespace MyEngine {
 	void Object3d::Update() {
 		model_data_ = model_->GetModelData();
 
-		// モデルにライティング有効・無効を反映
-		//model_->SetEnableLighting(enable_lighting_);
-
 		if (material_data_) {
 			material_data_->enableLighting = enable_lighting_ ? 1 : 0;
 		}
@@ -2161,11 +1997,8 @@ namespace MyEngine {
 	}
 
 	void Object3d::SetColor(const Vector4& color) {
-		/*
-		if (model_) {
-			model_->SetColor(color);
-		}
-		*/
+	
+		// マテリアルデータの色を設定
 		if (material_data_) {
 			material_data_->color = color;
 		}
@@ -2618,26 +2451,23 @@ namespace MyEngine {
 		}
 		if (strncmp(data.id, "data", 4) != 0) { assert(0); }
 
-		// 波形データ本体の読み込み
-		char* p_buffer = new char[data.size];
-		file.read(p_buffer, data.size);
-		file.close();
-
-		// 読み込んだデータをSoundData構造体にまとめる
-		SoundData sound_data = {};
+		// 音声データ本体の読み込み
+		SoundData sound_data{};
 		sound_data.wfex = format.fmt;
-		sound_data.p_buffer = reinterpret_cast<BYTE*>(p_buffer);
-		sound_data.buffer_size = data.size;
+		sound_data.buffer.resize(data.size);
+
+		// 音声データをバッファに読み込む
+		file.read(reinterpret_cast<char*>(sound_data.buffer.data()), data.size);
+		file.close();
 
 		return sound_data;
 	}
 
 	// 音声データ解放
 	void Audio::SoundUnload(SoundData* sound_data) {
-		// バッファメモリの解放と構造体の初期化
-		delete[] sound_data->p_buffer;
-		sound_data->p_buffer = nullptr;
-		sound_data->buffer_size = 0;
+		// バッファの解放
+		sound_data->buffer.clear();
+		sound_data->buffer.shrink_to_fit();
 		sound_data->wfex = {};
 	}
 
@@ -2650,8 +2480,8 @@ namespace MyEngine {
 
 		// 再生用バッファ情報の設定
 		XAUDIO2_BUFFER buf{};
-		buf.pAudioData = sound_data.p_buffer;
-		buf.AudioBytes = sound_data.buffer_size;
+		buf.pAudioData = sound_data.buffer.data();
+		buf.AudioBytes = static_cast<UINT32>(sound_data.buffer.size());
 		buf.Flags = XAUDIO2_END_OF_STREAM;
 
 		// 再生開始
@@ -2697,8 +2527,7 @@ namespace MyEngine {
 	// 音声データ
 	struct SoundData {
 		WAVEFORMATEX wfex;     // 波型フォーマット
-		BYTE* p_buffer;        // バッファの先頭アドレス
-		unsigned int buffer_size; // バッファのサイズ
+		std::vector<BYTE> buffer;    // 音声データバッファ
 	};
 
 	// オーディオクラス
@@ -2739,11 +2568,18 @@ namespace MyEngine {
 		~Audio() = default;
 
 	private:
+		/// シングルトンインスタンス
 		static std::unique_ptr<Audio> instance_;
+		// XAudio2関連の結果コード
 		HRESULT result_;
+		// XAudio2本体
 		Microsoft::WRL::ComPtr<IXAudio2> x_audio2_;
+		// マスターボイス
 		IXAudio2MasteringVoice* master_voice_ = nullptr;
+		// 読み込んだサウンドデータのリスト
 		std::vector<SoundData> loaded_sounds_;
+
+		std::unique_ptr<BYTE[]>buffer_;
 	};
 }
 
@@ -5097,7 +4933,7 @@ namespace MyEngine {
             DispatchMessage(&msg);
         }
 
-        // WM_QUITが来ていればtrueを返す
+        // WM_QUITが来ていればTrueを返す
         return msg.message == WM_QUIT;
     }
 }
@@ -5166,8 +5002,6 @@ namespace MyEngine {
         ~WindowsApi() = default;
     private:
         static std::unique_ptr<WindowsApi> instance_;
-
-        WindowsApi* windows_api_ = nullptr;
 
         // ウインドウハンドル
         HWND hwnd_ = nullptr;
@@ -5877,7 +5711,7 @@ namespace MyEngine {
     }
 
     // JSONファイルを読み込んでLevelDataを生成
-    LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
+    std::unique_ptr<LevelData> JsonManager::LoadJsonFile(const std::string& filename) {
         // フルパスを生成
         const std::string full_path = "resources/levels/" + filename + ".json";
 
@@ -5900,7 +5734,7 @@ namespace MyEngine {
         assert(name.compare("scene") == 0);
 
         // レベルデータ格納用インスタンス生成
-        LevelData* level_data = new LevelData();
+        auto level_data = std::make_unique<LevelData>();
 
         // "objects" 配列を走査
         for (nlohmann::json& object_json : deserialized_json["objects"]) {
@@ -6033,10 +5867,10 @@ namespace MyEngine {
         /// <summary>
         /// JSON ファイルを読み込み、LevelData を生成して返す。
         /// </summary>
-        LevelData* LoadJsonFile(const std::string& filename);
+        std::unique_ptr<LevelData> LoadJsonFile(const std::string& filename);
 
         /// <summary>
-        /// JSONのtransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
+        /// JSONからTransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
         /// </summary>
         void ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling);
 
@@ -7336,24 +7170,23 @@ File Path: project/engine/math/MyMath.cpp
 #include "MyMath.h"
 #include <cassert>
 
-// EaseOutQuadイージング関数
-// x（0.0～1.0）に対して加速→減速のカーブを返す
-double easeOutQuad(double x) {
-	// (1-x)^2で減速カーブを作り、1.0から引くことで加速→減速のイージングを実現
-	return 1.0 - (1.0 - x) * (1.0 - x);
-}
-
-// EaseInOutQuadイージング関数
-// x（0.0～1.0）に対して前半は加速、後半は減速のカーブを返す
-double easeInOutQuad(double x) {
-	// xが0.5未満なら加速（前半）、0.5以上なら減速（後半）
-	if (x < 0.5)
-		return 2 * x * x;
-	else
-		return 1 - pow(-2 * x + 2, 2) / 2;
-}
-
 namespace Math {
+	// EaseOutQuadイージング関数
+    // x（0.0～1.0）に対して加速→減速のカーブを返す
+	double Math::easeOutQuad(double x) {
+		// (1-x)^2で減速カーブを作り、1.0から引くことで加速→減速のイージングを実現
+		return 1.0 - (1.0 - x) * (1.0 - x);
+	}
+
+	// EaseInOutQuadイージング関数
+	// x（0.0～1.0）に対して前半は加速、後半は減速のカーブを返す
+	double Math::easeInOutQuad(double x) {
+		// xが0.5未満なら加速（前半）、0.5以上なら減速（後半）
+		if (x < 0.5)
+			return 2 * x * x;
+		else
+			return 1 - pow(-2 * x + 2, 2) / 2;
+	}
 	//長さ
 	float Math::Length(const Vector3& v) {
 		return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
@@ -7366,7 +7199,7 @@ namespace Math {
 	Vector2 Math::Multiply(const Vector2& v1, const Vector2& v2) {
 		return { v1.x * v2.x, v1.y * v2.y };
 	}
-	//乗算(Vectorｘscaler)
+	//乗算(Vector*scaler)
 	Vector2 Math::MultiplyScalar(const Vector2& v, const float scalar) {
 		return { v.x * scalar, v.y * scalar };
 	}
@@ -7395,7 +7228,7 @@ namespace Math {
 		result.z = v1.z * v2.z;
 		return result;
 	}
-	//乗算(Vectorｘscaler)
+	//乗算(Vector*scaler)
 	Vector3 Math::MultiplyScalar(const Vector3& v, const float scalar) {
 		Vector3 result{};
 		result.x = v.x * scalar;
@@ -7432,8 +7265,8 @@ namespace Math {
 		result.z = v1.x * v2.y - v1.y * v2.x;
 		return result;
 	}
-	//CatmullRom補間
-	Vector3 Math::CatmullRom(
+	//CatMullRom補間
+	Vector3 Math::CatMullRom(
 		const Vector3& p0,
 		const Vector3& p1,
 		const Vector3& p2,
@@ -7870,180 +7703,180 @@ File Path: project/engine/math/MyMath.h
 /// Vector2とスカラー値の掛け算
 /// </summary>
 inline Vector2 operator*(const Vector2& v, float s) {
-    return { v.x * s, v.y * s};
+	return { v.x * s, v.y * s };
 }
 
 /// <summary>
 /// Vector3同士の加算
 /// </summary>
 inline Vector3 operator+(const Vector3& v1, const Vector3& v2) {
-    return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
+	return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 }
 
 /// <summary>
 /// Vector3に別のベクトルを加算して更新
 /// </summary>
 inline Vector3& operator+=(Vector3& v1, const Vector3& v2) {
-    v1.x += v2.x;
-    v1.y += v2.y;
-    v1.z += v2.z;
-    return v1;
+	v1.x += v2.x;
+	v1.y += v2.y;
+	v1.z += v2.z;
+	return v1;
 }
 
 /// <summary>
 /// Vector3同士の減算
 /// </summary>
 inline Vector3 operator-(const Vector3& v1, const Vector3& v2) {
-    return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
+	return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 }
 /// <summary>
 /// Vector3 の単項マイナス（符号反転）
 /// </summary>
 inline Vector3 operator-(const Vector3& v) {
-    return { -v.x, -v.y, -v.z };
+	return { -v.x, -v.y, -v.z };
 }
 
 /// <summary>
 /// Vector3から別のベクトルを減算して更新
 /// </summary>
 inline Vector3& operator-=(Vector3& v1, const Vector3& v2) {
-    v1.x -= v2.x;
-    v1.y -= v2.y;
-    v1.z -= v2.z;
-    return v1;
+	v1.x -= v2.x;
+	v1.y -= v2.y;
+	v1.z -= v2.z;
+	return v1;
 }
 
 /// <summary>
 /// Vector3とスカラー値の掛け算
 /// </summary>
 inline Vector3 operator*(const Vector3& v, float s) {
-    return { v.x * s, v.y * s, v.z * s };
+	return { v.x * s, v.y * s, v.z * s };
 }
 
 /// <summary>
 /// Vector3にスカラー値を掛けて更新
 /// </summary>
 inline Vector3& operator*=(Vector3& v, float s) {
-    v.x *= s;
-    v.y *= s;
-    v.z *= s;
-    return v;
+	v.x *= s;
+	v.y *= s;
+	v.z *= s;
+	return v;
 }
 
 /// <summary>
 /// Vector3同士の掛け算（要素ごと）
 /// </summary>
 inline Vector3 operator*(const Vector3& v1, const Vector3& v2) {
-    return { v1.x * v2.x, v1.y * v2.y, v1.z * v2.z };
+	return { v1.x * v2.x, v1.y * v2.y, v1.z * v2.z };
 }
 
 /// <summary>
 /// Vector3同士の掛け算（要素ごと）を更新
 /// </summary>
 inline Vector3& operator*=(Vector3& v1, const Vector3& v2) {
-    v1.x *= v2.x;
-    v1.y *= v2.y;
-    v1.z *= v2.z;
-    return v1;
+	v1.x *= v2.x;
+	v1.y *= v2.y;
+	v1.z *= v2.z;
+	return v1;
 }
 
-/// <summary>
-/// 指定した値に対してイージング（EaseOutQuad）を適用した結果を返します。
-/// </summary>
-double easeOutQuad(double x);
-
-/// <summary>
-/// 指定した値に対してイージング（EaseInOutQuad）を適用した結果を返します
-/// </summary>
-double easeInOutQuad(double x);
-
 namespace Math {
-    /// <summary>ベクトルの長さを計算する</summary>
-    float Length(const Vector3& v);
+	/// <summary>
+    /// 指定した値に対してイージング（EaseOutQuad）を適用した結果を返す
+    /// </summary>
+	double easeOutQuad(double x);
 
-    /// <summary>2つのベクトルの内積を計算する</summary>
-    float Dot(const Vector3& v1, const Vector3& v2);
+	/// <summary>
+	/// 指定した値に対してイージング（EaseInOutQuad）を適用した結果を返す
+	/// </summary>
+	double easeInOutQuad(double x);
+
+	/// <summary>ベクトルの長さを計算する</summary>
+	float Length(const Vector3& v);
+
+	/// <summary>2つのベクトルの内積を計算する</summary>
+	float Dot(const Vector3& v1, const Vector3& v2);
 
 	/// <summary>2つのベクトルの加算</summary>
-    Vector2 Multiply(const Vector2& v1, const Vector2& v2);
+	Vector2 Multiply(const Vector2& v1, const Vector2& v2);
 
 	/// <summary>ベクトルとスカラー値の掛け算</summary>
 	Vector2 MultiplyScalar(const Vector2& v, const float scalar);
 
-    /// <summary>2つのベクトルの加算</summary>
-    Vector3 Add(const Vector3& v1, const Vector3& v2);
+	/// <summary>2つのベクトルの加算</summary>
+	Vector3 Add(const Vector3& v1, const Vector3& v2);
 
-    /// <summary>2つのベクトルの減算</summary>
-    Vector3 Subtract(const Vector3& v1, const Vector3& v2);
+	/// <summary>2つのベクトルの減算</summary>
+	Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 
-    /// <summary>ベクトルの正規化</summary>
-    Vector3 Normalize(const Vector3& v);
+	/// <summary>ベクトルの正規化</summary>
+	Vector3 Normalize(const Vector3& v);
 
-    /// <summary>2つのベクトルの要素ごとの掛け算</summary>
-    Vector3 Multiply(const Vector3& v1, const Vector3& v2);
+	/// <summary>2つのベクトルの要素ごとの掛け算</summary>
+	Vector3 Multiply(const Vector3& v1, const Vector3& v2);
 
-    /// <summary>ベクトルとスカラー値の掛け算</summary>
-    Vector3 MultiplyScalar(const Vector3& v, const float scalar);
+	/// <summary>ベクトルとスカラー値の掛け算</summary>
+	Vector3 MultiplyScalar(const Vector3& v, const float scalar);
 
-    /// <summary>ベクトルを行列で変換（座標変換）</summary>
-    Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+	/// <summary>ベクトルを行列で変換（座標変換）</summary>
+	Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
-    /// <summary>法線ベクトルを行列で変換</summary>
-    Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
+	/// <summary>法線ベクトルを行列で変換</summary>
+	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
-    /// <summary>2つのベクトルの外積を計算</summary>
-    Vector3 Cross(const Vector3& v1, const Vector3& v2);
+	/// <summary>2つのベクトルの外積を計算</summary>
+	Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
 	/// <summary>Catmull-Rom補間</summary>
-    Vector3 CatmullRom(const Vector3& p0, const Vector3& p1,const Vector3& p2,const Vector3& p3,float t);
+	Vector3 CatMullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
 
-    /// <summary>座標ベクトル(Vector4)を行列で変換</summary>
-    Vector4 Transform(const Vector4& v, const Matrix4x4& m);
+	/// <summary>座標ベクトル(Vector4)を行列で変換</summary>
+	Vector4 Transform(const Vector4& v, const Matrix4x4& m);
 
-    /// <summary>単位行列を作成</summary>
-    Matrix4x4 MakeIdentity4x4();
+	/// <summary>単位行列を作成</summary>
+	Matrix4x4 MakeIdentity4x4();
 
-    /// <summary>2つの行列の掛け算</summary>
-    Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
+	/// <summary>2つの行列の掛け算</summary>
+	Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 
-    /// <summary>平行移動行列を作成</summary>
-    Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
+	/// <summary>平行移動行列を作成</summary>
+	Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 
-    /// <summary>拡大縮小行列を作成</summary>
-    Matrix4x4 MakeScaleMatrix(const Vector3& scale);
+	/// <summary>拡大縮小行列を作成</summary>
+	Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 
-    /// <summary>x軸回転行列を作成</summary>
-    Matrix4x4 MakeRotateXMatrix(float radian);
+	/// <summary>x軸回転行列を作成</summary>
+	Matrix4x4 MakeRotateXMatrix(float radian);
 
-    /// <summary>y軸回転行列を作成</summary>
-    Matrix4x4 MakeRotateYMatrix(float radian);
+	/// <summary>y軸回転行列を作成</summary>
+	Matrix4x4 MakeRotateYMatrix(float radian);
 
-    /// <summary>z軸回転行列を作成</summary>
-    Matrix4x4 MakeRotateZMatrix(float radian);
+	/// <summary>z軸回転行列を作成</summary>
+	Matrix4x4 MakeRotateZMatrix(float radian);
 
-    /// <summary>ベクトルによる回転行列を作成</summary>
-    Matrix4x4 MakeRotateMatrix(const Vector3& rotate);
+	/// <summary>ベクトルによる回転行列を作成</summary>
+	Matrix4x4 MakeRotateMatrix(const Vector3& rotate);
 
-    /// <summary>3Dアフィン変換行列を作成</summary>
-    Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+	/// <summary>3Dアフィン変換行列を作成</summary>
+	Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
-    /// <summary>行列の逆行列を計算</summary>
-    Matrix4x4 Inverse(const Matrix4x4& m);
+	/// <summary>行列の逆行列を計算</summary>
+	Matrix4x4 Inverse(const Matrix4x4& m);
 
-    /// <summary>透視投影行列を作成</summary>
-    Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
+	/// <summary>透視投影行列を作成</summary>
+	Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
 
-    /// <summary>正射影行列を作成</summary>
-    Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
+	/// <summary>正射影行列を作成</summary>
+	Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
 
-    /// <summary>ビューポート行列を作成</summary>
-    Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
+	/// <summary>ビューポート行列を作成</summary>
+	Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
-    /// <summary>行列の転置を計算</summary>
-    Matrix4x4 Transpose(const Matrix4x4& m);
+	/// <summary>行列の転置を計算</summary>
+	Matrix4x4 Transpose(const Matrix4x4& m);
 
-    /// <summary>OBB同士の衝突判定</summary>
-    bool IsCollisionOBB(const OBB& obb1, const OBB& obb2);
+	/// <summary>OBB同士の衝突判定</summary>
+	bool IsCollisionOBB(const OBB& obb1, const OBB& obb2);
 }
 
 
@@ -8302,80 +8135,6 @@ struct Vector4 {
 };
 
 ============================================================
-File Path: project/engine/math/WorldTransform.cpp
-============================================================
-#include "WorldTransform.h"
-#include "MyMath.h"
-
-// 初期化
-void WorldTransform::Initialize() {
-    // 現在は特に初期化処理はなし
-}
-
-// 行列計算
-void WorldTransform::UpdateMatrix() {
-    // ローカルスケール、ローカル回転、ローカル平行移動から
-    // ローカル→ワールド変換行列を作成
-    matWorld_ = Math::MakeAffineMatrix(scale_, rotation_, translation_);
-
-    // 親トランスフォームがある場合は親のワールド行列を掛けて
-    // ワールド座標に変換する
-    if (parent_) {
-        matWorld_ = Math::Multiply(matWorld_, parent_->matWorld_);
-    }
-}
-
-
-============================================================
-File Path: project/engine/math/WorldTransform.h
-============================================================
-#pragma once
-#include "Struct.h"
-#include <d3d12.h>
-#include <wrl.h>
-
-/// <summary>
-/// ワールドトランスフォームのクラス
-/// </summary>
-class WorldTransform
-{
-public:
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    /// <remarks>
-    /// 現在は特に処理を行わない。必要に応じて初期化処理を追加可能。
-    /// </remarks>
-    void Initialize();
-
-    /// <summary>
-    /// 行列計算
-    /// </summary>
-    /// <remarks>
-    /// ローカルスケール、ローカル回転、ローカル平行移動をもとに
-    /// ローカル→ワールド変換行列を計算する。
-    /// 親トランスフォームが設定されている場合は親のワールド行列を掛ける。
-    /// </remarks>
-    void UpdateMatrix();
-
-public:
-    //ローカルスケール
-    Vector3 scale_ = { 1,1,1 };
-    //X,Y,Z軸回りのローカル回転角
-    Vector3 rotation_ = { 0,0,0 };
-    //ローカル座標
-    Vector3 translation_ = { 0,0,0 };
-    //ローカル→ワールド変換行列
-    Matrix4x4 matWorld_;
-    //親となるワールド変換へのポインタ
-    const WorldTransform* parent_ = nullptr;
-
-private:
-
-};
-
-
-============================================================
 File Path: project/engine/scene/AbstractSceneFactory.h
 ============================================================
 #pragma once
@@ -8511,12 +8270,17 @@ File Path: project/game/boss/Boss1.cpp
 #include "Boss1.h"
 #include "Player.h"
 #include "ImGuiManager.h"
+#include "ModelManager.h"
 #include "MyMath.h"
 #include "BossStateNormal.h"
 
 // 初期化処理
 void Boss1::Initialize(MyEngine::Object3dBase* object3d_base) {
+	// モデルの読み込み
+	MyEngine::ModelManager::GetInstance()->LoadModel("boss/boss.obj");
+	// Object3dBaseの保存
 	object3d_base_ = object3d_base;
+	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique<MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("boss/boss.obj");
@@ -8593,14 +8357,16 @@ void Boss1::Draw() {
 }
 //移動
 void Boss1::Move() {
+	//目標へのベクトル
 	Vector3 toTarget{
 	target_position_.x - transform_.translate.x,
 	target_position_.y - transform_.translate.y,
 	0.0f
 	};
-
+	//目標までの距離
 	float distance = Math::Length(toTarget);
 
+	//目標到達判定
 	if (distance < arrive_threshold_) {
 		DecideNextTarget();
 	} else {
@@ -8646,18 +8412,20 @@ void Boss1::FireDoubleHeightShot() {
 		return;
 	}
 
-	// 高さ
-	float yOffsets[] = { -0.5f, 0.8f ,2.1f };
-	// 横方向
-	float xOffsets[] = { -5.4f, -4.2f, -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f, 4.2f, 5.4f };
+	// 定数化したオフセットを使用
+	constexpr size_t yCount = std::size(kDoubleShotYOffset);
+	constexpr size_t xCount = std::size(kDoubleShotXOffset);
 
 	const float bulletSpeed = 0.7f;
 
 	Vector3 bossPos = transform_.translate;
 	Vector3 playerPos = player_->GetTranslate();
 
-	for (float yOffset : yOffsets) {
-		for (float xOffset : xOffsets) {
+	// 二段に分けて発射
+	for (size_t yIdx = 0; yIdx < yCount; ++yIdx) {
+		float yOffset = kDoubleShotYOffset[yIdx];
+		for (size_t xIdx = 0; xIdx < xCount; ++xIdx) {
+			float xOffset = kDoubleShotXOffset[xIdx];
 
 			//発射位置にランダム性を追加
 			Vector3 spawnPos{
@@ -8696,24 +8464,29 @@ void Boss1::DecideNextTarget() {
 	Vector3 newTarget;
 	const int maxTry = 10;
 
+	// 十分離れた位置を探す
 	for (int i = 0; i < maxTry; ++i) {
 		newTarget.x = RandomFloat(-7.0f, 7.0f);
 		newTarget.y = RandomFloat(0.3f, 3.0f);
 		newTarget.z = transform_.translate.z;
 
+		// 現在位置からの距離を計算
 		Vector3 diff{
 			newTarget.x - transform_.translate.x,
 			newTarget.y - transform_.translate.y,
 			0.0f
 		};
 
+		// 距離計算
 		float dist = Math::Length(diff);
 
+		// 十分離れていれば決定
 		if (dist >= min_target_distance_) {
 			target_position_ = newTarget;
 			return;
 		}
 	}
+	// 十分離れた位置が見つからなかった場合は最後に決定した位置を使用
 	target_position_ = newTarget;
 }
 /// 扇状拡散ショット発射
@@ -8747,6 +8520,7 @@ void Boss1::FireFanShot()
 	// 角度刻み
 	float angleStep = (kSpreadAngle * 2.0f) / (kBulletCount - 1);
 
+	// 弾発射ループ
 	for (int i = 0; i < kBulletCount; ++i) {
 		float angle = -kSpreadAngle + angleStep * i;
 
@@ -9046,6 +8820,10 @@ private:
 	bool is_death_particle_ = false;
 	//発射間隔
 	static const int kFireInterval = 200;
+	// FireDoubleHeightShot用の高さオフセット
+	static constexpr float kDoubleShotYOffset[3] = { -0.5f, 0.8f, 2.1f };
+	// FireDoubleHeightShot用の横方向オフセット
+	static constexpr float kDoubleShotXOffset[10] = { -5.4f, -4.2f, -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f, 4.2f, 5.4f };
 	//現在のHP
 	int hp_ = 150;
 	//攻撃力
@@ -9112,16 +8890,173 @@ public:
 };
 
 ============================================================
+File Path: project/game/boss/BossStateEnraged.cpp
+============================================================
+#include "BossStateEnraged.h"
+#include "Boss1.h"
+
+// 状態に入るときの処理
+void BossStateEnraged::Enter(Boss1& boss) {
+    fire_timer_ = 0;
+    second_shot_delay_timer_ = 0;
+    is_second_shot_pending_ = false;
+	// 発射間隔決定
+    fire_interval_current_ = boss.DecideFireInterval();
+
+    isFanShotPending_ = false;
+    fan_shot_delay_timer_ = 0;
+}
+// 状態の更新
+void BossStateEnraged::Update(Boss1& boss) {
+	//移動
+    boss.Move();
+
+    // 二段高さショット発射処理
+    if (boss.UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
+        boss.FireDoubleHeightShot();
+        is_second_shot_pending_ = true;
+        fire_interval_current_ = boss.DecideFireInterval();
+    }
+    // 二段ショット遅延処理
+    if (is_second_shot_pending_ &&
+        boss.UpdateDelayTimer(second_shot_delay_timer_, kSecondShotDelay)) {
+        boss.FireDoubleHeightShot();
+        is_second_shot_pending_ = false;
+    }
+	// 扇状ショット発射処理
+    if (!isFanShotPending_) {
+        isFanShotPending_ = true;
+    }
+	// 扇状ショット遅延処理
+    if (isFanShotPending_ &&
+        boss.UpdateDelayTimer(fan_shot_delay_timer_, kFanShotDelay)) {
+        boss.FireFanShot();
+        isFanShotPending_ = false;
+    }
+}
+
+============================================================
+File Path: project/game/boss/BossStateEnraged.h
+============================================================
+#pragma once
+#include "BossState.h"
+
+//ボスの強化状態を表すクラス
+// 通常状態と異なる移動・攻撃パターンを制御する
+class BossStateEnraged : public BossState {
+public:
+    /// <summary>
+	/// 状態に入るときの処理
+    /// </summary>
+    void Enter(Boss1& boss) override;
+    /// <summary>
+	/// 状態の更新
+    /// </summary>
+    void Update(Boss1& boss) override;
+private:
+	// 発射タイマー
+    int fire_timer_ = 0;
+	// 発射間隔
+    int fire_interval_current_ = 0;
+	// 扇状ショット遅延タイマー
+    int fan_shot_delay_timer_ = 0;
+	// 二段ショット遅延タイマー
+    int second_shot_delay_timer_ = 0;
+	// 二段ショット発射保留フラグ
+    bool is_second_shot_pending_ = false;
+	// 扇状ショット発射保留フラグ
+    bool isFanShotPending_ = false;
+	// 扇状ショット遅延時間定数
+    static const int kFanShotDelay = 30;
+	// 二段ショット遅延時間定数
+    static const int kSecondShotDelay = 15;
+};
+
+============================================================
+File Path: project/game/boss/BossStateNormal.cpp
+============================================================
+#include "BossStateNormal.h"
+#include "Boss1.h"
+#include "BossStateEnraged.h"
+
+// 状態に入るときの処理
+void BossStateNormal::Enter(Boss1& boss) {
+    fire_timer_ = 0;
+    second_shot_delay_timer_ = 0;
+    is_second_shot_pending_ = false;
+	// 発射間隔決定
+    fire_interval_current_ = boss.DecideFireInterval();
+}
+// 状態の更新
+void BossStateNormal::Update(Boss1& boss) {
+    //移動
+    boss.Move();
+	// 二段高さショット発射処理
+    if (boss.UpdateDelayTimer(fire_timer_, fire_interval_current_)) {
+        boss.FireDoubleHeightShot();
+        is_second_shot_pending_ = true;
+        fire_interval_current_ = boss.DecideFireInterval();
+    }
+	// 二段ショット遅延処理
+    if (is_second_shot_pending_ &&
+        boss.UpdateDelayTimer(second_shot_delay_timer_, kSecondShotDelay)) {
+        boss.FireDoubleHeightShot();
+        is_second_shot_pending_ = false;
+    }
+
+    // 強化遷移
+    if (boss.GetHP() <= boss.GetEnragedHP()) {
+        boss.ChangeState(std::make_unique<BossStateEnraged>());
+    }
+}
+
+============================================================
+File Path: project/game/boss/BossStateNormal.h
+============================================================
+#pragma once
+#include "BossState.h"
+
+// ボス通常状態クラス
+class BossStateNormal : public BossState
+{
+public:
+    /// <summary>
+	/// 状態に入るときの処理
+    /// </summary>
+    void Enter(Boss1& boss) override;
+    /// <summary>
+	/// 状態の更新
+    /// </summary>
+    void Update(Boss1& boss) override;
+private:
+	// 発射タイマー
+    int fire_timer_ = 0;
+	// 発射間隔
+    int fire_interval_current_ = 0;
+	// 二段ショット遅延タイマー
+    int second_shot_delay_timer_ = 0;
+	// 二段ショット発射保留フラグ
+    bool is_second_shot_pending_ = false;
+	// 二段ショット遅延時間定数
+    static const int kSecondShotDelay = 15;
+};
+
+============================================================
 File Path: project/game/enemy/Enemy.cpp
 ============================================================
 #include "Enemy.h"
 #include "Player.h"
 #include "ImGuiManager.h"
+#include "ModelManager.h"
 #include "MyMath.h"
 
 // 初期化処理
 void Enemy::Initialize(MyEngine::Object3dBase* object3d_base) {
+	// モデルの読み込み
+	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
+	// Object3dBaseの保存
 	object3d_base_ = object3d_base;
+	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique<MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("enemy/enemy.obj");
@@ -9314,10 +9249,10 @@ Vector3 Enemy::EvaluateRailPosition(float progress)
 	// 範囲安全化
 	size_t i0 = (index == 0) ? index : index - 1;
 	size_t i1 = index;
-	size_t i2 = min(index + 1, pointCount - 1);
-	size_t i3 = min(index + 2, pointCount - 1);
+	size_t i2 = std::min(index + 1, pointCount - 1);
+	size_t i3 = std::min(index + 2, pointCount - 1);
 
-	return Math::CatmullRom(
+	return Math::CatMullRom(
 		rail_points_[i0],
 		rail_points_[i1],
 		rail_points_[i2],
@@ -9581,10 +9516,15 @@ File Path: project/game/enemy/EnemyBullet.cpp
 ============================================================
 #include "EnemyBullet.h"
 #include "MyMath.h"
+#include "ModelManager.h"
 
 // 弾の初期化処理
 void EnemyBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
+	// モデルの読み込み
+    MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
+	// Object3dBaseの保存
     object3d_base_ = object3d_base;
+	// 3Dオブジェクトの生成・初期化
     object_ = std::make_unique< MyEngine::Object3d>();
     object_->Initialize(object3d_base_);
     object_->SetModel("enemy/enemybullet.obj");
@@ -9770,7 +9710,7 @@ void Fade::Update() {
     float t = std::clamp(count_ / duration_, 0.0f, 1.0f);
 
     // イージング適用
-    float eased = static_cast<float>(easeOutQuad(t));
+    float eased = static_cast<float>(Math::easeOutQuad(t));
 
     float alpha = 1.0f;
 
@@ -10664,7 +10604,7 @@ void TitleObject::UpdateHowto() {
 
     howto_scale_ = std::clamp(howto_scale_, 0.0f, 1.0f);
 
-    float eased = static_cast<float>(easeOutQuad(howto_scale_));
+    float eased = static_cast<float>(Math::easeOutQuad(howto_scale_));
 
     Vector2 baseSize = { 600.0f, 600.0f };
     howto_sprite_->SetSize(Math::MultiplyScalar(baseSize, eased));
@@ -10695,7 +10635,7 @@ void TitleObject::Debug() {
 
     ImGui::Separator();
 
-    // pushspaceオブジェクトのパラメータ調整
+    // PushSpaceオブジェクトのパラメータ調整
     static float push_scale[3] = { 0.5f, 0.5f, 0.5f };
     static float push_rotate[3] = { 0.0f, 0.0f, 0.0f };
     static float push_translate[3] = { 1.1f, -1.5f, 1.0f };
@@ -10949,11 +10889,16 @@ File Path: project/game/platform/Platform.cpp
 ============================================================
 #include "Platform.h"
 #include "ImGuiManager.h"
+#include "ModelManager.h"
 #include "MyMath.h"
 
 // プラットフォームの初期化処理
 void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
+	// モデルの読み込み
+	MyEngine::ModelManager::GetInstance()->LoadModel("platform/platform.obj");
+	// Object3dBaseの保存
 	object3d_base_ = object3dbase;
+	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("platform/platform.obj");
@@ -11086,6 +11031,7 @@ File Path: project/game/player/Player.cpp
 #include "MyMath.h"
 #include "ImGuiManager.h"
 #include "CameraManager.h"
+#include "ModelManager.h"
 #include "Platform.h"
 #include <algorithm>
 
@@ -11095,7 +11041,11 @@ Player::~Player() {}
 
 // プレイヤーの初期化処理
 void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
+	// モデルの読み込み
+	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
+	// Object3dBaseの保存
 	object3d_base_ = object3d_base;
+	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("player/player.obj");
@@ -11715,11 +11665,14 @@ File Path: project/game/player/playerBullet.cpp
 ============================================================
 #include "PlayerBullet.h"
 #include "MyMath.h"
+#include "ModelManager.h"
 
 // 弾の初期化処理
 void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
+	// モデルの読み込み
+	MyEngine::ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
+    // Object3dBaseの保存
 	object3d_base_ = object3d_base;
-
 	// 3Dオブジェクトの生成・初期化
 	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
@@ -12291,6 +12244,7 @@ File Path: project/game/scene/GameScene.cpp
 #include "GameScene.h"
 #include "SceneManager.h"
 #include "CameraManager.h"
+#include "Object3dBase.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
 #include "Input.h"
@@ -12301,21 +12255,8 @@ void GameScene::Initialize() {
 	// サウンド初期化
 	MyEngine::Audio::GetInstance()->Initialize();
 
-	// モデルの読み込み
-	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("player/playerbullet.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemy.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("enemy/enemybullet.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("boss/boss.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("skydome/skydome.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("platform/platform.obj");
-
 	// パーティクルグループの生成
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle", "resources/uvChecker.png", MyEngine::ParticleType::Normal);
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle2", "resources/circle2.png", MyEngine::ParticleType::Normal);
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle3", "resources/gradationLine.png", MyEngine::ParticleType::Ring);
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle4", "resources/gradationLine.png", MyEngine::ParticleType::Cylinder);
-	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("particle5", "resources/circle2.png", MyEngine::ParticleType::Explosive);
+	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("enemydestroy", "resources/gradationLine.png", MyEngine::ParticleType::Ring);
 	MyEngine::ParticleManager::GetInstance()->CreateParticleGroup("platformsmoke", "resources/circle.png", MyEngine::ParticleType::Smoke);
 
 	//カメラの初期化・設定
@@ -12368,8 +12309,7 @@ void GameScene::Initialize() {
 			const auto& rail = enemyData.rails[0];
 			newEnemy->SetRail(rail.controlPoints, rail.closed);
 		}
-
-
+	
 		enemies_.push_back(std::move(newEnemy));
 	}
 
@@ -12469,7 +12409,7 @@ void GameScene::Update() {
 
 		if (enemy->IsDeathParticle()) {
 			auto emitter = std::make_unique< MyEngine::ParticleEmitter>();
-			emitter->Initialize("particle3");
+			emitter->Initialize("enemydestroy");
 			emitter->SetPosition(enemy->GetPosition());
 			emitter->Emit();
 			particle_emitters_.push_back(std::move(emitter));
@@ -12639,10 +12579,10 @@ void GameScene::StartAnimation() {
 	// Update内
 	if (is_start_animation_) {
 		camera_rotate_timer_ += 1.0f / 60.0f;
-		float t = std::min(camera_rotate_timer_ / totalRotationTime, 1.0f);
+		float t = min(camera_rotate_timer_ / totalRotationTime, 1.0f);
 
 		//イージング適用
-		float easedT = static_cast<float>(easeInOutQuad(t));
+		float easedT = static_cast<float>(Math::easeInOutQuad(t));
 
 		//イージングを反映後角度
 		float angle = easedT * oneRotation * rotationSpeed;
@@ -12675,8 +12615,8 @@ void GameScene::StartAnimation() {
 
 		//イージングタイマーを更新
 		camera_rotate_timer_ += 1.0f / 60.0f;
-		float t = std::min(camera_rotate_timer_ / 2.0f, 1.0f);
-		float easedT = static_cast<float>(easeInOutQuad(t));
+		float t = min(camera_rotate_timer_ / 2.0f, 1.0f);
+		float easedT = static_cast<float>(Math::easeInOutQuad(t));
 
 		Vector3 newRot;
 		newRot.x = currentRot.x + (targetRot.x - currentRot.x) * easedT * 0.1f;
@@ -12784,13 +12724,7 @@ bool GameScene::IsBossSpawnCondition() {
 File Path: project/game/scene/GameScene.h
 ============================================================
 #pragma once
-#include "Sprite.h"
-#include "SpriteBase.h"
-#include "Object3d.h"
-#include "Object3dBase.h"
 #include "Audio.h"
-#include "TextureManager.h"
-#include "ModelManager.h"
 #include "ParticleEmitter.h"
 #include "BaseScene.h"
 #include "Camera.h"
@@ -12889,7 +12823,8 @@ private:
 	//UI
 	std::unique_ptr<Ui>ui_;
 	//レベルデータ
-	LevelData* level_data_ = nullptr;
+	std::unique_ptr<LevelData> level_data_;
+
 	//ボス出現位置
 	Vector3 boss_spawn_position_;
 	//撃破演出回転軸
@@ -13230,7 +13165,7 @@ private:
 	// JsonManager
 	std::unique_ptr<MyEngine::JsonManager> json_manager_;
 	// レベルデータ
-	LevelData* level_data_ = nullptr;
+	std::unique_ptr<LevelData> level_data_;
 };
 
 
@@ -13575,7 +13510,7 @@ void Ui::UpdateOperationGuide()
 
     operation_scale_ = std::clamp(operation_scale_, 0.0f, 1.0f);
 
-    float eased = static_cast<float>(easeOutQuad(operation_scale_));
+    float eased = static_cast<float>(Math::easeOutQuad(operation_scale_));
     Vector2 baseSize = { 600.0f,600.0f };
 
     Get(SpriteType::OperationGuide)->SetSize(
