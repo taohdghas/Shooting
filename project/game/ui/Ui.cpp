@@ -36,7 +36,7 @@ void Ui::Update()
 	//HPバー更新
     UpdateHPBar();
 	//操作説明画面更新
-    UpdateOperationGuide();
+    UpdatePauseGuide();
 
 	//スプライト更新
     for (auto& [type, sprite] : sprites_) {
@@ -101,11 +101,11 @@ void Ui::UpdateHPBar()
     Get(SpriteType::HpBar)->SetSize({ maxSize.x * ratio, maxSize.y });
 }
 //操作説明画面処理
-void Ui::UpdateOperationGuide()
+void Ui::UpdatePauseGuide()
 {
     const float speed = 0.07f;
     //スケール更新
-    if (is_show_operation_) {
+    if (is_show_pause_) {
         pause_scale_ += speed;
     } else {
         pause_scale_ -= speed;

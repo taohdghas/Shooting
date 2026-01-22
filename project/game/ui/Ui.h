@@ -45,9 +45,9 @@ public:
 	/// </summary>
 	void UpdateHPBar();
      /// <summary>
-     /// 操作説明画面処理
+     /// ポーズ画面処理
      /// </summary>
-	void UpdateOperationGuide();
+	void UpdatePauseGuide();
 	/// <summary>
 	/// スプライト作成
 	/// </summary>
@@ -68,7 +68,7 @@ public:
 	/// <summary>
 	/// 操作説明画面表示設定
 	/// </summary>
-	void SetOperationGuide(bool flag) { is_show_operation_ = flag; }
+	void SetShowPause(bool flag) { is_show_pause_ = flag; }
 private:
 	// スプライト格納用マップ
 	std::unordered_map<SpriteType, std::unique_ptr<MyEngine::Sprite>> sprites_;
@@ -86,6 +86,6 @@ private:
 	float back_title_scale_ = 0.0f;
 	//ポーズ画面のスプライトスケール
 	float pause_scale_ = 0.0f;
-	//操作説明画面が出ているか
-	bool is_show_operation_ = false;
+	//ポーズ画面が出ているか
+	bool is_show_pause_ = false;
 };

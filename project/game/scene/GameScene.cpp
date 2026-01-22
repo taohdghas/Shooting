@@ -124,7 +124,7 @@ void GameScene::Update() {
 		is_game_pause_ = !is_game_pause_;
 	}
 	// UIに一時停止フラグをセット
-	ui_->SetOperationGuide(is_game_pause_);
+	ui_->SetShowPause(is_game_pause_);
 
 	// UIの更新
 	ui_->Update();
