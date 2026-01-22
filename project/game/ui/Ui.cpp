@@ -9,10 +9,14 @@
 void Ui::Initialize()
 {   //HPバー作成
     CreateSprite(SpriteType::HpBar, "resources/ui/hpbar.png", { 50,50 }, { 200,20 });
-	//ポーズ表示作成
+	//ポーズ文字作成
     CreateSprite(SpriteType::Pause,"resources/ui/pause.png", { 1000,20 }, { 300,60 });
+    //リトライ文字作成
+	//CreateSprite(SpriteType::Retry, "resources/ui/retry.png", { 640,420 }, { 400,100 });
+	//タイトルへ戻る文字作成
+	//CreateSprite(SpriteType::BackTitle, "resources/ui/back_title.png", { 640,540 }, { 400,100 });
 	//操作説明画面作成
-    CreateSprite(SpriteType::OperationGuide,"resources/ui/operation.png", { 640,360 }, { 600,600 }, { 0.5f,0.5f });
+    CreateSprite(SpriteType::OperationGuide,"resources/ui/operation.png", { 640,300 }, { 500,500 }, { 0.5f,0.5f });
 	//各キー説明作成
     CreateSprite(SpriteType::KeyA, "resources/ui/keyboard_a.png", { 440,500 }, { 50,50 });
 	//Dキー
@@ -21,7 +25,7 @@ void Ui::Initialize()
     CreateSprite(SpriteType::KeyF,"resources/ui/keyboard_f.png", { 640,500 }, { 50,50 });
 	//Wキー
     CreateSprite(SpriteType::KeyW, "resources/ui/keyboard_w.png", { 490,450 }, { 50,50 });
-	//左クリック
+	//マウス左
     CreateSprite(SpriteType::MouseLeft, "resources/ui/mouse_left.png", { 740,500 }, { 50,50 });
 	//マウス移動
     CreateSprite(SpriteType::MouseMove,"resources/ui/mouse_move.png", { 840,500 }, { 50,50 });
@@ -44,10 +48,12 @@ void Ui::Draw()
 {
 	//HPバー表示
     Get(SpriteType::HpBar)->Draw();
-	//ポーズ表示
+	//ポーズ文字表示
     Get(SpriteType::Pause)->Draw();
-	//操作説明画面表示
-    if (operation_scale_ > 0.01f) {
+	//ポーズ画面表示
+    if (pause_scale_ > 0.01f) {
+       // Get(SpriteType::Retry)->Draw();
+		//Get(SpriteType::BackTitle)->Draw();
         Get(SpriteType::OperationGuide)->Draw();
     }
 }
@@ -100,19 +106,19 @@ void Ui::UpdateOperationGuide()
     const float speed = 0.07f;
     //スケール更新
     if (is_show_operation_) {
-        operation_scale_ += speed;
+        pause_scale_ += speed;
     } else {
-        operation_scale_ -= speed;
+        pause_scale_ -= speed;
     }
+    pause_scale_ = std::clamp(pause_scale_, 0.0f, 1.0f);
 
-    operation_scale_ = std::clamp(operation_scale_, 0.0f, 1.0f);
+    float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
 
-    float eased = static_cast<float>(Math::easeOutQuad(operation_scale_));
-    Vector2 baseSize = { 600.0f,600.0f };
+    //Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
 
-    Get(SpriteType::OperationGuide)->SetSize(
-        Math::MultiplyScalar(baseSize, eased)
-    );
+    //Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size, eased));
+
+    Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size, eased));
 }
 //スプライト作成
 void Ui::CreateSprite(SpriteType type,

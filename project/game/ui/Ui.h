@@ -5,21 +5,23 @@
 #include <unordered_map>
 #include <memory>
 
-
+// UI管理クラス
 class Ui
 {
 public:
 	// スプライトの種類
 	enum class SpriteType {
-		HpBar,
-		Pause,
-		OperationGuide,
-		KeyA,
-		KeyD,
-		KeyF,
-		KeyW,
-		MouseLeft,
-		MouseMove,
+		HpBar,//HPバー
+		Pause,//ポーズ表示
+		Retry,//リトライ文字
+		BackTitle,//タイトルへ戻る文字
+		OperationGuide,//操作説明画面
+		KeyA,//Aキー
+		KeyD,//Dキー
+		KeyF,//Fキー
+		KeyW,//Wキー
+		MouseLeft,//マウス左
+		MouseMove,//マウス移動
 	};
 public:
 	/// <summary>
@@ -72,8 +74,18 @@ private:
 	std::unordered_map<SpriteType, std::unique_ptr<MyEngine::Sprite>> sprites_;
 	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
-	//操作説明画面のスケール
-	float operation_scale_ = 0.0f;
+	//リトライ文字の基準サイズ
+	Vector2 retry_base_size = { 100.0f,100.0f };
+	//タイトルㇸ戻る文字の基準サイズ
+	Vector2 back_title_base_size = { 100.0f,100.0f };
+	//操作説明画面の基準サイズ
+	Vector2 operation_base_size = { 500.0f,500.0f };
+	//リトライ文字のスケール
+	float retry_scale_ = 0.0f;
+	//タイトルへ戻る文字のスケール
+	float back_title_scale_ = 0.0f;
+	//ポーズ画面のスプライトスケール
+	float pause_scale_ = 0.0f;
 	//操作説明画面が出ているか
 	bool is_show_operation_ = false;
 };
