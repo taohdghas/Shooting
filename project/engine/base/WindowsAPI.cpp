@@ -100,7 +100,7 @@ namespace MyEngine {
             DispatchMessage(&msg);
         }
 
-        // WM_QUITが来ていればtrueを返す
+        // WM_QUITが来ていればTrueを返す
         return msg.message == WM_QUIT;
     }
 }

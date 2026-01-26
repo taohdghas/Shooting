@@ -38,7 +38,7 @@ void Fade::Update() {
     float t = std::clamp(count_ / duration_, 0.0f, 1.0f);
 
     // イージング適用
-    float eased = static_cast<float>(easeOutQuad(t));
+    float eased = static_cast<float>(Math::easeOutQuad(t));
 
     float alpha = 1.0f;
 

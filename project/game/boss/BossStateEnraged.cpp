@@ -10,7 +10,8 @@ void BossStateEnraged::Enter(Boss1& boss) {
     fire_interval_current_ = boss.DecideFireInterval();
 
     isFanShotPending_ = false;
-    fanShotDelayTimer_ = 0;
+
+    fan_shot_delay_timer_ = 0;
 }
 // 状態の更新
 void BossStateEnraged::Update(Boss1& boss) {
@@ -35,7 +36,7 @@ void BossStateEnraged::Update(Boss1& boss) {
     }
 	// 扇状ショット遅延処理
     if (isFanShotPending_ &&
-        boss.UpdateDelayTimer(fanShotDelayTimer_, kFanShotDelay)) {
+        boss.UpdateDelayTimer(fan_shot_delay_timer_, kFanShotDelay)) {
         boss.FireFanShot();
         isFanShotPending_ = false;
     }

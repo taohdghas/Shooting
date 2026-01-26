@@ -16,7 +16,7 @@ namespace MyEngine {
     }
 
     // JSONファイルを読み込んでLevelDataを生成
-    LevelData* JsonManager::LoadJsonFile(const std::string& filename) {
+    std::unique_ptr<LevelData> JsonManager::LoadJsonFile(const std::string& filename) {
         // フルパスを生成
         const std::string full_path = "resources/levels/" + filename + ".json";
 
@@ -39,7 +39,7 @@ namespace MyEngine {
         assert(name.compare("scene") == 0);
 
         // レベルデータ格納用インスタンス生成
-        LevelData* level_data = new LevelData();
+        auto level_data = std::make_unique<LevelData>();
 
         // "objects" 配列を走査
         for (nlohmann::json& object_json : deserialized_json["objects"]) {

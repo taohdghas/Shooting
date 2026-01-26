@@ -273,7 +273,7 @@
     <ClCompile Include="game\player\Player.cpp">
       <Filter>ソース ファイル\application\player</Filter>
     </ClCompile>
-    <ClCompile Include="game\player\playerBullet.cpp">
+    <ClCompile Include="game\player\PlayerBullet.cpp">
       <Filter>ソース ファイル\application\player</Filter>
     </ClCompile>
     <ClCompile Include="game\scene\GameClearScene.cpp">
@@ -296,9 +296,6 @@
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\math\WorldTransform.cpp">
-      <Filter>ソース ファイル\engine\math</Filter>
     </ClCompile>
     <ClCompile Include="game\fade\Fade.cpp">
       <Filter>ソース ファイル\application\fade</Filter>
@@ -473,7 +470,7 @@
     <ClInclude Include="game\player\Player.h">
       <Filter>ヘッダー ファイル\application\player</Filter>
     </ClInclude>
-    <ClInclude Include="game\player\playerBullet.h">
+    <ClInclude Include="game\player\PlayerBullet.h">
       <Filter>ヘッダー ファイル\application\player</Filter>
     </ClInclude>
     <ClInclude Include="game\scene\GameClearScene.h">
@@ -493,9 +490,6 @@
     </ClInclude>
     <ClInclude Include="game\object\TitleObject.h">
       <Filter>ヘッダー ファイル\application\titleobject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\WorldTransform.h">
-      <Filter>ヘッダー ファイル\engine\math</Filter>
     </ClInclude>
     <ClInclude Include="game\fade\Fade.h">
       <Filter>ヘッダー ファイル\application\fade</Filter>
