@@ -24,6 +24,8 @@ public:
     /// </summary>
     void Draw();
 
+	void DrawSprite();
+
     /// <summary>
     /// ゲームクリアオブジェクトのデバッグ表示・デバッグ用更新処理を行う。
     /// </summary>
@@ -39,12 +41,10 @@ private:
 
     // ゲームクリア文字のオブジェクト
     std::unique_ptr< MyEngine::Object3d> game_clear_object_;
-    // push spaceのオブジェクト
-    std::unique_ptr< MyEngine::Object3d> push_space_object_;
+	//push spaceスプライト
+	std::unique_ptr< MyEngine::Sprite> push_space_sprite_;
     // ゲームクリアトランスフォーム
     Transform game_clear_transform_;
-    // push spaceトランスフォーム
-    Transform push_space_transform_;
     // 文字数
     static const int kNumLetters = 9;
     // 文字配列

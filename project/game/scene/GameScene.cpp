@@ -134,6 +134,17 @@ void GameScene::Update() {
 
 	// ゲーム一時停止中は更新処理をスキップ
 	if (is_game_pause_) {
+		if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_R)) {
+			// リトライ
+			MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
+			return;
+		}
+
+		if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_T)) {
+			// タイトルへ
+			MyEngine::SceneManager::GetInstance()->ChangeScene("TITLE");
+			return;
+		}
 		return;
 	}
 
@@ -162,8 +173,9 @@ void GameScene::Update() {
 
 	// 敵ごとの衝突判定・デスパーティクル処理
 	for (auto& enemy : enemies_) {
+		// 衝突判定
 		collision_manager_->CheckPlayerEnemyCollisions(player_.get(), enemy.get());
-
+		// デスパーティクル処理
 		if (enemy->IsDeathParticle()) {
 			auto emitter = std::make_unique< MyEngine::ParticleEmitter>();
 			emitter->Initialize("enemydestroy");
@@ -208,9 +220,11 @@ void GameScene::Update() {
 		is_to_game_over_ = true;
 	}
 	// デバッグ用：Rキーでゲームオーバー
+#ifdef _DEBUG
 	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_R)) {
 		is_to_game_over_ = true;
 	}
+#endif
 	// ゲームクリアシーンへ遷移
 	if (is_to_game_clear_) {
 		ToGameClear();

@@ -21,19 +21,22 @@ void TitleObject::Initialize() {
     player_obj_transform_.scale = { 0.5f, 0.5f, 0.5f };
     player_obj_transform_.rotate = { 0.0f, -0.5f, 0.0f };
     player_obj_transform_.translate = { -1.3f, -0.5f, -4.8f };
-	// メニュー項目スプライト生成・初期化
+	// スタートスプライト生成・初期化
     menu_start_ = std::make_unique<MyEngine::Sprite>();
     menu_start_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/start.png");
+	menu_start_->SetAnchorPoint({ 0.5f, 0.5f });
     menu_start_->SetPosition({ 700, 380 });
 	menu_start_->SetSize({150,100});
 	// 操作説明項目スプライト
     menu_howto_ = std::make_unique<MyEngine::Sprite>();
     menu_howto_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/howto.png");
-    menu_howto_->SetPosition({ 693, 505 });
+	menu_howto_->SetAnchorPoint({ 0.5f, 0.5f });
+    menu_howto_->SetPosition({ 720, 505 });
 	menu_howto_->SetSize({ 200,80 });
 	// 終了項目スプライト
     menu_exit_ = std::make_unique<MyEngine::Sprite>();
     menu_exit_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/exit.png");
+	menu_exit_->SetAnchorPoint({ 0.5f, 0.5f });
     menu_exit_->SetPosition({ 699, 607 });
 	menu_exit_->SetSize({ 150,80 });
 
@@ -219,24 +222,6 @@ void TitleObject::Debug() {
 
     ImGui::Separator();
 
-    // PushSpaceオブジェクトのパラメータ調整
-    static float push_scale[3] = { 0.5f, 0.5f, 0.5f };
-    static float push_rotate[3] = { 0.0f, 0.0f, 0.0f };
-    static float push_translate[3] = { 1.1f, -1.5f, 1.0f };
-
-    ImGui::Text("PushSpace");
-    if (ImGui::DragFloat3("Push Scale", push_scale, 0.01f)) {
-        push_space_->SetScale({ push_scale[0], push_scale[1], push_scale[2] });
-    }
-    if (ImGui::DragFloat3("Push Rotate", push_rotate, 0.5f)) {
-        push_space_->SetRotate({ push_rotate[0], push_rotate[1], push_rotate[2] });
-    }
-    if (ImGui::DragFloat3("Push Translate", push_translate, 0.01f)) {
-        push_space_->SetTranslate({ push_translate[0], push_translate[1], push_translate[2] });
-    }
-
-    ImGui::Separator();
-
     // プレイヤーオブジェクトのパラメータ調整
     static float player_scale[3] = { 0.5f, 0.5f, 0.5f };
     static float player_rotate[3] = { 0.0f, 0.0f, 0.0f };
@@ -305,16 +290,27 @@ bool TitleObject::IsMouseOnSprite(MyEngine::Sprite* sprite)
 {
     POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
 
-    Vector2 pos = sprite->GetPosition(); // 左上
-    Vector2 size = sprite->GetSize();     // 幅・高さ
+    Vector2 pos = sprite->GetPosition();      // 基準点（アンカー位置）
+    Vector2 size = sprite->GetSize();         // サイズ
+    Vector2 anchor = sprite->GetAnchorPoint();// アンカーポイント (0.0～1.0)
 
-    if (mouse.x >= pos.x && mouse.x <= pos.x + size.x &&
-        mouse.y >= pos.y && mouse.y <= pos.y + size.y) {
+    // 左上座標をアンカーから逆算
+    Vector2 leftTop;
+    leftTop.x = pos.x - size.x * anchor.x;
+    leftTop.y = pos.y - size.y * anchor.y;
+
+    Vector2 rightBottom;
+    rightBottom.x = leftTop.x + size.x;
+    rightBottom.y = leftTop.y + size.y;
+
+    if (mouse.x >= leftTop.x && mouse.x <= rightBottom.x &&
+        mouse.y >= leftTop.y && mouse.y <= rightBottom.y) {
         return true;
     }
 
     return false;
 }
+
 
 // マウスが乗っているメニュー項目のインデックスを取得
 int TitleObject::GetMouseHoverIndex()

@@ -75,9 +75,9 @@ private:
 	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
 	//リトライ文字の基準サイズ
-	Vector2 retry_base_size = { 100.0f,100.0f };
+	Vector2 retry_base_size = { 180.0f,100.0f };
 	//タイトルㇸ戻る文字の基準サイズ
-	Vector2 back_title_base_size = { 100.0f,100.0f };
+	Vector2 back_title_base_size = { 180.0f,100.0f };
 	//操作説明画面の基準サイズ
 	Vector2 operation_base_size = { 500.0f,500.0f };
 	//リトライ文字のスケール

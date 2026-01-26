@@ -12,9 +12,9 @@ void Ui::Initialize()
 	//ポーズ文字作成
     CreateSprite(SpriteType::Pause,"resources/ui/pause.png", { 1000,20 }, { 300,60 });
     //リトライ文字作成
-	//CreateSprite(SpriteType::Retry, "resources/ui/retry.png", { 640,420 }, { 400,100 });
-	//タイトルへ戻る文字作成
-	//CreateSprite(SpriteType::BackTitle, "resources/ui/back_title.png", { 640,540 }, { 400,100 });
+    CreateSprite(SpriteType::Retry, "resources/ui/retry.png", { 485,620 }, { 180,100 }, { 0.5f,0.5f });
+    //タイトルへ戻る文字作成
+    CreateSprite(SpriteType::BackTitle, "resources/ui/back_title.png", { 805,620 }, { 180,100 }, { 0.5f,0.5f });
 	//操作説明画面作成
     CreateSprite(SpriteType::OperationGuide,"resources/ui/operation.png", { 640,300 }, { 500,500 }, { 0.5f,0.5f });
 	//各キー説明作成
@@ -52,8 +52,8 @@ void Ui::Draw()
     Get(SpriteType::Pause)->Draw();
 	//ポーズ画面表示
     if (pause_scale_ > 0.01f) {
-       // Get(SpriteType::Retry)->Draw();
-		//Get(SpriteType::BackTitle)->Draw();
+        Get(SpriteType::Retry)->Draw();
+		Get(SpriteType::BackTitle)->Draw();
         Get(SpriteType::OperationGuide)->Draw();
     }
 }
@@ -114,9 +114,9 @@ void Ui::UpdatePauseGuide()
 
     float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
 
-    //Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
+    Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
 
-    //Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size, eased));
+    Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size, eased));
 
     Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size, eased));
 }

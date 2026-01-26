@@ -8,42 +8,84 @@
 // ゲームオーバーオブジェクト
 class GameOverObject {
 public:
+
+	// メニュー結果
+    enum class MenuResult {
+        None,
+        Retry,
+        BackTitle
+    };
+
     /// <summary>
-    /// ゲームオーバーオブジェクトの初期化処理を行う。
+    /// 初期化
     /// </summary>
     void Initialize();
 
     /// <summary>
-    /// ゲームオーバーオブジェクトの毎フレーム更新処理を行う。
+    /// ゲームオーバーオブジェクトの更新
     /// </summary>
     void Update();
 
     /// <summary>
-    /// ゲームオーバーオブジェクトの描画処理を行う。
+    /// 描画
     /// </summary>
     void Draw();
 
+	/// <summary>
+	/// スプライト更新
+	/// </summary>
+    void UpdateSprite();
+
+	/// <summary>
+	/// スプライト描画
+	/// </summary>
+    void DrawSprite();
+
     /// <summary>
-    /// ゲームオーバーオブジェクトのデバッグ表示・デバッグ用更新処理を行う
+    /// デバッグ表示
     /// </summary>
     void Debug();
 
+    /// <summary>
+	/// メニュー結果リセット
+    /// </summary>
+    void ResetMenuResult() { menu_result_ = MenuResult::None; }
+
+	/// <summary>
+	/// メニューインデックス取得
+	/// </summary>
+    int GetMouseHoverIndex();
+
+	/// <summary>
+	/// スプライト上にマウスがあるか判定
+	/// </summary>
+    bool IsMouseOnSprite(MyEngine::Sprite* sprite);
+
+	/// <summary>
+	/// メニュー結果取得
+	/// </summary>
+    MenuResult GetMenuResult() const { return menu_result_; }
+
 private:
+	// メニュー結果
+    MenuResult menu_result_ = MenuResult::None;
     // 文字構造体
     struct Letter {
         std::unique_ptr< MyEngine::Object3d> obj;
         Transform transform;
         float delay;  // 出現までの遅延時間
     };
-
     // ゲームオーバー文字のオブジェクト
-    std::unique_ptr< MyEngine::Object3d> gameOverObj_;
-    // retry のオブジェクト
-    std::unique_ptr< MyEngine::Object3d> retryObj_;
+    std::unique_ptr< MyEngine::Object3d> game_over_object_;
+    //retryのスプライト
+	std::unique_ptr< MyEngine::Sprite> retry_sprite_;
+    //タイトルへ戻るスプライト
+	std::unique_ptr< MyEngine::Sprite> back_title_sprite_;
     // ゲームオーバーのトランスフォーム
     Transform gameOverTransform_;
-    // retry のトランスフォーム
-    Transform retryTransform_;
+	//基準サイズ
+    Vector2 retry_size_;
+    Vector2 back_title_size_;
     // 文字数
     static constexpr int kNumLetters = 8;
     // 文字配列
@@ -70,5 +112,9 @@ private:
     float spacing_ = 0.9f;
     // 基準座標
     float baseY_ = -1.0f;
+	// スケールタイマー
+    float scale_timer_ = 0.0f;
+	// 選択中インデックス
+    int select_index_ = -1;
 };
 

@@ -9,8 +9,7 @@
 //初期化
 void GameOverScene::Initialize() {
 
-	//モデル読み込み
-	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/retry.obj");
+	//モデル読み込み;
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/g.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/a.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/m.obj");
@@ -49,9 +48,25 @@ void GameOverScene::Update() {
 	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 	//Skybox
 	skybox_->Update();
-
 	//ゲームオーバーオブジェクト
 	game_over_object_->Update();
+
+	//選択結果取得
+	auto result = game_over_object_->GetMenuResult();
+
+	//選択結果による処理
+	if (fade_->GetState() == Fade::State::None) {
+		if (result == GameOverObject::MenuResult::Retry) {
+			fade_->FadeStart(Fade::State::FadeOut, 0.5f);
+			is_to_game_ = true;
+			game_over_object_->ResetMenuResult();
+		} else if (result == GameOverObject::MenuResult::BackTitle) {
+			fade_->FadeStart(Fade::State::FadeOut, 0.5f);
+			is_to_title_ = true;
+			game_over_object_->ResetMenuResult();
+		}
+	}
+
 	//フェード
 	fade_->Update();
 	//シーン遷移
@@ -71,6 +86,9 @@ void GameOverScene::Draw() {
 
 	//共通描画設定
 	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
+
+	//ゲームオーバーオブジェクトスプライト
+	game_over_object_->DrawSprite();
 
 	//フェード
 	fade_->Draw();
