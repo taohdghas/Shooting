@@ -233,7 +233,7 @@ void Boss1::FireFanShot()
 	if (Math::Length(baseDir) == 0.0f) {
 		return;
 	}
-
+	// 正規化
 	baseDir = Math::Normalize(baseDir);
 
 	// 角度刻み
