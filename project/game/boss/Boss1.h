@@ -185,7 +185,7 @@ private:
 	// FireDoubleHeightShot用の高さオフセット
 	static constexpr float kDoubleShotYOffset[3] = { -0.5f, 0.8f, 2.1f };
 	// FireDoubleHeightShot用の横方向オフセット
-	static constexpr float kDoubleShotXOffset[10] = { -5.4f, -4.2f, -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f, 4.2f, 5.4f };
+	static constexpr float kDoubleShotXOffset[6] = { -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f };
 	//現在のHP
 	int hp_ = 190;
 	//攻撃力

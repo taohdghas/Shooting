@@ -143,12 +143,11 @@ void Boss1::FireDoubleHeightShot() {
 		return;
 	}
 
-	//高さ
-	float yOffsets[] = { -0.5f, 0.8f ,2.1f };
-	//横方向
-	float xOffsets[] = {  -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f };
-	// 弾速
+	// 定数化したオフセットを使用
+	constexpr size_t yCount = std::size(kDoubleShotYOffset);
+	constexpr size_t xCount = std::size(kDoubleShotXOffset);
 
+	// 弾速
 	const float bulletSpeed = 0.7f;
 
 	Vector3 bossPos = transform_.translate;
