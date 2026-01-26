@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <memory>
 
-
+// UIクラス
 class Ui
 {
 public:

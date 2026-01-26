@@ -67,6 +67,8 @@ public:
     /// </summary>
     void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 
+    void SetColor(const Vector4& color) { object_->SetColor(color); }
+
 private:
     MyEngine::Object3dBase* object3d_base_ = nullptr;
     std::unique_ptr< MyEngine::Object3d> object_;
