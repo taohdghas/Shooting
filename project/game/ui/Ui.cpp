@@ -9,6 +9,10 @@
 void Ui::Initialize()
 {   //HPバー作成
     CreateSprite(SpriteType::HpBar, "resources/ui/hpbar.png", { 50,50 }, { 200,20 });
+	//回避ゲージ作成
+    CreateSprite(SpriteType::DodgeGauge, "resources/ui/dodgecooldownbar.png", { 50,80 }, { 200,20 });
+	//回避ゲージフラッシュ作成
+    CreateSprite(SpriteType::DodgeGaugeFlash, "resources/ui/dodgecooldownbar_flash.png", { 50,80 }, { 200,20 });
 	//ポーズ文字作成
     CreateSprite(SpriteType::Pause,"resources/ui/pause.png", { 1000,20 }, { 300,60 });
     //リトライ文字作成
@@ -39,8 +43,10 @@ void Ui::Update()
     UpdatePauseGuide();
 	//ポーズボタンホバー更新
     UpdatePauseButtonHover();
-
+	//ポーズメニュークリック更新
     UpdatePauseClick();
+	//回避ゲージ更新
+    UpdateDodgeGauge();
 
 	//スプライト更新
     for (auto& [type, sprite] : sprites_) {
@@ -50,17 +56,26 @@ void Ui::Update()
 //描画
 void Ui::Draw()
 {
-	//HPバー表示
+	//HPバー描画
     Get(SpriteType::HpBar)->Draw();
-	//ポーズ文字表示
+    //通常ゲージ
+    if (!is_dodge_flash_visible_) {
+        Get(SpriteType::DodgeGaugeFlash)->Draw();
+    }
+    //強調ゲージ
+    else {
+        Get(SpriteType::DodgeGauge)->Draw();
+    }
+	//ポーズ文字描画
     Get(SpriteType::Pause)->Draw();
-	//ポーズ画面表示
+	//ポーズメニュー描画
     if (pause_scale_ > 0.01f) {
         Get(SpriteType::Retry)->Draw();
-		Get(SpriteType::BackTitle)->Draw();
+        Get(SpriteType::BackTitle)->Draw();
         Get(SpriteType::OperationGuide)->Draw();
     }
 }
+
 //デバック
 void Ui::Debug()
 {
@@ -95,13 +110,14 @@ void Ui::Debug()
 void Ui::UpdateHPBar()
 {
     if (!player_) return;
-
+	//現在のHP取得
     float currentHP = static_cast<float>(player_->GetHP());
     constexpr float maxHP = 100.0f;
-
+	//HP比率計算
     float ratio = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
 
     Vector2 maxSize = { 200.0f, 20.0f };
+	//サイズ更新
     Get(SpriteType::HpBar)->SetSize({ maxSize.x * ratio, maxSize.y });
 }
 //操作説明画面処理
@@ -115,7 +131,7 @@ void Ui::UpdatePauseGuide()
         pause_scale_ -= speed;
     }
     pause_scale_ = std::clamp(pause_scale_, 0.0f, 1.0f);
-
+	//イージング適用
     float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
 
     Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
@@ -143,11 +159,11 @@ void Ui::UpdatePauseButtonHover()
     Get(SpriteType::Retry)->SetSize(retrySize);
     Get(SpriteType::BackTitle)->SetSize(backSize);
 
-    // ホバーしてたら拡縮
+	// リトライボタン
     if (IsMouseOnSprite(Get(SpriteType::Retry))) {
         Get(SpriteType::Retry)->SetSize(Math::MultiplyScalar(retrySize, animationScale));
     }
-
+	// タイトルへ戻るボタン
     if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
         Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(backSize, animationScale));
     }
@@ -166,6 +182,33 @@ void Ui::UpdatePauseClick()
         pause_result_ = PauseResult::Retry;
     } else if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
         pause_result_ = PauseResult::BackTitle;
+    }
+}
+//回避クールタイムバー更新
+void Ui::UpdateDodgeGauge()
+{
+    if (!player_) return;
+
+    float ratio = player_->GetDodgeCooldownRatio();
+    constexpr Vector2 maxSize = { 200.0f, 20.0f };
+
+    Vector2 size = { maxSize.x * ratio, maxSize.y };
+
+    Get(SpriteType::DodgeGauge)->SetSize(size);
+    Get(SpriteType::DodgeGaugeFlash)->SetSize(size);
+
+    //点滅制御
+    if (ratio < 1.0f) {
+        //クールタイム中交互にスプライト表示
+        dodge_flash_timer_ += 1.0f / 60.0f;
+		//一定時間ごとに表示非表示切り替え
+        if (dodge_flash_timer_ > 0.2f) {  
+            dodge_flash_timer_ = 0.0f;
+            is_dodge_flash_visible_ = !is_dodge_flash_visible_;
+        }
+    } else {
+        // 満タン → 強調表示固定
+        is_dodge_flash_visible_ = true;
     }
 }
 
