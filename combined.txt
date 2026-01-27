@@ -10038,13 +10038,12 @@ void GameClearObject::Initialize() {
         letters_[i].delay = i * 0.1f;
     }
 
-    //PushSpaceオブジェクトの初期化
-    push_space_object_ = std::make_unique< MyEngine::Object3d>();
-    push_space_object_->Initialize(MyEngine::Object3dBase::GetInstance());
-    push_space_object_->SetModel("gameclearobject/pushspace.obj");
-    push_space_transform_.scale = { 0.5f,0.5f,0.5f };
-    push_space_transform_.rotate = { 0.0f,0.0f,0.0f };
-    push_space_transform_.translate = { -2.0f,-1.7f,1.0f };
+	//push spaceスプライトの初期化
+	push_space_sprite_ = std::make_unique< MyEngine::Sprite>();
+	push_space_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/pushspace.png");
+	push_space_sprite_->SetAnchorPoint({ 0.5f,0.5f });
+	push_space_sprite_->SetSize({ 400.0f,100.0f });
+	push_space_sprite_->SetPosition({ 640.0f, 480.0f + 100.0f });
 
 }
 
@@ -10100,11 +10099,11 @@ void GameClearObject::Update()
     // PushSpace の点滅
     alpha_timer_ += kDeltaTime;
     alpha_ = (sinf(alpha_timer_ * 3.0f) * 0.5f) + 0.5f;
-    push_space_object_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
-    push_space_object_->SetScale(push_space_transform_.scale);
-    push_space_object_->SetRotate(push_space_transform_.rotate);
-    push_space_object_->SetTranslate(push_space_transform_.translate);
-    push_space_object_->Update();
+
+    // スプライトのアルファ値を設定
+    push_space_sprite_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });
+    push_space_sprite_->SetPosition({ 640.0f, 480.0f + 100.0f }); 
+    push_space_sprite_->Update(); 
 }
 
 //描画
@@ -10113,8 +10112,12 @@ void GameClearObject::Draw() {
     for (int i = 0; i < kNumLetters; i++) {
         letters_[i].object->Draw();
     }
-    //PushSpace描画
-    push_space_object_->Draw();
+}
+
+//スプライト描画
+void GameClearObject::DrawSprite() {
+    //push spaceスプライト描画
+    push_space_sprite_->Draw();
 }
 
 //デバッグ
@@ -10135,11 +10138,6 @@ void GameClearObject::Debug() {
             }
         }
 
-        ImGui::Separator();
-        ImGui::Text("Next");
-        ImGui::DragFloat3("Next Scale", &push_space_transform_.scale.x, 0.01f);
-        ImGui::DragFloat3("Next Rotate", &push_space_transform_.rotate.x, 0.01f);
-        ImGui::DragFloat3("Next Translate", &push_space_transform_.translate.x, 0.01f);
     }
     ImGui::End();
 #endif
@@ -10160,22 +10158,27 @@ class GameClearObject
 {
 public:
     /// <summary>
-    /// ゲームクリアオブジェクトの初期化処理を行う。
+    /// 初期化処理
     /// </summary>
     void Initialize();
 
     /// <summary>
-    /// ゲームクリアオブジェクトの毎フレーム更新処理を行う。
+    /// 更新処理
     /// </summary>
     void Update();
 
     /// <summary>
-    /// ゲームクリアオブジェクトの描画処理を行う。
+    /// オブジェクトの描画
     /// </summary>
     void Draw();
 
+	/// <summary>
+	/// スプライトの描画
+	/// </summary>
+	void DrawSprite();
+
     /// <summary>
-    /// ゲームクリアオブジェクトのデバッグ表示・デバッグ用更新処理を行う。
+    /// デバッグ
     /// </summary>
     void Debug();
 
@@ -10189,12 +10192,10 @@ private:
 
     // ゲームクリア文字のオブジェクト
     std::unique_ptr< MyEngine::Object3d> game_clear_object_;
-    // push spaceのオブジェクト
-    std::unique_ptr< MyEngine::Object3d> push_space_object_;
+	//push spaceスプライト
+	std::unique_ptr< MyEngine::Sprite> push_space_sprite_;
     // ゲームクリアトランスフォーム
     Transform game_clear_transform_;
-    // push spaceトランスフォーム
-    Transform push_space_transform_;
     // 文字数
     static const int kNumLetters = 9;
     // 文字配列
@@ -10227,6 +10228,7 @@ private:
 File Path: project/game/object/GameOverObject.cpp
 ============================================================
 #include "GameOverObject.h"
+#include "Input.h"
 #include "ImGuiManager.h"
 
 // 初期化
@@ -10239,44 +10241,54 @@ void GameOverObject::Initialize() {
         "gameoverobject/e.obj", "gameoverobject/r.obj"
     };
 
-    // 各文字生成
+    // 各文字生成・初期化
     for (int i = 0; i < kNumLetters; i++) {
         letters_[i].obj = std::make_unique< MyEngine::Object3d>();
         letters_[i].obj->Initialize(MyEngine::Object3dBase::GetInstance());
         letters_[i].obj->SetModel(models[i]);
 
-        letters_[i].transform.scale = { 1.0f, 1.0f, 1.0f };
+        letters_[i].transform.scale = { 0.8f, 0.8f, 1.0f };
         letters_[i].transform.rotate = { 0.0f, 0.0f, 0.0f };
         letters_[i].transform.translate = {
             startX_ + spacing_ * i,
             baseY_,
             1.0f
         };
-
+       
         letters_[i].delay = i * 0.1f;
     }
 
-    // retry オブジェクト
-    retryObj_ = std::make_unique< MyEngine::Object3d>();
-    retryObj_->Initialize(MyEngine::Object3dBase::GetInstance());
-    retryObj_->SetModel("gameoverobject/retry.obj");
+	//リトライスプライト生成・初期化
+    retry_sprite_ = std::make_unique< MyEngine::Sprite>();
+    retry_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/retry.png");
+    retry_sprite_->SetAnchorPoint({ 0.5f, 0.5f });
+    retry_sprite_->SetPosition({ 405, 580 });
+    retry_sprite_->SetSize({ 300, 100 });
+    //タイトルへ戻るスプライト生成・初期化
+    back_title_sprite_ = std::make_unique< MyEngine::Sprite>();
+    back_title_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/back_title.png");
+    back_title_sprite_->SetAnchorPoint({ 0.5f, 0.5f });
+    back_title_sprite_->SetPosition({ 870, 580 });
+	back_title_sprite_->SetSize({ 300, 100 });
 
-    retryTransform_.scale = { 0.7f, 0.7f, 0.7f };
-    retryTransform_.rotate = { 0.0f, 0.0f, 0.0f };
-    retryTransform_.translate = { -0.65f, -1.7f, 1.0f };
+    // 元サイズ保存
+    retry_size_ = { 300,100 };
+    back_title_size_ = { 300,100 };
+
+
 }
 
 // 更新
 void GameOverObject::Update() {
     // 文字ジャンプアニメーション
     jumpTimer_ += kDeltaTime;
-
+	// １文字ずつ処理
     for (int i = 0; i < kNumLetters; i++) {
         float y = 0.0f;
-
+		// ジャンプ中の文字か判定
         if (i == currentIndex_) {
             float t = jumpTimer_ / kJumpDuration;
-
+			// ジャンプ中
             if (t < 1.0f) {
                 y = sinf(t * 3.14159f) * kJumpHeight;
             } else {
@@ -10295,16 +10307,10 @@ void GameOverObject::Update() {
         letters_[i].obj->SetTranslate(letters_[i].transform.translate);
         letters_[i].obj->Update();
     }
-    // retry 点滅
-    alphaTimer_ += kDeltaTime;
-    alpha_ = (sinf(alphaTimer_ * 3.0f) * 0.5f) + 0.5f;
-    retryObj_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });
+ 
+    //スプライト更新
+    UpdateSprite();
 
-    retryObj_->SetScale(retryTransform_.scale);
-    retryObj_->SetRotate(retryTransform_.rotate);
-    retryObj_->SetTranslate(retryTransform_.translate);
-
-    retryObj_->Update();
 }
 
 // 描画
@@ -10313,29 +10319,129 @@ void GameOverObject::Draw() {
     for (int i = 0; i < kNumLetters; i++) {
         letters_[i].obj->Draw();
     }
-    retryObj_->Draw();
+
+}
+
+// スプライト更新
+void GameOverObject::UpdateSprite() {
+    // 拡縮用タイマー
+    scale_timer_ += kDeltaTime;
+
+    // マウスが乗っている方を取得
+    select_index_ = GetMouseHoverIndex();
+
+    float scale = 1.0f + sinf(scale_timer_ * 5.0f) * 0.1f;
+
+    //元サイズに戻す
+    retry_sprite_->SetSize(retry_size_);
+    back_title_sprite_->SetSize(back_title_size_);
+
+	//選択されている方を拡大
+    if (select_index_ == 0) {
+        retry_sprite_->SetSize({ retry_size_.x * scale, retry_size_.y * scale });
+    }
+
+    if (select_index_ == 1) {
+        back_title_sprite_->SetSize({ back_title_size_.x * scale, back_title_size_.y * scale });
+    }
+
+    auto input = MyEngine::Input::GetInstance();
+
+    //クリック判定
+    if (select_index_ != -1 && input->IsMouseLeftTriggered()) {
+        if (select_index_ == 0) {
+            menu_result_ = MenuResult::Retry;
+        } else if (select_index_ == 1) {
+            menu_result_ = MenuResult::BackTitle;
+        }
+    }
+
+    // スプライト更新
+    retry_sprite_->Update();
+    back_title_sprite_->Update();
+}
+
+// スプライト描画
+void GameOverObject::DrawSprite() {
+    // スプライト描画
+    retry_sprite_->Draw();
+    back_title_sprite_->Draw();
 }
 
 // デバッグ
 void GameOverObject::Debug() {
 #ifdef USE_IMGUI
     if (ImGui::Begin("GameOverObject SRT")) {
-        // GameOver
-        ImGui::Text("GameOver");
-        ImGui::DragFloat3("GameOver Scale", &gameOverTransform_.scale.x, 0.01f);
-        ImGui::DragFloat3("GameOver Rotate", &gameOverTransform_.rotate.x, 0.01f);
-        ImGui::DragFloat3("GameOver Translate", &gameOverTransform_.translate.x, 0.01f);
+        // 文字オブジェクトのSRT
+        for (int i = 0; i < kNumLetters; i++) {
+            std::string label = "Letter " + std::to_string(i);
+            if (ImGui::TreeNode(label.c_str())) {
+                ImGui::DragFloat3("Scale", &letters_[i].transform.scale.x, 0.01f, 0.01f, 10.0f);
+                ImGui::DragFloat3("Rotate", &letters_[i].transform.rotate.x, 0.1f, -360.0f, 360.0f);
+                ImGui::DragFloat3("Translate", &letters_[i].transform.translate.x, 0.1f, -1000.0f, 1000.0f);
+                ImGui::TreePop();
+            }
+        }
 
-        ImGui::Separator();
+        // リトライスプライト
+        if (ImGui::TreeNode("Retry Sprite")) {
+            Vector2 pos = retry_sprite_->GetPosition();
+            Vector2 size = retry_sprite_->GetSize();
+            if (ImGui::DragFloat2("Position", (float*)&pos, 1.0f, 0.0f, 1280.0f)) {
+                retry_sprite_->SetPosition(pos);
+            }
+            if (ImGui::DragFloat2("Size", (float*)&size, 1.0f, 1.0f, 1000.0f)) {
+                retry_sprite_->SetSize(size);
+            }
+            ImGui::TreePop();
+        }
 
-        // Retry
-        ImGui::Text("Retry");
-        ImGui::DragFloat3("Retry Scale", &retryTransform_.scale.x, 0.01f);
-        ImGui::DragFloat3("Retry Rotate", &retryTransform_.rotate.x, 0.01f);
-        ImGui::DragFloat3("Retry Translate", &retryTransform_.translate.x, 0.01f);
+        // タイトルへ戻るスプライト
+        if (ImGui::TreeNode("Back Title Sprite")) {
+            Vector2 pos = back_title_sprite_->GetPosition();
+            Vector2 size = back_title_sprite_->GetSize();
+            if (ImGui::DragFloat2("Position", (float*)&pos, 1.0f, 0.0f, 1280.0f)) {
+                back_title_sprite_->SetPosition(pos);
+            }
+            if (ImGui::DragFloat2("Size", (float*)&size, 1.0f, 1.0f, 1000.0f)) {
+                back_title_sprite_->SetSize(size);
+            }
+            ImGui::TreePop();
+        }
     }
     ImGui::End();
 #endif
+}
+
+int GameOverObject::GetMouseHoverIndex()
+{
+    if (IsMouseOnSprite(retry_sprite_.get())) return 0;
+    if (IsMouseOnSprite(back_title_sprite_.get())) return 1;
+    return -1;
+}
+
+bool GameOverObject::IsMouseOnSprite(MyEngine::Sprite* sprite)
+{
+    POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
+
+    Vector2 pos = sprite->GetPosition();
+    Vector2 size = sprite->GetSize();
+    Vector2 anchor = sprite->GetAnchorPoint();
+
+    Vector2 leftTop;
+    leftTop.x = pos.x - size.x * anchor.x;
+    leftTop.y = pos.y - size.y * anchor.y;
+
+    Vector2 rightBottom;
+    rightBottom.x = leftTop.x + size.x;
+    rightBottom.y = leftTop.y + size.y;
+
+    if (mouse.x >= leftTop.x && mouse.x <= rightBottom.x &&
+        mouse.y >= leftTop.y && mouse.y <= rightBottom.y) {
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -10352,42 +10458,84 @@ File Path: project/game/object/GameOverObject.h
 // ゲームオーバーオブジェクト
 class GameOverObject {
 public:
+
+	// メニュー結果
+    enum class MenuResult {
+        None,
+        Retry,
+        BackTitle
+    };
+
     /// <summary>
-    /// ゲームオーバーオブジェクトの初期化処理を行う。
+    /// 初期化
     /// </summary>
     void Initialize();
 
     /// <summary>
-    /// ゲームオーバーオブジェクトの毎フレーム更新処理を行う。
+    /// 更新
     /// </summary>
     void Update();
 
     /// <summary>
-    /// ゲームオーバーオブジェクトの描画処理を行う。
+    /// 描画
     /// </summary>
     void Draw();
 
+	/// <summary>
+	/// スプライト更新
+	/// </summary>
+    void UpdateSprite();
+
+	/// <summary>
+	/// スプライト描画
+	/// </summary>
+    void DrawSprite();
+
     /// <summary>
-    /// ゲームオーバーオブジェクトのデバッグ表示・デバッグ用更新処理を行う
+    /// デバッグ表示
     /// </summary>
     void Debug();
 
+    /// <summary>
+	/// メニュー結果リセット
+    /// </summary>
+    void ResetMenuResult() { menu_result_ = MenuResult::None; }
+
+	/// <summary>
+	/// メニューインデックス取得
+	/// </summary>
+    int GetMouseHoverIndex();
+
+	/// <summary>
+	/// スプライト上にマウスがあるか判定
+	/// </summary>
+    bool IsMouseOnSprite(MyEngine::Sprite* sprite);
+
+	/// <summary>
+	/// メニュー結果取得
+	/// </summary>
+    MenuResult GetMenuResult() const { return menu_result_; }
+
 private:
+	// メニュー結果
+    MenuResult menu_result_ = MenuResult::None;
     // 文字構造体
     struct Letter {
         std::unique_ptr< MyEngine::Object3d> obj;
         Transform transform;
         float delay;  // 出現までの遅延時間
     };
-
     // ゲームオーバー文字のオブジェクト
-    std::unique_ptr< MyEngine::Object3d> gameOverObj_;
-    // retry のオブジェクト
-    std::unique_ptr< MyEngine::Object3d> retryObj_;
+    std::unique_ptr< MyEngine::Object3d> game_over_object_;
+    //retryのスプライト
+	std::unique_ptr< MyEngine::Sprite> retry_sprite_;
+    //タイトルへ戻るスプライト
+	std::unique_ptr< MyEngine::Sprite> back_title_sprite_;
     // ゲームオーバーのトランスフォーム
     Transform gameOverTransform_;
-    // retry のトランスフォーム
-    Transform retryTransform_;
+	//基準サイズ
+    Vector2 retry_size_;
+    Vector2 back_title_size_;
     // 文字数
     static constexpr int kNumLetters = 8;
     // 文字配列
@@ -10414,6 +10562,10 @@ private:
     float spacing_ = 0.9f;
     // 基準座標
     float baseY_ = -1.0f;
+	// スケールタイマー
+    float scale_timer_ = 0.0f;
+	// 選択中インデックス
+    int select_index_ = -1;
 };
 
 
@@ -10444,19 +10596,22 @@ void TitleObject::Initialize() {
     player_obj_transform_.scale = { 0.5f, 0.5f, 0.5f };
     player_obj_transform_.rotate = { 0.0f, -0.5f, 0.0f };
     player_obj_transform_.translate = { -1.3f, -0.5f, -4.8f };
-	// メニュー項目スプライト生成・初期化
+	// スタートスプライト生成・初期化
     menu_start_ = std::make_unique<MyEngine::Sprite>();
     menu_start_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/start.png");
+	menu_start_->SetAnchorPoint({ 0.5f, 0.5f });
     menu_start_->SetPosition({ 700, 380 });
 	menu_start_->SetSize({150,100});
 	// 操作説明項目スプライト
     menu_howto_ = std::make_unique<MyEngine::Sprite>();
     menu_howto_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/howto.png");
-    menu_howto_->SetPosition({ 693, 505 });
+	menu_howto_->SetAnchorPoint({ 0.5f, 0.5f });
+    menu_howto_->SetPosition({ 720, 505 });
 	menu_howto_->SetSize({ 200,80 });
 	// 終了項目スプライト
     menu_exit_ = std::make_unique<MyEngine::Sprite>();
     menu_exit_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/exit.png");
+	menu_exit_->SetAnchorPoint({ 0.5f, 0.5f });
     menu_exit_->SetPosition({ 699, 607 });
 	menu_exit_->SetSize({ 150,80 });
 
@@ -10642,24 +10797,6 @@ void TitleObject::Debug() {
 
     ImGui::Separator();
 
-    // PushSpaceオブジェクトのパラメータ調整
-    static float push_scale[3] = { 0.5f, 0.5f, 0.5f };
-    static float push_rotate[3] = { 0.0f, 0.0f, 0.0f };
-    static float push_translate[3] = { 1.1f, -1.5f, 1.0f };
-
-    ImGui::Text("PushSpace");
-    if (ImGui::DragFloat3("Push Scale", push_scale, 0.01f)) {
-        push_space_->SetScale({ push_scale[0], push_scale[1], push_scale[2] });
-    }
-    if (ImGui::DragFloat3("Push Rotate", push_rotate, 0.5f)) {
-        push_space_->SetRotate({ push_rotate[0], push_rotate[1], push_rotate[2] });
-    }
-    if (ImGui::DragFloat3("Push Translate", push_translate, 0.01f)) {
-        push_space_->SetTranslate({ push_translate[0], push_translate[1], push_translate[2] });
-    }
-
-    ImGui::Separator();
-
     // プレイヤーオブジェクトのパラメータ調整
     static float player_scale[3] = { 0.5f, 0.5f, 0.5f };
     static float player_rotate[3] = { 0.0f, 0.0f, 0.0f };
@@ -10728,16 +10865,27 @@ bool TitleObject::IsMouseOnSprite(MyEngine::Sprite* sprite)
 {
     POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
 
-    Vector2 pos = sprite->GetPosition(); // 左上
-    Vector2 size = sprite->GetSize();     // 幅・高さ
+    Vector2 pos = sprite->GetPosition();      
+    Vector2 size = sprite->GetSize();       
+    Vector2 anchor = sprite->GetAnchorPoint();
 
-    if (mouse.x >= pos.x && mouse.x <= pos.x + size.x &&
-        mouse.y >= pos.y && mouse.y <= pos.y + size.y) {
+    // 左上座標をアンカーから逆算
+    Vector2 leftTop;
+    leftTop.x = pos.x - size.x * anchor.x;
+    leftTop.y = pos.y - size.y * anchor.y;
+
+    Vector2 rightBottom;
+    rightBottom.x = leftTop.x + size.x;
+    rightBottom.y = leftTop.y + size.y;
+
+    if (mouse.x >= leftTop.x && mouse.x <= rightBottom.x &&
+        mouse.y >= leftTop.y && mouse.y <= rightBottom.y) {
         return true;
     }
 
     return false;
 }
+
 
 // マウスが乗っているメニュー項目のインデックスを取得
 int TitleObject::GetMouseHoverIndex()
@@ -10781,12 +10929,12 @@ public:
 	void Update();
 
 	/// <summary>
-	/// タイトル、PUSH SPACE、プレイヤーモデルを描画
+	/// 描画
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// メニュー項目スプライトを描画
+	/// スプライト描画
 	/// </summary>
 	void DrawSprite();
 
@@ -10835,8 +10983,6 @@ private:
 	MenuResult menu_result_ = MenuResult::None;
 	// タイトルのオブジェクト
 	std::unique_ptr< MyEngine::Object3d> title_;
-	// pushspaceのオブジェクト
-	std::unique_ptr< MyEngine::Object3d> push_space_;
 	// プレイヤーオブジェクト
 	std::unique_ptr< MyEngine::Object3d> player_obj_;
 	//スタート項目スプライト
@@ -11651,7 +11797,7 @@ private:
 	//攻撃のクールタイム
 	float attack_cooldown_ = 0.0f;
 	//再攻撃できるまでの間隔
-	float attack_interval_ = 10.0f;
+	float attack_interval_ = 20.0f;
 	//回避タイマー
 	float dodge_timer_ = 0.0f;
 	//回避適用時間
@@ -11941,7 +12087,6 @@ void GameClearScene::Initialize() {
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameclearobject/c.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameclearobject/l.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameclearobject/r.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("gameclearobject/pushspace.obj");
 	//カメラ
 	camera_ = std::make_unique< MyEngine::Camera>();
 	camera_->SetTranslate({ 0.0f,0.0f,-10.0f });
@@ -11992,6 +12137,8 @@ void GameClearScene::Draw() {
 	game_clear_object_->Draw();
 	//共通描画設定
 	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
+	//ゲームクリアオブジェクトスプライト描画
+	game_clear_object_->DrawSprite();
 	//フェード
 	fade_->Draw();
 }
@@ -12086,8 +12233,7 @@ File Path: project/game/scene/GameOverScene.cpp
 //初期化
 void GameOverScene::Initialize() {
 
-	//モデル読み込み
-	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/retry.obj");
+	//モデル読み込み;
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/g.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/a.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameoverobject/m.obj");
@@ -12126,9 +12272,25 @@ void GameOverScene::Update() {
 	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 	//Skybox
 	skybox_->Update();
-
 	//ゲームオーバーオブジェクト
 	game_over_object_->Update();
+
+	//選択結果取得
+	auto result = game_over_object_->GetMenuResult();
+
+	//選択結果による処理
+	if (fade_->GetState() == Fade::State::None) {
+		if (result == GameOverObject::MenuResult::Retry) {
+			fade_->FadeStart(Fade::State::FadeOut, 0.5f);
+			is_to_game_ = true;
+			game_over_object_->ResetMenuResult();
+		} else if (result == GameOverObject::MenuResult::BackTitle) {
+			fade_->FadeStart(Fade::State::FadeOut, 0.5f);
+			is_to_title_ = true;
+			game_over_object_->ResetMenuResult();
+		}
+	}
+
 	//フェード
 	fade_->Update();
 	//シーン遷移
@@ -12149,6 +12311,9 @@ void GameOverScene::Draw() {
 	//共通描画設定
 	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
 
+	//ゲームオーバーオブジェクトスプライト
+	game_over_object_->DrawSprite();
+
 	//フェード
 	fade_->Draw();
 }
@@ -12163,16 +12328,6 @@ void GameOverScene::SceneChange() {
 	//フェードインが終わったら状態リセット
 	if (fade_->GetState() == Fade::State::FadeIn && fade_->IsFinished()) {
 		fade_->End();
-	}
-	//タイトルへのフェードアウト開始
-	if (fade_->GetState() == Fade::State::None && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
-		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
-		is_to_title_ = true;
-	}
-	//ゲームシーンへのフェードアウト(リトライ)
-	if (fade_->GetState() == Fade::State::None && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_R)) {
-		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
-		is_to_game_ = true;
 	}
 	//タイトルシーン移行
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()&&is_to_title_) {
@@ -12374,7 +12529,7 @@ void GameScene::Update() {
 		is_game_pause_ = !is_game_pause_;
 	}
 	// UIに一時停止フラグをセット
-	ui_->SetOperationGuide(is_game_pause_);
+	ui_->SetShowPause(is_game_pause_);
 
 	// UIの更新
 	ui_->Update();
@@ -12384,6 +12539,19 @@ void GameScene::Update() {
 
 	// ゲーム一時停止中は更新処理をスキップ
 	if (is_game_pause_) {
+		Ui::PauseResult result = ui_->GetPauseResult();
+		//リトライ
+		if (result == Ui::PauseResult::Retry) {
+			ui_->ResetPauseResult();
+			MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
+			return;
+		}
+		//タイトルへ戻る
+		if (result == Ui::PauseResult::BackTitle) {
+			ui_->ResetPauseResult();
+			MyEngine::SceneManager::GetInstance()->ChangeScene("TITLE");
+			return;
+		}
 		return;
 	}
 
@@ -12412,8 +12580,9 @@ void GameScene::Update() {
 
 	// 敵ごとの衝突判定・デスパーティクル処理
 	for (auto& enemy : enemies_) {
+		// 衝突判定
 		collision_manager_->CheckPlayerEnemyCollisions(player_.get(), enemy.get());
-
+		// デスパーティクル処理
 		if (enemy->IsDeathParticle()) {
 			auto emitter = std::make_unique< MyEngine::ParticleEmitter>();
 			emitter->Initialize("enemydestroy");
@@ -12457,10 +12626,16 @@ void GameScene::Update() {
 	if (player_->IsDead()) {
 		is_to_game_over_ = true;
 	}
-	// デバッグ用：Rキーでゲームオーバー
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_R)) {
+	// デバッグ用
+#ifdef _DEBUG
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_G)) {
 		is_to_game_over_ = true;
 	}
+
+	if(MyEngine::Input::GetInstance()->IsKeyPressed(DIK_C)){
+		is_to_game_clear_ = true;
+	}
+#endif
 	// ゲームクリアシーンへ遷移
 	if (is_to_game_clear_) {
 		ToGameClear();
@@ -12579,11 +12754,8 @@ void GameScene::FollowCamera() {
 
 //スタート演出
 void GameScene::StartAnimation() {
-	if (!is_start_animation_ && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_H)) {
-		MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
-	}
 
-	// Update内
+	//カメラ回転処理
 	if (is_start_animation_) {
 		camera_rotate_timer_ += 1.0f / 60.0f;
 		float t = min(camera_rotate_timer_ / totalRotationTime, 1.0f);
@@ -12655,7 +12827,6 @@ void GameScene::ToGameClear() {
 		MyEngine::SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
 }
-
 // ゲームオーバーへ
 void GameScene::ToGameOver() {
 	// FadeIn が終わっているなら状態を None に
@@ -12779,27 +12950,22 @@ public:
 	/// デバッグ表示処
 	/// </summary>
 	void Debug() override;
-
 	/// <summary>
 	/// 追従カメラ
 	///	</summary>	
 	void FollowCamera();
-
 	/// <summary>
 	/// スタート演出 
 	/// </summary>
 	void StartAnimation();
-
 	/// <summary>
 	/// ゲームクリアシーンへ遷移
 	/// </summary>
 	void ToGameClear();
-
 	/// <summary>
 	/// ゲームオーバーシーンへ遷移
 	/// </summary>
 	void ToGameOver();
-
 	/// <summary>
 	/// ボス出現条件を判定
 	/// </summary>
@@ -12807,6 +12973,8 @@ public:
 private:
 	//ゲームフェーズ
 	GamePhase game_phase_ = GamePhase::Stage;
+	// 遷移先
+	Ui::PauseResult pause_transition_target_ = Ui::PauseResult::None;
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 	//敵
@@ -12884,8 +13052,13 @@ private:
 	bool is_following_initialized_ = false;
 	//ゲーム一時停止フラグ
 	bool is_game_pause_ = false;
-};
+	// ポーズメニュー遷移待ちフラグ
+	bool is_pause_transition_ = false;
+	// ポーズ画面シーン遷移フラグ
+	bool is_to_game_from_pause_ = false;
+	bool is_to_title_from_pause_ = false;
 
+};
 
 ============================================================
 File Path: project/game/scene/GameSelectScene.cpp
@@ -13419,10 +13592,14 @@ File Path: project/game/ui/Ui.cpp
 void Ui::Initialize()
 {   //HPバー作成
     CreateSprite(SpriteType::HpBar, "resources/ui/hpbar.png", { 50,50 }, { 200,20 });
-	//ポーズ表示作成
+	//ポーズ文字作成
     CreateSprite(SpriteType::Pause,"resources/ui/pause.png", { 1000,20 }, { 300,60 });
+    //リトライ文字作成
+    CreateSprite(SpriteType::Retry, "resources/ui/retry.png", { 485,620 }, { 180,100 }, { 0.5f,0.5f });
+    //タイトルへ戻る文字作成
+    CreateSprite(SpriteType::BackTitle, "resources/ui/back_title.png", { 805,620 }, { 180,100 }, { 0.5f,0.5f });
 	//操作説明画面作成
-    CreateSprite(SpriteType::OperationGuide,"resources/ui/operation.png", { 640,360 }, { 600,600 }, { 0.5f,0.5f });
+    CreateSprite(SpriteType::OperationGuide,"resources/ui/operation.png", { 640,300 }, { 500,500 }, { 0.5f,0.5f });
 	//各キー説明作成
     CreateSprite(SpriteType::KeyA, "resources/ui/keyboard_a.png", { 440,500 }, { 50,50 });
 	//Dキー
@@ -13431,7 +13608,7 @@ void Ui::Initialize()
     CreateSprite(SpriteType::KeyF,"resources/ui/keyboard_f.png", { 640,500 }, { 50,50 });
 	//Wキー
     CreateSprite(SpriteType::KeyW, "resources/ui/keyboard_w.png", { 490,450 }, { 50,50 });
-	//左クリック
+	//マウス左
     CreateSprite(SpriteType::MouseLeft, "resources/ui/mouse_left.png", { 740,500 }, { 50,50 });
 	//マウス移動
     CreateSprite(SpriteType::MouseMove,"resources/ui/mouse_move.png", { 840,500 }, { 50,50 });
@@ -13442,7 +13619,11 @@ void Ui::Update()
 	//HPバー更新
     UpdateHPBar();
 	//操作説明画面更新
-    UpdateOperationGuide();
+    UpdatePauseGuide();
+	//ポーズボタンホバー更新
+    UpdatePauseButtonHover();
+
+    UpdatePauseClick();
 
 	//スプライト更新
     for (auto& [type, sprite] : sprites_) {
@@ -13454,10 +13635,12 @@ void Ui::Draw()
 {
 	//HPバー表示
     Get(SpriteType::HpBar)->Draw();
-	//ポーズ表示
+	//ポーズ文字表示
     Get(SpriteType::Pause)->Draw();
-	//操作説明画面表示
-    if (operation_scale_ > 0.01f) {
+	//ポーズ画面表示
+    if (pause_scale_ > 0.01f) {
+        Get(SpriteType::Retry)->Draw();
+		Get(SpriteType::BackTitle)->Draw();
         Get(SpriteType::OperationGuide)->Draw();
     }
 }
@@ -13505,25 +13688,70 @@ void Ui::UpdateHPBar()
     Get(SpriteType::HpBar)->SetSize({ maxSize.x * ratio, maxSize.y });
 }
 //操作説明画面処理
-void Ui::UpdateOperationGuide()
+void Ui::UpdatePauseGuide()
 {
     const float speed = 0.07f;
     //スケール更新
-    if (is_show_operation_) {
-        operation_scale_ += speed;
+    if (is_show_pause_) {
+        pause_scale_ += speed;
     } else {
-        operation_scale_ -= speed;
+        pause_scale_ -= speed;
+    }
+    pause_scale_ = std::clamp(pause_scale_, 0.0f, 1.0f);
+
+    float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
+
+    Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
+
+    Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size, eased));
+
+    Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size, eased));
+}
+
+//ポーズボタンホバー処理
+void Ui::UpdatePauseButtonHover()
+{
+    if (pause_scale_ <= 0.01f) return; // ポーズ画面が出てない
+
+    hover_timer_ += 1.0f / 60.0f;
+
+    float animationScale = 1.0f + sinf(hover_timer_ * 5.0f) * 0.1f;
+
+    float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
+
+    Vector2 retrySize = Math::MultiplyScalar(retry_base_size, eased);
+    Vector2 backSize = Math::MultiplyScalar(back_title_base_size, eased);
+
+    // 通常サイズに戻す
+    Get(SpriteType::Retry)->SetSize(retrySize);
+    Get(SpriteType::BackTitle)->SetSize(backSize);
+
+    // ホバーしてたら拡縮
+    if (IsMouseOnSprite(Get(SpriteType::Retry))) {
+        Get(SpriteType::Retry)->SetSize(Math::MultiplyScalar(retrySize, animationScale));
     }
 
-    operation_scale_ = std::clamp(operation_scale_, 0.0f, 1.0f);
-
-    float eased = static_cast<float>(Math::easeOutQuad(operation_scale_));
-    Vector2 baseSize = { 600.0f,600.0f };
-
-    Get(SpriteType::OperationGuide)->SetSize(
-        Math::MultiplyScalar(baseSize, eased)
-    );
+    if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
+        Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(backSize, animationScale));
+    }
 }
+//ポーズメニュークリック処理
+void Ui::UpdatePauseClick()
+{
+    if (!is_show_pause_) return;
+    if (pause_scale_ < 0.95f) return; // 出現中は無効（誤爆防止）
+
+    auto input = MyEngine::Input::GetInstance();
+
+    if (!input->IsMouseLeftTriggered()) return;
+
+    if (IsMouseOnSprite(Get(SpriteType::Retry))) {
+        pause_result_ = PauseResult::Retry;
+    } else if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
+        pause_result_ = PauseResult::BackTitle;
+    }
+}
+
 //スプライト作成
 void Ui::CreateSprite(SpriteType type,
     const char* path,
@@ -13539,6 +13767,34 @@ void Ui::CreateSprite(SpriteType type,
 
     sprites_[type] = std::move(sprite);
 }
+
+//スプライト上にマウスが乗っているか
+bool Ui::IsMouseOnSprite(MyEngine::Sprite* sprite)
+{
+    if (!sprite) return false;
+
+    POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
+
+    Vector2 pos = sprite->GetPosition();
+    Vector2 size = sprite->GetSize();
+    Vector2 anchor = sprite->GetAnchorPoint();
+
+    Vector2 leftTop;
+    leftTop.x = pos.x - size.x * anchor.x;
+    leftTop.y = pos.y - size.y * anchor.y;
+
+    Vector2 rightBottom;
+    rightBottom.x = leftTop.x + size.x;
+    rightBottom.y = leftTop.y + size.y;
+
+    if (mouse.x >= leftTop.x && mouse.x <= rightBottom.x &&
+        mouse.y >= leftTop.y && mouse.y <= rightBottom.y) {
+        return true;
+    }
+
+    return false;
+}
+
 ///スプライト取得
 MyEngine::Sprite* Ui::Get(SpriteType type)
 {
@@ -13561,17 +13817,25 @@ File Path: project/game/ui/Ui.h
 class Ui
 {
 public:
-	// スプライトの種類
+	//ポーズメニューの結果
+	enum class PauseResult {
+		None,//何もしない
+		Retry,//リトライ
+		BackTitle//タイトルへ戻る
+	};
+	//スプライトの種類
 	enum class SpriteType {
-		HpBar,
-		Pause,
-		OperationGuide,
-		KeyA,
-		KeyD,
-		KeyF,
-		KeyW,
-		MouseLeft,
-		MouseMove,
+		HpBar,//HPバー
+		Pause,//ポーズ表示
+		Retry,//リトライ文字
+		BackTitle,//タイトルへ戻る文字
+		OperationGuide,//操作説明画面
+		KeyA,//Aキー
+		KeyD,//Dキー
+		KeyF,//Fキー
+		KeyW,//Wキー
+		MouseLeft,//マウス左
+		MouseMove,//マウス移動
 	};
 public:
 	/// <summary>
@@ -13594,17 +13858,40 @@ public:
 	/// HPバー更新
 	/// </summary>
 	void UpdateHPBar();
-     /// <summary>
-     /// 操作説明画面処理
-     /// </summary>
-	void UpdateOperationGuide();
+	/// <summary>
+	/// ポーズ画面処理
+	/// </summary>
+	void UpdatePauseGuide();
+	/// <summary>
+	/// ポーズボタンホバー処理
+	/// </summary>
+	void UpdatePauseButtonHover();
+	/// <summary>
+	/// ポーズメニュークリック処理
+	/// </summary>
+	void UpdatePauseClick();
 	/// <summary>
 	/// スプライト作成
 	/// </summary>
-	void CreateSprite(SpriteType type,const char* path,const Vector2& pos,
-		const Vector2& size,const Vector2& anchor = { 0,0 });
+	void CreateSprite(SpriteType type, const char* path, const Vector2& pos,
+		const Vector2& size, const Vector2& anchor = { 0,0 });
+
+	/// <summary>
+	/// スプライト上にマウスがあるか
+	/// </summary>
+	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
 public:
+	/// <summary>
+	/// メニュー選択結果リセット
+	/// </summary>
+	void ResetPauseResult() { pause_result_ = PauseResult::None; }
+
+	/// <summary>
+    /// メニュー選択結果を取得
+    /// </summary>
+	PauseResult GetPauseResult() const { return pause_result_; }
+
 	/// <summary>
 	/// スプライト取得
 	/// </summary>
@@ -13618,16 +13905,30 @@ public:
 	/// <summary>
 	/// 操作説明画面表示設定
 	/// </summary>
-	void SetOperationGuide(bool flag) { is_show_operation_ = flag; }
+	void SetShowPause(bool flag) { is_show_pause_ = flag; }
 private:
+	//ポーズメニュー選択結果
+	PauseResult pause_result_ = PauseResult::None;
 	// スプライト格納用マップ
 	std::unordered_map<SpriteType, std::unique_ptr<MyEngine::Sprite>> sprites_;
 	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
-	//操作説明画面のスケール
-	float operation_scale_ = 0.0f;
-	//操作説明画面が出ているか
-	bool is_show_operation_ = false;
+	//リトライ文字の基準サイズ
+	Vector2 retry_base_size = { 180.0f,100.0f };
+	//タイトルㇸ戻る文字の基準サイズ
+	Vector2 back_title_base_size = { 180.0f,100.0f };
+	//操作説明画面の基準サイズ
+	Vector2 operation_base_size = { 500.0f,500.0f };
+	//リトライ文字のスケール
+	float retry_scale_ = 0.0f;
+	//タイトルへ戻る文字のスケール
+	float back_title_scale_ = 0.0f;
+	//ポーズ画面のスプライトスケール
+	float pause_scale_ = 0.0f;
+	//ホバー用タイマー
+	float hover_timer_ = 0.0f;
+	//ポーズ画面が出ているか
+	bool is_show_pause_ = false;
 };
 
 ============================================================
