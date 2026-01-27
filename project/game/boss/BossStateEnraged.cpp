@@ -10,6 +10,7 @@ void BossStateEnraged::Enter(Boss1& boss) {
     fire_interval_current_ = boss.DecideFireInterval();
 
     isFanShotPending_ = false;
+
     fan_shot_delay_timer_ = 0;
 }
 // 状態の更新

@@ -23,7 +23,7 @@ class Boss1
 	/// 描画
 	/// </summary>
 	void Draw();
-
+	
 	/// <summary>
 	/// 移動
 	/// </summary>
@@ -66,7 +66,7 @@ class Boss1
 	/// <summary>
 	/// OBB（Oriented Bounding Box）を取得する
 	/// </summary>
-	OBB GetOBB() const;
+	OBB GetOBB() const; 
 
 	/// <summary>
 	/// 弾発射間隔を決定する
@@ -185,9 +185,9 @@ private:
 	// FireDoubleHeightShot用の高さオフセット
 	static constexpr float kDoubleShotYOffset[3] = { -0.5f, 0.8f, 2.1f };
 	// FireDoubleHeightShot用の横方向オフセット
-	static constexpr float kDoubleShotXOffset[10] = { -5.4f, -4.2f, -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f, 4.2f, 5.4f };
+	static constexpr float kDoubleShotXOffset[6] = { -3.0f, -1.8f, -0.6f, 0.6f, 1.8f, 3.0f };
 	//現在のHP
-	int hp_ = 150;
+	int hp_ = 190;
 	//攻撃力
 	int attack_ = 5;
 	// 弾発射タイマーのカウント
@@ -201,7 +201,7 @@ private:
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
 	//ボス強化体力値
-	const int kEnragedHP = 70;
+	const int kEnragedHP = 100;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
 	// ダメージスケール演出の時間

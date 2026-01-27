@@ -119,7 +119,6 @@ void Boss1::Move() {
 		velocity_.x *= velocity_damping_;
 		velocity_.y *= velocity_damping_;
 
-
 		// 移動
 		transform_.translate.x += velocity_.x * kDeltaTime;
 		transform_.translate.y += velocity_.y * kDeltaTime;
@@ -139,6 +138,7 @@ void Boss1::Move() {
 
 ///二段高さショット発射
 void Boss1::FireDoubleHeightShot() {
+
 	if (!player_) {
 		return;
 	}
@@ -147,6 +147,7 @@ void Boss1::FireDoubleHeightShot() {
 	constexpr size_t yCount = std::size(kDoubleShotYOffset);
 	constexpr size_t xCount = std::size(kDoubleShotXOffset);
 
+	// 弾速
 	const float bulletSpeed = 0.7f;
 
 	Vector3 bossPos = transform_.translate;
@@ -197,8 +198,8 @@ void Boss1::DecideNextTarget() {
 
 	// 十分離れた位置を探す
 	for (int i = 0; i < maxTry; ++i) {
-		newTarget.x = RandomFloat(-7.0f, 7.0f);
-		newTarget.y = RandomFloat(0.3f, 3.0f);
+		newTarget.x = RandomFloat(-6.0f, 6.0f);
+		newTarget.y = RandomFloat(0.0f, 0.1f);
 		newTarget.z = transform_.translate.z;
 
 		// 現在位置からの距離を計算
@@ -227,10 +228,12 @@ void Boss1::FireFanShot()
 		return;
 	}
 
-	// 弾数と拡散角度
+	// 弾数
 	const int kBulletCount = 7;
+	// 20度ずつ左右に拡散
 	const float kSpreadAngle = 20.0f; 
-	const float bulletSpeed = 0.35f;
+	// 弾速
+	const float bulletSpeed = 0.25;
 
 	Vector3 bossPos = transform_.translate;
 	Vector3 playerPos = player_->GetTranslate();
@@ -245,7 +248,7 @@ void Boss1::FireFanShot()
 	if (Math::Length(baseDir) == 0.0f) {
 		return;
 	}
-
+	// 正規化
 	baseDir = Math::Normalize(baseDir);
 
 	// 角度刻み
@@ -273,7 +276,7 @@ void Boss1::FireFanShot()
 			dir.y * bulletSpeed,
 			dir.z * bulletSpeed
 			});
-
+		bullet->SetColor({ 0.2f, 0.6f, 1.0f, 1.0f });
 		bullet->Update();
 		bullets_.push_back(std::move(bullet));
 	}
