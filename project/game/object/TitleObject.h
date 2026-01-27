@@ -26,12 +26,12 @@ public:
 	void Update();
 
 	/// <summary>
-	/// タイトル、PUSH SPACE、プレイヤーモデルを描画
+	/// 描画
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// メニュー項目スプライトを描画
+	/// スプライト描画
 	/// </summary>
 	void DrawSprite();
 

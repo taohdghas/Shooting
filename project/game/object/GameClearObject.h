@@ -10,24 +10,27 @@ class GameClearObject
 {
 public:
     /// <summary>
-    /// ゲームクリアオブジェクトの初期化処理を行う。
+    /// 初期化処理
     /// </summary>
     void Initialize();
 
     /// <summary>
-    /// ゲームクリアオブジェクトの毎フレーム更新処理を行う。
+    /// 更新処理
     /// </summary>
     void Update();
 
     /// <summary>
-    /// ゲームクリアオブジェクトの描画処理を行う。
+    /// オブジェクトの描画
     /// </summary>
     void Draw();
 
+	/// <summary>
+	/// スプライトの描画
+	/// </summary>
 	void DrawSprite();
 
     /// <summary>
-    /// ゲームクリアオブジェクトのデバッグ表示・デバッグ用更新処理を行う。
+    /// デバッグ
     /// </summary>
     void Debug();
 

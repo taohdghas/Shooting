@@ -290,9 +290,9 @@ bool TitleObject::IsMouseOnSprite(MyEngine::Sprite* sprite)
 {
     POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
 
-    Vector2 pos = sprite->GetPosition();      // 基準点（アンカー位置）
-    Vector2 size = sprite->GetSize();         // サイズ
-    Vector2 anchor = sprite->GetAnchorPoint();// アンカーポイント (0.0～1.0)
+    Vector2 pos = sprite->GetPosition();      
+    Vector2 size = sprite->GetSize();       
+    Vector2 anchor = sprite->GetAnchorPoint();
 
     // 左上座標をアンカーから逆算
     Vector2 leftTop;

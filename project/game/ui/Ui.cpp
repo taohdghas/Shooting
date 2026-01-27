@@ -37,6 +37,10 @@ void Ui::Update()
     UpdateHPBar();
 	//操作説明画面更新
     UpdatePauseGuide();
+	//ポーズボタンホバー更新
+    UpdatePauseButtonHover();
+
+    UpdatePauseClick();
 
 	//スプライト更新
     for (auto& [type, sprite] : sprites_) {
@@ -120,6 +124,51 @@ void Ui::UpdatePauseGuide()
 
     Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size, eased));
 }
+
+//ポーズボタンホバー処理
+void Ui::UpdatePauseButtonHover()
+{
+    if (pause_scale_ <= 0.01f) return; // ポーズ画面が出てない
+
+    hover_timer_ += 1.0f / 60.0f;
+
+    float animationScale = 1.0f + sinf(hover_timer_ * 5.0f) * 0.1f;
+
+    float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
+
+    Vector2 retrySize = Math::MultiplyScalar(retry_base_size, eased);
+    Vector2 backSize = Math::MultiplyScalar(back_title_base_size, eased);
+
+    // 通常サイズに戻す
+    Get(SpriteType::Retry)->SetSize(retrySize);
+    Get(SpriteType::BackTitle)->SetSize(backSize);
+
+    // ホバーしてたら拡縮
+    if (IsMouseOnSprite(Get(SpriteType::Retry))) {
+        Get(SpriteType::Retry)->SetSize(Math::MultiplyScalar(retrySize, animationScale));
+    }
+
+    if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
+        Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(backSize, animationScale));
+    }
+}
+//ポーズメニュークリック処理
+void Ui::UpdatePauseClick()
+{
+    if (!is_show_pause_) return;
+    if (pause_scale_ < 0.95f) return; // 出現中は無効（誤爆防止）
+
+    auto input = MyEngine::Input::GetInstance();
+
+    if (!input->IsMouseLeftTriggered()) return;
+
+    if (IsMouseOnSprite(Get(SpriteType::Retry))) {
+        pause_result_ = PauseResult::Retry;
+    } else if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
+        pause_result_ = PauseResult::BackTitle;
+    }
+}
+
 //スプライト作成
 void Ui::CreateSprite(SpriteType type,
     const char* path,
@@ -135,6 +184,34 @@ void Ui::CreateSprite(SpriteType type,
 
     sprites_[type] = std::move(sprite);
 }
+
+//スプライト上にマウスが乗っているか
+bool Ui::IsMouseOnSprite(MyEngine::Sprite* sprite)
+{
+    if (!sprite) return false;
+
+    POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
+
+    Vector2 pos = sprite->GetPosition();
+    Vector2 size = sprite->GetSize();
+    Vector2 anchor = sprite->GetAnchorPoint();
+
+    Vector2 leftTop;
+    leftTop.x = pos.x - size.x * anchor.x;
+    leftTop.y = pos.y - size.y * anchor.y;
+
+    Vector2 rightBottom;
+    rightBottom.x = leftTop.x + size.x;
+    rightBottom.y = leftTop.y + size.y;
+
+    if (mouse.x >= leftTop.x && mouse.x <= rightBottom.x &&
+        mouse.y >= leftTop.y && mouse.y <= rightBottom.y) {
+        return true;
+    }
+
+    return false;
+}
+
 ///スプライト取得
 MyEngine::Sprite* Ui::Get(SpriteType type)
 {

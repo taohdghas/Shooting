@@ -22,7 +22,7 @@ public:
     void Initialize();
 
     /// <summary>
-    /// ゲームオーバーオブジェクトの更新
+    /// 更新
     /// </summary>
     void Update();
 

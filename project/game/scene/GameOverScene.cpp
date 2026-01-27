@@ -105,16 +105,6 @@ void GameOverScene::SceneChange() {
 	if (fade_->GetState() == Fade::State::FadeIn && fade_->IsFinished()) {
 		fade_->End();
 	}
-	//タイトルへのフェードアウト開始
-	if (fade_->GetState() == Fade::State::None && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_SPACE)) {
-		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
-		is_to_title_ = true;
-	}
-	//ゲームシーンへのフェードアウト(リトライ)
-	if (fade_->GetState() == Fade::State::None && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_R)) {
-		fade_->FadeStart(Fade::State::FadeOut, 0.5f);
-		is_to_game_ = true;
-	}
 	//タイトルシーン移行
 	if (fade_->GetState() == Fade::State::FadeOut && fade_->IsFinished()&&is_to_title_) {
 		MyEngine::SceneManager::GetInstance()->ChangeScene("TITLE");

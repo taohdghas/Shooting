@@ -88,14 +88,14 @@ void GameClearObject::Update()
         letters_[i].object->Update();
     }
 
-    // PushSpace の点滅（スプライト用に変更）
+    // PushSpace の点滅
     alpha_timer_ += kDeltaTime;
     alpha_ = (sinf(alpha_timer_ * 3.0f) * 0.5f) + 0.5f;
 
     // スプライトのアルファ値を設定
     push_space_sprite_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });
-    push_space_sprite_->SetPosition({ 640.0f, 480.0f + 100.0f }); // 必要なら位置も更新
-    push_space_sprite_->Update(); // スプライトにUpdateがあれば呼ぶ
+    push_space_sprite_->SetPosition({ 640.0f, 480.0f + 100.0f }); 
+    push_space_sprite_->Update(); 
 }
 
 //描画

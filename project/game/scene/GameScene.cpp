@@ -134,14 +134,16 @@ void GameScene::Update() {
 
 	// ゲーム一時停止中は更新処理をスキップ
 	if (is_game_pause_) {
-		if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_R)) {
-			// リトライ
+		Ui::PauseResult result = ui_->GetPauseResult();
+		//リトライ
+		if (result == Ui::PauseResult::Retry) {
+			ui_->ResetPauseResult();
 			MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
 			return;
 		}
-
-		if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_T)) {
-			// タイトルへ
+		//タイトルへ戻る
+		if (result == Ui::PauseResult::BackTitle) {
+			ui_->ResetPauseResult();
 			MyEngine::SceneManager::GetInstance()->ChangeScene("TITLE");
 			return;
 		}
@@ -219,10 +221,14 @@ void GameScene::Update() {
 	if (player_->IsDead()) {
 		is_to_game_over_ = true;
 	}
-	// デバッグ用：Rキーでゲームオーバー
+	// デバッグ用
 #ifdef _DEBUG
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_R)) {
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_G)) {
 		is_to_game_over_ = true;
+	}
+
+	if(MyEngine::Input::GetInstance()->IsKeyPressed(DIK_C)){
+		is_to_game_clear_ = true;
 	}
 #endif
 	// ゲームクリアシーンへ遷移
@@ -343,11 +349,8 @@ void GameScene::FollowCamera() {
 
 //スタート演出
 void GameScene::StartAnimation() {
-	if (!is_start_animation_ && MyEngine::Input::GetInstance()->IsKeyPressed(DIK_H)) {
-		MyEngine::SceneManager::GetInstance()->ChangeScene("GAME");
-	}
 
-	// Update内
+	//カメラ回転処理
 	if (is_start_animation_) {
 		camera_rotate_timer_ += 1.0f / 60.0f;
 		float t = min(camera_rotate_timer_ / totalRotationTime, 1.0f);
@@ -419,7 +422,6 @@ void GameScene::ToGameClear() {
 		MyEngine::SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
 }
-
 // ゲームオーバーへ
 void GameScene::ToGameOver() {
 	// FadeIn が終わっているなら状態を None に
