@@ -9,17 +9,25 @@
 class Ui
 {
 public:
-	// スプライトの種類
+	//ポーズメニューの結果
+	enum class PauseResult {
+		None,//何もしない
+		Retry,//リトライ
+		BackTitle//タイトルへ戻る
+	};
+	//スプライトの種類
 	enum class SpriteType {
-		HpBar,
-		Pause,
-		OperationGuide,
-		KeyA,
-		KeyD,
-		KeyF,
-		KeyW,
-		MouseLeft,
-		MouseMove,
+		HpBar,//HPバー
+		Pause,//ポーズ表示
+		Retry,//リトライ文字
+		BackTitle,//タイトルへ戻る文字
+		OperationGuide,//操作説明画面
+		KeyA,//Aキー
+		KeyD,//Dキー
+		KeyF,//Fキー
+		KeyW,//Wキー
+		MouseLeft,//マウス左
+		MouseMove,//マウス移動
 	};
 public:
 	/// <summary>
@@ -42,17 +50,40 @@ public:
 	/// HPバー更新
 	/// </summary>
 	void UpdateHPBar();
-     /// <summary>
-     /// 操作説明画面処理
-     /// </summary>
-	void UpdateOperationGuide();
+	/// <summary>
+	/// ポーズ画面処理
+	/// </summary>
+	void UpdatePauseGuide();
+	/// <summary>
+	/// ポーズボタンホバー処理
+	/// </summary>
+	void UpdatePauseButtonHover();
+	/// <summary>
+	/// ポーズメニュークリック処理
+	/// </summary>
+	void UpdatePauseClick();
 	/// <summary>
 	/// スプライト作成
 	/// </summary>
-	void CreateSprite(SpriteType type,const char* path,const Vector2& pos,
-		const Vector2& size,const Vector2& anchor = { 0,0 });
+	void CreateSprite(SpriteType type, const char* path, const Vector2& pos,
+		const Vector2& size, const Vector2& anchor = { 0,0 });
+
+	/// <summary>
+	/// スプライト上にマウスがあるか
+	/// </summary>
+	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
 public:
+	/// <summary>
+	/// メニュー選択結果リセット
+	/// </summary>
+	void ResetPauseResult() { pause_result_ = PauseResult::None; }
+
+	/// <summary>
+    /// メニュー選択結果を取得
+    /// </summary>
+	PauseResult GetPauseResult() const { return pause_result_; }
+
 	/// <summary>
 	/// スプライト取得
 	/// </summary>
@@ -66,14 +97,28 @@ public:
 	/// <summary>
 	/// 操作説明画面表示設定
 	/// </summary>
-	void SetOperationGuide(bool flag) { is_show_operation_ = flag; }
+	void SetShowPause(bool flag) { is_show_pause_ = flag; }
 private:
+	//ポーズメニュー選択結果
+	PauseResult pause_result_ = PauseResult::None;
 	// スプライト格納用マップ
 	std::unordered_map<SpriteType, std::unique_ptr<MyEngine::Sprite>> sprites_;
 	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
-	//操作説明画面のスケール
-	float operation_scale_ = 0.0f;
-	//操作説明画面が出ているか
-	bool is_show_operation_ = false;
+	//リトライ文字の基準サイズ
+	Vector2 retry_base_size = { 180.0f,100.0f };
+	//タイトルㇸ戻る文字の基準サイズ
+	Vector2 back_title_base_size = { 180.0f,100.0f };
+	//操作説明画面の基準サイズ
+	Vector2 operation_base_size = { 500.0f,500.0f };
+	//リトライ文字のスケール
+	float retry_scale_ = 0.0f;
+	//タイトルへ戻る文字のスケール
+	float back_title_scale_ = 0.0f;
+	//ポーズ画面のスプライトスケール
+	float pause_scale_ = 0.0f;
+	//ホバー用タイマー
+	float hover_timer_ = 0.0f;
+	//ポーズ画面が出ているか
+	bool is_show_pause_ = false;
 };

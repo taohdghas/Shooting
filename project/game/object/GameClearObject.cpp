@@ -30,13 +30,12 @@ void GameClearObject::Initialize() {
         letters_[i].delay = i * 0.1f;
     }
 
-    //PushSpaceオブジェクトの初期化
-    push_space_object_ = std::make_unique< MyEngine::Object3d>();
-    push_space_object_->Initialize(MyEngine::Object3dBase::GetInstance());
-    push_space_object_->SetModel("gameclearobject/pushspace.obj");
-    push_space_transform_.scale = { 0.5f,0.5f,0.5f };
-    push_space_transform_.rotate = { 0.0f,0.0f,0.0f };
-    push_space_transform_.translate = { -2.0f,-1.7f,1.0f };
+	//push spaceスプライトの初期化
+	push_space_sprite_ = std::make_unique< MyEngine::Sprite>();
+	push_space_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/pushspace.png");
+	push_space_sprite_->SetAnchorPoint({ 0.5f,0.5f });
+	push_space_sprite_->SetSize({ 400.0f,100.0f });
+	push_space_sprite_->SetPosition({ 640.0f, 480.0f + 100.0f });
 
 }
 
@@ -92,11 +91,11 @@ void GameClearObject::Update()
     // PushSpace の点滅
     alpha_timer_ += kDeltaTime;
     alpha_ = (sinf(alpha_timer_ * 3.0f) * 0.5f) + 0.5f;
-    push_space_object_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
-    push_space_object_->SetScale(push_space_transform_.scale);
-    push_space_object_->SetRotate(push_space_transform_.rotate);
-    push_space_object_->SetTranslate(push_space_transform_.translate);
-    push_space_object_->Update();
+
+    // スプライトのアルファ値を設定
+    push_space_sprite_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });
+    push_space_sprite_->SetPosition({ 640.0f, 480.0f + 100.0f }); 
+    push_space_sprite_->Update(); 
 }
 
 //描画
@@ -105,8 +104,12 @@ void GameClearObject::Draw() {
     for (int i = 0; i < kNumLetters; i++) {
         letters_[i].object->Draw();
     }
-    //PushSpace描画
-    push_space_object_->Draw();
+}
+
+//スプライト描画
+void GameClearObject::DrawSprite() {
+    //push spaceスプライト描画
+    push_space_sprite_->Draw();
 }
 
 //デバッグ
@@ -127,11 +130,6 @@ void GameClearObject::Debug() {
             }
         }
 
-        ImGui::Separator();
-        ImGui::Text("Next");
-        ImGui::DragFloat3("Next Scale", &push_space_transform_.scale.x, 0.01f);
-        ImGui::DragFloat3("Next Rotate", &push_space_transform_.rotate.x, 0.01f);
-        ImGui::DragFloat3("Next Translate", &push_space_transform_.translate.x, 0.01f);
     }
     ImGui::End();
 #endif

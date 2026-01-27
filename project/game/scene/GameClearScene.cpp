@@ -16,7 +16,6 @@ void GameClearScene::Initialize() {
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameclearobject/c.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameclearobject/l.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("gameclearobject/r.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("gameclearobject/pushspace.obj");
 	//カメラ
 	camera_ = std::make_unique< MyEngine::Camera>();
 	camera_->SetTranslate({ 0.0f,0.0f,-10.0f });
@@ -67,6 +66,8 @@ void GameClearScene::Draw() {
 	game_clear_object_->Draw();
 	//共通描画設定
 	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
+	//ゲームクリアオブジェクトスプライト描画
+	game_clear_object_->DrawSprite();
 	//フェード
 	fade_->Draw();
 }

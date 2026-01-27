@@ -9,10 +9,14 @@
 void Ui::Initialize()
 {   //HPバー作成
     CreateSprite(SpriteType::HpBar, "resources/ui/hpbar.png", { 50,50 }, { 200,20 });
-	//ポーズ表示作成
+	//ポーズ文字作成
     CreateSprite(SpriteType::Pause,"resources/ui/pause.png", { 1000,20 }, { 300,60 });
+    //リトライ文字作成
+    CreateSprite(SpriteType::Retry, "resources/ui/retry.png", { 485,620 }, { 180,100 }, { 0.5f,0.5f });
+    //タイトルへ戻る文字作成
+    CreateSprite(SpriteType::BackTitle, "resources/ui/back_title.png", { 805,620 }, { 180,100 }, { 0.5f,0.5f });
 	//操作説明画面作成
-    CreateSprite(SpriteType::OperationGuide,"resources/ui/operation.png", { 640,360 }, { 600,600 }, { 0.5f,0.5f });
+    CreateSprite(SpriteType::OperationGuide,"resources/ui/operation.png", { 640,300 }, { 500,500 }, { 0.5f,0.5f });
 	//各キー説明作成
     CreateSprite(SpriteType::KeyA, "resources/ui/keyboard_a.png", { 440,500 }, { 50,50 });
 	//Dキー
@@ -21,7 +25,7 @@ void Ui::Initialize()
     CreateSprite(SpriteType::KeyF,"resources/ui/keyboard_f.png", { 640,500 }, { 50,50 });
 	//Wキー
     CreateSprite(SpriteType::KeyW, "resources/ui/keyboard_w.png", { 490,450 }, { 50,50 });
-	//左クリック
+	//マウス左
     CreateSprite(SpriteType::MouseLeft, "resources/ui/mouse_left.png", { 740,500 }, { 50,50 });
 	//マウス移動
     CreateSprite(SpriteType::MouseMove,"resources/ui/mouse_move.png", { 840,500 }, { 50,50 });
@@ -32,7 +36,11 @@ void Ui::Update()
 	//HPバー更新
     UpdateHPBar();
 	//操作説明画面更新
-    UpdateOperationGuide();
+    UpdatePauseGuide();
+	//ポーズボタンホバー更新
+    UpdatePauseButtonHover();
+
+    UpdatePauseClick();
 
 	//スプライト更新
     for (auto& [type, sprite] : sprites_) {
@@ -44,10 +52,12 @@ void Ui::Draw()
 {
 	//HPバー表示
     Get(SpriteType::HpBar)->Draw();
-	//ポーズ表示
+	//ポーズ文字表示
     Get(SpriteType::Pause)->Draw();
-	//操作説明画面表示
-    if (operation_scale_ > 0.01f) {
+	//ポーズ画面表示
+    if (pause_scale_ > 0.01f) {
+        Get(SpriteType::Retry)->Draw();
+		Get(SpriteType::BackTitle)->Draw();
         Get(SpriteType::OperationGuide)->Draw();
     }
 }
@@ -95,25 +105,70 @@ void Ui::UpdateHPBar()
     Get(SpriteType::HpBar)->SetSize({ maxSize.x * ratio, maxSize.y });
 }
 //操作説明画面処理
-void Ui::UpdateOperationGuide()
+void Ui::UpdatePauseGuide()
 {
     const float speed = 0.07f;
     //スケール更新
-    if (is_show_operation_) {
-        operation_scale_ += speed;
+    if (is_show_pause_) {
+        pause_scale_ += speed;
     } else {
-        operation_scale_ -= speed;
+        pause_scale_ -= speed;
+    }
+    pause_scale_ = std::clamp(pause_scale_, 0.0f, 1.0f);
+
+    float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
+
+    Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
+
+    Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size, eased));
+
+    Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size, eased));
+}
+
+//ポーズボタンホバー処理
+void Ui::UpdatePauseButtonHover()
+{
+    if (pause_scale_ <= 0.01f) return; // ポーズ画面が出てない
+
+    hover_timer_ += 1.0f / 60.0f;
+
+    float animationScale = 1.0f + sinf(hover_timer_ * 5.0f) * 0.1f;
+
+    float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
+
+    Vector2 retrySize = Math::MultiplyScalar(retry_base_size, eased);
+    Vector2 backSize = Math::MultiplyScalar(back_title_base_size, eased);
+
+    // 通常サイズに戻す
+    Get(SpriteType::Retry)->SetSize(retrySize);
+    Get(SpriteType::BackTitle)->SetSize(backSize);
+
+    // ホバーしてたら拡縮
+    if (IsMouseOnSprite(Get(SpriteType::Retry))) {
+        Get(SpriteType::Retry)->SetSize(Math::MultiplyScalar(retrySize, animationScale));
     }
 
-    operation_scale_ = std::clamp(operation_scale_, 0.0f, 1.0f);
-
-    float eased = static_cast<float>(Math::easeOutQuad(operation_scale_));
-    Vector2 baseSize = { 600.0f,600.0f };
-
-    Get(SpriteType::OperationGuide)->SetSize(
-        Math::MultiplyScalar(baseSize, eased)
-    );
+    if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
+        Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(backSize, animationScale));
+    }
 }
+//ポーズメニュークリック処理
+void Ui::UpdatePauseClick()
+{
+    if (!is_show_pause_) return;
+    if (pause_scale_ < 0.95f) return; // 出現中は無効（誤爆防止）
+
+    auto input = MyEngine::Input::GetInstance();
+
+    if (!input->IsMouseLeftTriggered()) return;
+
+    if (IsMouseOnSprite(Get(SpriteType::Retry))) {
+        pause_result_ = PauseResult::Retry;
+    } else if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
+        pause_result_ = PauseResult::BackTitle;
+    }
+}
+
 //スプライト作成
 void Ui::CreateSprite(SpriteType type,
     const char* path,
@@ -129,6 +184,34 @@ void Ui::CreateSprite(SpriteType type,
 
     sprites_[type] = std::move(sprite);
 }
+
+//スプライト上にマウスが乗っているか
+bool Ui::IsMouseOnSprite(MyEngine::Sprite* sprite)
+{
+    if (!sprite) return false;
+
+    POINT mouse = MyEngine::Input::GetInstance()->GetMousePosition();
+
+    Vector2 pos = sprite->GetPosition();
+    Vector2 size = sprite->GetSize();
+    Vector2 anchor = sprite->GetAnchorPoint();
+
+    Vector2 leftTop;
+    leftTop.x = pos.x - size.x * anchor.x;
+    leftTop.y = pos.y - size.y * anchor.y;
+
+    Vector2 rightBottom;
+    rightBottom.x = leftTop.x + size.x;
+    rightBottom.y = leftTop.y + size.y;
+
+    if (mouse.x >= leftTop.x && mouse.x <= rightBottom.x &&
+        mouse.y >= leftTop.y && mouse.y <= rightBottom.y) {
+        return true;
+    }
+
+    return false;
+}
+
 ///スプライト取得
 MyEngine::Sprite* Ui::Get(SpriteType type)
 {

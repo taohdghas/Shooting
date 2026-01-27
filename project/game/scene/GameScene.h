@@ -47,27 +47,22 @@ public:
 	/// デバッグ表示処
 	/// </summary>
 	void Debug() override;
-
 	/// <summary>
 	/// 追従カメラ
 	///	</summary>	
 	void FollowCamera();
-
 	/// <summary>
 	/// スタート演出 
 	/// </summary>
 	void StartAnimation();
-
 	/// <summary>
 	/// ゲームクリアシーンへ遷移
 	/// </summary>
 	void ToGameClear();
-
 	/// <summary>
 	/// ゲームオーバーシーンへ遷移
 	/// </summary>
 	void ToGameOver();
-
 	/// <summary>
 	/// ボス出現条件を判定
 	/// </summary>
@@ -75,6 +70,8 @@ public:
 private:
 	//ゲームフェーズ
 	GamePhase game_phase_ = GamePhase::Stage;
+	// 遷移先
+	Ui::PauseResult pause_transition_target_ = Ui::PauseResult::None;
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 	//敵
@@ -152,4 +149,10 @@ private:
 	bool is_following_initialized_ = false;
 	//ゲーム一時停止フラグ
 	bool is_game_pause_ = false;
+	// ポーズメニュー遷移待ちフラグ
+	bool is_pause_transition_ = false;
+	// ポーズ画面シーン遷移フラグ
+	bool is_to_game_from_pause_ = false;
+	bool is_to_title_from_pause_ = false;
+
 };

@@ -237,7 +237,7 @@ private:
 	//攻撃のクールタイム
 	float attack_cooldown_ = 0.0f;
 	//再攻撃できるまでの間隔
-	float attack_interval_ = 10.0f;
+	float attack_interval_ = 20.0f;
 	//回避タイマー
 	float dodge_timer_ = 0.0f;
 	//回避適用時間

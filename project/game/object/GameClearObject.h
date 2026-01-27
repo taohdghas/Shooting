@@ -10,22 +10,27 @@ class GameClearObject
 {
 public:
     /// <summary>
-    /// ゲームクリアオブジェクトの初期化処理を行う。
+    /// 初期化処理
     /// </summary>
     void Initialize();
 
     /// <summary>
-    /// ゲームクリアオブジェクトの毎フレーム更新処理を行う。
+    /// 更新処理
     /// </summary>
     void Update();
 
     /// <summary>
-    /// ゲームクリアオブジェクトの描画処理を行う。
+    /// オブジェクトの描画
     /// </summary>
     void Draw();
 
+	/// <summary>
+	/// スプライトの描画
+	/// </summary>
+	void DrawSprite();
+
     /// <summary>
-    /// ゲームクリアオブジェクトのデバッグ表示・デバッグ用更新処理を行う。
+    /// デバッグ
     /// </summary>
     void Debug();
 
@@ -39,12 +44,10 @@ private:
 
     // ゲームクリア文字のオブジェクト
     std::unique_ptr< MyEngine::Object3d> game_clear_object_;
-    // push spaceのオブジェクト
-    std::unique_ptr< MyEngine::Object3d> push_space_object_;
+	//push spaceスプライト
+	std::unique_ptr< MyEngine::Sprite> push_space_sprite_;
     // ゲームクリアトランスフォーム
     Transform game_clear_transform_;
-    // push spaceトランスフォーム
-    Transform push_space_transform_;
     // 文字数
     static const int kNumLetters = 9;
     // 文字配列

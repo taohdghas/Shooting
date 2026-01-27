@@ -26,12 +26,12 @@ public:
 	void Update();
 
 	/// <summary>
-	/// タイトル、PUSH SPACE、プレイヤーモデルを描画
+	/// 描画
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// メニュー項目スプライトを描画
+	/// スプライト描画
 	/// </summary>
 	void DrawSprite();
 
@@ -80,8 +80,6 @@ private:
 	MenuResult menu_result_ = MenuResult::None;
 	// タイトルのオブジェクト
 	std::unique_ptr< MyEngine::Object3d> title_;
-	// pushspaceのオブジェクト
-	std::unique_ptr< MyEngine::Object3d> push_space_;
 	// プレイヤーオブジェクト
 	std::unique_ptr< MyEngine::Object3d> player_obj_;
 	//スタート項目スプライト
