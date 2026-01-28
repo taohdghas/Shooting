@@ -98,7 +98,7 @@ namespace Math {
 		return result;
 	}
 	//CatMullRom補間
-	Vector3 Math::CatMullRom(
+	Vector3 Math::CatmullRom(
 		const Vector3& p0,
 		const Vector3& p1,
 		const Vector3& p2,

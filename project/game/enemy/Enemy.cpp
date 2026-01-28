@@ -206,7 +206,7 @@ Vector3 Enemy::EvaluateRailPosition(float progress)
 	size_t i2 = std::min(index + 1, pointCount - 1);
 	size_t i3 = std::min(index + 2, pointCount - 1);
 
-	return Math::CatMullRom(
+	return Math::CatmullRom(
 		rail_points_[i0],
 		rail_points_[i1],
 		rail_points_[i2],
