@@ -88,11 +88,6 @@ void Enemy::Update() {
 	object_->SetTranslate(transform_.translate);
 
 	object_->Update();
-
-	// 弾の再更新
-	for (const auto& bullet : bullets_) {
-		bullet->Update();
-	}
 }
 
 // 描画処理
@@ -147,8 +142,9 @@ void Enemy::Laser() {
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3d_base_);
 	bullet->SetTranslate(transform_.translate);
-	bullet->SetVelocity(Math::MultiplyScalar(direction, 0.2f));
+	bullet->SetVelocity(Math::MultiplyScalar(direction, 0.5f));
 
+	bullet->Update();
 	bullets_.emplace_back(std::move(bullet));
 }
 
