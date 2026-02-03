@@ -278,5 +278,3 @@ void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed)
 		rail_total_length_ += Math::Length(diff);
 	}
 }
-
-
