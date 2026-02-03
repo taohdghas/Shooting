@@ -4933,7 +4933,7 @@ namespace MyEngine {
             DispatchMessage(&msg);
         }
 
-        // WM_QUITが来ていればTrueを返す
+        // WM_QUITが来ていればtrueを返す
         return msg.message == WM_QUIT;
     }
 }
@@ -5767,6 +5767,9 @@ namespace MyEngine {
                 EnemySpawnData enemy_spawn{};
                 enemy_spawn.name = object_json["name"].get<std::string>();
                 enemy_spawn.fileName = object_json["file_name"].get<std::string>();
+                if (object_json.contains("hp")) {
+                    enemy_spawn.hp = object_json["hp"].get<int>();
+                }
                 ReadTransform(object_json["transform"], enemy_spawn.translation, enemy_spawn.rotation, enemy_spawn.scaling);
                 level_data->enemies.push_back(enemy_spawn);
             } else if (type.compare("BossSpawn") == 0) {
@@ -5870,7 +5873,7 @@ namespace MyEngine {
         std::unique_ptr<LevelData> LoadJsonFile(const std::string& filename);
 
         /// <summary>
-        /// JSONからTransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
+        /// JSONからTransformオブジェクトから準拠・回転・スケールを読み取り、エンジン用に変換して格納する。
         /// </summary>
         void ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling);
 
@@ -7265,8 +7268,13 @@ namespace Math {
 		result.z = v1.x * v2.y - v1.y * v2.x;
 		return result;
 	}
+
+	Vector3 Math::Lerp(const Vector3& a, const Vector3& b, float t) {
+		return a * (1.0f - t) + b * t;
+	}
+
 	//CatMullRom補間
-	Vector3 Math::CatMullRom(
+	Vector3 Math::CatmullRom(
 		const Vector3& p0,
 		const Vector3& p1,
 		const Vector3& p2,
@@ -7827,8 +7835,10 @@ namespace Math {
 	/// <summary>2つのベクトルの外積を計算</summary>
 	Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
-	/// <summary>Catmull-Rom補間</summary>
-	Vector3 CatMullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
+	/// <summary>CatmullRom補間</summary>
+	Vector3 CatmullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
+
+	Vector3 Lerp(const Vector3& a, const Vector3& b, float t);
 
 	/// <summary>座標ベクトル(Vector4)を行列で変換</summary>
 	Vector4 Transform(const Vector4& v, const Matrix4x4& m);
@@ -7878,7 +7888,6 @@ namespace Math {
 	/// <summary>OBB同士の衝突判定</summary>
 	bool IsCollisionOBB(const OBB& obb1, const OBB& obb2);
 }
-
 
 ============================================================
 File Path: project/engine/math/Struct.h
@@ -8044,6 +8053,8 @@ struct EnemySpawnData {
 	std::string name;
 	// ファイル名
 	std::string fileName;
+	// 体力
+	int hp = 100;
 	// 平行移動
 	Vector3 translation;
 	// 回転角
@@ -9139,11 +9150,6 @@ void Enemy::Update() {
 	object_->SetTranslate(transform_.translate);
 
 	object_->Update();
-
-	// 弾の再更新
-	for (const auto& bullet : bullets_) {
-		bullet->Update();
-	}
 }
 
 // 描画処理
@@ -9152,6 +9158,7 @@ void Enemy::Draw() {
 		return;
 	}
 
+	// 敵本体の描画
 	object_->Draw();
 
 	// 弾の描画
@@ -9162,19 +9169,18 @@ void Enemy::Draw() {
 
 // レーザー攻撃判定・発射処理
 void Enemy::Laser() {
+
 	if (is_dead_ || !player_) {
 		return;
 	}
 
-	static int fire_timer = 0;
-	fire_timer++;
-
-	// 発射間隔未満なら発射しない
-	if (fire_timer < kFireInterval) {
+	// 発射タイマー更新
+	fire_timer_++;
+	if (fire_timer_ < kFireInterval) {
 		return;
 	}
 
-	// プレイヤーとの距離計算
+	// 敵からプレイヤーのベクトル
 	Vector3 to_player = Math::Subtract(player_->GetTranslate(), transform_.translate);
 	float distance = Math::Length(to_player);
 
@@ -9183,23 +9189,40 @@ void Enemy::Laser() {
 		return;
 	}
 
-	// プレイヤーのZ座標＋定数より手前なら発射しない
+	// プレイヤーより前に出すぎたら発射しない
 	if (transform_.translate.z < player_->GetTranslate().z + kAttackStopDistanceZ) {
 		return;
 	}
 
 	// 発射タイマーリセット
-	fire_timer = 0;
+	fire_timer_ = 0;
 
-	// プレイヤー方向に正規化ベクトルを算出
-	Vector3 direction = Math::Normalize(to_player);
+	//距離依存でZ座標を先読み
 
-	// 弾生成・初期化・速度設定
+	const float bulletSpeed = 0.5f;
+
+	// 弾が到達するまでの時間（概算）
+	float timeToHit = distance / bulletSpeed;
+
+	// Z方向の先読み量（係数で調整）
+	const float zLeadFactor = 0.08f; 
+	float zLead = timeToHit * zLeadFactor;
+
+	// 狙う位置
+	Vector3 target = player_->GetTranslate();
+	target.z += zLead;
+
+	// 敵から狙い位置の方向
+	Vector3 to_target = Math::Subtract(target, transform_.translate);
+	Vector3 direction = Math::Normalize(to_target);
+
+	// 弾生成
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3d_base_);
 	bullet->SetTranslate(transform_.translate);
-	bullet->SetVelocity(Math::MultiplyScalar(direction, 0.2f));
+	bullet->SetVelocity(Math::MultiplyScalar(direction, bulletSpeed));
 
+	bullet->Update();
 	bullets_.emplace_back(std::move(bullet));
 }
 
@@ -9257,7 +9280,7 @@ Vector3 Enemy::EvaluateRailPosition(float progress)
 	size_t i2 = std::min(index + 1, pointCount - 1);
 	size_t i3 = std::min(index + 2, pointCount - 1);
 
-	return Math::CatMullRom(
+	return Math::CatmullRom(
 		rail_points_[i0],
 		rail_points_[i1],
 		rail_points_[i2],
@@ -9317,9 +9340,6 @@ void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed)
 		rail_total_length_ += Math::Length(diff);
 	}
 }
-
-
-
 
 ============================================================
 File Path: project/game/enemy/Enemy.h
@@ -9395,7 +9415,7 @@ public:
 	/// <summary>
 	/// 現在の位置（Transform.translate）を取得する。
 	/// </summary>
-	const Vector3& GetPosition() const { return transform_.translate; }
+	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
     /// 弾の攻撃力を取得する。
@@ -9426,6 +9446,11 @@ public:
 	/// 座標を設定する。
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
+
+	/// <summary>
+    /// 初期HPを設定する
+    /// </summary>
+	void SetHP(int hp) { hp_ = hp; }
 
 	/// <summary>
 	/// 対象プレイヤーのポインタを設定する。
@@ -9480,7 +9505,7 @@ private:
 	// レールが閉じているかどうか
 	bool rail_closed_ = false;
 	// 現在のHP
-	int hp_ = 10;
+	int hp_ = 5;
 	//攻撃力
 	uint32_t attack_ = 5;
 	// 弾発射タイマーのカウント
@@ -9490,9 +9515,9 @@ private:
 	// コリジョンや描画に使う半径
 	float radius_ = 1.0f;
 	// 弾発射のインターバル（フレーム数）
-	static const int kFireInterval = 80;
+	static const int kFireInterval = 40;
 	// プレイヤーへの発射有効距離
-	const float kFireDistance = 25.0f;
+	const float kFireDistance = 45.0f;
 	// Z方向の攻撃停止距離
 	const float kAttackStopDistanceZ = 6.0f;
 	// 1フレームあたりの時間（秒）
@@ -9501,12 +9526,14 @@ private:
 	const float kDamageColorDuration = 0.1f;
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
+	// プレイヤーZ先読み距離
+	const float kPlayerZLead = 3.8f;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
 	// レール上の進行度（0.0～1.0）
 	float rail_progress_ = 0.0f;
 	// レール移動速度
-	float rail_speed_ = 7.0f;
+	float rail_speed_ = 5.0f;
 	// ダメージスケール演出の時間
 	float damage_scale_duration_ = 0.08f;
 	// 現在のスケール演出の残り時間
@@ -9514,7 +9541,6 @@ private:
 	// レール全体の長さ
 	float rail_total_length_ = 0.0f;
 };
-
 
 ============================================================
 File Path: project/game/enemy/EnemyBullet.cpp
@@ -11192,7 +11218,7 @@ Player::Player() {}
 
 Player::~Player() {}
 
-// プレイヤーの初期化処理
+//初期化処理
 void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	// モデルの読み込み
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
@@ -11205,14 +11231,14 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->SetLight(false);
 	transform_.scale = { 0.25f,0.25f,0.25f };
 	transform_.translate = { 0.0f,-1.5f,0.0f };
-	// レティクル（照準）の初期化
+	// レティクルの初期化
 	reticle_ = std::make_unique< MyEngine::Sprite>();
 	reticle_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/re.png");
 	reticle_->SetSize({ 32,32 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
 
-// 毎フレームの更新処理
+//更新処理
 void Player::Update(bool is_start_animation_, bool is_returning_) {
 
 	//攻撃クールタイム
@@ -11302,7 +11328,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 	}
 }
 
-// プレイヤー・弾の描画処理
+//描画処理
 void Player::Draw() {
 	//デスの場合スキップ
 
@@ -11313,7 +11339,7 @@ void Player::Draw() {
 	}
 }
 
-// レティクル（照準）の描画
+// レティクルの描画
 void Player::ReticleDraw() {
 	reticle_->Draw();
 }
@@ -11365,7 +11391,7 @@ void Player::Jump() {
 	}
 }
 
-// 攻撃処理（弾発射）
+// 攻撃処理
 void Player::Attack() {
 	if (attack_cooldown_ > 0.0f) return;
 
@@ -11456,7 +11482,7 @@ void Player::Dodge() {
 	}
 }
 
-// レティクル（照準）の座標更新
+// レティクルの座標更新
 void Player::ReticleUpdate() {
 	POINT mousePos = MyEngine::Input::GetInstance()->GetMousePosition();
 
@@ -11472,8 +11498,7 @@ void Player::ReticleUpdate() {
 	reticle_->Update();
 }
 
-
-// 衝突時コールバック（死亡フラグを立てる）
+// 衝突時コールバック
 void Player::OnCollision() {
 	is_dead_ = true;
 }
@@ -11508,7 +11533,7 @@ void Player::TakeDamage(int damage) {
 	}
 }
 
-// デバッグ表示（ImGuiによるパラメータ調整・状態表示）
+// デバッグ表示
 void Player::Debug() {
 #ifdef USE_IMGUI
 	if (ImGui::TreeNodeEx("Player", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -11536,8 +11561,14 @@ void Player::Debug() {
 	}
 #endif
 }
+// 回避クールタイム進行率取得
+float Player::GetDodgeCooldownRatio() {
+	// 回避可能状態
+	float ratio = 1.0f - (dodge_cooldown_ / dodge_interval_);
+	return std::clamp(ratio, 0.0f, 1.0f);
+}
 
-// OBB（当たり判定用の回転付きボックス）取得
+// OBB取得
 OBB Player::GetOBB() const {
 	OBB obb;
 	obb.center = transform_.translate;
@@ -11554,7 +11585,6 @@ OBB Player::GetOBB() const {
 	return obb;
 }
 
-
 ============================================================
 File Path: project/game/player/Player.h
 ============================================================
@@ -11566,7 +11596,7 @@ File Path: project/game/player/Player.h
 #include "SpriteBase.h"
 #include "Input.h"
 #include "Struct.h"
-#include "playerBullet.h"
+#include "PlayerBullet.h"
 #include "Camera.h"
 #include <list>
 #include <memory>
@@ -11582,137 +11612,114 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	Player();
-
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~Player();
-
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
-
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update(bool is_start_animation_, bool is_returning_);
-
 	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
-
 	/// <summary>
 	/// レティクル描画
 	/// </summary>
 	void ReticleDraw();
-
 	/// <summary>
 	/// 移動
 	/// </summary>
 	void Move();
-
 	/// <summary>
 	/// ジャンプ
 	/// </summary>
 	void Jump();
-
 	/// <summary>
 	/// 攻撃
 	/// </summary>
 	void Attack();
-
 	/// <summary>
 	/// 回避
 	/// </summary>
 	void Dodge();
-
 	/// <summary>
 	/// レティクル更新
 	/// </summary>
 	void ReticleUpdate();
-
 	/// <summary>
 	/// 衝突時処理
 	/// </summary>
 	void OnCollision();
-
 	/// <summary>
 	/// ダメージ処理
 	/// </summary>
 	void TakeDamage(int damage);
-
 	/// <summary>
 	/// デバッグ表示
 	/// </summary>
 	void Debug();
-
+	/// <summary>
+    /// 回避クールタイム進行率 
+    /// </summary>
+	float GetDodgeCooldownRatio();
 	/// <summary>
 	/// OBB取得
 	/// </summary>
 	OBB GetOBB() const;
-
 	/// <summary>
 	/// 死亡判定
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
-
 	/// <summary>
 	/// スケール取得
 	/// </summary>
 	const Vector3& GetScale() const { return transform_.scale; }
-
 	/// <summary>
 	/// 回転取得
 	/// </summary>
 	const Vector3& GetRotate() const { return transform_.rotate; }
-
 	/// <summary>
 	/// 位置取得
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
-
 	/// <summary>
 	/// 速度取得
 	/// </summary>
 	const Vector3& GetVelocity() const { return velocity_; }
-
 	/// <summary>
 	/// HP取得
 	/// </summary>
 	int GetHP() const { return hp_; }
-
 	/// <summary>
 	/// 半径取得
 	/// </summary>
 	float GetRadius() const { return radius_; }
-
 	/// <summary>
 	/// 弾リスト取得
 	/// </summary>
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
-
 	/// <summary>
 	/// スケール設定
 	/// </summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
-
 	/// <summary>
 	/// 回転設定
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-
 	/// <summary>
 	/// 座標設定
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
-
 	/// <summary>
 	/// プラットフォーム設定
 	/// </summary>
 	void SetPlatform(Platform* platform) { platform_ = platform; }
-
 	/// <summary>
 	/// プラットフォーム追従設定
 	/// </summary>
@@ -11731,8 +11738,9 @@ private:
 	std::unique_ptr< MyEngine::Sprite> reticle_;
 	//プラットフォーム
 	Platform* platform_ = nullptr;
-	//画面上の位置
+	//レティクル画面上の位置
 	Vector2 reticle_screen_pos_{ 640.0f, 360.0f };
+	//レティクルの位置
 	Vector2 reticle_pos_ = { 640.0f, 360.0f };
 	//プレイヤーの移動速度
 	Vector3 velocity_{ 0.0f, 0.0f, 0.0f };
@@ -11812,7 +11820,6 @@ private:
 	float invincible_timer_ = 0.0f;
 };
 
-
 ============================================================
 File Path: project/game/player/playerBullet.cpp
 ============================================================
@@ -11830,7 +11837,7 @@ void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("player/playerbullet.obj");
-	object_->SetScale({ 1.0f, 1.0f, 1.0f });
+	object_->SetScale({ 1.5f, 1.5f, 1.5f });
 
 	// 寿命タイマーの初期化
 	death_timer_ = kLifeTime;
@@ -11841,6 +11848,7 @@ void PlayerBullet::Update() {
 	if (is_dead_) {
 		return;
 	}
+
 	// 速度ベクトル分だけ座標を移動
 	transform_.translate = Math::Add(transform_.translate, velocity_);
 
@@ -11883,7 +11891,6 @@ OBB PlayerBullet::GetOBB() const {
 
 	return obb;
 }
-
 
 ============================================================
 File Path: project/game/player/playerBullet.h
@@ -12464,7 +12471,7 @@ void GameScene::Initialize() {
 		newEnemy->Initialize(MyEngine::Object3dBase::GetInstance());
 		newEnemy->SetTranslate(enemyData.translation);
 		newEnemy->SetPlayer(player_.get());
-
+		newEnemy->SetHP(enemyData.hp);
 		// Rails がある場合セット
 		if (!enemyData.rails.empty()) {
 			// ここでは最初のRailsのみ使用
@@ -12586,7 +12593,7 @@ void GameScene::Update() {
 		if (enemy->IsDeathParticle()) {
 			auto emitter = std::make_unique< MyEngine::ParticleEmitter>();
 			emitter->Initialize("enemydestroy");
-			emitter->SetPosition(enemy->GetPosition());
+			emitter->SetPosition(enemy->GetTranslate());
 			emitter->Emit();
 			particle_emitters_.push_back(std::move(emitter));
 
@@ -12973,8 +12980,6 @@ public:
 private:
 	//ゲームフェーズ
 	GamePhase game_phase_ = GamePhase::Stage;
-	// 遷移先
-	Ui::PauseResult pause_transition_target_ = Ui::PauseResult::None;
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 	//敵
@@ -13052,12 +13057,6 @@ private:
 	bool is_following_initialized_ = false;
 	//ゲーム一時停止フラグ
 	bool is_game_pause_ = false;
-	// ポーズメニュー遷移待ちフラグ
-	bool is_pause_transition_ = false;
-	// ポーズ画面シーン遷移フラグ
-	bool is_to_game_from_pause_ = false;
-	bool is_to_title_from_pause_ = false;
-
 };
 
 ============================================================
@@ -13592,6 +13591,10 @@ File Path: project/game/ui/Ui.cpp
 void Ui::Initialize()
 {   //HPバー作成
     CreateSprite(SpriteType::HpBar, "resources/ui/hpbar.png", { 50,50 }, { 200,20 });
+	//回避ゲージ作成
+    CreateSprite(SpriteType::DodgeGauge, "resources/ui/dodgecooldownbar.png", { 50,80 }, { 200,20 });
+	//回避ゲージフラッシュ作成
+    CreateSprite(SpriteType::DodgeGaugeFlash, "resources/ui/dodgecooldownbar_flash.png", { 50,80 }, { 200,20 });
 	//ポーズ文字作成
     CreateSprite(SpriteType::Pause,"resources/ui/pause.png", { 1000,20 }, { 300,60 });
     //リトライ文字作成
@@ -13622,8 +13625,10 @@ void Ui::Update()
     UpdatePauseGuide();
 	//ポーズボタンホバー更新
     UpdatePauseButtonHover();
-
+	//ポーズメニュークリック更新
     UpdatePauseClick();
+	//回避ゲージ更新
+    UpdateDodgeGauge();
 
 	//スプライト更新
     for (auto& [type, sprite] : sprites_) {
@@ -13633,17 +13638,26 @@ void Ui::Update()
 //描画
 void Ui::Draw()
 {
-	//HPバー表示
+	//HPバー描画
     Get(SpriteType::HpBar)->Draw();
-	//ポーズ文字表示
+    //通常ゲージ
+    if (!is_dodge_flash_visible_) {
+        Get(SpriteType::DodgeGaugeFlash)->Draw();
+    }
+    //強調ゲージ
+    else {
+        Get(SpriteType::DodgeGauge)->Draw();
+    }
+	//ポーズ文字描画
     Get(SpriteType::Pause)->Draw();
-	//ポーズ画面表示
+	//ポーズメニュー描画
     if (pause_scale_ > 0.01f) {
         Get(SpriteType::Retry)->Draw();
-		Get(SpriteType::BackTitle)->Draw();
+        Get(SpriteType::BackTitle)->Draw();
         Get(SpriteType::OperationGuide)->Draw();
     }
 }
+
 //デバック
 void Ui::Debug()
 {
@@ -13678,13 +13692,14 @@ void Ui::Debug()
 void Ui::UpdateHPBar()
 {
     if (!player_) return;
-
+	//現在のHP取得
     float currentHP = static_cast<float>(player_->GetHP());
     constexpr float maxHP = 100.0f;
-
+	//HP比率計算
     float ratio = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
 
     Vector2 maxSize = { 200.0f, 20.0f };
+	//サイズ更新
     Get(SpriteType::HpBar)->SetSize({ maxSize.x * ratio, maxSize.y });
 }
 //操作説明画面処理
@@ -13698,7 +13713,7 @@ void Ui::UpdatePauseGuide()
         pause_scale_ -= speed;
     }
     pause_scale_ = std::clamp(pause_scale_, 0.0f, 1.0f);
-
+	//イージング適用
     float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
 
     Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
@@ -13726,11 +13741,11 @@ void Ui::UpdatePauseButtonHover()
     Get(SpriteType::Retry)->SetSize(retrySize);
     Get(SpriteType::BackTitle)->SetSize(backSize);
 
-    // ホバーしてたら拡縮
+	// リトライボタン
     if (IsMouseOnSprite(Get(SpriteType::Retry))) {
         Get(SpriteType::Retry)->SetSize(Math::MultiplyScalar(retrySize, animationScale));
     }
-
+	// タイトルへ戻るボタン
     if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
         Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(backSize, animationScale));
     }
@@ -13749,6 +13764,33 @@ void Ui::UpdatePauseClick()
         pause_result_ = PauseResult::Retry;
     } else if (IsMouseOnSprite(Get(SpriteType::BackTitle))) {
         pause_result_ = PauseResult::BackTitle;
+    }
+}
+//回避クールタイムバー更新
+void Ui::UpdateDodgeGauge()
+{
+    if (!player_) return;
+
+    float ratio = player_->GetDodgeCooldownRatio();
+    constexpr Vector2 maxSize = { 200.0f, 20.0f };
+
+    Vector2 size = { maxSize.x * ratio, maxSize.y };
+
+    Get(SpriteType::DodgeGauge)->SetSize(size);
+    Get(SpriteType::DodgeGaugeFlash)->SetSize(size);
+
+    //点滅制御
+    if (ratio < 1.0f) {
+        //クールタイム中交互にスプライト表示
+        dodge_flash_timer_ += 1.0f / 60.0f;
+		//一定時間ごとに表示非表示切り替え
+        if (dodge_flash_timer_ > 0.2f) {  
+            dodge_flash_timer_ = 0.0f;
+            is_dodge_flash_visible_ = !is_dodge_flash_visible_;
+        }
+    } else {
+        // 満タン → 強調表示固定
+        is_dodge_flash_visible_ = true;
     }
 }
 
@@ -13826,6 +13868,8 @@ public:
 	//スプライトの種類
 	enum class SpriteType {
 		HpBar,//HPバー
+		DodgeGauge,//回避ゲージ
+		DodgeGaugeFlash,//回避ゲージフラッシュ
 		Pause,//ポーズ表示
 		Retry,//リトライ文字
 		BackTitle,//タイトルへ戻る文字
@@ -13871,11 +13915,14 @@ public:
 	/// </summary>
 	void UpdatePauseClick();
 	/// <summary>
+    /// 回避クールタイムバー更新
+    /// </summary>
+	void UpdateDodgeGauge();
+	/// <summary>
 	/// スプライト作成
 	/// </summary>
 	void CreateSprite(SpriteType type, const char* path, const Vector2& pos,
 		const Vector2& size, const Vector2& anchor = { 0,0 });
-
 	/// <summary>
 	/// スプライト上にマウスがあるか
 	/// </summary>
@@ -13919,14 +13966,14 @@ private:
 	Vector2 back_title_base_size = { 180.0f,100.0f };
 	//操作説明画面の基準サイズ
 	Vector2 operation_base_size = { 500.0f,500.0f };
-	//リトライ文字のスケール
-	float retry_scale_ = 0.0f;
-	//タイトルへ戻る文字のスケール
-	float back_title_scale_ = 0.0f;
 	//ポーズ画面のスプライトスケール
 	float pause_scale_ = 0.0f;
 	//ホバー用タイマー
 	float hover_timer_ = 0.0f;
+	//回避ゲージフラッシュ用タイマー
+	float dodge_flash_timer_ = 0.0f;
+	//回避ゲージフラッシュ表示フラグ
+	bool is_dodge_flash_visible_ = true;
 	//ポーズ画面が出ているか
 	bool is_show_pause_ = false;
 };
