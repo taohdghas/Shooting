@@ -18,6 +18,8 @@ public:
 	//スプライトの種類
 	enum class SpriteType {
 		HpBar,//HPバー
+		DodgeGauge,//回避ゲージ
+		DodgeGaugeFlash,//回避ゲージフラッシュ
 		Pause,//ポーズ表示
 		Retry,//リトライ文字
 		BackTitle,//タイトルへ戻る文字
@@ -63,11 +65,14 @@ public:
 	/// </summary>
 	void UpdatePauseClick();
 	/// <summary>
+    /// 回避クールタイムバー更新
+    /// </summary>
+	void UpdateDodgeGauge();
+	/// <summary>
 	/// スプライト作成
 	/// </summary>
 	void CreateSprite(SpriteType type, const char* path, const Vector2& pos,
 		const Vector2& size, const Vector2& anchor = { 0,0 });
-
 	/// <summary>
 	/// スプライト上にマウスがあるか
 	/// </summary>
@@ -111,14 +116,14 @@ private:
 	Vector2 back_title_base_size = { 180.0f,100.0f };
 	//操作説明画面の基準サイズ
 	Vector2 operation_base_size = { 500.0f,500.0f };
-	//リトライ文字のスケール
-	float retry_scale_ = 0.0f;
-	//タイトルへ戻る文字のスケール
-	float back_title_scale_ = 0.0f;
 	//ポーズ画面のスプライトスケール
 	float pause_scale_ = 0.0f;
 	//ホバー用タイマー
 	float hover_timer_ = 0.0f;
+	//回避ゲージフラッシュ用タイマー
+	float dodge_flash_timer_ = 0.0f;
+	//回避ゲージフラッシュ表示フラグ
+	bool is_dodge_flash_visible_ = true;
 	//ポーズ画面が出ているか
 	bool is_show_pause_ = false;
 };

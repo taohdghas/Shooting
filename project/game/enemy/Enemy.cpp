@@ -88,11 +88,6 @@ void Enemy::Update() {
 	object_->SetTranslate(transform_.translate);
 
 	object_->Update();
-
-	// 弾の再更新
-	for (const auto& bullet : bullets_) {
-		bullet->Update();
-	}
 }
 
 // 描画処理
@@ -101,6 +96,7 @@ void Enemy::Draw() {
 		return;
 	}
 
+	// 敵本体の描画
 	object_->Draw();
 
 	// 弾の描画
@@ -111,19 +107,18 @@ void Enemy::Draw() {
 
 // レーザー攻撃判定・発射処理
 void Enemy::Laser() {
+
 	if (is_dead_ || !player_) {
 		return;
 	}
 
-	static int fire_timer = 0;
-	fire_timer++;
-
-	// 発射間隔未満なら発射しない
-	if (fire_timer < kFireInterval) {
+	// 発射タイマー更新
+	fire_timer_++;
+	if (fire_timer_ < kFireInterval) {
 		return;
 	}
 
-	// プレイヤーとの距離計算
+	// 敵からプレイヤーのベクトル
 	Vector3 to_player = Math::Subtract(player_->GetTranslate(), transform_.translate);
 	float distance = Math::Length(to_player);
 
@@ -132,23 +127,40 @@ void Enemy::Laser() {
 		return;
 	}
 
-	// プレイヤーのZ座標＋定数より手前なら発射しない
+	// プレイヤーより前に出すぎたら発射しない
 	if (transform_.translate.z < player_->GetTranslate().z + kAttackStopDistanceZ) {
 		return;
 	}
 
 	// 発射タイマーリセット
-	fire_timer = 0;
+	fire_timer_ = 0;
 
-	// プレイヤー方向に正規化ベクトルを算出
-	Vector3 direction = Math::Normalize(to_player);
+	//距離依存でZ座標を先読み
 
-	// 弾生成・初期化・速度設定
+	const float bulletSpeed = 0.5f;
+
+	// 弾が到達するまでの時間（概算）
+	float timeToHit = distance / bulletSpeed;
+
+	// Z方向の先読み量（係数で調整）
+	const float zLeadFactor = 0.08f; 
+	float zLead = timeToHit * zLeadFactor;
+
+	// 狙う位置
+	Vector3 target = player_->GetTranslate();
+	target.z += zLead;
+
+	// 敵から狙い位置の方向
+	Vector3 to_target = Math::Subtract(target, transform_.translate);
+	Vector3 direction = Math::Normalize(to_target);
+
+	// 弾生成
 	auto bullet = std::make_unique<EnemyBullet>();
 	bullet->Initialize(object3d_base_);
 	bullet->SetTranslate(transform_.translate);
-	bullet->SetVelocity(Math::MultiplyScalar(direction, 0.2f));
+	bullet->SetVelocity(Math::MultiplyScalar(direction, bulletSpeed));
 
+	bullet->Update();
 	bullets_.emplace_back(std::move(bullet));
 }
 
@@ -206,7 +218,7 @@ Vector3 Enemy::EvaluateRailPosition(float progress)
 	size_t i2 = std::min(index + 1, pointCount - 1);
 	size_t i3 = std::min(index + 2, pointCount - 1);
 
-	return Math::CatMullRom(
+	return Math::CatmullRom(
 		rail_points_[i0],
 		rail_points_[i1],
 		rail_points_[i2],
@@ -266,5 +278,3 @@ void Enemy::SetRail(const std::vector<Vector3>& controlPoints, bool closed)
 		rail_total_length_ += Math::Length(diff);
 	}
 }
-
-

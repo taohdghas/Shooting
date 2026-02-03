@@ -11,7 +11,7 @@ Player::Player() {}
 
 Player::~Player() {}
 
-// プレイヤーの初期化処理
+//初期化処理
 void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	// モデルの読み込み
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
@@ -24,14 +24,14 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->SetLight(false);
 	transform_.scale = { 0.25f,0.25f,0.25f };
 	transform_.translate = { 0.0f,-1.5f,0.0f };
-	// レティクル（照準）の初期化
+	// レティクルの初期化
 	reticle_ = std::make_unique< MyEngine::Sprite>();
 	reticle_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/re.png");
 	reticle_->SetSize({ 32,32 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
 
-// 毎フレームの更新処理
+//更新処理
 void Player::Update(bool is_start_animation_, bool is_returning_) {
 
 	//攻撃クールタイム
@@ -121,7 +121,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 	}
 }
 
-// プレイヤー・弾の描画処理
+//描画処理
 void Player::Draw() {
 	//デスの場合スキップ
 
@@ -132,7 +132,7 @@ void Player::Draw() {
 	}
 }
 
-// レティクル（照準）の描画
+// レティクルの描画
 void Player::ReticleDraw() {
 	reticle_->Draw();
 }
@@ -184,7 +184,7 @@ void Player::Jump() {
 	}
 }
 
-// 攻撃処理（弾発射）
+// 攻撃処理
 void Player::Attack() {
 	if (attack_cooldown_ > 0.0f) return;
 
@@ -275,7 +275,7 @@ void Player::Dodge() {
 	}
 }
 
-// レティクル（照準）の座標更新
+// レティクルの座標更新
 void Player::ReticleUpdate() {
 	POINT mousePos = MyEngine::Input::GetInstance()->GetMousePosition();
 
@@ -291,8 +291,7 @@ void Player::ReticleUpdate() {
 	reticle_->Update();
 }
 
-
-// 衝突時コールバック（死亡フラグを立てる）
+// 衝突時コールバック
 void Player::OnCollision() {
 	is_dead_ = true;
 }
@@ -327,7 +326,7 @@ void Player::TakeDamage(int damage) {
 	}
 }
 
-// デバッグ表示（ImGuiによるパラメータ調整・状態表示）
+// デバッグ表示
 void Player::Debug() {
 #ifdef USE_IMGUI
 	if (ImGui::TreeNodeEx("Player", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -355,8 +354,14 @@ void Player::Debug() {
 	}
 #endif
 }
+// 回避クールタイム進行率取得
+float Player::GetDodgeCooldownRatio() {
+	// 回避可能状態
+	float ratio = 1.0f - (dodge_cooldown_ / dodge_interval_);
+	return std::clamp(ratio, 0.0f, 1.0f);
+}
 
-// OBB（当たり判定用の回転付きボックス）取得
+// OBB取得
 OBB Player::GetOBB() const {
 	OBB obb;
 	obb.center = transform_.translate;

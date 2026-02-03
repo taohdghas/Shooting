@@ -6,7 +6,7 @@
 #include "SpriteBase.h"
 #include "Input.h"
 #include "Struct.h"
-#include "playerBullet.h"
+#include "PlayerBullet.h"
 #include "Camera.h"
 #include <list>
 #include <memory>
@@ -22,137 +22,114 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	Player();
-
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~Player();
-
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
-
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update(bool is_start_animation_, bool is_returning_);
-
 	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
-
 	/// <summary>
 	/// レティクル描画
 	/// </summary>
 	void ReticleDraw();
-
 	/// <summary>
 	/// 移動
 	/// </summary>
 	void Move();
-
 	/// <summary>
 	/// ジャンプ
 	/// </summary>
 	void Jump();
-
 	/// <summary>
 	/// 攻撃
 	/// </summary>
 	void Attack();
-
 	/// <summary>
 	/// 回避
 	/// </summary>
 	void Dodge();
-
 	/// <summary>
 	/// レティクル更新
 	/// </summary>
 	void ReticleUpdate();
-
 	/// <summary>
 	/// 衝突時処理
 	/// </summary>
 	void OnCollision();
-
 	/// <summary>
 	/// ダメージ処理
 	/// </summary>
 	void TakeDamage(int damage);
-
 	/// <summary>
 	/// デバッグ表示
 	/// </summary>
 	void Debug();
-
+	/// <summary>
+    /// 回避クールタイム進行率 
+    /// </summary>
+	float GetDodgeCooldownRatio();
 	/// <summary>
 	/// OBB取得
 	/// </summary>
 	OBB GetOBB() const;
-
 	/// <summary>
 	/// 死亡判定
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
-
 	/// <summary>
 	/// スケール取得
 	/// </summary>
 	const Vector3& GetScale() const { return transform_.scale; }
-
 	/// <summary>
 	/// 回転取得
 	/// </summary>
 	const Vector3& GetRotate() const { return transform_.rotate; }
-
 	/// <summary>
 	/// 位置取得
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
-
 	/// <summary>
 	/// 速度取得
 	/// </summary>
 	const Vector3& GetVelocity() const { return velocity_; }
-
 	/// <summary>
 	/// HP取得
 	/// </summary>
 	int GetHP() const { return hp_; }
-
 	/// <summary>
 	/// 半径取得
 	/// </summary>
 	float GetRadius() const { return radius_; }
-
 	/// <summary>
 	/// 弾リスト取得
 	/// </summary>
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
-
 	/// <summary>
 	/// スケール設定
 	/// </summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
-
 	/// <summary>
 	/// 回転設定
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-
 	/// <summary>
 	/// 座標設定
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
-
 	/// <summary>
 	/// プラットフォーム設定
 	/// </summary>
 	void SetPlatform(Platform* platform) { platform_ = platform; }
-
 	/// <summary>
 	/// プラットフォーム追従設定
 	/// </summary>
@@ -171,8 +148,9 @@ private:
 	std::unique_ptr< MyEngine::Sprite> reticle_;
 	//プラットフォーム
 	Platform* platform_ = nullptr;
-	//画面上の位置
+	//レティクル画面上の位置
 	Vector2 reticle_screen_pos_{ 640.0f, 360.0f };
+	//レティクルの位置
 	Vector2 reticle_pos_ = { 640.0f, 360.0f };
 	//プレイヤーの移動速度
 	Vector3 velocity_{ 0.0f, 0.0f, 0.0f };

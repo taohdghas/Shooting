@@ -130,8 +130,10 @@ namespace Math {
 	/// <summary>2つのベクトルの外積を計算</summary>
 	Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
-	/// <summary>Catmull-Rom補間</summary>
-	Vector3 CatMullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
+	/// <summary>CatmullRom補間</summary>
+	Vector3 CatmullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
+
+	Vector3 Lerp(const Vector3& a, const Vector3& b, float t);
 
 	/// <summary>座標ベクトル(Vector4)を行列で変換</summary>
 	Vector4 Transform(const Vector4& v, const Matrix4x4& m);

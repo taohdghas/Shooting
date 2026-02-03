@@ -159,6 +159,8 @@ struct EnemySpawnData {
 	std::string name;
 	// ファイル名
 	std::string fileName;
+	// 体力
+	int hp = 100;
 	// 平行移動
 	Vector3 translation;
 	// 回転角

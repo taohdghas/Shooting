@@ -69,7 +69,7 @@ public:
 	/// <summary>
 	/// 現在の位置（Transform.translate）を取得する。
 	/// </summary>
-	const Vector3& GetPosition() const { return transform_.translate; }
+	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
     /// 弾の攻撃力を取得する。
@@ -100,6 +100,11 @@ public:
 	/// 座標を設定する。
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
+
+	/// <summary>
+    /// 初期HPを設定する
+    /// </summary>
+	void SetHP(int hp) { hp_ = hp; }
 
 	/// <summary>
 	/// 対象プレイヤーのポインタを設定する。
@@ -154,7 +159,7 @@ private:
 	// レールが閉じているかどうか
 	bool rail_closed_ = false;
 	// 現在のHP
-	int hp_ = 10;
+	int hp_ = 5;
 	//攻撃力
 	uint32_t attack_ = 5;
 	// 弾発射タイマーのカウント
@@ -164,9 +169,9 @@ private:
 	// コリジョンや描画に使う半径
 	float radius_ = 1.0f;
 	// 弾発射のインターバル（フレーム数）
-	static const int kFireInterval = 80;
+	static const int kFireInterval = 40;
 	// プレイヤーへの発射有効距離
-	const float kFireDistance = 25.0f;
+	const float kFireDistance = 45.0f;
 	// Z方向の攻撃停止距離
 	const float kAttackStopDistanceZ = 6.0f;
 	// 1フレームあたりの時間（秒）
@@ -175,12 +180,14 @@ private:
 	const float kDamageColorDuration = 0.1f;
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
+	// プレイヤーZ先読み距離
+	const float kPlayerZLead = 3.8f;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
 	// レール上の進行度（0.0～1.0）
 	float rail_progress_ = 0.0f;
 	// レール移動速度
-	float rail_speed_ = 7.0f;
+	float rail_speed_ = 5.0f;
 	// ダメージスケール演出の時間
 	float damage_scale_duration_ = 0.08f;
 	// 現在のスケール演出の残り時間

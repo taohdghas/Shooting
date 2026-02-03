@@ -12,7 +12,7 @@ void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("player/playerbullet.obj");
-	object_->SetScale({ 1.0f, 1.0f, 1.0f });
+	object_->SetScale({ 1.5f, 1.5f, 1.5f });
 
 	// 寿命タイマーの初期化
 	death_timer_ = kLifeTime;
@@ -23,6 +23,7 @@ void PlayerBullet::Update() {
 	if (is_dead_) {
 		return;
 	}
+
 	// 速度ベクトル分だけ座標を移動
 	transform_.translate = Math::Add(transform_.translate, velocity_);
 

@@ -97,8 +97,13 @@ namespace Math {
 		result.z = v1.x * v2.y - v1.y * v2.x;
 		return result;
 	}
+
+	Vector3 Math::Lerp(const Vector3& a, const Vector3& b, float t) {
+		return a * (1.0f - t) + b * t;
+	}
+
 	//CatMullRom補間
-	Vector3 Math::CatMullRom(
+	Vector3 Math::CatmullRom(
 		const Vector3& p0,
 		const Vector3& p1,
 		const Vector3& p2,
