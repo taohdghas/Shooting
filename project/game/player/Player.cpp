@@ -291,7 +291,6 @@ void Player::ReticleUpdate() {
 	reticle_->Update();
 }
 
-
 // 衝突時コールバック
 void Player::OnCollision() {
 	is_dead_ = true;

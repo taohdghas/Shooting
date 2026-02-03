@@ -59,7 +59,7 @@ void GameScene::Initialize() {
 		newEnemy->Initialize(MyEngine::Object3dBase::GetInstance());
 		newEnemy->SetTranslate(enemyData.translation);
 		newEnemy->SetPlayer(player_.get());
-
+		newEnemy->SetHP(enemyData.hp);
 		// Rails がある場合セット
 		if (!enemyData.rails.empty()) {
 			// ここでは最初のRailsのみ使用
@@ -181,7 +181,7 @@ void GameScene::Update() {
 		if (enemy->IsDeathParticle()) {
 			auto emitter = std::make_unique< MyEngine::ParticleEmitter>();
 			emitter->Initialize("enemydestroy");
-			emitter->SetPosition(enemy->GetPosition());
+			emitter->SetPosition(enemy->GetTranslate());
 			emitter->Emit();
 			particle_emitters_.push_back(std::move(emitter));
 

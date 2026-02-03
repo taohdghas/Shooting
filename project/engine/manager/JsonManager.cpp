@@ -72,6 +72,9 @@ namespace MyEngine {
                 EnemySpawnData enemy_spawn{};
                 enemy_spawn.name = object_json["name"].get<std::string>();
                 enemy_spawn.fileName = object_json["file_name"].get<std::string>();
+                if (object_json.contains("hp")) {
+                    enemy_spawn.hp = object_json["hp"].get<int>();
+                }
                 ReadTransform(object_json["transform"], enemy_spawn.translation, enemy_spawn.rotation, enemy_spawn.scaling);
                 level_data->enemies.push_back(enemy_spawn);
             } else if (type.compare("BossSpawn") == 0) {

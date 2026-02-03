@@ -6,7 +6,7 @@
 #include "SpriteBase.h"
 #include "Input.h"
 #include "Struct.h"
-#include "playerBullet.h"
+#include "PlayerBullet.h"
 #include "Camera.h"
 #include <list>
 #include <memory>
