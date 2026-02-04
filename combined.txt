@@ -5873,7 +5873,7 @@ namespace MyEngine {
         std::unique_ptr<LevelData> LoadJsonFile(const std::string& filename);
 
         /// <summary>
-        /// JSONからTransformオブジェクトから準拠・回転・スケールを読み取り、エンジン用に変換して格納する。
+        /// JSONからTransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
         /// </summary>
         void ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling);
 
@@ -9088,6 +9088,20 @@ void Enemy::Update() {
 		return;
 	}
 	
+	//プレイヤーより一定距離後方に来たら消滅
+	if (player_) {
+		//敵の座標がプレイヤーのZ座標＋オフセット以下なら
+		if (transform_.translate.z <=
+			player_->GetTranslate().z + kVanishOffsetZ) {
+
+			//消滅
+			is_dead_ = true;
+			//消滅なのでデスパーティクルは未発生
+			is_death_particle_ = false;
+			return;
+		}
+	}
+
 	// スプライン移動がある場合のみ処理
 	if (!rail_points_.empty())
 	{
@@ -9526,8 +9540,8 @@ private:
 	const float kDamageColorDuration = 0.1f;
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
-	// プレイヤーZ先読み距離
-	const float kPlayerZLead = 3.8f;
+	// プレイヤー後方に到達したと見なすZオフセット
+	const float kVanishOffsetZ = -1.0f;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
 	// レール上の進行度（0.0～1.0）
@@ -10626,19 +10640,19 @@ void TitleObject::Initialize() {
     menu_start_ = std::make_unique<MyEngine::Sprite>();
     menu_start_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/start.png");
 	menu_start_->SetAnchorPoint({ 0.5f, 0.5f });
-    menu_start_->SetPosition({ 700, 380 });
+    menu_start_->SetPosition({ 765, 380 });
 	menu_start_->SetSize({150,100});
 	// 操作説明項目スプライト
     menu_howto_ = std::make_unique<MyEngine::Sprite>();
     menu_howto_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/howto.png");
 	menu_howto_->SetAnchorPoint({ 0.5f, 0.5f });
-    menu_howto_->SetPosition({ 720, 505 });
+    menu_howto_->SetPosition({ 782, 505 });
 	menu_howto_->SetSize({ 200,80 });
 	// 終了項目スプライト
     menu_exit_ = std::make_unique<MyEngine::Sprite>();
     menu_exit_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/exit.png");
 	menu_exit_->SetAnchorPoint({ 0.5f, 0.5f });
-    menu_exit_->SetPosition({ 699, 607 });
+    menu_exit_->SetPosition({ 752, 607 });
 	menu_exit_->SetSize({ 150,80 });
 
     // 操作説明
