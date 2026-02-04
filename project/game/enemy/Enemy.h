@@ -180,8 +180,8 @@ private:
 	const float kDamageColorDuration = 0.1f;
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
-	// プレイヤーZ先読み距離
-	const float kPlayerZLead = 3.8f;
+	// プレイヤー後方に到達したと見なすZオフセット
+	const float kVanishOffsetZ = -1.0f;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
 	// レール上の進行度（0.0～1.0）

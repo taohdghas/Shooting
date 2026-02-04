@@ -25,19 +25,19 @@ void TitleObject::Initialize() {
     menu_start_ = std::make_unique<MyEngine::Sprite>();
     menu_start_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/start.png");
 	menu_start_->SetAnchorPoint({ 0.5f, 0.5f });
-    menu_start_->SetPosition({ 700, 380 });
+    menu_start_->SetPosition({ 765, 380 });
 	menu_start_->SetSize({150,100});
 	// 操作説明項目スプライト
     menu_howto_ = std::make_unique<MyEngine::Sprite>();
     menu_howto_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/howto.png");
 	menu_howto_->SetAnchorPoint({ 0.5f, 0.5f });
-    menu_howto_->SetPosition({ 720, 505 });
+    menu_howto_->SetPosition({ 782, 505 });
 	menu_howto_->SetSize({ 200,80 });
 	// 終了項目スプライト
     menu_exit_ = std::make_unique<MyEngine::Sprite>();
     menu_exit_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/exit.png");
 	menu_exit_->SetAnchorPoint({ 0.5f, 0.5f });
-    menu_exit_->SetPosition({ 699, 607 });
+    menu_exit_->SetPosition({ 752, 607 });
 	menu_exit_->SetSize({ 150,80 });
 
     // 操作説明

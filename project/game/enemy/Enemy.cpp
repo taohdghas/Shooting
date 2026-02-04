@@ -26,6 +26,20 @@ void Enemy::Update() {
 		return;
 	}
 	
+	//プレイヤーより一定距離後方に来たら消滅
+	if (player_) {
+		//敵の座標がプレイヤーのZ座標＋オフセット以下なら
+		if (transform_.translate.z <=
+			player_->GetTranslate().z + kVanishOffsetZ) {
+
+			//消滅
+			is_dead_ = true;
+			//消滅なのでデスパーティクルは未発生
+			is_death_particle_ = false;
+			return;
+		}
+	}
+
 	// スプライン移動がある場合のみ処理
 	if (!rail_points_.empty())
 	{
