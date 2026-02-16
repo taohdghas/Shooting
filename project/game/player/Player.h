@@ -212,6 +212,8 @@ private:
 	const float damage_color_duration_ = 0.1f;
 	//無敵時間
 	const float invincible_time_ = 0.1f;
+	//回避最大回転量
+	const float dodge_max_rotate_y_ = 25.0f;
 	//攻撃のクールタイム
 	float attack_cooldown_ = 0.0f;
 	//再攻撃できるまでの間隔
@@ -224,6 +226,12 @@ private:
 	float dodge_cooldown_ = 0.0f;
 	//回避コマンド再使用待機時間
 	float dodge_interval_ = 5.0f;
+	// 回避開始座標
+	float dodge_start_x_ = 0.0f;
+	//回避ターゲット座標
+	float dodge_target_x_ = 0.0f;
+	// 回避回転量
+	float dodge_rotate_y_ = 0.0f;
 	//ダメージ色変化タイマー
 	float damage_color_timer_ = 0.0f;
 	//無敵タイマー

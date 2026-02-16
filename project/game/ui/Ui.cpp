@@ -9,6 +9,16 @@
 void Ui::Initialize()
 {   //HPバー作成
     CreateSprite(SpriteType::HpBar, "resources/ui/hpbar.png", { 50,50 }, { 200,20 });
+	//HPバーフラッシュ作成
+    CreateSprite(SpriteType::HpBarFlash, "resources/ui/hpbar_flash.png", { 50,50 }, { 200,20 });
+	//HPバー注意作成
+    CreateSprite(SpriteType::HpBarCaution, "resources/ui/hpbarcaution.png", { 50,50 }, { 200,20 });
+	//HPバー注意フラッシュ作成
+    CreateSprite(SpriteType::HpBarCautionFlash, "resources/ui/hpbarcaution_flash.png", { 50,50 }, { 200,20 });
+	//HPバー危険作成
+    CreateSprite(SpriteType::HpBarDanger, "resources/ui/hpbardanger.png", { 50,50 }, { 200,20 });
+	//HPバー危険フラッシュ作成
+    CreateSprite(SpriteType::hpBarDangerFlash, "resources/ui/hpbardanger_flash.png", { 50,50 }, { 200,20 });
 	//回避ゲージ作成
     CreateSprite(SpriteType::DodgeGauge, "resources/ui/dodgecooldownbar.png", { 50,80 }, { 200,20 });
 	//回避ゲージフラッシュ作成
@@ -56,25 +66,31 @@ void Ui::Update()
 //描画
 void Ui::Draw()
 {
-	//HPバー描画
-    Get(SpriteType::HpBar)->Draw();
-    //通常ゲージ
+    //HPバー描画
+    if (is_hp_flash_visible_) {
+        Get(current_hp_flash_)->Draw();
+    } else {
+        Get(current_hp_bar_)->Draw();
+    }
+
+    // 回避ゲージ
     if (!is_dodge_flash_visible_) {
         Get(SpriteType::DodgeGaugeFlash)->Draw();
-    }
-    //強調ゲージ
-    else {
+    } else {
         Get(SpriteType::DodgeGauge)->Draw();
     }
-	//ポーズ文字描画
+
+    // ポーズ文字
     Get(SpriteType::Pause)->Draw();
-	//ポーズメニュー描画
+
+    // ポーズメニュー
     if (pause_scale_ > 0.01f) {
         Get(SpriteType::Retry)->Draw();
         Get(SpriteType::BackTitle)->Draw();
         Get(SpriteType::OperationGuide)->Draw();
     }
 }
+
 
 //デバック
 void Ui::Debug()
@@ -110,19 +126,56 @@ void Ui::Debug()
 void Ui::UpdateHPBar()
 {
     if (!player_) return;
-	//現在のHP取得
+	//HP比率計算
     float currentHP = static_cast<float>(player_->GetHP());
     constexpr float maxHP = 100.0f;
-	//HP比率計算
+	//HP比率
     float ratio = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
 
-    Vector2 maxSize = { 200.0f, 20.0f };
-	//サイズ更新
-    Get(SpriteType::HpBar)->SetSize({ maxSize.x * ratio, maxSize.y });
+    //HP帯判定
+    if (ratio > 0.7f) {
+		current_hp_bar_ = SpriteType::HpBar;//通常
+        current_hp_flash_ = SpriteType::HpBarFlash;
+    } else if (ratio > 0.4f) {
+		current_hp_bar_ = SpriteType::HpBarCaution;//注意
+        current_hp_flash_ = SpriteType::HpBarCautionFlash;
+    } else {
+		current_hp_bar_ = SpriteType::HpBarDanger;//危険
+        current_hp_flash_ = SpriteType::hpBarDangerFlash;
+    }
+
+    //HP減少時フラッシュ開始
+    if (ratio < prev_hp_ratio_) {
+        hp_flash_timer_ = 0.0f;
+        is_hp_flash_visible_ = true;
+    }
+
+    //フラッシュ制御
+    if (is_hp_flash_visible_) {
+        hp_flash_timer_ += 1.0f / 60.0f;
+        if (hp_flash_timer_ > 0.2f) {
+            hp_flash_timer_ = 0.0f;
+            is_hp_flash_visible_ = false;
+        }
+    }
+
+    //サイズ更新
+    Vector2 size = { 200.0f * ratio, 20.0f };
+    Get(SpriteType::HpBar)->SetSize(size);
+    Get(SpriteType::HpBarFlash)->SetSize(size);
+    Get(SpriteType::HpBarCaution)->SetSize(size);
+    Get(SpriteType::HpBarCautionFlash)->SetSize(size);
+    Get(SpriteType::HpBarDanger)->SetSize(size);
+    Get(SpriteType::hpBarDangerFlash)->SetSize(size);
+	//前フレームのHP比率保存
+    prev_hp_ratio_ = ratio;
 }
+
+
 //操作説明画面処理
 void Ui::UpdatePauseGuide()
 {
+	//スケール変化速度
     const float speed = 0.07f;
     //スケール更新
     if (is_show_pause_) {
@@ -130,22 +183,23 @@ void Ui::UpdatePauseGuide()
     } else {
         pause_scale_ -= speed;
     }
+	//範囲制限
     pause_scale_ = std::clamp(pause_scale_, 0.0f, 1.0f);
 	//イージング適用
     float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
-
+    //リトライ
     Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
-
+    //タイトルへ戻る
     Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size, eased));
-
+    //操作説明画面
     Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size, eased));
 }
 
 //ポーズボタンホバー処理
 void Ui::UpdatePauseButtonHover()
 {
-    if (pause_scale_ <= 0.01f) return; // ポーズ画面が出てない
-
+    if (pause_scale_ <= 0.01f) return;
+	//ホバータイマー更新
     hover_timer_ += 1.0f / 60.0f;
 
     float animationScale = 1.0f + sinf(hover_timer_ * 5.0f) * 0.1f;
@@ -171,11 +225,13 @@ void Ui::UpdatePauseButtonHover()
 //ポーズメニュークリック処理
 void Ui::UpdatePauseClick()
 {
+	//ポーズ画面が出ていないならスキップ
     if (!is_show_pause_) return;
-    if (pause_scale_ < 0.95f) return; // 出現中は無効（誤爆防止）
+	//スケールが十分でないならスキップ
+    if (pause_scale_ < 0.95f) return;
 
     auto input = MyEngine::Input::GetInstance();
-
+	//マウス左クリックされていなければスキップ
     if (!input->IsMouseLeftTriggered()) return;
 
     if (IsMouseOnSprite(Get(SpriteType::Retry))) {

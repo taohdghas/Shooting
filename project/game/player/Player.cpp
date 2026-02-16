@@ -11,6 +11,7 @@ Player::Player() {}
 
 Player::~Player() {}
 
+
 //初期化処理
 void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	// モデルの読み込み
@@ -247,30 +248,69 @@ void Player::Attack() {
 	// 攻撃クールタイムリセット
 	attack_cooldown_ = attack_interval_;
 }
-
 // 回避処理
 void Player::Dodge() {
-	// 回避中の処理
+
+	// 回避中処理
 	if (dodge_) {
-		transform_.rotate.z += rotate_angle_ * kDeltaTime / apply_dodge_;
+
+		float t = dodge_timer_ / apply_dodge_;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		float ease = float(Math::easeInOutQuad(t));
+
+		//横回避がある場合のみスライド
+		if (dodge_direction_.x != 0.0f) {
+			transform_.translate.x =
+				Math::Lerp(
+					{ dodge_start_x_, ground_y_, transform_.translate.z },
+					{ dodge_target_x_, ground_y_, transform_.translate.z },
+					ease
+				).x;
+		}
+
+		transform_.rotate.y =
+			360.0f * (dodge_direction_.x == 0.0f ? 1.0f : dodge_direction_.x) * t;
+
 		dodge_timer_ += kDeltaTime;
-		// 回避時間終了でフラグオフ・回転リセット
-		if (dodge_timer_ > apply_dodge_) {
+
+		// 回避終了
+		if (dodge_timer_ >= apply_dodge_) {
 			dodge_ = false;
 			dodge_timer_ = 0.0f;
-			transform_.rotate.z = 0.0f;
+			transform_.rotate.y = 0.0f;
 		}
 		return;
 	}
-
-	// クールダウン中は回避不可
+	// クールタイム中は回避不可
 	if (dodge_cooldown_ > 0.0f) {
 		return;
 	}
 
 	// 回避入力判定
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_F)) {
+	if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_F)) {
+
+		dodge_direction_ = { 0,0,0 };
+
+		// 左右入力で横回避
+		if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
+			dodge_direction_.x = -1.0f;
+		} else if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
+			dodge_direction_.x = 1.0f;
+		}
+
 		dodge_ = true;
+		dodge_timer_ = 0.0f;
+
+		//横回避の目標位置を設定
+		dodge_start_x_ = transform_.translate.x;
+		dodge_target_x_ =
+			std::clamp(
+				dodge_start_x_ + dodge_direction_.x * 1.2f,
+				kGroundMinX,
+				kGroundMaxX
+			);
+		//回避のインターバルを設定
 		dodge_cooldown_ = dodge_interval_;
 	}
 }
