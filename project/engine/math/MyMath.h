@@ -133,6 +133,7 @@ namespace Math {
 	/// <summary>CatmullRom補間</summary>
 	Vector3 CatmullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
 
+	/// <summary>リニア補間</summary>
 	Vector3 Lerp(const Vector3& a, const Vector3& b, float t);
 
 	/// <summary>座標ベクトル(Vector4)を行列で変換</summary>

@@ -18,6 +18,11 @@ public:
 	//スプライトの種類
 	enum class SpriteType {
 		HpBar,//HPバー
+		HpBarFlash,//HPバーフラッシュ
+		HpBarCaution,//HPバー注意
+		HpBarCautionFlash,//HPバー注意フラッシュ
+		HpBarDanger,//HPバー危険
+		hpBarDangerFlash,//HPバー危険フラッシュ
 		DodgeGauge,//回避ゲージ
 		DodgeGaugeFlash,//回避ゲージフラッシュ
 		Pause,//ポーズ表示
@@ -106,6 +111,9 @@ public:
 private:
 	//ポーズメニュー選択結果
 	PauseResult pause_result_ = PauseResult::None;
+	// 現在使用中のHPバー
+	SpriteType current_hp_bar_ = SpriteType::HpBar;
+	SpriteType current_hp_flash_ = SpriteType::HpBarFlash;
 	// スプライト格納用マップ
 	std::unordered_map<SpriteType, std::unique_ptr<MyEngine::Sprite>> sprites_;
 	// プレイヤーへのポインタ
@@ -122,8 +130,16 @@ private:
 	float hover_timer_ = 0.0f;
 	//回避ゲージフラッシュ用タイマー
 	float dodge_flash_timer_ = 0.0f;
+	//HPバーフラッシュ用タイマー
+	float hp_flash_timer_ = 0.0f;
+	//前フレームのHP比率
+	float prev_hp_ratio_ = 1.0f;
+	//表示用HP比率
+	float display_hp_ratio_ = 1.0f;
 	//回避ゲージフラッシュ表示フラグ
 	bool is_dodge_flash_visible_ = true;
 	//ポーズ画面が出ているか
 	bool is_show_pause_ = false;
+	//HPバーフラッシュ表示フラグ
+	bool is_hp_flash_visible_ = false;
 };

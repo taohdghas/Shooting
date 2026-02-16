@@ -130,23 +130,35 @@
     <Filter Include="ソース ファイル\application\skybox">
       <UniqueIdentifier>{f51fb4a6-50cb-4f12-8b61-cf283967e362}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\application\skydome">
-      <UniqueIdentifier>{05c245d6-c626-4cf0-9671-3098e50e7663}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\application\skydome">
-      <UniqueIdentifier>{516b0b0c-36b0-4003-86e9-2d60af0e044a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\application\titleobject">
-      <UniqueIdentifier>{8966b2a9-83e4-4f67-8b41-ece9934c1a2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\application\titleobject">
-      <UniqueIdentifier>{fc338709-39ed-465d-9c65-baf52a3d5953}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\application\fade">
       <UniqueIdentifier>{57064972-778f-4455-8120-19ec3069b693}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\application\fade">
       <UniqueIdentifier>{d4deb4ba-45cd-4b15-8a1c-a975dc7d4ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\boss">
+      <UniqueIdentifier>{a95e9bb6-275a-4598-b985-33d81d6cc380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\object">
+      <UniqueIdentifier>{d784e052-eebb-4344-9eb7-c8555fa12fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\boss">
+      <UniqueIdentifier>{e4371b12-776d-4b88-8633-131771fb7ab2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\object">
+      <UniqueIdentifier>{b297e6b4-8fa5-48be-a516-2e17fe09a3ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\ui">
+      <UniqueIdentifier>{f47f2a7f-5f77-4909-aa92-90c6257aa1a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\ui">
+      <UniqueIdentifier>{72f29062-304d-4b0d-8c72-b795e8cab942}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\railcamera">
+      <UniqueIdentifier>{28f243ed-9f16-4968-a63a-8ab1153d225d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\railcamera">
+      <UniqueIdentifier>{5913035c-347c-46f9-844e-773c5069b725}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -291,38 +303,38 @@
     <ClCompile Include="game\skybox\Skybox.cpp">
       <Filter>ソース ファイル\application\skybox</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\TitleObject.cpp">
-      <Filter>ソース ファイル\application\titleobject</Filter>
-    </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="game\fade\Fade.cpp">
       <Filter>ソース ファイル\application\fade</Filter>
     </ClCompile>
-    <ClCompile Include="game\railcamera\RailCamera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\scene\GameOverScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\object\GameOverObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\object\GameClearObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\ui\Ui.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="game\boss\Boss1.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\boss\BossStateNormal.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\application\boss</Filter>
     </ClCompile>
     <ClCompile Include="game\boss\BossStateEnraged.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\application\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="game\boss\BossStateNormal.cpp">
+      <Filter>ソース ファイル\application\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\TitleObject.cpp">
+      <Filter>ソース ファイル\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\GameClearObject.cpp">
+      <Filter>ソース ファイル\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\GameOverObject.cpp">
+      <Filter>ソース ファイル\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="game\scene\GameOverScene.cpp">
+      <Filter>ソース ファイル\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="game\ui\Ui.cpp">
+      <Filter>ソース ファイル\application\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="game\railcamera\RailCamera.cpp">
+      <Filter>ソース ファイル\application\railcamera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -488,38 +500,38 @@
     <ClInclude Include="game\skybox\Skybox.h">
       <Filter>ヘッダー ファイル\application\skybox</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\TitleObject.h">
-      <Filter>ヘッダー ファイル\application\titleobject</Filter>
-    </ClInclude>
     <ClInclude Include="game\fade\Fade.h">
       <Filter>ヘッダー ファイル\application\fade</Filter>
     </ClInclude>
-    <ClInclude Include="game\railcamera\RailCamera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\scene\GameOverScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\object\GameOverObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\object\GameClearObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\ui\Ui.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="game\boss\Boss1.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\application\boss</Filter>
     </ClInclude>
     <ClInclude Include="game\boss\BossState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\boss\BossStateNormal.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\application\boss</Filter>
     </ClInclude>
     <ClInclude Include="game\boss\BossStateEnraged.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\application\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="game\boss\BossStateNormal.h">
+      <Filter>ヘッダー ファイル\application\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\TitleObject.h">
+      <Filter>ヘッダー ファイル\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\GameClearObject.h">
+      <Filter>ヘッダー ファイル\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\GameOverObject.h">
+      <Filter>ヘッダー ファイル\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="game\scene\GameOverScene.h">
+      <Filter>ヘッダー ファイル\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="game\ui\Ui.h">
+      <Filter>ヘッダー ファイル\application\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="game\railcamera\RailCamera.h">
+      <Filter>ヘッダー ファイル\application\railcamera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

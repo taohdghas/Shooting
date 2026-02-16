@@ -56,10 +56,10 @@ void TitleScene::Update() {
 	// タイトルオブジェクトの更新
 	title_object_->Update();
 
-	// シーン遷移処理
+	//シーン遷移処理
 	SceneChange();
 
-	// デバッグ表示
+	//デバッグ表示
 	Debug();
 }
 
