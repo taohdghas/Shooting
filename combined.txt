@@ -641,23 +641,35 @@ File Path: project/CG2 directX.vcxproj.filters
     <Filter Include="ソース ファイル\application\skybox">
       <UniqueIdentifier>{f51fb4a6-50cb-4f12-8b61-cf283967e362}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\application\skydome">
-      <UniqueIdentifier>{05c245d6-c626-4cf0-9671-3098e50e7663}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\application\skydome">
-      <UniqueIdentifier>{516b0b0c-36b0-4003-86e9-2d60af0e044a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\application\titleobject">
-      <UniqueIdentifier>{8966b2a9-83e4-4f67-8b41-ece9934c1a2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\application\titleobject">
-      <UniqueIdentifier>{fc338709-39ed-465d-9c65-baf52a3d5953}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\application\fade">
       <UniqueIdentifier>{57064972-778f-4455-8120-19ec3069b693}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\application\fade">
       <UniqueIdentifier>{d4deb4ba-45cd-4b15-8a1c-a975dc7d4ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\boss">
+      <UniqueIdentifier>{a95e9bb6-275a-4598-b985-33d81d6cc380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\object">
+      <UniqueIdentifier>{d784e052-eebb-4344-9eb7-c8555fa12fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\boss">
+      <UniqueIdentifier>{e4371b12-776d-4b88-8633-131771fb7ab2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\object">
+      <UniqueIdentifier>{b297e6b4-8fa5-48be-a516-2e17fe09a3ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\ui">
+      <UniqueIdentifier>{f47f2a7f-5f77-4909-aa92-90c6257aa1a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\ui">
+      <UniqueIdentifier>{72f29062-304d-4b0d-8c72-b795e8cab942}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\railcamera">
+      <UniqueIdentifier>{28f243ed-9f16-4968-a63a-8ab1153d225d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\railcamera">
+      <UniqueIdentifier>{5913035c-347c-46f9-844e-773c5069b725}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -802,38 +814,38 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClCompile Include="game\skybox\Skybox.cpp">
       <Filter>ソース ファイル\application\skybox</Filter>
     </ClCompile>
-    <ClCompile Include="game\object\TitleObject.cpp">
-      <Filter>ソース ファイル\application\titleobject</Filter>
-    </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="game\fade\Fade.cpp">
       <Filter>ソース ファイル\application\fade</Filter>
     </ClCompile>
-    <ClCompile Include="game\railcamera\RailCamera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\scene\GameOverScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\object\GameOverObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\object\GameClearObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\ui\Ui.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="game\boss\Boss1.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="game\boss\BossStateNormal.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\application\boss</Filter>
     </ClCompile>
     <ClCompile Include="game\boss\BossStateEnraged.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\application\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="game\boss\BossStateNormal.cpp">
+      <Filter>ソース ファイル\application\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\TitleObject.cpp">
+      <Filter>ソース ファイル\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\GameClearObject.cpp">
+      <Filter>ソース ファイル\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="game\object\GameOverObject.cpp">
+      <Filter>ソース ファイル\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="game\scene\GameOverScene.cpp">
+      <Filter>ソース ファイル\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="game\ui\Ui.cpp">
+      <Filter>ソース ファイル\application\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="game\railcamera\RailCamera.cpp">
+      <Filter>ソース ファイル\application\railcamera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -999,38 +1011,38 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClInclude Include="game\skybox\Skybox.h">
       <Filter>ヘッダー ファイル\application\skybox</Filter>
     </ClInclude>
-    <ClInclude Include="game\object\TitleObject.h">
-      <Filter>ヘッダー ファイル\application\titleobject</Filter>
-    </ClInclude>
     <ClInclude Include="game\fade\Fade.h">
       <Filter>ヘッダー ファイル\application\fade</Filter>
     </ClInclude>
-    <ClInclude Include="game\railcamera\RailCamera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\scene\GameOverScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\object\GameOverObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\object\GameClearObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\ui\Ui.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="game\boss\Boss1.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\application\boss</Filter>
     </ClInclude>
     <ClInclude Include="game\boss\BossState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game\boss\BossStateNormal.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\application\boss</Filter>
     </ClInclude>
     <ClInclude Include="game\boss\BossStateEnraged.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\application\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="game\boss\BossStateNormal.h">
+      <Filter>ヘッダー ファイル\application\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\TitleObject.h">
+      <Filter>ヘッダー ファイル\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\GameClearObject.h">
+      <Filter>ヘッダー ファイル\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="game\object\GameOverObject.h">
+      <Filter>ヘッダー ファイル\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="game\scene\GameOverScene.h">
+      <Filter>ヘッダー ファイル\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="game\ui\Ui.h">
+      <Filter>ヘッダー ファイル\application\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="game\railcamera\RailCamera.h">
+      <Filter>ヘッダー ファイル\application\railcamera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4400,7 +4412,7 @@ namespace MyEngine {
 			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 			DXGI_FORMAT_D24_UNORM_S8_UINT,
 			L"resources/shaders/Fullscreen.VS.hlsl", L"vs_6_0",
-			L"resources/shaders/GaussianFilter.ps.hlsl", L"ps_6_0",
+			L"resources/shaders/Vignette.PS.hlsl", L"ps_6_0",
 			post_effect_graphics_pipeline_state_
 		);
 	}
@@ -7838,6 +7850,7 @@ namespace Math {
 	/// <summary>CatmullRom補間</summary>
 	Vector3 CatmullRom(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
 
+	/// <summary>リニア補間</summary>
 	Vector3 Lerp(const Vector3& a, const Vector3& b, float t);
 
 	/// <summary>座標ベクトル(Vector4)を行列で変換</summary>
@@ -11232,6 +11245,7 @@ Player::Player() {}
 
 Player::~Player() {}
 
+
 //初期化処理
 void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	// モデルの読み込み
@@ -11468,30 +11482,69 @@ void Player::Attack() {
 	// 攻撃クールタイムリセット
 	attack_cooldown_ = attack_interval_;
 }
-
 // 回避処理
 void Player::Dodge() {
-	// 回避中の処理
+
+	// 回避中処理
 	if (dodge_) {
-		transform_.rotate.z += rotate_angle_ * kDeltaTime / apply_dodge_;
+
+		float t = dodge_timer_ / apply_dodge_;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		float ease = float(Math::easeInOutQuad(t));
+
+		//横回避がある場合のみスライド
+		if (dodge_direction_.x != 0.0f) {
+			transform_.translate.x =
+				Math::Lerp(
+					{ dodge_start_x_, ground_y_, transform_.translate.z },
+					{ dodge_target_x_, ground_y_, transform_.translate.z },
+					ease
+				).x;
+		}
+
+		transform_.rotate.y =
+			360.0f * (dodge_direction_.x == 0.0f ? 1.0f : dodge_direction_.x) * t;
+
 		dodge_timer_ += kDeltaTime;
-		// 回避時間終了でフラグオフ・回転リセット
-		if (dodge_timer_ > apply_dodge_) {
+
+		// 回避終了
+		if (dodge_timer_ >= apply_dodge_) {
 			dodge_ = false;
 			dodge_timer_ = 0.0f;
-			transform_.rotate.z = 0.0f;
+			transform_.rotate.y = 0.0f;
 		}
 		return;
 	}
-
-	// クールダウン中は回避不可
+	// クールタイム中は回避不可
 	if (dodge_cooldown_ > 0.0f) {
 		return;
 	}
 
 	// 回避入力判定
-	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_F)) {
+	if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_F)) {
+
+		dodge_direction_ = { 0,0,0 };
+
+		// 左右入力で横回避
+		if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
+			dodge_direction_.x = -1.0f;
+		} else if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
+			dodge_direction_.x = 1.0f;
+		}
+
 		dodge_ = true;
+		dodge_timer_ = 0.0f;
+
+		//横回避の目標位置を設定
+		dodge_start_x_ = transform_.translate.x;
+		dodge_target_x_ =
+			std::clamp(
+				dodge_start_x_ + dodge_direction_.x * 1.2f,
+				kGroundMinX,
+				kGroundMaxX
+			);
+		//回避のインターバルを設定
 		dodge_cooldown_ = dodge_interval_;
 	}
 }
@@ -11816,6 +11869,8 @@ private:
 	const float damage_color_duration_ = 0.1f;
 	//無敵時間
 	const float invincible_time_ = 0.1f;
+	//回避最大回転量
+	const float dodge_max_rotate_y_ = 25.0f;
 	//攻撃のクールタイム
 	float attack_cooldown_ = 0.0f;
 	//再攻撃できるまでの間隔
@@ -11828,6 +11883,12 @@ private:
 	float dodge_cooldown_ = 0.0f;
 	//回避コマンド再使用待機時間
 	float dodge_interval_ = 5.0f;
+	// 回避開始座標
+	float dodge_start_x_ = 0.0f;
+	//回避ターゲット座標
+	float dodge_target_x_ = 0.0f;
+	// 回避回転量
+	float dodge_rotate_y_ = 0.0f;
 	//ダメージ色変化タイマー
 	float damage_color_timer_ = 0.0f;
 	//無敵タイマー
@@ -13205,10 +13266,10 @@ void TitleScene::Update() {
 	// タイトルオブジェクトの更新
 	title_object_->Update();
 
-	// シーン遷移処理
+	//シーン遷移処理
 	SceneChange();
 
-	// デバッグ表示
+	//デバッグ表示
 	Debug();
 }
 
@@ -13605,6 +13666,16 @@ File Path: project/game/ui/Ui.cpp
 void Ui::Initialize()
 {   //HPバー作成
     CreateSprite(SpriteType::HpBar, "resources/ui/hpbar.png", { 50,50 }, { 200,20 });
+	//HPバーフラッシュ作成
+    CreateSprite(SpriteType::HpBarFlash, "resources/ui/hpbar_flash.png", { 50,50 }, { 200,20 });
+	//HPバー注意作成
+    CreateSprite(SpriteType::HpBarCaution, "resources/ui/hpbarcaution.png", { 50,50 }, { 200,20 });
+	//HPバー注意フラッシュ作成
+    CreateSprite(SpriteType::HpBarCautionFlash, "resources/ui/hpbarcaution_flash.png", { 50,50 }, { 200,20 });
+	//HPバー危険作成
+    CreateSprite(SpriteType::HpBarDanger, "resources/ui/hpbardanger.png", { 50,50 }, { 200,20 });
+	//HPバー危険フラッシュ作成
+    CreateSprite(SpriteType::hpBarDangerFlash, "resources/ui/hpbardanger_flash.png", { 50,50 }, { 200,20 });
 	//回避ゲージ作成
     CreateSprite(SpriteType::DodgeGauge, "resources/ui/dodgecooldownbar.png", { 50,80 }, { 200,20 });
 	//回避ゲージフラッシュ作成
@@ -13652,26 +13723,30 @@ void Ui::Update()
 //描画
 void Ui::Draw()
 {
-	//HPバー描画
-    Get(SpriteType::HpBar)->Draw();
-    //通常ゲージ
+    //HPバー描画
+    if (is_hp_flash_visible_) {
+        Get(current_hp_flash_)->Draw();
+    } else {
+        Get(current_hp_bar_)->Draw();
+    }
+
+    // 回避ゲージ
     if (!is_dodge_flash_visible_) {
         Get(SpriteType::DodgeGaugeFlash)->Draw();
-    }
-    //強調ゲージ
-    else {
+    } else {
         Get(SpriteType::DodgeGauge)->Draw();
     }
-	//ポーズ文字描画
+
+    // ポーズ文字
     Get(SpriteType::Pause)->Draw();
-	//ポーズメニュー描画
+
+    // ポーズメニュー
     if (pause_scale_ > 0.01f) {
         Get(SpriteType::Retry)->Draw();
         Get(SpriteType::BackTitle)->Draw();
         Get(SpriteType::OperationGuide)->Draw();
     }
 }
-
 //デバック
 void Ui::Debug()
 {
@@ -13706,19 +13781,67 @@ void Ui::Debug()
 void Ui::UpdateHPBar()
 {
     if (!player_) return;
-	//現在のHP取得
+
+    //実際のHP比率
     float currentHP = static_cast<float>(player_->GetHP());
     constexpr float maxHP = 100.0f;
-	//HP比率計算
-    float ratio = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
+    float targetRatio = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
 
-    Vector2 maxSize = { 200.0f, 20.0f };
-	//サイズ更新
-    Get(SpriteType::HpBar)->SetSize({ maxSize.x * ratio, maxSize.y });
+    // HP帯でバーの切り替え
+    if (targetRatio > 0.7f) {
+        current_hp_bar_ = SpriteType::HpBar;
+        current_hp_flash_ = SpriteType::HpBarFlash;
+    } else if (targetRatio > 0.4f) {
+        current_hp_bar_ = SpriteType::HpBarCaution;
+        current_hp_flash_ = SpriteType::HpBarCautionFlash;
+    } else {
+        current_hp_bar_ = SpriteType::HpBarDanger;
+        current_hp_flash_ = SpriteType::hpBarDangerFlash;
+    }
+
+    //HP減少じバー点滅
+    if (targetRatio < prev_hp_ratio_) {
+        hp_flash_timer_ = 0.0f;
+        is_hp_flash_visible_ = true;
+    }
+
+    //点滅制御
+    if (is_hp_flash_visible_) {
+        hp_flash_timer_ += 1.0f / 60.0f;
+        if (hp_flash_timer_ > 0.2f) {
+            hp_flash_timer_ = 0.0f;
+            is_hp_flash_visible_ = false;
+        }
+    }
+
+    //HP比率を補間 
+    float speed =
+        (display_hp_ratio_ > targetRatio) ? 0.2f : 0.05f;
+
+    display_hp_ratio_ += (targetRatio - display_hp_ratio_) * speed;
+
+    // 誤差防止
+    display_hp_ratio_ = std::clamp(display_hp_ratio_, 0.0f, 1.0f);
+
+    //サイズ更新
+    Vector2 size = { 200.0f * display_hp_ratio_, 20.0f };
+
+    Get(SpriteType::HpBar)->SetSize(size);
+    Get(SpriteType::HpBarFlash)->SetSize(size);
+    Get(SpriteType::HpBarCaution)->SetSize(size);
+    Get(SpriteType::HpBarCautionFlash)->SetSize(size);
+    Get(SpriteType::HpBarDanger)->SetSize(size);
+    Get(SpriteType::hpBarDangerFlash)->SetSize(size);
+
+ 
+    //前フレームのHP比率保存
+    prev_hp_ratio_ = targetRatio;
 }
+
 //操作説明画面処理
 void Ui::UpdatePauseGuide()
 {
+	//スケール変化速度
     const float speed = 0.07f;
     //スケール更新
     if (is_show_pause_) {
@@ -13726,22 +13849,23 @@ void Ui::UpdatePauseGuide()
     } else {
         pause_scale_ -= speed;
     }
+	//範囲制限
     pause_scale_ = std::clamp(pause_scale_, 0.0f, 1.0f);
 	//イージング適用
     float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
-
+    //リトライ
     Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
-
+    //タイトルへ戻る
     Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size, eased));
-
+    //操作説明画面
     Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size, eased));
 }
 
 //ポーズボタンホバー処理
 void Ui::UpdatePauseButtonHover()
 {
-    if (pause_scale_ <= 0.01f) return; // ポーズ画面が出てない
-
+    if (pause_scale_ <= 0.01f) return;
+	//ホバータイマー更新
     hover_timer_ += 1.0f / 60.0f;
 
     float animationScale = 1.0f + sinf(hover_timer_ * 5.0f) * 0.1f;
@@ -13767,11 +13891,13 @@ void Ui::UpdatePauseButtonHover()
 //ポーズメニュークリック処理
 void Ui::UpdatePauseClick()
 {
+	//ポーズ画面が出ていないならスキップ
     if (!is_show_pause_) return;
-    if (pause_scale_ < 0.95f) return; // 出現中は無効（誤爆防止）
+	//スケールが十分でないならスキップ
+    if (pause_scale_ < 0.95f) return;
 
     auto input = MyEngine::Input::GetInstance();
-
+	//マウス左クリックされていなければスキップ
     if (!input->IsMouseLeftTriggered()) return;
 
     if (IsMouseOnSprite(Get(SpriteType::Retry))) {
@@ -13882,6 +14008,11 @@ public:
 	//スプライトの種類
 	enum class SpriteType {
 		HpBar,//HPバー
+		HpBarFlash,//HPバーフラッシュ
+		HpBarCaution,//HPバー注意
+		HpBarCautionFlash,//HPバー注意フラッシュ
+		HpBarDanger,//HPバー危険
+		hpBarDangerFlash,//HPバー危険フラッシュ
 		DodgeGauge,//回避ゲージ
 		DodgeGaugeFlash,//回避ゲージフラッシュ
 		Pause,//ポーズ表示
@@ -13970,6 +14101,9 @@ public:
 private:
 	//ポーズメニュー選択結果
 	PauseResult pause_result_ = PauseResult::None;
+	// 現在使用中のHPバー
+	SpriteType current_hp_bar_ = SpriteType::HpBar;
+	SpriteType current_hp_flash_ = SpriteType::HpBarFlash;
 	// スプライト格納用マップ
 	std::unordered_map<SpriteType, std::unique_ptr<MyEngine::Sprite>> sprites_;
 	// プレイヤーへのポインタ
@@ -13986,10 +14120,18 @@ private:
 	float hover_timer_ = 0.0f;
 	//回避ゲージフラッシュ用タイマー
 	float dodge_flash_timer_ = 0.0f;
+	//HPバーフラッシュ用タイマー
+	float hp_flash_timer_ = 0.0f;
+	//前フレームのHP比率
+	float prev_hp_ratio_ = 1.0f;
+	//表示用HP比率
+	float display_hp_ratio_ = 1.0f;
 	//回避ゲージフラッシュ表示フラグ
 	bool is_dodge_flash_visible_ = true;
 	//ポーズ画面が出ているか
 	bool is_show_pause_ = false;
+	//HPバーフラッシュ表示フラグ
+	bool is_hp_flash_visible_ = false;
 };
 
 ============================================================
