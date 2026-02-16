@@ -226,12 +226,12 @@ private:
 	float dodge_cooldown_ = 0.0f;
 	//回避コマンド再使用待機時間
 	float dodge_interval_ = 5.0f;
-	// 回避開始座標
-	float dodge_start_x_ = 0.0f;
-	//回避ターゲット座標
-	float dodge_target_x_ = 0.0f;
-	// 回避回転量
+	//回避回転量
 	float dodge_rotate_y_ = 0.0f;
+	//回避ジャンプの高さ
+	float dodge_jump_height_ = 0.5f;
+	//回避開始時のY座標
+	float dodge_start_y_ = 0.0f;
 	//ダメージ色変化タイマー
 	float damage_color_timer_ = 0.0f;
 	//無敵タイマー
