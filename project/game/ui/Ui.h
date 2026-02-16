@@ -134,6 +134,8 @@ private:
 	float hp_flash_timer_ = 0.0f;
 	//前フレームのHP比率
 	float prev_hp_ratio_ = 1.0f;
+	//表示用HP比率
+	float display_hp_ratio_ = 1.0f;
 	//回避ゲージフラッシュ表示フラグ
 	bool is_dodge_flash_visible_ = true;
 	//ポーズ画面が出ているか

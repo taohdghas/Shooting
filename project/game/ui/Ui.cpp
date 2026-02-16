@@ -90,8 +90,6 @@ void Ui::Draw()
         Get(SpriteType::OperationGuide)->Draw();
     }
 }
-
-
 //デバック
 void Ui::Debug()
 {
@@ -126,31 +124,31 @@ void Ui::Debug()
 void Ui::UpdateHPBar()
 {
     if (!player_) return;
-	//HP比率計算
+
+    //実際のHP比率
     float currentHP = static_cast<float>(player_->GetHP());
     constexpr float maxHP = 100.0f;
-	//HP比率
-    float ratio = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
+    float targetRatio = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
 
-    //HP帯判定
-    if (ratio > 0.7f) {
-		current_hp_bar_ = SpriteType::HpBar;//通常
+    // HP帯でバーの切り替え
+    if (targetRatio > 0.7f) {
+        current_hp_bar_ = SpriteType::HpBar;
         current_hp_flash_ = SpriteType::HpBarFlash;
-    } else if (ratio > 0.4f) {
-		current_hp_bar_ = SpriteType::HpBarCaution;//注意
+    } else if (targetRatio > 0.4f) {
+        current_hp_bar_ = SpriteType::HpBarCaution;
         current_hp_flash_ = SpriteType::HpBarCautionFlash;
     } else {
-		current_hp_bar_ = SpriteType::HpBarDanger;//危険
+        current_hp_bar_ = SpriteType::HpBarDanger;
         current_hp_flash_ = SpriteType::hpBarDangerFlash;
     }
 
-    //HP減少時フラッシュ開始
-    if (ratio < prev_hp_ratio_) {
+    //HP減少じバー点滅
+    if (targetRatio < prev_hp_ratio_) {
         hp_flash_timer_ = 0.0f;
         is_hp_flash_visible_ = true;
     }
 
-    //フラッシュ制御
+    //点滅制御
     if (is_hp_flash_visible_) {
         hp_flash_timer_ += 1.0f / 60.0f;
         if (hp_flash_timer_ > 0.2f) {
@@ -159,18 +157,29 @@ void Ui::UpdateHPBar()
         }
     }
 
+    //HP比率を補間 
+    float speed =
+        (display_hp_ratio_ > targetRatio) ? 0.2f : 0.05f;
+
+    display_hp_ratio_ += (targetRatio - display_hp_ratio_) * speed;
+
+    // 誤差防止
+    display_hp_ratio_ = std::clamp(display_hp_ratio_, 0.0f, 1.0f);
+
     //サイズ更新
-    Vector2 size = { 200.0f * ratio, 20.0f };
+    Vector2 size = { 200.0f * display_hp_ratio_, 20.0f };
+
     Get(SpriteType::HpBar)->SetSize(size);
     Get(SpriteType::HpBarFlash)->SetSize(size);
     Get(SpriteType::HpBarCaution)->SetSize(size);
     Get(SpriteType::HpBarCautionFlash)->SetSize(size);
     Get(SpriteType::HpBarDanger)->SetSize(size);
     Get(SpriteType::hpBarDangerFlash)->SetSize(size);
-	//前フレームのHP比率保存
-    prev_hp_ratio_ = ratio;
-}
 
+ 
+    //前フレームのHP比率保存
+    prev_hp_ratio_ = targetRatio;
+}
 
 //操作説明画面処理
 void Ui::UpdatePauseGuide()

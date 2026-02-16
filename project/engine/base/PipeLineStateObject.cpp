@@ -259,7 +259,7 @@ namespace MyEngine {
 			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 			DXGI_FORMAT_D24_UNORM_S8_UINT,
 			L"resources/shaders/Fullscreen.VS.hlsl", L"vs_6_0",
-			L"resources/shaders/GaussianFilter.ps.hlsl", L"ps_6_0",
+			L"resources/shaders/Vignette.PS.hlsl", L"ps_6_0",
 			post_effect_graphics_pipeline_state_
 		);
 	}
