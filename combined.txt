@@ -174,7 +174,7 @@ File Path: project/CG2 directX.vcxproj
     <ClCompile Include="game\enemy\EnemyBullet.cpp" />
     <ClCompile Include="game\enemy\Enemy.cpp" />
     <ClCompile Include="engine\manager\CameraManager.cpp" />
-    <ClCompile Include="engine\Audio\Audio.cpp" />
+    <ClCompile Include="engine\audio\Audio.cpp" />
     <ClCompile Include="engine\camera\Camera.cpp" />
     <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\DirectXBase.cpp" />
@@ -218,7 +218,7 @@ File Path: project/CG2 directX.vcxproj
     <ClCompile Include="engine\2d\SpriteBase.cpp" />
     <ClCompile Include="engine\manager\SrvManager.cpp" />
     <ClCompile Include="engine\manager\ParticleManager.cpp" />
-    <ClCompile Include="engine\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="engine\particle\ParticleEmitter.cpp" />
     <ClCompile Include="engine\base\MyGame.cpp" />
     <ClCompile Include="engine\base\StringUtility.cpp" />
     <ClCompile Include="engine\manager\TextureManager.cpp" />
@@ -247,7 +247,7 @@ File Path: project/CG2 directX.vcxproj
     <ClInclude Include="game\enemy\EnemyBullet.h" />
     <ClInclude Include="game\enemy\Enemy.h" />
     <ClInclude Include="engine\manager\CameraManager.h" />
-    <ClInclude Include="engine\Audio\Audio.h" />
+    <ClInclude Include="engine\audio\Audio.h" />
     <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\debug\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\base\DirectXBase.h" />
@@ -284,7 +284,7 @@ File Path: project/CG2 directX.vcxproj
     <ClInclude Include="engine\2d\SpriteBase.h" />
     <ClInclude Include="engine\manager\SrvManager.h" />
     <ClInclude Include="engine\manager\ParticleManager.h" />
-    <ClInclude Include="engine\Particle\ParticleEmitter.h" />
+    <ClInclude Include="engine\particle\ParticleEmitter.h" />
     <ClInclude Include="engine\base\MyGame.h" />
     <ClInclude Include="engine\base\StringUtility.h" />
     <ClInclude Include="engine\manager\TextureManager.h" />
@@ -459,7 +459,7 @@ File Path: project/CG2 directX.vcxproj
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;$(ProjectDir)game\ui;$(ProjectDir)game\boss;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;$(ProjectDir)game\ui;$(ProjectDir)game\boss;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -486,7 +486,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\Particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\Audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox\;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;$(ProjectDir)game\ui;$(ProjectDir)game\boss;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\io;$(ProjectDir)engine\manager;$(ProjectDir)engine\math;$(ProjectDir)engine\particle;$(ProjectDir)externals\imgui;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)externals\assimp\include;$(ProjectDir)game\;$(ProjectDir)game\skydome\;$(ProjectDir)game\player\;$(ProjectDir)game\enemy\;$(ProjectDir)engine\camera\;$(ProjectDir)engine\scene\;$(ProjectDir)game\scene\;$(ProjectDir)game\manager;$(ProjectDir)engine\debug;$(ProjectDir)game\skybox\;$(ProjectDir)game\titleObject;$(ProjectDir)game\platform;$(ProjectDir)game\fade;$(ProjectDir)game\railcamera;$(ProjectDir)game\object;$(ProjectDir)game\ui;$(ProjectDir)game\boss;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -593,9 +593,6 @@ File Path: project/CG2 directX.vcxproj.filters
     <Filter Include="ヘッダー ファイル\engine\debug">
       <UniqueIdentifier>{952ce3c1-e128-4fcf-989c-220f749537fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\engine\partcle">
-      <UniqueIdentifier>{c8fcffbc-51bc-4c3b-b234-11ebf0e8e329}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\engine\camera">
       <UniqueIdentifier>{e66600bd-9dc5-4592-9317-d5ffe2430b08}</UniqueIdentifier>
     </Filter>
@@ -671,6 +668,9 @@ File Path: project/CG2 directX.vcxproj.filters
     <Filter Include="ソース ファイル\application\railcamera">
       <UniqueIdentifier>{5913035c-347c-46f9-844e-773c5069b725}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\engine\particle">
+      <UniqueIdentifier>{c8fcffbc-51bc-4c3b-b234-11ebf0e8e329}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -739,7 +739,7 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClCompile Include="engine\base\WindowsAPI.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\Audio.cpp">
+    <ClCompile Include="engine\audio\Audio.cpp">
       <Filter>ソース ファイル\engine\audio</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\BaseScene.cpp">
@@ -775,7 +775,7 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClCompile Include="engine\camera\Camera.cpp">
       <Filter>ソース ファイル\engine\camera</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Particle\ParticleEmitter.cpp">
+    <ClCompile Include="engine\particle\ParticleEmitter.cpp">
       <Filter>ソース ファイル\engine\particle</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\MyMath.cpp">
@@ -909,7 +909,7 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClInclude Include="engine\io\Input.h">
       <Filter>ヘッダー ファイル\engine\io</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\Audio.h">
+    <ClInclude Include="engine\audio\Audio.h">
       <Filter>ヘッダー ファイル\engine\audio</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SceneFactory.h">
@@ -954,8 +954,8 @@ File Path: project/CG2 directX.vcxproj.filters
     <ClInclude Include="engine\camera\Camera.h">
       <Filter>ヘッダー ファイル\engine\camera</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Particle\ParticleEmitter.h">
-      <Filter>ヘッダー ファイル\engine\partcle</Filter>
+    <ClInclude Include="engine\particle\ParticleEmitter.h">
+      <Filter>ヘッダー ファイル\engine\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\Struct.h">
       <Filter>ヘッダー ファイル\engine\math</Filter>
@@ -1207,7 +1207,7 @@ namespace MyEngine {
             0.0f, 0.0f,
             float(WindowsApi::kClientWidth),
             float(WindowsApi::kClientHeight),
-            0.0f, 100.0f
+            near_clip_, far_clip_
         );
 
         // ワールド・ビュー・プロジェクション行列を計算し、GPUリソースに転送
@@ -1319,6 +1319,9 @@ namespace MyEngine {
 	class SpriteBase;
 
 	// スプライトクラス
+	/// <summary>
+	/// 2Dスプライトの初期化、描画、更新処理の管理
+	/// </summary>
 	class Sprite {
 	public:
 		/// <summary>
@@ -1429,6 +1432,10 @@ namespace MyEngine {
 		Vector2 texture_size_ = { 100.0f, 100.0f };
 		// スプライト個々の回転角
 		float rotation_ = 0.0f;
+		//ニアクリップ座標
+		float near_clip_ = 0.0f;
+		//ファークリップ座標
+		float far_clip_ = 100.0f;
 		// テクスチャ番号
 		uint32_t texture_index_ = 0;
 		// 左右フリップ
@@ -1499,6 +1506,14 @@ File Path: project/engine/2d/SpriteBase.h
 namespace MyEngine {
 
 	// スプライト共通部クラス
+	/// <summary>
+	/// SpriteBaseクラスの責務
+	/// スプライト描画に必要な共通リソースの生成・管理
+	/// DirectX基盤との連携・管理
+	/// スプライト描画時の共通設定処理
+	/// シングルトンによるインスタンス管理
+	/// 初期化・終了処理
+	/// </summary>
 	class SpriteBase {
 	public:
 		/// <summary>
@@ -1578,9 +1593,6 @@ namespace MyEngine {
 	void Model::Draw() {
 		// 頂点バッファをコマンドリストに設定
 		model_base_->GetDxBase()->GetCommandList()->IASetVertexBuffers(0, 1, &vertex_buffer_view_);
-
-		// マテリアルの定数バッファを設定（ルートパラメータ0）
-		//model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
 
 		// テクスチャSRVのディスクリプタテーブルを設定（ルートパラメータ2）
 		model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(model_data_.material.textureFilePath));
@@ -1720,7 +1732,7 @@ namespace MyEngine {
 		return modelData;
 	}
 
-	// assimpのノード構造体を独自Nodeに変換
+	//assimpのノード構造体を独自Nodeに変換
 	Node Model::ReadNode(aiNode* node) {
 		Node result;
 
@@ -1764,6 +1776,13 @@ File Path: project/engine/3d/Model.h
 namespace MyEngine {
 
 	// 3Dモデルクラス
+	/// <summary>
+	/// 3Dモデルデータの読み込み・管理
+	/// モデルの初期化、描画処理の提供
+	/// DirectX 12リソースの生成・管理
+	/// マテリアルやライティング設定の制御
+	/// Assimp等を用いた外部ファイルのパースとデータ変換
+	/// </summary>
 	class Model {
 	public:
 		/// <summary>
@@ -1860,6 +1879,11 @@ File Path: project/engine/3d/ModelBase.h
 namespace MyEngine {
 
 	// 3Dモデル共通部クラス
+	/// <summary>
+	/// 3Dモデル描画に必要な共通リソースの管理
+	/// DirectX基盤との連携・管理
+	/// 3Dモデル描画処理の基盤となる初期化処理の提供
+	/// </summary>
 	class ModelBase {
 	public:
 		/// <summary>
@@ -2112,6 +2136,14 @@ namespace MyEngine {
 	class Object3dBase;
 
 	// 3Dオブジェクトクラス
+	/// <summary>
+	/// 3Dオブジェクトの初期化、更新、描画処理の管理
+	/// モデルデータやトランスフォームの管理
+	/// マテリアルやライティングの設定・制御
+	/// カメラとの連携およびカメラデータの管理
+	/// DirectX 12リソースの生成と管理
+	/// デバッグ用の更新処理の提供
+	/// </summary>
 	class Object3d {
 	public:
 		/// <summary>
@@ -2325,6 +2357,14 @@ File Path: project/engine/3d/Object3dBase.h
 namespace MyEngine {
 
 	// 3Dオブジェクト共通部クラス
+    /// <summary>
+    ///3Dオブジェクト描画に必要な共通リソースの生成・管理
+    ///DirectX基盤との連携・管理
+    ///デフォルトカメラの管理・提供
+    ///3Dオブジェクト描画時の共通設定処理
+    ///シングルトンによるインスタンス管理
+    ///初期化・終了処理の提供
+/// </summary>
 	class Object3dBase {
 	public:
 		/// <summary>
@@ -2543,6 +2583,13 @@ namespace MyEngine {
 	};
 
 	// オーディオクラス
+    /// <summary>
+    /// XAudio2を用いたオーディオシステムの初期化・終了処理
+    /// WAVファイルの読み込みとサウンドデータの管理
+    /// サウンドデータの再生・解放処理
+    /// シングルトンによるインスタンス管理
+    /// XAudio2リソースの管理
+    /// </summary>
 	class Audio {
 	public:
 		/// <summary>
@@ -2657,57 +2704,64 @@ File Path: project/engine/Particle/ParticleEmitter.h
 
 namespace MyEngine {
 
-    // パーティクルエミッタークラス
-    class ParticleEmitter {
-    public:
-        // エミッターの情報を保持
-        struct Emitter {
-            Transform transform;
-            uint32_t count_;          // 発生数
-            float frequency_;         // 発生頻度
-            float frequency_time_;    // 頻度用時刻
-        };
+	// パーティクルエミッタークラス
+    /// <summary>
+    /// パーティクル発生源の初期化・管理
+    /// エミッターの位置・発生数・発生頻度などの状態管理
+    /// 毎フレームのパーティクル発生制御（自動・即時発生）
+    /// パーティクルマネージャとの連携によるパーティクル生成
+    /// エミッター初期化データの管理と利用
+    /// </summary>
+	class ParticleEmitter
+	{
+	public:
+		// エミッターの情報を保持
+		struct Emitter {
+			Transform transform;
+			uint32_t count_;          // 発生数
+			float frequency_;         // 発生頻度
+			float frequency_time_;    // 頻度用時刻
+		};
 
-        // エミッター初期化データ
-        struct ParticleEmitterInitData {
-            int count;
-            float frequency;
-            Vector3 scale;
-            Vector3 rotate;
-            Vector3 translate;
-        };
+		// エミッター初期化データ
+		struct ParticleEmitterInitData {
+			int count;
+			float frequency;
+			Vector3 scale;
+			Vector3 rotate;
+			Vector3 translate;
+		};
 
+	public:
+		/// <summary>
+		/// エミッターを初期化する。
+		/// </summary>
+		void Initialize(const std::string& name);
 
-    public:
-        /// <summary>
-        /// エミッターを初期化する。
-        /// </summary>
-        void Initialize(const std::string& name);
+		/// <summary>
+		/// 毎フレームの更新処理を行う。
+		/// </summary>
+		void Update();
 
-        /// <summary>
-        /// 毎フレームの更新処理を行う。
-        /// </summary>
-        void Update();
+		/// <summary>
+		/// 即時にパーティクルを発生させる。
+		/// </summary>
+		void Emit();
 
-        /// <summary>
-        /// 即時にパーティクルを発生させる。
-        /// </summary>
-        void Emit();
+	public:
+		/// <summary>
+		/// エミッターの発生位置を設定する。
+		/// </summary>
+		void SetPosition(const Vector3& pos) { emitter_.transform.translate = pos; }
 
-    public:
-        /// <summary>
-        /// エミッターの発生位置を設定する。
-        /// </summary>
-        void SetPosition(const Vector3& pos) { emitter_.transform.translate = pos; }
+	private:
+		//ParticleTypeごとの初期値テーブル
+		static const std::unordered_map<ParticleType, ParticleEmitterInitData> kEmitterInitTable;
 
-    private:
-        //ParticleTypeごとの初期値テーブル
-        static const std::unordered_map<ParticleType, ParticleEmitterInitData> kEmitterInitTable;
-
-        Emitter emitter_;
-        std::string name_;
-        const float kDeltaTime = 1.0f / 60.0f;
-    };
+		Emitter emitter_;
+		std::string name_;
+		const float kDeltaTime = 1.0f / 60.0f;
+	};
 }
 
 ============================================================
@@ -2770,7 +2824,7 @@ namespace MyEngine {
 		// シザリング矩形の初期化
 		ScissorrectInitialize();
 		// DXCコンパイラの生成
-		DXCcompilerInitialize();
+		DXCompilerInitialize();
 		// グラフィックスパイプライン作成
 		pso_->CreatePostEffectPipelineState();
 	}
@@ -3038,7 +3092,7 @@ namespace MyEngine {
 	}
 
 	//DXCコンパイラの初期化
-	void DirectXBase::DXCcompilerInitialize() {
+	void DirectXBase::DXCompilerInitialize() {
 		hr_ = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxc_utils_));
 		assert(SUCCEEDED(hr_));
 		hr_ = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxc_compiler_));
@@ -3515,8 +3569,16 @@ namespace MyEngine {
     };
 
     // DirectX基盤クラス
-    class DirectXBase
-    {
+    /// <summary>
+    /// DirectX 12デバイスやコマンドリスト等のグラフィックス基盤リソースの生成・管理
+    ///描画処理の前後処理やレンダーテクスチャ制御
+    ///テクスチャやバッファ等のGPUリソース生成・管理
+    ///シェーダーのコンパイルやデスクリプタヒープの生成
+    ///スワップチェインやレンダーテクスチャの管理
+    ///テクスチャファイルのロードユーティリティの提供
+    ///シングルトンによるインスタンス管理
+    /// </summary>
+    class DirectXBase {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
@@ -3682,7 +3744,7 @@ namespace MyEngine {
         // シザー矩形の初期化
         void ScissorrectInitialize();
         // DXCコンパイラの生成
-        void DXCcompilerInitialize();
+        void DXCompilerInitialize();
         // FPS固定初期化
         void InitializeFixFPS();
         // FPS固定更新
@@ -3946,6 +4008,13 @@ File Path: project/engine/base/Framework.h
 namespace MyEngine {
 
     //アプリケーション全体の実行を管理する基底クラス
+    /// <summary>
+    ///アプリケーション全体のライフサイクルの管理
+    ///ウィンドウ、DirectX、ImGui、カメラ、シーンなど主要システムの初期化・解放・連携
+    ///シーン管理の基盤提供
+    ///ゲームループによるフレーム制御と終了判定
+    ///派生クラスでの描画処理の実装要求（純粋仮想関数）
+    /// </summary>
     class Framework
     {
     public:
@@ -4120,6 +4189,12 @@ using namespace Math;
 namespace MyEngine {
 
     // ゲーム全体を司るクラス
+    /// <summary>
+    /// ゲームアプリケーション全体の初期化、更新、描画、終了処理の実装
+    /// ゲーム固有のリソースやシーン、レンダリング設定の管理
+    /// Framework基底クラスから継承したライフサイクル制御の具体的なゲーム処理への適用
+    /// ゲーム全体の状態管理やフレームごとの制御
+    /// </summary>
     class MyGame : public Framework {
     public:
         /// <summary>
@@ -4578,6 +4653,14 @@ namespace MyEngine {
     class DirectXBase;
 
     // パイプラインステートを管理するクラス
+    /// <summary>
+    ///DirectX 12の各種描画用途に対応した
+    /// ルートシグネチャおよびグラフィックスパイプラインステートの生成・管理
+    /// ルートシグネチャやパイプラインステートの共通生成処理の提供
+    /// CBVやディスクリプタテーブル、静的サンプラー等のルートパラメータ設定補助
+    /// 用途ごとのルートシグネチャ／パイプラインステートの取得インターフェースの提供
+    /// DirectXBaseとの連携
+    /// </summary>
     class PipelineStateObject {
     public:
         /// <summary>
@@ -4828,6 +4911,11 @@ File Path: project/engine/base/StringUtility.h
 namespace MyEngine {
 
 	//文字コードユーティリティ
+	/// <summary>
+	/// UTF-8とUTF-16間の文字列変換処理の提供
+	/// Windows APIを利用した安全かつ汎用的な文字コード変換の実装
+	/// アプリケーション内での文字列エンコーディング変換の共通インターフェースの提供
+	/// </summary>
 	namespace string_utility {
 		/// <summary>
 		/// UTF-8 エンコードされた std::string を std::wstring (Windows の UTF-16) に変換する。
@@ -4923,11 +5011,7 @@ namespace MyEngine {
         // ウィンドウ表示
         ShowWindow(hwnd_, SW_SHOW);
     }
-
-    void WindowsApi::Update() {
-        // 今回は何も処理なし
-    }
-
+    //終了処理
     void WindowsApi::Finalize() {
         // ウィンドウを閉じる
         CloseWindow(hwnd_);
@@ -4961,6 +5045,14 @@ File Path: project/engine/base/WindowsAPI.h
 namespace MyEngine {
 
     // WindowsAPI関連のクラス
+    /// <summary>
+    /// Windowsアプリケーションのウィンドウ生成・管理・破棄
+    /// ウィンドウプロシージャによるメッセージ処理
+    /// Windowsメッセージループの管理
+    /// ウィンドウハンドルやインスタンスハンドル等の取得インターフェースの提供
+    /// ウィンドウクラス情報の管理
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class WindowsApi {
     public:
         /// <summary>
@@ -4978,11 +5070,6 @@ namespace MyEngine {
         /// 初期化処理を行う。
         /// </summary>
         void Initialize();
-
-        /// <summary>
-        /// 毎フレーム更新処理（現在は未使用／空実装）。
-        /// </summary>
-        void Update();
 
         /// <summary>
         /// 終了処理を行う。
@@ -5072,6 +5159,12 @@ File Path: project/engine/camera/Camera.h
 namespace MyEngine {
 
 	// カメラクラス
+	/// <summary>
+	///3D空間におけるカメラの位置・回転・投影パラメータの管理
+	///ワールド・ビュー・プロジェクション・ビュー×プロジェクション各行列の生成・保持
+	///毎フレームのカメラ行列更新処理
+	///外部からのカメラパラメータ設定・取得インターフェースの提供
+	/// </summary>
 	class Camera {
 	public:
 		/// <summary>
@@ -5089,13 +5182,13 @@ namespace MyEngine {
 		/// <summary>平行移動（座標）を設定する。</summary>
 		void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 		/// <summary>垂直方向（y軸）視野角を設定する。</summary>
-		void SetFovY(float& fov_y) { fov_y_ = fov_y; }
+		void SetFovY(float fov_y) { fov_y_ = fov_y; }
 		/// <summary>アスペクト比を設定する（幅 / 高さ）。</summary>
-		void SetAspectRatio(float& aspect_ratio) { aspect_ratio_ = aspect_ratio; }
+		void SetAspectRatio(float aspect_ratio) { aspect_ratio_ = aspect_ratio; }
 		/// <summary>ニアクリップ距離を設定する。</summary>
-		void SetNearClip(float& near_clip) { near_clip_ = near_clip; }
+		void SetNearClip(float near_clip) { near_clip_ = near_clip; }
 		/// <summary>ファークリップ距離を設定する。</summary>
-		void SetFarClip(float& far_clip) { far_clip_ = far_clip; }
+		void SetFarClip(float far_clip) { far_clip_ = far_clip; }
 
 		/// <summary>ワールド行列を取得する。</summary>
 		const Matrix4x4& GetWorldMatrix() const { return world_matrix_; }
@@ -5162,6 +5255,11 @@ File Path: project/engine/debug/D3DResourceLeakChecker.h
 namespace MyEngine {
 
 	//リークを検出するクラス
+	/// <summary>
+	/// Direct3D/DirectXリソースのリークの検出
+	/// デストラクタでリソースリークの有無をチェックし、検出時はデバッグ出力等で通知
+	/// アプリケーション終了時のリソース管理の健全性確認支援
+	/// </summary>
 	class D3DResourceLeakChecker
 	{
 	public:
@@ -5201,6 +5299,12 @@ File Path: project/engine/debug/Logger.h
 namespace MyEngine {
 
 	//ログ出力
+	/// <summary>
+	/// アプリケーション全体のデバッグ・情報・エラー等のログメッセージ出力処理の提供
+	/// Windowsのデバッグ出力を利用したメッセージ出力
+	/// 文字列メッセージの一元的なログインターフェースの提供
+	/// 開発・デバッグ時の情報可視化支援
+	/// </summary>
 	namespace Logger
 	{
 		/// <summary>
@@ -5328,6 +5432,13 @@ File Path: project/engine/io/Input.h
 namespace MyEngine {
 
     // 入力関連クラス
+    /// <summary>
+    /// DirectInputを用いたキーボードおよびマウス入力の初期化・終了・毎フレーム更新処理
+    /// キー・マウスボタンの押下／トリガー状態の検出と取得インターフェースの提供
+    /// 入力状態のクリアやマウス座標の取得
+    /// WindowsAPIとの連携による入力デバイス管理
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class Input {
     public:
         // ComPtrのエイリアス
@@ -5487,7 +5598,14 @@ File Path: project/engine/manager/CameraManager.h
 
 namespace MyEngine {
 
-    // カメラマネージャー
+     // カメラマネージャー
+     /// <summary>
+     /// 複数カメラインスタンスの登録・管理
+     /// カメラ名によるカメラの追加・取得・切り替え
+     /// アクティブカメラの管理と取得インターフェースの提供
+     /// シングルトンによるインスタンス管理
+     /// カメラリソースの初期化・解放処理
+     /// </summary>
     class CameraManager {
     public:
         /// <summary>
@@ -5655,6 +5773,13 @@ File Path: project/engine/manager/ImGuiManager.h
 namespace MyEngine {
 
     // ImGui を管理するクラス
+    /// <summary>
+    /// ImGuiの初期化・終了処理の管理
+    /// ImGuiフレームの開始・終了・描画処理の制御
+    /// DirectXおよびWindowsAPIとの連携によるImGui描画環境の構築
+    /// SRV管理との連携
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class ImGuiManager {
     public:
         /// <summary>
@@ -5864,14 +5989,21 @@ File Path: project/engine/manager/JsonManager.h
 ============================================================
 #pragma once
 #include "Struct.h"
+#include <json.hpp>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include <json.hpp>
 
 namespace MyEngine {
 
     // JSON に関連するクラス
+    /// <summary>
+    /// JSONファイルの読み込み・パースおよびエンジン用データへの変換
+    /// Transform情報（座標・回転・スケール）のJSONからの抽出とVector3等への格納
+    /// ゲームレベルやオブジェクト配置データのロード処理の一元化
+    /// シングルトンによるインスタンス管理
+    /// JSONファイルのパスや拡張子等の管理
+    /// </summary>
     class JsonManager {
     public:
         /// <summary>
@@ -5970,6 +6102,12 @@ File Path: project/engine/manager/ModelManager.h
 namespace MyEngine {
 
     // モデルマネージャー
+    /// <summary>
+    /// 3Dモデルデータの一元的な読み込み・管理・解放
+    /// ファイルパスによるモデルの登録・検索・取得インターフェースの提供
+    /// モデル共通リソース（ModelBase）の管理とDirectX基盤との連携
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class ModelManager {
     public:
         /// <summary>
@@ -6461,6 +6599,14 @@ namespace MyEngine {
     };
 
     // パーティクル管理クラス
+    /// <summary>
+    /// 複数種類のパーティクルの生成・管理・描画
+    /// パーティクルグループごとのリソースの生成・管理
+    /// パーティクルの発生・更新・消滅・物理挙動の制御
+    /// GPUへのパーティクルデータ転送およびインスタンシング描画の実装
+    /// DirectX/カメラ/テクスチャ/パイプライン等の外部リソースとの連携
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class ParticleManager {
     public:
 
@@ -6712,6 +6858,13 @@ File Path: project/engine/manager/SceneManager.h
 namespace MyEngine {
 
     // シーンを管理するクラス
+    /// <summary>
+    /// ゲーム内のシーンの生成・切り替え・管理
+    ///現在シーンおよび次シーンのライフサイクル（初期化・終了・更新・描画）の制御
+    /// シーンファクトリー（AbstractSceneFactory）との連携によるシーン生成
+    /// シングルトンによるインスタンス管理
+    /// シーン遷移要求の受付と実際の切り替え処理
+    /// </summary>
     class SceneManager
     {
     public:
@@ -6882,7 +7035,16 @@ File Path: project/engine/manager/SrvManager.h
 
 namespace MyEngine {
 
-    // SRV管理
+    // SRV管理クラス
+    /// <summary>
+    /// DirectX 12のSRV用デスクリプタヒープの生成・管理
+    /// 2Dテクスチャ、構造化バッファ、レンダーテクスチャ等のSRV生成処理の提供
+    /// SRVインデックスの割り当て・管理とハンドル計算
+    /// コマンドリストへのデスクリプタヒープセットやルートパラメータへのSRVバインド
+    /// SRVリソースの最大数管理と利用可能チェック
+    /// DirectXBaseとの連携
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class SrvManager {
     public:
         /// <summary>
@@ -7099,6 +7261,14 @@ File Path: project/engine/manager/TextureManager.h
 namespace MyEngine {
 
 	// テクスチャ管理クラス
+    /// <summary>
+    /// テクスチャリソースの一元的な読み込み・管理・解放
+    /// ファイルパスによるテクスチャの登録・検索・取得インターフェースの提供
+    /// DirectX 12リソースやSRVの生成・管理
+    /// テクスチャメタデータやSRVインデックス、デスクリプタハンドルの管理
+    /// DirectXBaseやSrvManagerとの連携
+    /// シングルトンによるインスタンス管理
+    /// </summary>
 	class TextureManager {
 	public:
 		/// <summary>
@@ -8169,6 +8339,12 @@ File Path: project/engine/scene/AbstractSceneFactory.h
 namespace MyEngine {
 
     // シーンを作る抽象ファクトリクラス
+    /// <summary>
+    /// シーン名に応じたBaseScene派生クラスのインスタンス生成処理の抽象化
+    /// シーン生成処理の共通インターフェースの提供
+    /// SceneManager等からのシーン生成要求に応じて適切なシーンを返す仕組みの基盤
+    /// 派生クラスで具体的なシーン生成ロジックを実装するための基底
+    /// </summary>
     class AbstractSceneFactory {
     public:
         // 仮想デストラクタ
@@ -8196,6 +8372,12 @@ namespace MyEngine {
 	//シーンマネージャー前方宣言
 	class SceneManager;
 	//シーンの基底クラス
+	/// <summary>
+	/// ゲーム内の各シーンの共通インターフェースを提供
+	/// シーンの初期化・終了・更新・描画・デバッグ処理の純粋仮想関数として定義
+	/// シーンマネージャとの連携のためのインターフェース提供
+	/// 派生クラスで具体的なシーン処理を実装するための基盤
+	/// </summary>
 	class BaseScene
 	{
 	public:
@@ -8278,6 +8460,12 @@ File Path: project/engine/scene/SceneFactory.h
 namespace MyEngine {
 
 	//シーンファクトリークラス
+    /// <summary>
+    /// シーン名に応じて適切なBaseScene派生クラスのインスタンスを生成・返却
+    /// AbstractSceneFactoryを継承し、具体的なシーン生成ロジックを実装
+    /// SceneManager等からのシーン生成要求に対応
+    /// ゲーム内のシーン遷移や管理のためのシーン生成基盤の提供
+    /// </summary>
 	class SceneFactory :public AbstractSceneFactory
 	{
 	public:
@@ -8440,9 +8628,6 @@ void Boss1::FireDoubleHeightShot() {
 	constexpr size_t yCount = std::size(kDoubleShotYOffset);
 	constexpr size_t xCount = std::size(kDoubleShotXOffset);
 
-	// 弾速
-	const float bulletSpeed = 0.7f;
-
 	Vector3 bossPos = transform_.translate;
 	Vector3 playerPos = player_->GetTranslate();
 
@@ -8474,9 +8659,9 @@ void Boss1::FireDoubleHeightShot() {
 			bullet->Initialize(object3d_base_);
 			bullet->SetTranslate(spawnPos);
 			bullet->SetVelocity({
-				dir.x * bulletSpeed,
-				dir.y * bulletSpeed,
-				dir.z * bulletSpeed
+				dir.x * kBulletSpeed,
+				dir.y * kBulletSpeed,
+				dir.z * kBulletSpeed
 				});
 			bullet->Update();
 			bullets_.push_back(std::move(bullet));
@@ -8673,6 +8858,16 @@ File Path: project/game/boss/Boss1.h
 
 //前方宣言
 class Player;
+/// <summary>
+/// ボスキャラクターの状態管理
+/// 状態パターンによる行動制御（移動・攻撃・待機等）
+/// 弾の生成・管理・描画および攻撃パターンの実装
+/// プレイヤーとの連携
+/// ダメージ処理、死亡時の演出・パーティクル発生制御
+/// 乱数生成による行動パターンや弾発射間隔の決定
+/// デバッグUIの表示
+/// 3Dオブジェクトやコリジョン（OBB）情報の管理
+/// </summary>
 class Boss1
 {
   public:
@@ -8865,6 +9060,8 @@ private:
 	const float kDamageColorDuration = 0.1f;
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
+	// 弾速
+	const float kBulletSpeed = 0.7f;
 	//ボス強化体力値
 	const int kEnragedHP = 100;
 	// ダメージ色の残り時間
@@ -8896,6 +9093,13 @@ File Path: project/game/boss/BossState.h
 class Boss1;
 
 //ボスの状態を表す基底クラス
+/// <summary>
+///ボスの状態ごとの振る舞いを抽象化し、状態遷移を管理する基盤を提供
+///状態ごとに「開始処理」「毎フレーム更新」「終了処理」のインターフェースを定義
+///各具体的なボス状態の共通基底として機能
+///状態遷移時のボス本体への操作・制御の受け渡し
+///派生クラスで状態固有のロジックを実装するための抽象クラス
+/// </summary>
 class BossState {
 public:
     /// <summary>
@@ -8970,7 +9174,13 @@ File Path: project/game/boss/BossStateEnraged.h
 #include "BossState.h"
 
 //ボスの強化状態を表すクラス
-// 通常状態と異なる移動・攻撃パターンを制御する
+/// <summary>
+/// ボスの強化状態における行動ロジックの実装
+/// 状態遷移時の初期化処理、強化状態特有の攻撃・移動・弾発射などの毎フレーム更新処理（Update）の具体化
+/// 扇状ショットや二段ショットなど強化状態専用の攻撃パターン・タイミング管理
+/// Boss本体への操作の実行
+/// 強化状態から他状態への遷移条件の判定
+/// </summary>
 class BossStateEnraged : public BossState {
 public:
     /// <summary>
@@ -9046,6 +9256,13 @@ File Path: project/game/boss/BossStateNormal.h
 #include "BossState.h"
 
 // ボス通常状態クラス
+/// <summary>
+/// ボスの通常状態における行動ロジックの実装
+/// 状態遷移時の初期化処理、通常攻撃パターンや移動・弾発射などの毎フレーム更新処理（Update）の具体化
+/// 発射タイマーや二段ショット遅延など通常状態特有のタイミング管理
+/// Boss本体への操作の実行
+/// 通常状態から他状態への遷移条件の判定
+/// </summary>
 class BossStateNormal : public BossState
 {
 public:
@@ -9380,7 +9597,16 @@ File Path: project/game/enemy/Enemy.h
 // プレイヤークラス前方宣言
 class Player;
 
-// 敵の処理を書いたクラス
+// 敵キャラクタークラス
+/// <summary>
+/// 敵キャラクターの状態管理
+/// 移動、攻撃、弾発射など敵固有の行動ロジックの実装
+/// プレイヤーや他オブジェクトとの当たり判定・ダメージ処理
+/// 弾の生成・管理・描画
+/// 死亡時の演出やリスポーン等の制御
+/// 毎フレームの更新・描画処理の提供
+/// デバッグ用情報の表示
+/// </summary>
 class Enemy {
 public:
 	/// <summary>
@@ -9641,6 +9867,14 @@ File Path: project/game/enemy/EnemyBullet.h
 #include "Transform.h"
 
 //敵の弾
+/// <summary>
+/// 敵キャラクターが発射する弾の状態管理
+/// 弾の初期化、毎フレームの移動・更新・寿命管理
+/// 弾の描画処理および色・見た目の制御
+/// プレイヤーや他オブジェクトとの当たり判定・衝突時処理
+/// OBBや座標・攻撃力等の取得・設定インターフェースの提供
+/// デスフラグや寿命タイマーによる弾の自動消滅制御
+/// </summary>
 class EnemyBullet
 {
 public:
@@ -9825,6 +10059,13 @@ File Path: project/game/fade/Fade.h
 #include "Struct.h"
 
 //フェードを管理するクラス
+/// <summary>
+/// 画面のフェードイン／フェードアウト演出の状態管理と制御
+/// フェードの開始・終了・進行状況の管理
+/// スプライトを用いたフェード描画処理の実装
+/// 毎フレームの更新処理によるアルファ値の補間・制御
+/// 外部からのフェード状態取得やフェード完了判定の提供
+/// </summary>
 class Fade
 {
 public:
@@ -10010,6 +10251,13 @@ class PlayerBullet;
 class EnemyBullet;
 
 // 衝突管理クラス
+/// <summary>
+/// プレイヤー、敵、ボス、各種弾同士の衝突判定処理の一元管理
+/// プレイヤーと敵、プレイヤーとボス、各種弾とキャラクター間の当たり判定ロジックの実装
+/// 衝突時のコールバック呼び出しやダメージ処理のトリガー
+/// ゲーム内の主要キャラクター・弾の相互作用を安全かつ効率的に制御
+/// 衝突判定のためのインターフェース提供
+/// </summary>
 class CollisionManager {
 public:
 	/// <summary>
@@ -10207,6 +10455,14 @@ File Path: project/game/object/GameClearObject.h
 #include "Struct.h"
 
 //ゲームクリアオブジェクト
+/// <summary>
+/// ゲームクリア画面の表示・演出
+///「PUSH SPACE」等の案内スプライトの管理と描画
+/// スプライトや3Dオブジェクトの初期化・更新・描画処理
+/// 文字列オブジェクトのアニメーション制御
+/// 演出パラメータの管理
+/// デバッグ表示や状態管理の補助機能の提供
+/// </summary>
 class GameClearObject
 {
 public:
@@ -10509,6 +10765,14 @@ File Path: project/game/object/GameOverObject.h
 #include "Struct.h"
 
 // ゲームオーバーオブジェクト
+/// <summary>
+/// ゲームオーバー画面の表示・演出
+/// リトライ・タイトルへ戻る等のメニュー選択肢の管理と選択状態・結果の判定
+/// スプライトや3Dオブジェクトの初期化・更新・描画処理
+/// マウス操作によるメニュー選択・決定の判定
+/// フェードやα値、スケール等の演出パラメータの管理
+/// デバッグ表示や状態リセット等の補助機能の提供
+/// </summary>
 class GameOverObject {
 public:
 
@@ -10962,6 +11226,15 @@ File Path: project/game/object/TitleObject.h
 #include <vector>
 
 // タイトルオブジェクト
+/// <summary>
+/// タイトル画面の表示
+/// メニュー選択肢の管理と選択状態・決定判定
+/// スプライトや3Dオブジェクトの初期化・更新・描画処理
+/// プレイヤーオブジェクトの演出制御
+/// メニュー項目の拡縮アニメーションやマウス操作による選択判定
+/// 操作説明表示の制御と更新
+/// デバッグUIの表示や状態リセット等の補助機能の提供
+/// </summary>
 class TitleObject {
 public:
 	/// メニュー選択結果
@@ -11173,6 +11446,13 @@ File Path: project/game/platform/Platform.h
 #include "ParticleEmitter.h"
 
 // 地面のクラス
+/// <summary>
+/// 地面オブジェクトの状態管理
+/// 3Dオブジェクトの初期化・更新・描画処理の実装
+/// プレイヤーや他オブジェクトとの連携のための座標取得・設定インターフェースの提供
+/// 移動制御やデバッグ表示の実装
+/// 煙パーティクルエミッター等の演出リソース管理
+/// </summary>
 class Platform {
 public:
 	/// <summary>
@@ -11265,7 +11545,6 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	reticle_->SetSize({ 32,32 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
-
 //更新処理
 void Player::Update(bool is_start_animation_, bool is_returning_) {
 
@@ -11379,10 +11658,10 @@ void Player::Move() {
 
     // キー入力によるX方向の速度設定
     if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
-        velocity_.x = -0.1f;
+        velocity_.x = -move_speed_x_;
     }
     if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
-        velocity_.x = 0.1f;
+        velocity_.x = move_speed_x_;
     }
 
     // 位置更新（
@@ -11468,8 +11747,6 @@ void Player::Attack() {
 	// 弾の進行方向ベクトル
 	Vector3 ray_dir = Math::Normalize(Vector3(far_world.x, far_world.y, far_world.z) - ray_origin);
 
-	// 弾速度
-	const float k_bullet_speed = 1.0f;
 	Vector3 velocity = ray_dir * k_bullet_speed;
 
 	// 弾生成・初期化・リスト追加
@@ -11482,29 +11759,21 @@ void Player::Attack() {
 	// 攻撃クールタイムリセット
 	attack_cooldown_ = attack_interval_;
 }
-// 回避処理
+//回避処理
 void Player::Dodge() {
 
-	// 回避中処理
+	//回避中
 	if (dodge_) {
 
+		//回避の進行度
 		float t = dodge_timer_ / apply_dodge_;
 		t = std::clamp(t, 0.0f, 1.0f);
 
-		float ease = float(Math::easeInOutQuad(t));
+		//回避ジャンプ
+		float jumpOffset = 4.0f * dodge_jump_height_ * t * (1.0f - t);
+		transform_.translate.y = dodge_start_y_ + jumpOffset;
 
-		//横回避がある場合のみスライド
-		if (dodge_direction_.x != 0.0f) {
-			transform_.translate.x =
-				Math::Lerp(
-					{ dodge_start_x_, ground_y_, transform_.translate.z },
-					{ dodge_target_x_, ground_y_, transform_.translate.z },
-					ease
-				).x;
-		}
-
-		transform_.rotate.y =
-			360.0f * (dodge_direction_.x == 0.0f ? 1.0f : dodge_direction_.x) * t;
+		transform_.rotate.y = rotate_angle_ * t;
 
 		dodge_timer_ += kDeltaTime;
 
@@ -11512,43 +11781,31 @@ void Player::Dodge() {
 		if (dodge_timer_ >= apply_dodge_) {
 			dodge_ = false;
 			dodge_timer_ = 0.0f;
+
 			transform_.rotate.y = 0.0f;
+			transform_.translate.y = dodge_start_y_;
 		}
 		return;
 	}
-	// クールタイム中は回避不可
+
+	//クールタイム中は使用不可
 	if (dodge_cooldown_ > 0.0f) {
 		return;
 	}
 
-	// 回避入力判定
+	//回避入力
 	if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_F)) {
-
-		dodge_direction_ = { 0,0,0 };
-
-		// 左右入力で横回避
-		if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
-			dodge_direction_.x = -1.0f;
-		} else if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
-			dodge_direction_.x = 1.0f;
-		}
 
 		dodge_ = true;
 		dodge_timer_ = 0.0f;
 
-		//横回避の目標位置を設定
-		dodge_start_x_ = transform_.translate.x;
-		dodge_target_x_ =
-			std::clamp(
-				dodge_start_x_ + dodge_direction_.x * 1.2f,
-				kGroundMinX,
-				kGroundMaxX
-			);
-		//回避のインターバルを設定
+		//現在のY座標を保存
+		dodge_start_y_ = transform_.translate.y;
+
+		//クールタイム設定
 		dodge_cooldown_ = dodge_interval_;
 	}
 }
-
 // レティクルの座標更新
 void Player::ReticleUpdate() {
 	POINT mousePos = MyEngine::Input::GetInstance()->GetMousePosition();
@@ -11672,6 +11929,16 @@ File Path: project/game/player/Player.h
 //プラットフォーム
 class Platform;
 //プレイヤー
+/// <summary>
+/// プレイヤーキャラクターの状態管理
+/// 操作処理
+/// 弾の生成・管理・描画
+/// レティクルの表示・操作
+/// プラットフォームとの連携
+/// 衝突判定とダメージ処理
+/// デバッグ情報の表示
+/// カメラとの連携
+/// </summary>
 class Player
 {
 public:
@@ -11837,14 +12104,16 @@ private:
 	float radius_ = 1.0f;
 	//ジャンプ速度
 	float jump_velocity_ = 0.0f;
+	//キー入力による移動速度
+	float move_speed_x_ = 0.1f;
 	//HP
 	int hp_ = 100;
 	//ジャンプ回数
 	int jump_count_ = 0;
 	//最大ジャンプ可能回数
 	const int kMaxJumpCount = 2;
-	//弾の速度
-	const float kBulletSpeed = 1.0f;
+	// 弾速度
+	const float k_bullet_speed = 1.0f;
 	//Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	//回避速度
@@ -11874,7 +12143,7 @@ private:
 	//攻撃のクールタイム
 	float attack_cooldown_ = 0.0f;
 	//再攻撃できるまでの間隔
-	float attack_interval_ = 25.0f;
+	float attack_interval_ = 20.0f;
 	//回避タイマー
 	float dodge_timer_ = 0.0f;
 	//回避適用時間
@@ -11883,12 +12152,12 @@ private:
 	float dodge_cooldown_ = 0.0f;
 	//回避コマンド再使用待機時間
 	float dodge_interval_ = 5.0f;
-	// 回避開始座標
-	float dodge_start_x_ = 0.0f;
-	//回避ターゲット座標
-	float dodge_target_x_ = 0.0f;
-	// 回避回転量
+	//回避回転量
 	float dodge_rotate_y_ = 0.0f;
+	//回避ジャンプの高さ
+	float dodge_jump_height_ = 0.5f;
+	//回避開始時のY座標
+	float dodge_start_y_ = 0.0f;
 	//ダメージ色変化タイマー
 	float damage_color_timer_ = 0.0f;
 	//無敵タイマー
@@ -11977,6 +12246,14 @@ File Path: project/game/player/playerBullet.h
 #include <memory>
 
 //プレイヤーの弾のクラス
+/// <summary>
+/// プレイヤーが発射する弾の状態管理
+/// 弾の初期化、毎フレームの移動・更新・寿命管理
+/// 弾の描画処理および見た目の制御
+/// 敵や他オブジェクトとの当たり判定・衝突時処理
+/// OBBや座標・攻撃力等の取得・設定インターフェースの提供
+/// デスフラグや寿命タイマーによる弾の自動消滅制御
+/// </summary>
 class PlayerBullet
 {
 public:
@@ -12095,7 +12372,16 @@ File Path: project/game/railcamera/RailCamera.h
 #include "Player.h"
 #include "Platform.h"
 
-class RailCamera {
+// レールカメラクラス
+/// <summary>
+/// レールに沿ったカメラの移動制御
+/// カメラの初期化・毎フレームの位置更新処理
+/// カメラに追従するプレイヤーやプラットフォームの座標制御
+/// カメラ・プレイヤー・プラットフォーム間のオフセット管理
+/// ゲーム進行に合わせたカメラの自動移動
+/// </summary>
+class RailCamera
+{
 public:
     /// <summary>
     /// デフォルトコンストラクタ。
@@ -12256,6 +12542,12 @@ File Path: project/game/scene/GameClearScene.h
 #include "Fade.h"
 
 // ゲームクリアシーン
+/// <summary>
+/// ゲームクリア時のシーン全体の初期化・更新・描画・終了処理の管理
+/// カメラ、スカイボックス、ゲームクリアオブジェクト、フェード等のリソース管理と連携
+/// ゲームクリア演出やUIの制御、シーン遷移処理の実装
+/// 毎フレームの状態更新・描画・デバッグ表示の提供
+/// </summary>
 class GameClearScene : public  MyEngine::BaseScene
 {
 public:
@@ -12432,7 +12724,13 @@ File Path: project/game/scene/GameOverScene.h
 #include "Skybox.h"
 
 // ゲームオーバーシーン
-class GameOverScene : public  MyEngine::BaseScene
+/// <summary>
+/// ゲームオーバー時のシーン全体の初期化・更新・描画・終了処理の管理
+/// カメラ、スカイボックス、ゲームオーバーオブジェクト、フェード等のリソース管理と連携
+/// ゲームオーバー演出やUIの制御、シーン遷移処理の実装
+/// 毎フレームの状態更新・描画・デバッグ表示の提供
+/// </summary>
+class GameOverScene : public  MyEngine::BaseScene 
 {
 public:
 	/// <summary>
@@ -12493,7 +12791,7 @@ File Path: project/game/scene/GameScene.cpp
 #include "MyMath.h"
 #include "Input.h"
 
-// ゲームシーンの初期化処理ad
+// ゲームシーンの初期化処理
 void GameScene::Initialize() {
 
 	// サウンド初期化
@@ -13003,6 +13301,14 @@ File Path: project/game/scene/GameScene.h
 #include "Ui.h"
 
 //ゲームシーン
+/// <summary>
+/// ゲーム進行全体の初期化・更新・描画・終了処理の管理
+/// プレイヤー、敵、ボス、プラットフォーム、UI、カメラ、パーティクル、フェード等のリソース管理と連携
+/// ゲームフェーズ（通常進行・ボス戦）の制御と状態遷移
+/// 衝突判定やレベルデータ、演出の制御
+/// シーン遷移処理やゲーム進行の各種判定・演出の実装
+/// 毎フレームの状態更新・描画・デバッグ表示の提供
+/// </summary>
 class GameScene : public  MyEngine::BaseScene
 {
 public:
@@ -13373,6 +13679,13 @@ File Path: project/game/scene/TitleScene.h
 #include "JsonManager.h"
 
 // タイトルシーン
+/// <summary>
+/// タイトル画面全体の初期化・更新・描画・終了処理の管理
+/// カメラ、スカイボックス、タイトルオブジェクト、フェード、パーティクルエミッター等のリソース管理と連携
+/// タイトル画面のUI・演出・操作説明・メニュー選択等の制御
+/// シーン遷移処理の実装
+/// 毎フレームの状態更新・描画・デバッグ表示の提供
+/// </summary>
 class TitleScene : public MyEngine::BaseScene
 {
 public:
@@ -13592,6 +13905,13 @@ File Path: project/game/skybox/Skybox.h
 #include "Struct.h"
 
 //SkyBoxのクラス
+/// <summary>
+/// スカイボックスの初期化・更新・描画処理の管理
+/// 頂点・インデックス・マテリアル・変換行列等のDirectX 12リソース生成・管理
+/// テクスチャファイルの読み込みとスカイボックスへの適用
+/// ワールド座標変換やモデルデータの管理
+/// 外部からのTransform取得インターフェースの提供
+/// </summary>
 class Skybox
 {
 public:
@@ -13854,11 +14174,11 @@ void Ui::UpdatePauseGuide()
 	//イージング適用
     float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
     //リトライ
-    Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
+    Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size_, eased));
     //タイトルへ戻る
-    Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size, eased));
+    Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size_, eased));
     //操作説明画面
-    Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size, eased));
+    Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size_, eased));
 }
 
 //ポーズボタンホバー処理
@@ -13872,8 +14192,8 @@ void Ui::UpdatePauseButtonHover()
 
     float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
 
-    Vector2 retrySize = Math::MultiplyScalar(retry_base_size, eased);
-    Vector2 backSize = Math::MultiplyScalar(back_title_base_size, eased);
+    Vector2 retrySize = Math::MultiplyScalar(retry_base_size_, eased);
+    Vector2 backSize = Math::MultiplyScalar(back_title_base_size_, eased);
 
     // 通常サイズに戻す
     Get(SpriteType::Retry)->SetSize(retrySize);
@@ -13996,6 +14316,14 @@ File Path: project/game/ui/Ui.h
 #include <memory>
 
 // UIクラス
+/// <summary>
+/// ゲーム画面上の各種UIの表示・更新・描画管理
+/// スプライトの生成・管理・状態制御
+/// プレイヤー情報とUI表示の連携
+/// ポーズメニューの選択・クリック・ホバー判定や結果管理
+/// 操作説明画面や各種ガイドの表示制御
+/// UIに関するデバッグ表示や状態リセット等の補助機能の提供
+/// </summary>
 class Ui
 {
 public:
@@ -14109,11 +14437,11 @@ private:
 	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
 	//リトライ文字の基準サイズ
-	Vector2 retry_base_size = { 180.0f,100.0f };
+	Vector2 retry_base_size_ = { 180.0f,100.0f };
 	//タイトルㇸ戻る文字の基準サイズ
-	Vector2 back_title_base_size = { 180.0f,100.0f };
+	Vector2 back_title_base_size_ = { 180.0f,100.0f };
 	//操作説明画面の基準サイズ
-	Vector2 operation_base_size = { 500.0f,500.0f };
+	Vector2 operation_base_size_ = { 500.0f,500.0f };
 	//ポーズ画面のスプライトスケール
 	float pause_scale_ = 0.0f;
 	//ホバー用タイマー
