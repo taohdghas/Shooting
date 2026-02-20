@@ -90,6 +90,16 @@ void GameScene::Initialize() {
 		boss_spawn_position_ = boss_->GetPosition();
 	}
 
+	// Player に Enemy リストを渡す
+	std::vector<Enemy*> enemyPtrs;
+	enemyPtrs.reserve(enemies_.size());
+
+	for (const auto& enemy : enemies_) {
+		enemyPtrs.push_back(enemy.get());
+	}
+
+	player_->SetEnemies(enemyPtrs);
+
 	// フェードの初期化・開始
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();

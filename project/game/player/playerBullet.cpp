@@ -1,6 +1,7 @@
 #include "PlayerBullet.h"
 #include "MyMath.h"
 #include "ModelManager.h"
+#include "Enemy.h"
 
 // 弾の初期化処理
 void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
@@ -20,23 +21,84 @@ void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
 
 // 毎フレームの更新処理
 void PlayerBullet::Update() {
-	if (is_dead_) {
-		return;
-	}
+    if (is_dead_) return;
 
-	// 速度ベクトル分だけ座標を移動
-	transform_.translate = Math::Add(transform_.translate, velocity_);
+    
+     //ロックオン探索（未追尾時）
+    if (!is_homing_ && is_homing_ready_) {
 
-	// 寿命タイマー減算・0以下で消滅フラグ
-	if (--death_timer_ <= 0) {
-		is_dead_ = true;
-	}
+        const float lock_on_distance = 10.0f;
+        const float lock_on_angle_deg = 7.0f;
+        const float lock_on_cos =
+            cosf(lock_on_angle_deg * 3.14159265f / 180.0f);
 
-	// オブジェクトの座標を更新
-	object_->SetTranslate(transform_.translate);
-	object_->Update();
+        Vector3 currentDir = Math::Normalize(velocity_);
+
+        Enemy* bestTarget = nullptr;
+        float bestDist = lock_on_distance;
+
+        for (Enemy* enemy : enemies_) {
+            if (!enemy || enemy->IsDead()) continue;
+
+            Vector3 toEnemy = enemy->GetTranslate() - transform_.translate;
+            float dist = Math::Length(toEnemy);
+            if (dist > lock_on_distance) continue;
+
+            Vector3 toEnemyDir = Math::Normalize(toEnemy);
+            float dot = Math::Dot(currentDir, toEnemyDir);
+
+            if (dot > lock_on_cos && dist < bestDist) {
+                bestDist = dist;
+                bestTarget = enemy;
+            }
+        }
+
+        if (bestTarget) {
+            SetHomingTarget(bestTarget);
+        }
+    }
+
+    //ホーミング処理（安定版）
+    if (is_homing_ && target_ && !target_->IsDead()) {
+
+        Vector3 toTarget = target_->GetTranslate() - transform_.translate;
+        float distance = Math::Length(toTarget);
+
+        Vector3 desiredDir = Math::Normalize(toTarget);
+        Vector3 currentDir = Math::Normalize(velocity_);
+
+        float dot = Math::Dot(currentDir, desiredDir);
+
+        //追尾解除条件
+        //敵が後方に回った
+        //敵が遠い
+        if (dot < 0.0f || distance > 15.0f) {
+            is_homing_ = false;
+            target_ = nullptr;
+        } else {
+            //旋回制御
+            const float turnRate = homing_strength_; 
+
+            Vector3 newDir = Math::Normalize(
+                currentDir * (1.0f - turnRate) +
+                desiredDir * turnRate
+            );
+
+            velocity_ = newDir * speed_;
+        }
+    }
+
+    // 移動
+    transform_.translate += velocity_;
+
+    // 寿命
+    if (--death_timer_ <= 0) {
+        is_dead_ = true;
+    }
+
+    object_->SetTranslate(transform_.translate);
+    object_->Update();
 }
-
 // 弾の描画処理
 void PlayerBullet::Draw() {
 	if (is_dead_) {

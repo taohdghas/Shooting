@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 
+class Enemy;
 //プラットフォーム
 class Platform;
 //プレイヤー
@@ -65,6 +66,10 @@ public:
 	/// </summary>
 	void Attack();
 	/// <summary>
+	/// 追尾弾
+	/// </summary>
+	void AttackHoming();
+	/// <summary>
 	/// 回避
 	/// </summary>
 	void Dodge();
@@ -92,6 +97,10 @@ public:
 	/// OBB取得
 	/// </summary>
 	OBB GetOBB() const;
+	/// <summary>
+	/// 最も近い敵を取得
+	/// </summary>
+	Enemy* FindNearestEnemy(float maxDistance);
 	/// <summary>
 	/// 死亡判定
 	/// </summary>
@@ -144,7 +153,10 @@ public:
 	/// プラットフォーム追従設定
 	/// </summary>
 	void SetFollowPlatform(bool flag) { is_follow_platform_ = flag; }
-
+	/// <summary>
+	/// 敵リスト設定
+	/// </summary>
+	void SetEnemies(const std::vector<Enemy*>& enemies) {enemies_ = enemies;}
 private:
 	MyEngine::Object3dBase* object3d_base_;
 	MyEngine::Camera* camera_;
@@ -156,6 +168,8 @@ private:
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	//レティクル
 	std::unique_ptr< MyEngine::Sprite> reticle_;
+	//敵のリスト
+	std::vector<Enemy*> enemies_;
 	//プラットフォーム
 	Platform* platform_ = nullptr;
 	//レティクル画面上の位置
@@ -172,8 +186,6 @@ private:
 	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
 	//色
 	Vector4 color_;
-	//回避方向
-	Vector3 dodge_direction_{ 0.0f,0.0f,0.0f };
 	//デスフラグ
 	bool is_dead_ = false;
 	//回避状態
@@ -199,7 +211,7 @@ private:
 	//最大ジャンプ可能回数
 	const int kMaxJumpCount = 2;
 	// 弾速度
-	const float k_bullet_speed = 1.0f;
+	const float kBulletSpeed = 1.0f;
 	//Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	//回避速度

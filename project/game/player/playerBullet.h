@@ -3,7 +3,10 @@
 #include "Object3dBase.h"
 #include "Struct.h"
 #include <memory>
+#include <vector>
 
+//前方宣言
+class Enemy;
 //プレイヤーの弾のクラス
 /// <summary>
 /// プレイヤーが発射する弾の状態管理
@@ -65,6 +68,18 @@ public:
 	/// 弾の速度を設定する。
 	/// </summary>
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
+	/// <summary>
+    /// 
+	/// </summary>
+	void SetHomingTarget(Enemy* enemy) { target_ = enemy; is_homing_ = true; }
+	/// <summary>
+	/// 速度を設定
+	/// </summary>
+	void SetSpeed(float speed) { speed_ = speed; }
+	/// <summary>
+	/// ホーミングの強さを設定
+	/// </summary>
+	void SetEnemyList(const std::vector<Enemy*>& enemies) {enemies_ = enemies;}
 private:
 	std::unique_ptr< MyEngine::Object3d> object_;
 	MyEngine::Object3dBase* object3d_base_;
@@ -81,5 +96,14 @@ private:
 	bool is_dead_ = false;
 	//半径
 	float radius_ = 0.1f;
+	//攻撃力
 	uint32_t attack_ = 5;
+
+	 // 追尾関連
+    bool is_homing_ = false;
+    Enemy* target_ = nullptr;
+    float speed_ = 1.0f;
+    float homing_strength_ = 0.05f; 
+	std::vector<Enemy*> enemies_;
+	bool is_homing_ready_ = true;
 };

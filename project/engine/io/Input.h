@@ -67,6 +67,16 @@ namespace MyEngine {
         bool IsMouseLeftTriggered();
 
         /// <summary>
+        /// マウス右ボタンが押されているか
+        /// </summary>
+        bool IsMouseRightPressed();
+
+        /// <summary>
+        /// マウス右ボタンがトリガーか
+        /// </summary>
+        bool IsMouseRightTriggered();
+
+        /// <summary>
         /// マウスのクライアント座標を取得
         /// </summary>
         POINT GetMousePosition();
@@ -93,5 +103,9 @@ namespace MyEngine {
         bool mouse_left_prev_ = false;
 		// マウス左ボタンの現在状態
         bool mouse_left_curr_ = false;
+        // マウス右ボタンの前回状態
+        bool mouse_right_prev_ = false;
+        // マウス右ボタンの現在状態
+        bool mouse_right_curr_ = false;
     };
 }
