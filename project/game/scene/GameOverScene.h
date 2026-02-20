@@ -6,7 +6,13 @@
 #include "Skybox.h"
 
 // ゲームオーバーシーン
-class GameOverScene : public  MyEngine::BaseScene
+/// <summary>
+/// ゲームオーバー時のシーン全体の初期化・更新・描画・終了処理の管理
+/// カメラ、スカイボックス、ゲームオーバーオブジェクト、フェード等のリソース管理と連携
+/// ゲームオーバー演出やUIの制御、シーン遷移処理の実装
+/// 毎フレームの状態更新・描画・デバッグ表示の提供
+/// </summary>
+class GameOverScene : public  MyEngine::BaseScene 
 {
 public:
 	/// <summary>

@@ -31,7 +31,6 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	reticle_->SetSize({ 32,32 });
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
-
 //更新処理
 void Player::Update(bool is_start_animation_, bool is_returning_) {
 
@@ -145,10 +144,10 @@ void Player::Move() {
 
     // キー入力によるX方向の速度設定
     if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
-        velocity_.x = -0.1f;
+        velocity_.x = -move_speed_x_;
     }
     if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
-        velocity_.x = 0.1f;
+        velocity_.x = move_speed_x_;
     }
 
     // 位置更新（
@@ -234,8 +233,6 @@ void Player::Attack() {
 	// 弾の進行方向ベクトル
 	Vector3 ray_dir = Math::Normalize(Vector3(far_world.x, far_world.y, far_world.z) - ray_origin);
 
-	// 弾速度
-	const float k_bullet_speed = 1.0f;
 	Vector3 velocity = ray_dir * k_bullet_speed;
 
 	// 弾生成・初期化・リスト追加
@@ -248,29 +245,21 @@ void Player::Attack() {
 	// 攻撃クールタイムリセット
 	attack_cooldown_ = attack_interval_;
 }
-// 回避処理
+//回避処理
 void Player::Dodge() {
 
-	// 回避中処理
+	//回避中
 	if (dodge_) {
 
+		//回避の進行度
 		float t = dodge_timer_ / apply_dodge_;
 		t = std::clamp(t, 0.0f, 1.0f);
 
-		float ease = float(Math::easeInOutQuad(t));
+		//回避ジャンプ
+		float jumpOffset = 4.0f * dodge_jump_height_ * t * (1.0f - t);
+		transform_.translate.y = dodge_start_y_ + jumpOffset;
 
-		//横回避がある場合のみスライド
-		if (dodge_direction_.x != 0.0f) {
-			transform_.translate.x =
-				Math::Lerp(
-					{ dodge_start_x_, ground_y_, transform_.translate.z },
-					{ dodge_target_x_, ground_y_, transform_.translate.z },
-					ease
-				).x;
-		}
-
-		transform_.rotate.y =
-			360.0f * (dodge_direction_.x == 0.0f ? 1.0f : dodge_direction_.x) * t;
+		transform_.rotate.y = rotate_angle_ * t;
 
 		dodge_timer_ += kDeltaTime;
 
@@ -278,43 +267,31 @@ void Player::Dodge() {
 		if (dodge_timer_ >= apply_dodge_) {
 			dodge_ = false;
 			dodge_timer_ = 0.0f;
+
 			transform_.rotate.y = 0.0f;
+			transform_.translate.y = dodge_start_y_;
 		}
 		return;
 	}
-	// クールタイム中は回避不可
+
+	//クールタイム中は使用不可
 	if (dodge_cooldown_ > 0.0f) {
 		return;
 	}
 
-	// 回避入力判定
+	//回避入力
 	if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_F)) {
-
-		dodge_direction_ = { 0,0,0 };
-
-		// 左右入力で横回避
-		if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
-			dodge_direction_.x = -1.0f;
-		} else if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
-			dodge_direction_.x = 1.0f;
-		}
 
 		dodge_ = true;
 		dodge_timer_ = 0.0f;
 
-		//横回避の目標位置を設定
-		dodge_start_x_ = transform_.translate.x;
-		dodge_target_x_ =
-			std::clamp(
-				dodge_start_x_ + dodge_direction_.x * 1.2f,
-				kGroundMinX,
-				kGroundMaxX
-			);
-		//回避のインターバルを設定
+		//現在のY座標を保存
+		dodge_start_y_ = transform_.translate.y;
+
+		//クールタイム設定
 		dodge_cooldown_ = dodge_interval_;
 	}
 }
-
 // レティクルの座標更新
 void Player::ReticleUpdate() {
 	POINT mousePos = MyEngine::Input::GetInstance()->GetMousePosition();

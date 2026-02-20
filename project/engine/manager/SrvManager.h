@@ -3,7 +3,16 @@
 
 namespace MyEngine {
 
-    // SRV管理
+    // SRV管理クラス
+    /// <summary>
+    /// DirectX 12のSRV用デスクリプタヒープの生成・管理
+    /// 2Dテクスチャ、構造化バッファ、レンダーテクスチャ等のSRV生成処理の提供
+    /// SRVインデックスの割り当て・管理とハンドル計算
+    /// コマンドリストへのデスクリプタヒープセットやルートパラメータへのSRVバインド
+    /// SRVリソースの最大数管理と利用可能チェック
+    /// DirectXBaseとの連携
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class SrvManager {
     public:
         /// <summary>

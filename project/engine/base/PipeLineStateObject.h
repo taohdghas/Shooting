@@ -8,6 +8,14 @@ namespace MyEngine {
     class DirectXBase;
 
     // パイプラインステートを管理するクラス
+    /// <summary>
+    ///DirectX 12の各種描画用途に対応した
+    /// ルートシグネチャおよびグラフィックスパイプラインステートの生成・管理
+    /// ルートシグネチャやパイプラインステートの共通生成処理の提供
+    /// CBVやディスクリプタテーブル、静的サンプラー等のルートパラメータ設定補助
+    /// 用途ごとのルートシグネチャ／パイプラインステートの取得インターフェースの提供
+    /// DirectXBaseとの連携
+    /// </summary>
     class PipelineStateObject {
     public:
         /// <summary>

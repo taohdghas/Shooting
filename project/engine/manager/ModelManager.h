@@ -9,6 +9,12 @@
 namespace MyEngine {
 
     // モデルマネージャー
+    /// <summary>
+    /// 3Dモデルデータの一元的な読み込み・管理・解放
+    /// ファイルパスによるモデルの登録・検索・取得インターフェースの提供
+    /// モデル共通リソース（ModelBase）の管理とDirectX基盤との連携
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class ModelManager {
     public:
         /// <summary>

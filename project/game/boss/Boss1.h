@@ -8,6 +8,16 @@
 
 //前方宣言
 class Player;
+/// <summary>
+/// ボスキャラクターの状態管理
+/// 状態パターンによる行動制御（移動・攻撃・待機等）
+/// 弾の生成・管理・描画および攻撃パターンの実装
+/// プレイヤーとの連携
+/// ダメージ処理、死亡時の演出・パーティクル発生制御
+/// 乱数生成による行動パターンや弾発射間隔の決定
+/// デバッグUIの表示
+/// 3Dオブジェクトやコリジョン（OBB）情報の管理
+/// </summary>
 class Boss1
 {
   public:
@@ -200,6 +210,8 @@ private:
 	const float kDamageColorDuration = 0.1f;
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
+	// 弾速
+	const float kBulletSpeed = 0.7f;
 	//ボス強化体力値
 	const int kEnragedHP = 100;
 	// ダメージ色の残り時間

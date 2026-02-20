@@ -9,6 +9,9 @@ namespace MyEngine {
 	class SpriteBase;
 
 	// スプライトクラス
+	/// <summary>
+	/// 2Dスプライトの初期化、描画、更新処理の管理
+	/// </summary>
 	class Sprite {
 	public:
 		/// <summary>
@@ -119,6 +122,10 @@ namespace MyEngine {
 		Vector2 texture_size_ = { 100.0f, 100.0f };
 		// スプライト個々の回転角
 		float rotation_ = 0.0f;
+		//ニアクリップ座標
+		float near_clip_ = 0.0f;
+		//ファークリップ座標
+		float far_clip_ = 100.0f;
 		// テクスチャ番号
 		uint32_t texture_index_ = 0;
 		// 左右フリップ

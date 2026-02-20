@@ -5,6 +5,12 @@
 namespace MyEngine {
 
 	// カメラクラス
+	/// <summary>
+	///3D空間におけるカメラの位置・回転・投影パラメータの管理
+	///ワールド・ビュー・プロジェクション・ビュー×プロジェクション各行列の生成・保持
+	///毎フレームのカメラ行列更新処理
+	///外部からのカメラパラメータ設定・取得インターフェースの提供
+	/// </summary>
 	class Camera {
 	public:
 		/// <summary>
@@ -22,13 +28,13 @@ namespace MyEngine {
 		/// <summary>平行移動（座標）を設定する。</summary>
 		void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 		/// <summary>垂直方向（y軸）視野角を設定する。</summary>
-		void SetFovY(float& fov_y) { fov_y_ = fov_y; }
+		void SetFovY(float fov_y) { fov_y_ = fov_y; }
 		/// <summary>アスペクト比を設定する（幅 / 高さ）。</summary>
-		void SetAspectRatio(float& aspect_ratio) { aspect_ratio_ = aspect_ratio; }
+		void SetAspectRatio(float aspect_ratio) { aspect_ratio_ = aspect_ratio; }
 		/// <summary>ニアクリップ距離を設定する。</summary>
-		void SetNearClip(float& near_clip) { near_clip_ = near_clip; }
+		void SetNearClip(float near_clip) { near_clip_ = near_clip; }
 		/// <summary>ファークリップ距離を設定する。</summary>
-		void SetFarClip(float& far_clip) { far_clip_ = far_clip; }
+		void SetFarClip(float far_clip) { far_clip_ = far_clip; }
 
 		/// <summary>ワールド行列を取得する。</summary>
 		const Matrix4x4& GetWorldMatrix() const { return world_matrix_; }

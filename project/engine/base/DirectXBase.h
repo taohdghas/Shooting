@@ -22,8 +22,16 @@ namespace MyEngine {
     };
 
     // DirectX基盤クラス
-    class DirectXBase
-    {
+    /// <summary>
+    /// DirectX 12デバイスやコマンドリスト等のグラフィックス基盤リソースの生成・管理
+    ///描画処理の前後処理やレンダーテクスチャ制御
+    ///テクスチャやバッファ等のGPUリソース生成・管理
+    ///シェーダーのコンパイルやデスクリプタヒープの生成
+    ///スワップチェインやレンダーテクスチャの管理
+    ///テクスチャファイルのロードユーティリティの提供
+    ///シングルトンによるインスタンス管理
+    /// </summary>
+    class DirectXBase {
     public:
         /// <summary>
         /// シングルトンインスタンスを取得する。
@@ -189,7 +197,7 @@ namespace MyEngine {
         // シザー矩形の初期化
         void ScissorrectInitialize();
         // DXCコンパイラの生成
-        void DXCcompilerInitialize();
+        void DXCompilerInitialize();
         // FPS固定初期化
         void InitializeFixFPS();
         // FPS固定更新

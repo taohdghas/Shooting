@@ -10,6 +10,14 @@
 namespace MyEngine {
 
 	// テクスチャ管理クラス
+    /// <summary>
+    /// テクスチャリソースの一元的な読み込み・管理・解放
+    /// ファイルパスによるテクスチャの登録・検索・取得インターフェースの提供
+    /// DirectX 12リソースやSRVの生成・管理
+    /// テクスチャメタデータやSRVインデックス、デスクリプタハンドルの管理
+    /// DirectXBaseやSrvManagerとの連携
+    /// シングルトンによるインスタンス管理
+    /// </summary>
 	class TextureManager {
 	public:
 		/// <summary>

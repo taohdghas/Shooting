@@ -4,6 +4,11 @@
 namespace MyEngine {
 
 	// 3Dモデル共通部クラス
+	/// <summary>
+	/// 3Dモデル描画に必要な共通リソースの管理
+	/// DirectX基盤との連携・管理
+	/// 3Dモデル描画処理の基盤となる初期化処理の提供
+	/// </summary>
 	class ModelBase {
 	public:
 		/// <summary>

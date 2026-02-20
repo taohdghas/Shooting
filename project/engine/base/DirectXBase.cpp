@@ -55,7 +55,7 @@ namespace MyEngine {
 		// シザリング矩形の初期化
 		ScissorrectInitialize();
 		// DXCコンパイラの生成
-		DXCcompilerInitialize();
+		DXCompilerInitialize();
 		// グラフィックスパイプライン作成
 		pso_->CreatePostEffectPipelineState();
 	}
@@ -323,7 +323,7 @@ namespace MyEngine {
 	}
 
 	//DXCコンパイラの初期化
-	void DirectXBase::DXCcompilerInitialize() {
+	void DirectXBase::DXCompilerInitialize() {
 		hr_ = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxc_utils_));
 		assert(SUCCEEDED(hr_));
 		hr_ = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxc_compiler_));

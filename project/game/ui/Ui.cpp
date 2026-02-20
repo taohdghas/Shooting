@@ -197,11 +197,11 @@ void Ui::UpdatePauseGuide()
 	//イージング適用
     float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
     //リトライ
-    Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size, eased));
+    Get(SpriteType::Retry)->SetSize( Math::MultiplyScalar(retry_base_size_, eased));
     //タイトルへ戻る
-    Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size, eased));
+    Get(SpriteType::BackTitle)->SetSize(Math::MultiplyScalar(back_title_base_size_, eased));
     //操作説明画面
-    Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size, eased));
+    Get(SpriteType::OperationGuide)->SetSize(Math::MultiplyScalar(operation_base_size_, eased));
 }
 
 //ポーズボタンホバー処理
@@ -215,8 +215,8 @@ void Ui::UpdatePauseButtonHover()
 
     float eased = static_cast<float>(Math::easeOutQuad(pause_scale_));
 
-    Vector2 retrySize = Math::MultiplyScalar(retry_base_size, eased);
-    Vector2 backSize = Math::MultiplyScalar(back_title_base_size, eased);
+    Vector2 retrySize = Math::MultiplyScalar(retry_base_size_, eased);
+    Vector2 backSize = Math::MultiplyScalar(back_title_base_size_, eased);
 
     // 通常サイズに戻す
     Get(SpriteType::Retry)->SetSize(retrySize);

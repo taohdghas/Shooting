@@ -13,6 +13,14 @@ namespace MyEngine {
 	class Object3dBase;
 
 	// 3Dオブジェクトクラス
+	/// <summary>
+	/// 3Dオブジェクトの初期化、更新、描画処理の管理
+	/// モデルデータやトランスフォームの管理
+	/// マテリアルやライティングの設定・制御
+	/// カメラとの連携およびカメラデータの管理
+	/// DirectX 12リソースの生成と管理
+	/// デバッグ用の更新処理の提供
+	/// </summary>
 	class Object3d {
 	public:
 		/// <summary>
