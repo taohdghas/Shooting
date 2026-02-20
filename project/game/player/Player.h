@@ -15,6 +15,16 @@
 //プラットフォーム
 class Platform;
 //プレイヤー
+/// <summary>
+/// プレイヤーキャラクターの状態管理
+/// 操作処理
+/// 弾の生成・管理・描画
+/// レティクルの表示・操作
+/// プラットフォームとの連携
+/// 衝突判定とダメージ処理
+/// デバッグ情報の表示
+/// カメラとの連携
+/// </summary>
 class Player
 {
 public:
@@ -180,14 +190,16 @@ private:
 	float radius_ = 1.0f;
 	//ジャンプ速度
 	float jump_velocity_ = 0.0f;
+	//キー入力による移動速度
+	float move_speed_x_ = 0.1f;
 	//HP
 	int hp_ = 100;
 	//ジャンプ回数
 	int jump_count_ = 0;
 	//最大ジャンプ可能回数
 	const int kMaxJumpCount = 2;
-	//弾の速度
-	const float kBulletSpeed = 1.0f;
+	// 弾速度
+	const float k_bullet_speed = 1.0f;
 	//Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	//回避速度
@@ -217,7 +229,7 @@ private:
 	//攻撃のクールタイム
 	float attack_cooldown_ = 0.0f;
 	//再攻撃できるまでの間隔
-	float attack_interval_ = 25.0f;
+	float attack_interval_ = 20.0f;
 	//回避タイマー
 	float dodge_timer_ = 0.0f;
 	//回避適用時間

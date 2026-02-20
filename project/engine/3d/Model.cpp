@@ -31,9 +31,6 @@ namespace MyEngine {
 		// 頂点バッファをコマンドリストに設定
 		model_base_->GetDxBase()->GetCommandList()->IASetVertexBuffers(0, 1, &vertex_buffer_view_);
 
-		// マテリアルの定数バッファを設定（ルートパラメータ0）
-		//model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, material_resource_->GetGPUVirtualAddress());
-
 		// テクスチャSRVのディスクリプタテーブルを設定（ルートパラメータ2）
 		model_base_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(model_data_.material.textureFilePath));
 
@@ -172,7 +169,7 @@ namespace MyEngine {
 		return modelData;
 	}
 
-	// assimpのノード構造体を独自Nodeに変換
+	//assimpのノード構造体を独自Nodeに変換
 	Node Model::ReadNode(aiNode* node) {
 		Node result;
 

@@ -28,6 +28,12 @@ using namespace Math;
 namespace MyEngine {
 
     // ゲーム全体を司るクラス
+    /// <summary>
+    /// ゲームアプリケーション全体の初期化、更新、描画、終了処理の実装
+    /// ゲーム固有のリソースやシーン、レンダリング設定の管理
+    /// Framework基底クラスから継承したライフサイクル制御の具体的なゲーム処理への適用
+    /// ゲーム全体の状態管理やフレームごとの制御
+    /// </summary>
     class MyGame : public Framework {
     public:
         /// <summary>

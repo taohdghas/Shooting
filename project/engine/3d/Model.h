@@ -11,6 +11,13 @@
 namespace MyEngine {
 
 	// 3Dモデルクラス
+	/// <summary>
+	/// 3Dモデルデータの読み込み・管理
+	/// モデルの初期化、描画処理の提供
+	/// DirectX 12リソースの生成・管理
+	/// マテリアルやライティング設定の制御
+	/// Assimp等を用いた外部ファイルのパースとデータ変換
+	/// </summary>
 	class Model {
 	public:
 		/// <summary>

@@ -6,6 +6,14 @@
 namespace MyEngine {
 
 	// スプライト共通部クラス
+	/// <summary>
+	/// SpriteBaseクラスの責務
+	/// スプライト描画に必要な共通リソースの生成・管理
+	/// DirectX基盤との連携・管理
+	/// スプライト描画時の共通設定処理
+	/// シングルトンによるインスタンス管理
+	/// 初期化・終了処理
+	/// </summary>
 	class SpriteBase {
 	public:
 		/// <summary>

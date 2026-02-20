@@ -6,7 +6,7 @@
 #include "MyMath.h"
 #include "Input.h"
 
-// ゲームシーンの初期化処理ad
+// ゲームシーンの初期化処理
 void GameScene::Initialize() {
 
 	// サウンド初期化

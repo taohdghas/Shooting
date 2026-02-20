@@ -1,13 +1,20 @@
 #pragma once
 #include "Struct.h"
+#include <json.hpp>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include <json.hpp>
 
 namespace MyEngine {
 
     // JSON に関連するクラス
+    /// <summary>
+    /// JSONファイルの読み込み・パースおよびエンジン用データへの変換
+    /// Transform情報（座標・回転・スケール）のJSONからの抽出とVector3等への格納
+    /// ゲームレベルやオブジェクト配置データのロード処理の一元化
+    /// シングルトンによるインスタンス管理
+    /// JSONファイルのパスや拡張子等の管理
+    /// </summary>
     class JsonManager {
     public:
         /// <summary>

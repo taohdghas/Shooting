@@ -6,6 +6,14 @@
 namespace MyEngine {
 
     // WindowsAPI関連のクラス
+    /// <summary>
+    /// Windowsアプリケーションのウィンドウ生成・管理・破棄
+    /// ウィンドウプロシージャによるメッセージ処理
+    /// Windowsメッセージループの管理
+    /// ウィンドウハンドルやインスタンスハンドル等の取得インターフェースの提供
+    /// ウィンドウクラス情報の管理
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class WindowsApi {
     public:
         /// <summary>
@@ -23,11 +31,6 @@ namespace MyEngine {
         /// 初期化処理を行う。
         /// </summary>
         void Initialize();
-
-        /// <summary>
-        /// 毎フレーム更新処理（現在は未使用／空実装）。
-        /// </summary>
-        void Update();
 
         /// <summary>
         /// 終了処理を行う。

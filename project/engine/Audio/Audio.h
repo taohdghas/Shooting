@@ -36,6 +36,13 @@ namespace MyEngine {
 	};
 
 	// オーディオクラス
+    /// <summary>
+    /// XAudio2を用いたオーディオシステムの初期化・終了処理
+    /// WAVファイルの読み込みとサウンドデータの管理
+    /// サウンドデータの再生・解放処理
+    /// シングルトンによるインスタンス管理
+    /// XAudio2リソースの管理
+    /// </summary>
 	class Audio {
 	public:
 		/// <summary>

@@ -3,7 +3,16 @@
 #include "Player.h"
 #include "Platform.h"
 
-class RailCamera {
+// レールカメラクラス
+/// <summary>
+/// レールに沿ったカメラの移動制御
+/// カメラの初期化・毎フレームの位置更新処理
+/// カメラに追従するプレイヤーやプラットフォームの座標制御
+/// カメラ・プレイヤー・プラットフォーム間のオフセット管理
+/// ゲーム進行に合わせたカメラの自動移動
+/// </summary>
+class RailCamera
+{
 public:
     /// <summary>
     /// デフォルトコンストラクタ。

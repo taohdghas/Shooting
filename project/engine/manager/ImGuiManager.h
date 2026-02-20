@@ -13,6 +13,13 @@
 namespace MyEngine {
 
     // ImGui を管理するクラス
+    /// <summary>
+    /// ImGuiの初期化・終了処理の管理
+    /// ImGuiフレームの開始・終了・描画処理の制御
+    /// DirectXおよびWindowsAPIとの連携によるImGui描画環境の構築
+    /// SRV管理との連携
+    /// シングルトンによるインスタンス管理
+    /// </summary>
     class ImGuiManager {
     public:
         /// <summary>

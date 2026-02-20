@@ -78,11 +78,7 @@ namespace MyEngine {
         // ウィンドウ表示
         ShowWindow(hwnd_, SW_SHOW);
     }
-
-    void WindowsApi::Update() {
-        // 今回は何も処理なし
-    }
-
+    //終了処理
     void WindowsApi::Finalize() {
         // ウィンドウを閉じる
         CloseWindow(hwnd_);

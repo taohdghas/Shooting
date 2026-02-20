@@ -82,9 +82,6 @@
     <Filter Include="ヘッダー ファイル\engine\debug">
       <UniqueIdentifier>{952ce3c1-e128-4fcf-989c-220f749537fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\engine\partcle">
-      <UniqueIdentifier>{c8fcffbc-51bc-4c3b-b234-11ebf0e8e329}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\engine\camera">
       <UniqueIdentifier>{e66600bd-9dc5-4592-9317-d5ffe2430b08}</UniqueIdentifier>
     </Filter>
@@ -160,6 +157,9 @@
     <Filter Include="ソース ファイル\application\railcamera">
       <UniqueIdentifier>{5913035c-347c-46f9-844e-773c5069b725}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\engine\particle">
+      <UniqueIdentifier>{c8fcffbc-51bc-4c3b-b234-11ebf0e8e329}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -228,7 +228,7 @@
     <ClCompile Include="engine\base\WindowsAPI.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\Audio.cpp">
+    <ClCompile Include="engine\audio\Audio.cpp">
       <Filter>ソース ファイル\engine\audio</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\BaseScene.cpp">
@@ -264,7 +264,7 @@
     <ClCompile Include="engine\camera\Camera.cpp">
       <Filter>ソース ファイル\engine\camera</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Particle\ParticleEmitter.cpp">
+    <ClCompile Include="engine\particle\ParticleEmitter.cpp">
       <Filter>ソース ファイル\engine\particle</Filter>
     </ClCompile>
     <ClCompile Include="engine\math\MyMath.cpp">
@@ -398,7 +398,7 @@
     <ClInclude Include="engine\io\Input.h">
       <Filter>ヘッダー ファイル\engine\io</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\Audio.h">
+    <ClInclude Include="engine\audio\Audio.h">
       <Filter>ヘッダー ファイル\engine\audio</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SceneFactory.h">
@@ -443,8 +443,8 @@
     <ClInclude Include="engine\camera\Camera.h">
       <Filter>ヘッダー ファイル\engine\camera</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Particle\ParticleEmitter.h">
-      <Filter>ヘッダー ファイル\engine\partcle</Filter>
+    <ClInclude Include="engine\particle\ParticleEmitter.h">
+      <Filter>ヘッダー ファイル\engine\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\math\Struct.h">
       <Filter>ヘッダー ファイル\engine\math</Filter>

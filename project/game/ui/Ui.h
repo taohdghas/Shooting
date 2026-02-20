@@ -6,6 +6,14 @@
 #include <memory>
 
 // UIクラス
+/// <summary>
+/// ゲーム画面上の各種UIの表示・更新・描画管理
+/// スプライトの生成・管理・状態制御
+/// プレイヤー情報とUI表示の連携
+/// ポーズメニューの選択・クリック・ホバー判定や結果管理
+/// 操作説明画面や各種ガイドの表示制御
+/// UIに関するデバッグ表示や状態リセット等の補助機能の提供
+/// </summary>
 class Ui
 {
 public:
@@ -119,11 +127,11 @@ private:
 	// プレイヤーへのポインタ
 	Player* player_ = nullptr;
 	//リトライ文字の基準サイズ
-	Vector2 retry_base_size = { 180.0f,100.0f };
+	Vector2 retry_base_size_ = { 180.0f,100.0f };
 	//タイトルㇸ戻る文字の基準サイズ
-	Vector2 back_title_base_size = { 180.0f,100.0f };
+	Vector2 back_title_base_size_ = { 180.0f,100.0f };
 	//操作説明画面の基準サイズ
-	Vector2 operation_base_size = { 500.0f,500.0f };
+	Vector2 operation_base_size_ = { 500.0f,500.0f };
 	//ポーズ画面のスプライトスケール
 	float pause_scale_ = 0.0f;
 	//ホバー用タイマー

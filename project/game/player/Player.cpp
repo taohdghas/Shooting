@@ -144,10 +144,10 @@ void Player::Move() {
 
     // キー入力によるX方向の速度設定
     if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
-        velocity_.x = -0.1f;
+        velocity_.x = -move_speed_x_;
     }
     if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
-        velocity_.x = 0.1f;
+        velocity_.x = move_speed_x_;
     }
 
     // 位置更新（
@@ -233,8 +233,6 @@ void Player::Attack() {
 	// 弾の進行方向ベクトル
 	Vector3 ray_dir = Math::Normalize(Vector3(far_world.x, far_world.y, far_world.z) - ray_origin);
 
-	// 弾速度
-	const float k_bullet_speed = 1.0f;
 	Vector3 velocity = ray_dir * k_bullet_speed;
 
 	// 弾生成・初期化・リスト追加
@@ -294,8 +292,6 @@ void Player::Dodge() {
 		dodge_cooldown_ = dodge_interval_;
 	}
 }
-
-
 // レティクルの座標更新
 void Player::ReticleUpdate() {
 	POINT mousePos = MyEngine::Input::GetInstance()->GetMousePosition();

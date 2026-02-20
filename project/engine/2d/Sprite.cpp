@@ -88,7 +88,7 @@ namespace MyEngine {
             0.0f, 0.0f,
             float(WindowsApi::kClientWidth),
             float(WindowsApi::kClientHeight),
-            0.0f, 100.0f
+            near_clip_, far_clip_
         );
 
         // ワールド・ビュー・プロジェクション行列を計算し、GPUリソースに転送

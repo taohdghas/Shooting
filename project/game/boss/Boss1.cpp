@@ -147,9 +147,6 @@ void Boss1::FireDoubleHeightShot() {
 	constexpr size_t yCount = std::size(kDoubleShotYOffset);
 	constexpr size_t xCount = std::size(kDoubleShotXOffset);
 
-	// 弾速
-	const float bulletSpeed = 0.7f;
-
 	Vector3 bossPos = transform_.translate;
 	Vector3 playerPos = player_->GetTranslate();
 
@@ -181,9 +178,9 @@ void Boss1::FireDoubleHeightShot() {
 			bullet->Initialize(object3d_base_);
 			bullet->SetTranslate(spawnPos);
 			bullet->SetVelocity({
-				dir.x * bulletSpeed,
-				dir.y * bulletSpeed,
-				dir.z * bulletSpeed
+				dir.x * kBulletSpeed,
+				dir.y * kBulletSpeed,
+				dir.z * kBulletSpeed
 				});
 			bullet->Update();
 			bullets_.push_back(std::move(bullet));
