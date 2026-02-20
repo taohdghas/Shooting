@@ -76,7 +76,7 @@ void TitleObject::Update()
     int hover = GetMouseHoverIndex();
     select_index_ = hover;
 
-    // 拡縮
+    //拡縮
     MenuSizeUpdate();
 
     if (!is_show_howto_) {
@@ -199,7 +199,7 @@ void TitleObject::UpdateHowto() {
     howto_sprite_->Update();
 }
 
-// デバッグ表示（
+// デバッグ表示
 void TitleObject::Debug() {
 #ifdef USE_IMGUI
     ImGui::Begin("TitleObject SetUp");
@@ -310,8 +310,6 @@ bool TitleObject::IsMouseOnSprite(MyEngine::Sprite* sprite)
 
     return false;
 }
-
-
 // マウスが乗っているメニュー項目のインデックスを取得
 int TitleObject::GetMouseHoverIndex()
 {
