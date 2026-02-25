@@ -24,7 +24,7 @@ void PlayerBullet::Update() {
     if (is_dead_) return;
 
     
-     //ロックオン探索（未追尾時）
+     //ロックオン探索
     if (!is_homing_ && is_homing_ready_) {
 
         const float lock_on_distance = 10.0f;
