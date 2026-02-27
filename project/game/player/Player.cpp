@@ -94,11 +94,6 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 		if (MyEngine::Input::GetInstance()->IsMouseLeftPressed()) {
 			Attack();
 		}
-		//追尾弾
-		if (MyEngine::Input::GetInstance()->IsMouseRightPressed()) {
-			AttackHoming();
-		}
-
 		// 回避処理
 		Dodge();
 		// レティクルの座標・状態更新
@@ -250,80 +245,6 @@ void Player::Attack() {
 	// 攻撃クールタイムリセット
 	attack_cooldown_ = attack_interval_;
 }
-//追尾弾
-void Player::AttackHoming() {
-	if (attack_cooldown_ > 0.0f) return;
-
-	MyEngine::Camera* camera =
-		MyEngine::CameraManager::GetInstance()->GetActiveCamera();
-	if (!camera) return;
-
-	const float screen_width = 1280.0f;
-	const float screen_height = 720.0f;
-
-	//レティクル → NDC
-	float ndc_x = (2.0f * reticle_screen_pos_.x) / screen_width - 1.0f;
-	float ndc_y = 1.0f - (2.0f * reticle_screen_pos_.y) / screen_height;
-
-	Vector4 near_clip = { ndc_x, ndc_y, 0.0f, 1.0f };
-	Vector4 far_clip = { ndc_x, ndc_y, 1.0f, 1.0f };
-
-	//ワールド変換
-	Matrix4x4 inv_view_proj =
-		Math::Inverse(camera->GetViewProjectionMatrix());
-
-	Vector4 near_world = Math::Transform(near_clip, inv_view_proj);
-	Vector4 far_world = Math::Transform(far_clip, inv_view_proj);
-
-	//同次座標正規化
-	near_world.x /= near_world.w;
-	near_world.y /= near_world.w;
-	near_world.z /= near_world.w;
-	near_world.w = 1.0f;
-
-	far_world.x /= far_world.w;
-	far_world.y /= far_world.w;
-	far_world.z /= far_world.w;
-	far_world.w = 1.0f;
-
-	//カメラ軸取得
-	Matrix4x4 inv_view = Math::Inverse(camera->GetViewMatrix());
-	Vector3 camera_forward =
-	{ -inv_view.m[2][0], -inv_view.m[2][1], -inv_view.m[2][2] };
-	Vector3 camera_right =
-	{ inv_view.m[0][0],  inv_view.m[0][1],  inv_view.m[0][2] };
-	Vector3 camera_up =
-	{ inv_view.m[1][0],  inv_view.m[1][1],  inv_view.m[1][2] };
-
-	//発射オフセット
-	float offset_forward = -1.0f;
-	float offset_right = 0.0f;
-	float offset_up = -0.5f;
-
-	Vector3 ray_origin =
-		camera->GetTranslate() +
-		camera_forward * offset_forward +
-		camera_right * offset_right +
-		camera_up * offset_up;
-
-	// 進行方向
-	Vector3 ray_dir = Math::Normalize(
-		Vector3(far_world.x, far_world.y, far_world.z) - ray_origin
-	);
-
-	// 弾生成
-	auto bullet = std::make_unique<PlayerBullet>();
-	bullet->Initialize(object3d_base_);
-	bullet->SetPosition(ray_origin);
-	bullet->SetVelocity(ray_dir * 0.5f);
-
-	//敵リストを渡す
-	bullet->SetEnemyList(enemies_);
-
-	bullets_.push_back(std::move(bullet));
-	attack_cooldown_ = attack_interval_;
-}
-
 //回避処理
 void Player::Dodge() {
 
@@ -470,22 +391,4 @@ OBB Player::GetOBB() const {
 	obb.size.z = transform_.scale.z * dimensions_.z * 0.5f;
 
 	return obb;
-}
-// 最も近い敵を取得
-Enemy* Player::FindNearestEnemy(float maxDistance) {
-	Enemy* nearest = nullptr;
-	float minDistSq = maxDistance * maxDistance;
-
-	for (Enemy* enemy : enemies_) {
-		if (!enemy || enemy->IsDead()) continue;
-
-		Vector3 diff = enemy->GetTranslate() - transform_.translate;
-		float distSq = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
-
-		if (distSq < minDistSq) {
-			minDistSq = distSq;
-			nearest = enemy;
-		}
-	}
-	return nearest;
 }

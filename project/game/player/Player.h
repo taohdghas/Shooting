@@ -66,10 +66,6 @@ public:
 	/// </summary>
 	void Attack();
 	/// <summary>
-	/// 追尾弾
-	/// </summary>
-	void AttackHoming();
-	/// <summary>
 	/// 回避
 	/// </summary>
 	void Dodge();
@@ -97,10 +93,6 @@ public:
 	/// OBB取得
 	/// </summary>
 	OBB GetOBB() const;
-	/// <summary>
-	/// 最も近い敵を取得
-	/// </summary>
-	Enemy* FindNearestEnemy(float maxDistance);
 	/// <summary>
 	/// 死亡判定
 	/// </summary>
@@ -153,10 +145,6 @@ public:
 	/// プラットフォーム追従設定
 	/// </summary>
 	void SetFollowPlatform(bool flag) { is_follow_platform_ = flag; }
-	/// <summary>
-	/// 敵リスト設定
-	/// </summary>
-	void SetEnemies(const std::vector<Enemy*>& enemies) {enemies_ = enemies;}
 private:
 	MyEngine::Object3dBase* object3d_base_;
 	MyEngine::Camera* camera_;
