@@ -10,7 +10,7 @@ void TitleScene::Initialize() {
 	MyEngine::Audio::GetInstance()->Initialize();
 
 	// モデルの読み込み
-	MyEngine::ModelManager::GetInstance()->LoadModel("title.obj");
+	MyEngine::ModelManager::GetInstance()->LoadModel("titleobject/title.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("pushspace.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
 

@@ -281,28 +281,26 @@ void GameScene::Draw() {
 // デバッグ表示
 void GameScene::Debug() {
 #ifdef USE_IMGUI
+	// 共通セットアップウィンドウ
 	ImGui::Begin("SetUp");
-	// カメラのパラメータ調整
+
+	// カメラ
 	if (ImGui::TreeNode("Camera")) {
 		Vector3 cameraPos = camera_->GetTranslate();
 		Vector3 cameraRot = camera_->GetRotate();
 		ImGui::DragFloat3("CameraTranslate", &cameraPos.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRot.x, 0.01f);
-		camera_->SetTranslate({ cameraPos.x,cameraPos.y,cameraPos.z });
-		camera_->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
+		camera_->SetTranslate(cameraPos);
+		camera_->SetRotate(cameraRot);
 		ImGui::TreePop();
 	}
-	// プレイヤーのデバッグ表示
+	// プレイヤー
 	player_->Debug();
-	// 敵のデバッグ表示
-	for (int i = 0; i < enemies_.size(); ++i) {
-		enemies_[i]->Debug(i);
-	}
-	// ボスのデバッグ表示
+	// ボス
 	boss_->Debug();
-	// プラットフォームのデバッグ表示
+	// プラットフォーム
 	platform_->Debug();
-	// Skyboxのデバッグ表示
+	// SkyBox
 	Transform& trans = skybox_->GetTransform();
 	if (ImGui::TreeNode("SkyBox")) {
 		ImGui::DragFloat3("Scale", &trans.scale.x, 0.01f, 0.01f, 5000.0f);
@@ -310,13 +308,21 @@ void GameScene::Debug() {
 		ImGui::DragFloat3("Translate", &trans.translate.x, 0.1f, -1000.0f, 1000.0f);
 		ImGui::TreePop();
 	}
-	//UIのデバック表示
+	// UI
 	ui_->Debug();
+	ImGui::End();
+
+	//敵
+	ImGui::Begin("Enemy");
+
+	for (int i = 0; i < enemies_.size(); ++i) {
+		enemies_[i]->Debug(i);
+	}
 
 	ImGui::End();
+
 #endif
 }
-
 //追従カメラ
 void GameScene::FollowCamera() {
 	MyEngine::Camera* cam = MyEngine::CameraManager::GetInstance()->GetActiveCamera();

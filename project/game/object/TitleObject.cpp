@@ -10,9 +10,9 @@ void TitleObject::Initialize() {
     // タイトルのオブジェクト生成・初期化
     title_ = std::make_unique< MyEngine::Object3d>();
     title_->Initialize(MyEngine::Object3dBase::GetInstance());
-    title_->SetModel("title.obj");
-    title_->SetScale({ 1.2f, 1.2f, 1.2f });
-    title_->SetTranslate({ -1.2f, 0.8f, 1.0f });
+    title_->SetModel("titleobject/title.obj");
+    title_->SetScale({ 0.74f, 1.2f, 1.2f });
+    title_->SetTranslate({ -1.3f, 0.8f, 1.0f });
 
     // プレイヤーオブジェクト（外見のみ）生成・初期化
     player_obj_ = std::make_unique< MyEngine::Object3d>();

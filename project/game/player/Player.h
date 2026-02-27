@@ -223,7 +223,7 @@ private:
 	//色変化時間
 	const float damage_color_duration_ = 0.1f;
 	//無敵時間
-	const float invincible_time_ = 0.1f;
+	const float invincible_time_ = 0.2f;
 	//回避最大回転量
 	const float dodge_max_rotate_y_ = 25.0f;
 	//攻撃のクールタイム
