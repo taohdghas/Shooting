@@ -17,52 +17,62 @@ namespace MyEngine {
 /// </summary>
 	class Object3dBase {
 	public:
-		/// <summary>
-		/// シングルトンインスタンスを取得する。
-		/// </summary>
-		static Object3dBase* GetInstance();
+        /// 
+        /// シングルトンインスタンスを取得
+        /// <returns>Object3dBaseのインスタンスポインタ）</returns>
+        /// </summary>
+        static Object3dBase* GetInstance();
 
-		/// <summary>
-		/// 初期化を行う。
-		/// </summary>
-		void Initialize(DirectXBase* directx_base);
+        /// <summary>
+        /// 初期化
+        /// <param name="directx_base">DirectX基盤クラスのポインタ</param>
+        /// <returns>なし</returns>
+        /// </summary>
+        void Initialize(DirectXBase* directx_base);
 
-		/// <summary>
-		/// 終了処理を行う。
-		/// </summary>
-		void Finalize();
+        /// <summary>
+        /// 終了処理
+        /// <returns>なし</returns>
+        /// </summary>
+        void Finalize();
 
-		/// <summary>
-		/// 共通描画設定を行う。
-		/// </summary>
-		void DrawBaseSet();
+        /// <summary>
+        /// 共通描画設
+        /// <returns>なし</returns>
+        /// </summary>
+        void DrawBaseSet();
 
-		/// <summary>
-		/// デフォルトのカメラをセットする。
-		/// </summary>
-		void SetDefaultCamera(Camera* camera) { default_camera_ = camera; }
+        /// <summary>
+        /// デフォルトのカメラをセット
+        /// <param name="camera">カメラのポインタ</param>
+        /// <returns>なし</returns>
+        /// </summary>
+        void SetDefaultCamera(Camera* camera) { default_camera_ = camera; }
 
-		/// <summary>
-		/// DirectXBase を取得する。
-		/// </summary>
-		DirectXBase* GetDxBase() const { return directx_base_; }
+        /// <summary>
+        /// DirectXBase を取得
+        /// <returns>DirectXBaseのポインタ</returns>
+        /// </summary>
+        DirectXBase* GetDxBase() const { return directx_base_; }
 
-		/// <summary>
-		/// デフォルトカメラを取得する。
-		/// </summary>
-		Camera* GetDefaultCamera() const { return default_camera_; }
+        /// <summary>
+        /// デフォルトカメラを取得
+        /// <returns>カメラのポインタ</returns>
+        /// </summary>
+        Camera* GetDefaultCamera() const { return default_camera_; }
 
-		/// <summary>
-		/// ルートシグネチャを取得する。
-		/// </summary>
-		ID3D12RootSignature* GetRootSignature() const { return pso_->GetRootSignature(); }
+        /// <summary>
+        /// ルートシグネチャを取得
+        /// <returns>ID3D12RootSignatureのポインタ</returns>
+        /// </summary>
+        ID3D12RootSignature* GetRootSignature() const { return pso_->GetRootSignature(); }
 
-		/// <summary>
-		/// グラフィックスパイプラインステートを取得する。
-		/// </summary>
-		ID3D12PipelineState* GetGraphicsPipelineState() const { return pso_->GetGraphicsPipelineState(); }
-
-	public:
+        /// <summary>
+        /// グラフィックスパイプラインステートを取得
+        /// <returns>ID3D12PipelineStateのポインタ</returns>
+        /// </summary>
+        ID3D12PipelineState* GetGraphicsPipelineState() const { return pso_->GetGraphicsPipelineState(); }
+    public:
 		Object3dBase() = default;
 		~Object3dBase() = default;
 

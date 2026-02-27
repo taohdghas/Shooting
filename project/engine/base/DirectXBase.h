@@ -34,54 +34,70 @@ namespace MyEngine {
     class DirectXBase {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンス
+        /// <returns>DirectXBaseのインスタンス（ポインタ）</returns>
         /// </summary>
         static DirectXBase* GetInstance();
 
         /// <summary>
-        /// 初期化を行う。
+        /// 初期化
+        /// <param name="windows_api">WindowsAPIクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(WindowsApi* windows_api);
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// 描画開始前の共通処理を行う。
+        /// 描画開始前の共通処理
+        /// <returns>なし</returns>
         /// </summary>
         void PreDraw();
 
         /// <summary>
-        /// 描画終了後の共通処理を行う。
+        /// 描画終了後の共通処理
+        /// <returns>なし</returns>
         /// </summary>
         void PostDraw();
 
         /// <summary>
-        /// レンダーテクスチャへ描画する際の前処理を行う。
+        /// レンダーテクスチャへ描画する際の前処理
+        /// <returns>なし</returns>
         /// </summary>
         void PreDrawRenderTexture();
 
         /// <summary>
-        /// レンダーテクスチャの内容をスワップチェインに描画する処理を行う。
+        /// レンダーテクスチャの内容をスワップチェインに描画する処理
+        /// <returns>なし</returns>
         /// </summary>
         void DrawRenderTextureToScreen();
 
         /// <summary>
-        /// レンダーテクスチャのリソースを SRV（ピクセルシェーダで参照可能）へ遷移する。
+        /// レンダーテクスチャのリソースを SRVへ遷移
+        /// <returns>なし</returns>
         /// </summary>
         void TransitionRenderTextureToSRV();
 
         /// <summary>
-        /// テクスチャデータを GPU に転送するユーティリティ。
+        /// テクスチャデータを GPU に転送するユーティリティ
+        /// <param name="texture">転送先のテクスチャリソース</param>
+        /// <param name="mip_images">転送するScratchImageデータ</param>
+        /// <returns>転送後のテクスチャリソース</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(
             Microsoft::WRL::ComPtr<ID3D12Resource> texture,
             const DirectX::ScratchImage& mip_images);
 
         /// <summary>
-        /// デスクリプタヒープを生成する。
+        /// デスクリプタヒープを生成
+        /// <param name="heap_type">ヒープタイプ</param>
+        /// <param name="num_descriptors">デスクリプタ数</param>
+        /// <param name="shader_visible">シェーダーから参照可能か</param>
+        /// <returns>ID3D12DescriptorHeapのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
             D3D12_DESCRIPTOR_HEAP_TYPE heap_type,
@@ -89,31 +105,48 @@ namespace MyEngine {
             bool shader_visible);
 
         /// <summary>
-        /// 深度ステンシル用テクスチャリソースを生成する。
+        /// 深度ステンシル用テクスチャリソースを生成
+        /// <param name="device">デバイス</param>
+        /// <param name="width">幅</param>
+        /// <param name="height">高さ</param>
+        /// <returns>ID3D12ResourceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(
             Microsoft::WRL::ComPtr<ID3D12Device> device,
             int32_t width, int32_t height);
 
         /// <summary>
-        /// シェーダーファイルをコンパイルする。
+        /// シェーダーファイルをコンパイル
+        /// <param name="file_path">シェーダーファイルのパス</param>
+        /// <param name="profile">シェーダープロファイル</param>
+        /// <returns>IDxcBlobのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
             const std::wstring& file_path, const wchar_t* profile);
 
         /// <summary>
-        /// 汎用バッファリソースを生成する。
+        /// 汎用バッファリソースを生成
+        /// <param name="size_in_bytes">バッファサイズ（バイト）</param>
+        /// <returns>ID3D12ResourceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t size_in_bytes);
 
         /// <summary>
-        /// テクスチャリソースを生成する。
+        /// テクスチャリソースを生成
+        /// <param name="metadata">テクスチャメタデータ</param>
+        /// <returns>ID3D12ResourceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(
             const DirectX::TexMetadata& metadata);
 
         /// <summary>
-        /// レンダーテクスチャ用のリソースを生成する。
+        /// レンダーテクスチャ用のリソースを生成
+        /// <param name="device">デバイス</param>
+        /// <param name="width">幅</param>
+        /// <param name="height">高さ</param>
+        /// <param name="format">フォーマット</param>
+        /// <param name="clear_color">クリアカラー</param>
+        /// <returns>ID3D12ResourceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(
             Microsoft::WRL::ComPtr<ID3D12Device> device,
@@ -122,52 +155,69 @@ namespace MyEngine {
             const Vector4& clear_color);
 
         /// <summary>
-        /// テクスチャファイルを読み込んで ScratchImage として返すユーティリティ。
+        /// テクスチャファイルを読み込んで ScratchImage として返すユーティリティ
+        /// <param name="file_path">テクスチャファイルのパス</param>
+        /// <returns>DirectX::ScratchImage</returns>
         /// </summary>
         static DirectX::ScratchImage LoadTexture(const std::string& file_path);
 
-    public:
         /// <summary>
-        /// デバイスを取得する。
+        /// デバイスを取得
+        /// <returns>ID3D12DeviceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Device> GetDevice() { return device_; }
 
         /// <summary>
-        /// コマンドリストを取得する。
+        /// コマンドリストを取得
+        /// <returns>ID3D12GraphicsCommandListのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return command_list_; }
 
         /// <summary>
-        /// レンダーテクスチャのリソースポインタを取得する。
+        /// レンダーテクスチャのリソースポインタを取得
+        /// <returns>ID3D12Resourceのポインタ</returns>
         /// </summary>
         ID3D12Resource* GetRenderTextureResource() const { return render_texture_resource_.Get(); }
 
         /// <summary>
-        /// スワップチェインのバッファ数を取得する。
+        /// スワップチェインのバッファ数を取得
+        /// <returns>バッファ数（size_t）</returns>
         /// </summary>
         size_t GetSwapChainResourcesNum() const { return swap_chain_desc_.BufferCount; }
 
         /// <summary>
-        /// 指定デスクリプタヒープの CPU デスクリプタハンドルを取得する。
+        /// 指定デスクリプタヒープの CPU デスクリプタハンドルを取得
+        /// <param name="descriptor_heap">デスクリプタヒープ</param>
+        /// <param name="descriptor_size">デスクリプタサイズ</param>
+        /// <param name="index">インデックス</param>
+        /// <returns>D3D12_CPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(
             Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptor_heap,
             uint32_t descriptor_size, uint32_t index);
 
         /// <summary>
-        /// 指定デスクリプタヒープの GPU デスクリプタハンドルを取得する。
+        /// 指定デスクリプタヒープの GPU デスクリプタハンドルを取得
+        /// <param name="descriptor_heap">デスクリプタヒープ</param>
+        /// <param name="descriptor_size">デスクリプタサイズ</param>
+        /// <param name="index">インデックス</param>
+        /// <returns>D3D12_GPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(
             Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptor_heap,
             uint32_t descriptor_size, uint32_t index);
 
         /// <summary>
-        /// DSV 用 CPU デスクリプタハンドルを取得する。
+        /// DSV 用 CPU デスクリプタハンドルを取得
+        /// <param name="index">インデックス</param>
+        /// <returns>D3D12_CPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
 
         /// <summary>
-        /// DSV 用 GPU デスクリプタハンドルを取得する。
+        /// DSV 用 GPU デスクリプタハンドルを取得
+        /// <param name="index">インデックス</param>
+        /// <returns>D3D12_GPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
@@ -176,31 +226,82 @@ namespace MyEngine {
         ~DirectXBase() = default;
     private:
 
-        // デバイスの初期化
+        /// <summary>
+        /// デバイスの初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void DeviceInitialize();
-        // コマンド関連の初期化
+
+        /// <summary>
+        /// コマンド関連の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void CommandInitialize();
-        // スワップチェーンの生成
+
+        /// <summary>
+        /// スワップチェーンの生成
+        /// <returns>なし</returns>
+        /// </summary>
         void SwapchainGenerate();
-        // 深度バッファの生成
+
+        /// <summary>
+        /// 深度バッファの生成
+        /// <returns>なし</returns>
+        /// </summary>
         void DepthbufferGenerate();
-        // デスクリプタヒープの生成
+
+        /// <summary>
+        /// デスクリプタヒープの生成
+        /// <returns>なし</returns>
+        /// </summary>
         void DescriptorheapGenerate();
-        // RTV の初期化
+
+        /// <summary>
+        /// レンダーターゲットビュー(RTV)の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void RendertargetviewInitialize();
-        // DSV の初期化
+
+        /// <summary>
+        /// 深度ステンシルビュー(DSV)の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void DepthstencilviewInitialize();
-        // フェンスの初期化
+
+        /// <summary>
+        /// フェンスの初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void FenceInitialize();
-        // ビューポートの初期化
+
+        /// <summary>
+        /// ビューポートの初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void ViewportInitialize();
-        // シザー矩形の初期化
+
+        /// <summary>
+        /// シザー矩形の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void ScissorrectInitialize();
-        // DXCコンパイラの生成
+
+        /// <summary>
+        /// DXCコンパイラの生成
+        /// <returns>なし</returns>
+        /// </summary>
         void DXCompilerInitialize();
-        // FPS固定初期化
+
+        /// <summary>
+        /// FPS固定用の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void InitializeFixFPS();
-        // FPS固定更新
+
+        /// <summary>
+        /// FPS固定用の更新処理
+        /// <returns>なし</returns>
+        /// </summary>
         void UpdateFixFPS();
 
     private:

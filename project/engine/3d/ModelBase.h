@@ -12,12 +12,15 @@ namespace MyEngine {
 	class ModelBase {
 	public:
 		/// <summary>
-		/// 初期化を行う。
-		/// </summary>
+        /// 初期化
+        /// <param name="directx_base">DirectX基盤クラスのポインタ</param>
+        /// <returns>なし</returns>
+        /// </summary>
 		void Initialize(DirectXBase* directx_base);
 
 		/// <summary>
-		/// DirectXBase のポインタを取得する。
+		/// DirectXBase のポインタを取得
+		/// <returns>DirectXBaseのポインタ</returns>
 		/// </summary>
 		DirectXBase* GetDxBase() const { return directx_base_; }
 

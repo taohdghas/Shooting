@@ -34,23 +34,28 @@ namespace MyEngine {
 
 	public:
 		/// <summary>
-		/// エミッターを初期化する。
-		/// </summary>
+        /// エミッターを初期化
+        /// <param name="name">エミッター名（std::string）</param>
+        /// <returns>なし</returns>
+        /// </summary>
 		void Initialize(const std::string& name);
 
 		/// <summary>
-		/// 毎フレームの更新処理を行う。
+		/// 毎フレームの更新処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Update();
 
 		/// <summary>
-		/// 即時にパーティクルを発生させる。
+		/// 即時にパーティクルを発生
+		/// <returns>なし</returns>
 		/// </summary>
 		void Emit();
 
-	public:
 		/// <summary>
-		/// エミッターの発生位置を設定する。
+		/// エミッターの発生位置を設定
+		/// <param name="pos">発生位置（Vector3）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetPosition(const Vector3& pos) { emitter_.transform.translate = pos; }
 

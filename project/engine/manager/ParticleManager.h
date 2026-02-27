@@ -81,82 +81,122 @@ namespace MyEngine {
 
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>ParticleManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static ParticleManager* GetInstance();
 
         /// <summary>
-        /// 初期化する。
+        /// 初期化
+        /// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+        /// <param name="srv_manager">SrvManagerクラスのポインタ</param>
+        /// <param name="camera">Cameraクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(DirectXBase* directx_base, SrvManager* srv_manager, Camera* camera);
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// シーン終了時に呼ぶクリア処理。
+        /// シーン終了時に呼ぶクリア処理
+        /// <returns>なし</returns>
         /// </summary>
         void Clear();
 
         /// <summary>
-        /// 毎フレーム更新処理を行う。
+        /// 毎フレーム更新処理
+        /// <returns>なし</returns>
         /// </summary>
         void Update();
 
         /// <summary>
-        /// 描画処理を行う
+        /// 描画処理
+        /// <returns>なし</returns>
         /// </summary>
         void Draw();
 
         /// <summary>
-        /// パーティクルグループを生成する。
+        /// パーティクルグループを生成
+        /// <param name="name">グループ名（std::string）</param>
+        /// <param name="texture_file_path">テクスチャファイルパス（std::string）</param>
+        /// <param name="type">パーティクル種類（ParticleType）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CreateParticleGroup(const std::string name, const std::string texture_file_path, ParticleType type);
 
         /// <summary>
-        /// 新しいパーティクルを生成して返す。
+        /// 新しいパーティクルを生成して返す
+        /// <param name="random_engine">乱数エンジン</param>
+        /// <param name="translate">生成位置（Vector3）</param>
+        /// <param name="type">パーティクル種類（ParticleType）</param>
+        /// <returns>生成されたParticle構造体</returns>
         /// </summary>
         Particle MakeNewParticle(std::mt19937& random_engine, const Vector3& translate, ParticleType type);
 
         /// <summary>
-        /// 指定グループの位置にパーティクルを発生させる。
+        /// 指定グループの位置にパーティクルを発生
+        /// <param name="name">グループ名（std::string）</param>
+        /// <param name="position">発生位置（Vector3）</param>
+        /// <param name="count">発生数（uint32_t）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Emit(const std::string& name, const Vector3& position, uint32_t count);
 
         /// <summary>
-        /// AABB 内に点が存在するか判定する。
+        /// AABB 内に点が存在するか判定
+        /// <param name="aabb">AABB構造体</param>
+        /// <param name="point">判定する点（Vector3）</param>
+        /// <returns>存在すればtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsCollision(const AABB& aabb, const Vector3& point);
 
         /// <summary>
-        /// 指定グループの ParticleType を取得する。
+        /// 指定グループの ParticleType を取得
+        /// <param name="name">グループ名（std::string）</param>
+        /// <returns>パーティクル種類（ParticleType）</returns>
         /// </summary>
         ParticleType GetParticleType(const std::string& name);
+
     private:
         /// <summary>
-        /// 汎用（四角）パーティクルの頂点データを作成し model_data に格納する。
+        /// 四角パーティクルの頂点データを作成し model_data に格納
+        /// <param name="model_data">頂点データを格納するModelData構造体</param>
+        /// <returns>なし</returns>
         /// </summary>
         void VertexDataCreate(ModelData& model_data);
 
         /// <summary>
-        /// リング型パーティクルの頂点データを作成する。
+        /// リング型パーティクルの頂点データを作成
+        /// <param name="model_data">頂点データを格納するModelData構造体</param>
+        /// <returns>なし</returns>
         /// </summary>
         void RingVertexDataCreate(ModelData& model_data);
 
         /// <summary>
-        /// シリンダー型パーティクルの頂点データを作成する。
+        /// シリンダー型パーティクルの頂点データを作成
+        /// <param name="model_data">頂点データを格納するModelData構造体</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CylinderVertexDataCreate(ModelData& model_data);
 
         /// <summary>
-        /// マテリアル用の GPU バッファを生成して初期値を書き込む。
+        /// マテリアル用の GPU バッファを生成して初期値を書き込む
+        /// <returns>なし</returns>
         /// </summary>
         void MaterialCreate();
 
         /// <summary>
-        /// 頂点バッファリソースを生成し、データをマッピング・コピーする。
+        /// 頂点バッファリソースを生成し、データをマッピング・コピー
+        /// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+        /// <param name="vertices">頂点データ配列</param>
+        /// <param name="vertex_resource">生成された頂点リソース</param>
+        /// <param name="vertex_buffer_view">頂点バッファビュー</param>
+        /// <param name="vertex_data">頂点データ書き込み用ポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CreateAndMapVertexBuffer(
             DirectXBase* directx_base,

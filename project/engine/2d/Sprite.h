@@ -16,81 +16,136 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// スプライトを初期化する。
+		/// <param name="sprite_base">スプライト共通部のポインタ</param>
+		/// <param name="texture_file_path">テクスチャファイルのパス</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void Initialize(SpriteBase* sprite_base, const std::string& texture_file_path);
 
 		/// <summary>
 		/// 毎フレームの更新処理を行う
+		/// <returns>なし</returns>
 		/// </summary>
 		void Update();
 
 		/// <summary>
 		/// スプライトを描画する。
+		/// <returns>なし</returns>
 		/// </summary>
 		void Draw();
 
-		/// <summary>スプライトの位置を取得する。</summary>
+		/// <summary>スプライトの位置を取得する。
+		/// <returns>スプライトの座標（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetPosition() const { return position_; }
-		/// <summary>スプライトの回転角（ラジアンまたは度は実装に依存）を取得する。</summary>
+		/// <summary>スプライトの回転角を取得
+		/// <returns>回転角（float）</returns>
+		/// </summary>
 		float GetRotation() const { return rotation_; }
-		/// <summary>スプライトの描画色（RGBA）を取得する。</summary>
+		/// <summary>スプライトの描画色を取得
+		/// <returns>色（Vector4）</returns>
+		/// </summary>
 		const Vector4& GetColor() const { return material_data_->color; }
-		/// <summary>スプライトの表示サイズを取得する。</summary>
+		/// <summary>スプライトの表示サイズを取得
+		/// <returns>サイズ（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetSize() const { return size_; }
-		/// <summary>スプライトのアンカーポイントを取得する（左上原点からの比率など）。</summary>
+		/// <summary>スプライトのアンカーポイントを取得
+		/// <returns>アンカーポイント（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetAnchorPoint() const { return anchor_point_; }
-		/// <summary>描画に使用するテクスチャの切り出し左上座標を取得する。</summary>
+		/// <summary>描画に使用するテクスチャの切り出し左上座標を取得
+		/// <returns>左上座標（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetTextureLeftTop() const { return texture_left_top_; }
-		/// <summary>描画に使用するテクスチャの切り出しサイズを取得する。</summary>
+		/// <summary>描画に使用するテクスチャの切り出しサイズを取得
+		/// <returns>切り出しサイズ（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetTextureSize() const { return texture_size_; }
-		/// <summary>水平方向に反転しているかを取得する。</summary>
+		/// <summary>水平方向に反転しているかを取得
+		/// <returns>反転状態（bool）</returns>
+		/// </summary>
 		const bool& GetIsFlipX() const { return is_flip_x_; }
-		/// <summary>垂直方向に反転しているかを取得する。</summary>
+		/// <summary>垂直方向に反転しているかを取得
+		/// <returns>反転状態（bool）</returns>
+		/// </summary>
 		const bool& GetIsFlipY() const { return is_flip_y_; }
 
-		/// <summary>スプライトの位置を設定する。</summary>
+		/// <summary>スプライトの位置を設定。
+		/// <param name="position">スプライトの座標（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetPosition(const Vector2& position) { position_ = position; }
-		/// <summary>スプライトの回転角を設定する。</summary>
+		/// <summary>スプライトの回転角を設定
+		/// <param name="rotation">回転角（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetRotation(float rotation) { rotation_ = rotation; }
-		/// <summary>スプライトの描画色（RGBA）を設定する。</summary>
+		/// <summary>スプライトの描画色（RGBA）を設定
+		/// <param name="color">色（Vector4）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetColor(const Vector4& color) { material_data_->color = color; }
-		/// <summary>スプライトの表示サイズを設定する。</summary>
+		/// <summary>スプライトの表示サイズを設定
+		/// <param name="size">サイズ（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetSize(const Vector2& size) { size_ = size; }
-		/// <summary>スプライトのアンカーポイントを設定する。</summary>
+		/// <summary>スプライトのアンカーポイントを設定
+		/// <param name="anchor_point">アンカーポイント（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetAnchorPoint(const Vector2& anchor_point) { anchor_point_ = anchor_point; }
-		/// <summary>テクスチャの切り出し左上座標を設定する。</summary>
+		/// <summary>テクスチャの切り出し左上座標を設定
+		/// <param name="texture_left_top">左上座標（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetTextureLeftTop(const Vector2& texture_left_top) { texture_left_top_ = texture_left_top; }
-		/// <summary>テクスチャの切り出しサイズを設定する。</summary>
+		/// <summary>テクスチャの切り出しサイズを設定
+		/// <param name="texture_size">切り出しサイズ（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetTextureSize(const Vector2& texture_size) { texture_size_ = texture_size; }
-		/// <summary>水平方向の反転設定を行う。</summary>
+		/// <summary>水平方向の反転設定
+		/// <param name="is_flip_x">反転状態（bool）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetIsFlipX(bool is_flip_x) { is_flip_x_ = is_flip_x; }
-		/// <summary>垂直方向の反転設定を行う。</summary>
+		/// <summary>垂直方向の反転設定
+		/// <param name="is_flip_y">反転状態（bool）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetIsFlipY(bool is_flip_y) { is_flip_y_ = is_flip_y; }
 
 	private:
-		SpriteBase* sprite_base_ = nullptr;
-		SrvManager* srv_manager_ = nullptr;
-
 		/// <summary>
-		// 頂点データ作成
-		/// </summary>
+        /// 頂点データ作成
+        /// <returns>なし</returns>
+        /// </summary>
 		void VertexDataCreate();
 		/// <summary>
-		// インデックス作成
+		/// インデックス作成
+		/// <returns>なし</returns>
 		/// </summary>
 		void IndexCreate();
 		/// <summary>
-		// マテリアル作成
+		/// マテリアル作成
+		/// <returns>なし</returns>
 		/// </summary>
 		void MaterialCreate();
 		/// <summary>
-		// 座標変換行列データ作成
+		/// 座標変換行列データ作成
+		/// <returns>なし</returns>
 		/// </summary>
 		void TransformationCreate();
 		/// <summary>
-		// テクスチャサイズをイメージに合わせる
+		/// テクスチャサイズをイメージに合わせる
+		/// <returns>なし</returns>
 		/// </summary>
 		void AdjustTextureSize();
+	private:
+		SpriteBase* sprite_base_ = nullptr;
+		SrvManager* srv_manager_ = nullptr;
 
 		// バッファリソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertex_resource_;
@@ -136,4 +191,3 @@ namespace MyEngine {
 		std::string file_path_;
 	};
 }
-

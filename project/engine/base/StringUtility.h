@@ -12,11 +12,15 @@ namespace MyEngine {
 	/// </summary>
 	namespace string_utility {
 		/// <summary>
-		/// UTF-8 エンコードされた std::string を std::wstring (Windows の UTF-16) に変換する。
-		/// </summary>
+        /// UTF-8 エンコードされた std::string を std::wstringに変換
+        /// <param name="str">変換元のUTF-8文字列</param>
+        /// <returns>変換後のUTF-16文字列（std::wstring）</returns>
+        /// </summary>
 		std::wstring ConvertString(const std::string& str);
 		/// <summary>
-		/// std::wstring (Windows の UTF-16) を UTF-8 エンコードされた std::string に変換する。
+		/// std::wstringを UTF-8 エンコードされた std::string に変換
+		/// <param name="str">変換元のUTF-16文字列</param>
+		/// <returns>変換後のUTF-8文字列（std::string）</returns>
 		/// </summary>
 		std::string ConvertString(const std::wstring& str);
 	}
