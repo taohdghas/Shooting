@@ -150,7 +150,7 @@ private:
 	// 離脱速度
 	Vector3 exit_velocity_ = { 0.0f,6.0f,0.0f };
 	// 通常時のスケールを保存
-	Vector3 default_scale_ = { 0.5f, 0.5f, 0.5f };
+	Vector3 default_scale_ = { 0.8f, 0.8f, 0.8f };
 	// レール移動用基準位置
 	Vector3 rail_base_position_;  
 	// レール移動用開始点

@@ -163,6 +163,9 @@ public:
 	/// 通常時のスケールを設定する。
 	/// </summary>
 	void SetDefaultScale(const Vector3& scale) {default_scale_ = scale;}
+
+	void SetMaxSpeed(float speed) { max_speed_ = speed; }
+	void SetAcceleration(float accel) { acceleration_ = accel; }
 private:
 	// 現在の状態を表すステート
 	std::unique_ptr<BossState> state_;

@@ -13,7 +13,7 @@ void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("player/playerbullet.obj");
-	object_->SetScale({ 1.5f, 1.5f, 1.5f });
+	object_->SetScale({ 1.8f, 1.8f, 1.8f });
 
 	// 寿命タイマーの初期化
 	death_timer_ = kLifeTime;

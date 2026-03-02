@@ -14,7 +14,7 @@ void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
 	object_->Initialize(object3d_base_);
 	object_->SetModel("platform/platform.obj");
 	object_->SetLight(false);
-	transform_.scale = { 7.5f,2.0f,3.0f };
+	transform_.scale = { 7.5f,2.0f,3.0f };//1.5,1,1
 	transform_.translate = { 0.0f,-1.9f,0.0f };
 
 	//煙パーティクルエミッター初期化
