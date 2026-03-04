@@ -16,32 +16,39 @@ class EnemyBullet
 {
 public:
     /// <summary>
-    /// 初期化する。
+    /// 初期化
+    /// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+    /// <returns>なし</returns>
     /// </summary>
     void Initialize(MyEngine::Object3dBase* object3d_base);
 
     /// <summary>
-    /// 毎フレームの更新処理を行う
+    /// 更新
+    /// <returns>なし</returns>
     /// </summary>
     void Update();
 
     /// <summary>
-    /// 描画処理を行う
+    /// 描画
+    /// <returns>なし</returns>
     /// </summary>
     void Draw();
 
     /// <summary>
     /// 衝突時のコールバック
+    /// <returns>なし</returns>
     /// </summary>
     void OnCollision();
 
     /// <summary>
-    /// OBB（Oriented Bounding Box）を取得する
+    /// OBBを取得
+    /// <returns>OBB構造体</returns>
     /// </summary>
     OBB GetOBB() const;
 
     /// <summary>
-    /// デスフラグが立っているかを取得する。
+    /// デスフラグが立っているかを取得
+    /// <returns>デスフラグが立っていればtrue</returns>
     /// </summary>
     bool IsDead() const { return is_dead_; }
 
@@ -49,32 +56,44 @@ public:
     /// Getter ///
 
     /// <summary>
-    /// 現在の座標（Transform.translate）を取得する。
+    /// 現在の座標を取得
+    /// <returns>現在の座標（Vector3参照）</returns>
     /// </summary>
     const Vector3& GetTranslate() const { return transform_.translate; }
 
     /// <summary>
-    /// 衝突判定等に使用する半径を取得する。
+    /// 衝突判定等に使用する半径を取得
+    /// <returns>半径</returns>
     /// </summary>
     float GetRadius() const { return radius_; }
 
     /// <summary>
-    /// 弾の攻撃力を取得する。
+    /// 弾の攻撃力を取得
+    /// <returns>攻撃力</returns>
     /// </summary>
     int GetAttack() const { return attack_; }
 
     /// Setter ///
 
     /// <summary>
-    /// 座標を設定する（変名: GetTranslate）。
+    /// 座標を設定。
+    /// <param name="position">設定する座標値</param>
+    /// <returns>なし</returns>
     /// </summary>
     void SetTranslate(const Vector3& position) { transform_.translate = position; }
 
     /// <summary>
-    /// 速度を設定する。
+    /// 速度を設定
+    /// <param name="velocity">設定する速度値</param>
+    /// <returns>なし</returns>
     /// </summary>
     void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 
+    /// <summary>
+    /// 色を設定
+    /// <param name="color">設定する色（Vector4）</param>
+    /// <returns>なし</returns>
+    /// </summary>
     void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 private:

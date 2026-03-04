@@ -17,28 +17,35 @@ namespace MyEngine {
     {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>SceneManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static SceneManager* GetInstance();
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
         /// <summary>
-        /// 毎フレームの更新処理を行う。
+        /// 毎フレームの更新処理
+        /// <returns>なし</returns>
         /// </summary>
         void Update();
         /// <summary>
-        /// 描画処理を行う。
+        /// 描画処理
+        /// <returns>なし</returns>
         /// </summary>
         void Draw();
-    public:
         /// <summary>
-        /// 次のシーンを予約する。
+        /// 次のシーンを予約
+        /// <param name="scene_name">遷移先シーン名（std::string）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void ChangeScene(const std::string& scene_name);
         /// <summary>
-        /// シーンファクトリーをセットする。
+        /// シーンファクトリーをセット
+        /// <param name="scene_factory">AbstractSceneFactoryのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void SetSceneFactory(AbstractSceneFactory* scene_factory) { scene_factory_ = scene_factory; }
     private:

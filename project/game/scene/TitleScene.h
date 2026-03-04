@@ -30,29 +30,39 @@ class TitleScene : public MyEngine::BaseScene
 {
 public:
 	/// <summary>
-	/// シーン初期化を行う。
+	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize() override;
+
 	/// <summary>
-	/// シーン終了時の後始末を行う。
+	/// 終了処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void Finalize() override;
+
 	/// <summary>
-	/// 毎フレーム更新を行う。
+	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update() override;
+
 	/// <summary>
-	/// 描画処理を行う。
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw() override;
+
 	/// <summary>
-	/// デバッグ表示を行う（ImGui）
+	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug() override;
 
 private:
 	/// <summary>
-	/// シーン遷移処理を行う。
+	/// シーン遷移処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void SceneChange();
 

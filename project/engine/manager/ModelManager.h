@@ -18,29 +18,38 @@ namespace MyEngine {
     class ModelManager {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>ModelManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static ModelManager* GetInstance();
 
         /// <summary>
-        /// 初期化を行う。
+        /// 初期化を行う
+        /// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(DirectXBase* directx_base);
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理を行う
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// モデルファイルを読み込む。
+        /// モデルファイルを読み込む
+        /// <param name="file_path">モデルファイルのパス（std::string）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void LoadModel(const std::string& file_path);
 
         /// <summary>
-        /// 登録済みのモデルを検索して返す。
+        /// 登録済みのモデルを検索して返す
+        /// <param name="file_path">モデルファイルのパス（std::string）</param>
+        /// <returns>Modelのポインタ。未登録の場合はnullptr</returns>
         /// </summary>
         Model* FindModel(const std::string& file_path);
+      
     public:
         // コンストラクタ
         ModelManager() {}

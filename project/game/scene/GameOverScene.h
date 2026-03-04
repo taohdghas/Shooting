@@ -16,33 +16,33 @@ class GameOverScene : public  MyEngine::BaseScene
 {
 public:
 	/// <summary>
-	/// ゲームオーバーシーンの初期化処理を行う。
+	/// 初期化
 	/// </summary>
 	void Initialize() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンの終了処理を行う
+	/// 終了処理
 	/// </summary>
 	void Finalize() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンの毎フレーム更新処理を行う。
+	/// 更新処理
 	/// </summary>
 	void Update() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンの描画処理を行う。
+	/// 描画処理
 	/// </summary>
 	void Draw() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンのデバッグ情報を表示する
+	/// デバッグ表示
 	/// </summary>
 	void Debug() override;
 
 public:
 	/// <summary>
-	/// シーン遷移処理を行う。
+	/// シーン遷移処理
 	/// </summary>
 	void SceneChange();
 

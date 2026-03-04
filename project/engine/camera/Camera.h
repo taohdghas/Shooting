@@ -14,39 +14,71 @@ namespace MyEngine {
 	class Camera {
 	public:
 		/// <summary>
-		/// デフォルトコンストラクタ。
-		/// </summary>
+        /// デフォルトコンストラクタ
+        /// <returns>なし</returns>
+        /// </summary>
 		Camera();
 
 		/// <summary>
-		/// 毎フレーム更新する。
+		/// 毎フレーム更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void Update();
 
-		/// <summary>回転を設定する。</summary>
+		/// <summary>回転を設定
+		/// <param name="rotate">回転値（Vector3）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-		/// <summary>平行移動（座標）を設定する。</summary>
+		/// <summary>平行移動を設定
+		/// <param name="translate">座標値（Vector3）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
-		/// <summary>垂直方向（y軸）視野角を設定する。</summary>
+		/// <summary>垂直方向視野角を設定
+		/// <param name="fov_y">視野角（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetFovY(float fov_y) { fov_y_ = fov_y; }
-		/// <summary>アスペクト比を設定する（幅 / 高さ）。</summary>
+		/// <summary>アスペクト比を設定する
+		/// <param name="aspect_ratio">アスペクト比（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetAspectRatio(float aspect_ratio) { aspect_ratio_ = aspect_ratio; }
-		/// <summary>ニアクリップ距離を設定する。</summary>
+		/// <summary>ニアクリップ距離を設定
+		/// <param name="near_clip">ニアクリップ距離（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetNearClip(float near_clip) { near_clip_ = near_clip; }
-		/// <summary>ファークリップ距離を設定する。</summary>
+		/// <summary>ファークリップ距離を設定
+		/// <param name="far_clip">ファークリップ距離（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetFarClip(float far_clip) { far_clip_ = far_clip; }
 
-		/// <summary>ワールド行列を取得する。</summary>
+		/// <summary>ワールド行列を取得
+		/// <returns>ワールド行列（const Matrix4x4&）</returns>
+		/// </summary>
 		const Matrix4x4& GetWorldMatrix() const { return world_matrix_; }
-		/// <summary>ビュー行列を取得する。</summary>
+		/// <summary>ビュー行列を取得
+		/// <returns>ビュー行列（const Matrix4x4&）</returns>
+		/// </summary>
 		const Matrix4x4& GetViewMatrix() const { return view_matrix_; }
-		/// <summary>プロジェクション行列を取得する。</summary>
+		/// <summary>プロジェクション行列を取得
+		/// <returns>プロジェクション行列（const Matrix4x4&）</returns>
+		/// </summary>
 		const Matrix4x4& GetProjectionMatrix() const { return projection_matrix_; }
-		/// <summary>ビュー×プロジェクション行列を取得する。</summary>
+		/// <summary>ビュー×プロジェクション行列を取得
+		/// <returns>ビュー×プロジェクション行列（const Matrix4x4&）</returns>
+		/// </summary>
 		const Matrix4x4& GetViewProjectionMatrix() const { return view_projection_matrix_; }
-		/// <summary>回転を取得する。</summary>
+		/// <summary>回転を取得
+		/// <returns>回転値（const Vector3&）</returns>
+		/// </summary>
 		const Vector3& GetRotate() const { return transform_.rotate; }
-		/// <summary>座標を取得する。</summary>
+		/// <summary>座標を取得
+		/// <returns>座標値（const Vector3&）</returns>
+		/// </summary>
 		const Vector3& GetTranslate() const { return transform_.translate; }
 
 	private:

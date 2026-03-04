@@ -13,22 +13,27 @@ class BossStateNormal : public BossState
 {
 public:
     /// <summary>
-	/// 状態に入るときの処理
+    /// 状態に入るときの処理
+    /// <param name="boss">対象となるボス本体</param>
+    /// <returns>なし</returns>
     /// </summary>
     void Enter(Boss1& boss) override;
+
     /// <summary>
-	/// 状態の更新
+    /// 状態の更新
+    /// <param name="boss">対象となるボス本体</param>
+    /// <returns>なし</returns>
     /// </summary>
     void Update(Boss1& boss) override;
 private:
-	// 発射タイマー
+    // 発射タイマー
     int fire_timer_ = 0;
-	// 発射間隔
+    // 発射間隔
     int fire_interval_current_ = 0;
-	// 二段ショット遅延タイマー
+    // 二段ショット遅延タイマー
     int second_shot_delay_timer_ = 0;
-	// 二段ショット発射保留フラグ
+    // 二段ショット発射保留フラグ
     bool is_second_shot_pending_ = false;
-	// 二段ショット遅延時間定数
+    // 二段ショット遅延時間定数
     static const int kSecondShotDelay = 15;
 };

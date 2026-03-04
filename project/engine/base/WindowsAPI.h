@@ -18,39 +18,47 @@ namespace MyEngine {
     public:
         /// <summary>
         /// ウィンドウプロシージャ（静的コールバック）
+        /// <param name="hwnd">ウィンドウハンドル</param>
+        /// <param name="msg">メッセージID</param>
+        /// <param name="wparam">追加情報1</param>
+        /// <param name="lparam">追加情報2</param>
+        /// <returns>メッセージ処理結果（LRESULT）</returns>
         /// </summary>
         static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-    public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>WindowsApiのインスタンス（ポインタ）</returns>
         /// </summary>
         static WindowsApi* GetInstance();
 
         /// <summary>
-        /// 初期化処理を行う。
+        /// 初期化処理
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize();
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// Windows メッセージをポーリングして処理する。
+        /// Windows メッセージをポーリングして処理
+        /// <returns>終了要求時はfalse、継続時はtrue</returns>
         /// </summary>
         bool ProcessMessage();
 
-        // getter
-
         /// <summary>
-        /// ウィンドウハンドルを取得する。
+        /// ウィンドウハンドルを取得
+        /// <returns>ウィンドウハンドル（HWND）</returns>
         /// </summary>
         HWND GetHwnd() const { return hwnd_; }
 
         /// <summary>
-        /// インスタンスハンドルを取得する。
+        /// インスタンスハンドルを取得
+        /// <returns>インスタンスハンドル（HINSTANCE）</returns>
         /// </summary>
         HINSTANCE GetHinstance() const { return wc_.hInstance; }
 

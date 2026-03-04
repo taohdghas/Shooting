@@ -17,37 +17,48 @@ namespace MyEngine {
     class CameraManager {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>CameraManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static CameraManager* GetInstance();
 
         /// <summary>
-        /// 初期化を行う。
+        /// 初期化
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize();
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// カメラを追加する。
+        /// カメラを追加
+        /// <param name="name">カメラ名（std::string）</param>
+        /// <param name="camera">追加するCameraのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void AddCamera(const std::string& name, Camera* camera);
 
         /// <summary>
-        /// 現在のアクティブカメラを取得する。
+        /// 現在のアクティブカメラを取得
+        /// <returns>アクティブなCameraのポインタ</returns>
         /// </summary>
         Camera* GetActiveCamera();
 
         /// <summary>
-        /// 名前からカメラを取得する。
+        /// 名前からカメラを取得
+        /// <param name="name">カメラ名（std::string）</param>
+        /// <returns>Cameraのポインタ</returns>
         /// </summary>
         Camera* GetCamera(const std::string& name);
 
         /// <summary>
-        /// 名前でアクティブカメラを設定する。
+        /// 名前でアクティブカメラを設定
+        /// <param name="name">カメラ名（std::string）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void SetActiveCamera(const std::string& name);
 

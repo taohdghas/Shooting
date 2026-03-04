@@ -23,144 +23,188 @@ class Boss1
   public:
 	/// <summary>
 	/// 初期化
+	/// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
+
 	/// <summary>
 	/// 更新処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
+
 	/// <summary>
 	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
 	
 	/// <summary>
 	/// 移動
+	/// <returns>なし</returns>
 	/// </summary>
 	void Move();
 
 	/// <summary>
-	/// 二段高さショットを発射する
+	/// 二段高さショットを発射
+	/// <returns>なし</returns>
 	/// </summary>
 	void FireDoubleHeightShot();
 
 	/// <summary>
-	/// 次の移動目標を決定する
+	/// 次の移動目標を決定
+	/// <returns>なし</returns>
 	/// </summary>
 	void DecideNextTarget();
 
 	/// <summary>
-    /// 扇状拡散ショットを発射する
+    /// 扇状拡散ショットを発射
+	/// <returns>なし</returns>
     /// </summary>
 	void FireFanShot();
 
 	/// <summary>
 	/// 衝突時のコールバック
+	/// <returns>なし</returns>
 	/// </summary>
 	void OnCollision();
+
 	/// <summary>
-	/// HP を減少させる
+	/// HP を減少
+	/// <param name="damage">減少させるダメージ量</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void TakeDamage(uint32_t damage);
 
 	/// <summary>
-	/// 状態を変更する
+	/// 状態を変更
+	/// <param name="newState">新しい状態のユニークポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void ChangeState(std::unique_ptr<BossState> newState);
 
 	/// <summary>
-	/// デバッグ UI を表示する（ImGui を使用）
+	/// デバッグ UIを表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
 
 	/// <summary>
-	/// OBB（Oriented Bounding Box）を取得する
+	/// OBBを取得する
+	/// <returns>OBB構造体</returns>
 	/// </summary>
 	OBB GetOBB() const; 
 
 	/// <summary>
-	/// 弾発射間隔を決定する
+	/// 弾発射間隔を決定
+	/// <returns>発射間隔（フレーム数）</returns>
 	///	</summary>
 	int DecideFireInterval();
 
 	/// <summary>
-	/// min から max の範囲で乱数の浮動小数点数を生成する
+	/// min から max の範囲で乱数の浮動小数点数を生成
+	/// <param name="min">最小値</param>
+	/// <param name="max">最大値</param>
+	/// <returns>生成された乱数値</returns>
 	/// </summary>
 	float RandomFloat(float min, float max);
 
 	/// <summary>
 	/// タイマーの共通関数
+	/// <param name="timer">タイマー変数（参照渡し）</param>
+	/// <param name="threshold">閾値</param>
+	/// <returns>タイマーが閾値を超えた場合true、それ以外はfalse</returns>
 	/// </summary>
 	bool UpdateDelayTimer(int& timer, int threshold);
 
 	/// <summary>
-	/// 死亡フラグが立っているか判定する。
+	/// 死亡フラグが立っているか判定
+	/// <returns>死亡していればtrue</returns>
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
 
 	/// <summary>
-	/// 死亡時のパーティクル発生フラグが立っているか判定する。
+	/// 死亡時のパーティクル発生フラグが立っているか判定
+	/// <returns>発生していればtrue</returns>
 	/// </summary>
 	bool IsDeathParticle() const { return is_death_particle_; }
 public:
 	/// <summary>
-	/// 現在の位置（Transform.translate）を取得する。
+	/// 現在の位置（Transform.translate）を取得
+	/// <returns>現在の座標（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetPosition() const { return transform_.translate; }
 
 	/// <summary>
-	/// 弾の攻撃力を取得する。
+	/// 弾の攻撃力を取得
+	/// <returns>攻撃力</returns>
 	/// </summary>
 	int GetAttack() const { return attack_; }
 
 	/// <summary>
-	/// 現在のHPを取得する。
+	/// 現在のHPを取得
+	/// <returns>現在のHP</returns>
 	/// </summary>
 	int GetHP() const { return hp_; }
 
 	/// <summary>
-	/// ボス強化体力値（Enraged HP）を取得する。
+	/// ボス強化体力値を取得
+	/// <returns>強化体力値</returns>
 	/// </summary>
 	int GetEnragedHP() const { return kEnragedHP; }
 
 	/// <summary>
-	/// コリジョンや描画に用いる半径を取得する。
+	/// コリジョンや描画に用いる半径を取得
+	/// <returns>半径</returns>
 	/// </summary>
 	float GetRadius() const { return radius_; }
 
 	/// <summary>
-	/// 所有する弾リストを取得する（読み取り専用）。
+	/// 所有する弾リストを取得
+	/// <returns>弾リスト（const参照）</returns>
 	/// </summary>
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() const { return bullets_; }
 
 	/// <summary>
-	/// スケールを設定する。
+	/// スケールを設定
+	/// <param name="scale">設定するスケール値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
 
 	/// <summary>
-	/// 回転を設定する。
+	/// 回転を設定
+	/// <param name="rotate">設定する回転値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 
 	/// <summary>
-	/// 座標を設定する。
+	/// 座標を設定
+	/// <param name="position">設定する座標値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 
 	/// <summary>
-	/// 対象プレイヤーのポインタを設定する。
-	/// - 攻撃判定や追従に利用される。
+	/// 対象プレイヤーのポインタを設定
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/// <summary>
-	/// デスパーティクル発生フラグを設定する。
+	/// デスパーティクル発生フラグを設定
+	/// <param name="flag">設定するフラグ値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
 	/// <summary>
-	/// 通常時のスケールを設定する。
+	/// 通常時のスケールを設定
+	/// <param name="scale">設定するスケール値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetDefaultScale(const Vector3& scale) {default_scale_ = scale;}
 private:

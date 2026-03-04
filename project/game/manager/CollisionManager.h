@@ -21,44 +21,68 @@ class EnemyBullet;
 class CollisionManager {
 public:
 	/// <summary>
-	/// プレイヤーと敵（および各弾）の衝突判定を行う。
+	/// プレイヤーと敵の衝突判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="enemy">敵キャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CheckPlayerEnemyCollisions(Player* player, Enemy* enemy);
 
 	/// <summary>
-	/// プレイヤー弾と敵の当たり判定を行う。
+	/// プレイヤー弾と敵の当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="enemy">敵キャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CheckPlayerBulletsToEnemy(Player* player, Enemy* enemy);
 
 	/// <summary>
-	/// 敵弾とプレイヤーの当たり判定を行う。
+	/// 敵弾とプレイヤーの当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="enemy">敵キャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CheckEnemyBulletsToPlayer(Player* player, Enemy* enemy);
 
 	/// <summary>
-	/// プレイヤー本体と敵本体の当たり判定を行う。
+	/// プレイヤー本体と敵本体の当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="enemy">敵キャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CheckPlayerEnemyBody(Player* player, Enemy* enemy);
 
 	/// <summary>
-    /// プレイヤーとボスと各弾の衝突判定を行う。
+    /// プレイヤーとボスと各弾の衝突判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="boss">ボスキャラクターのポインタ</param>
+	/// <returns>なし</returns>
     /// </summary>
-	void CheckPlayerBossCollisions(Player* player, Boss1*boss);
+	void CheckPlayerBossCollisions(Player* player, Boss1* boss);
 
 	/// <summary>
-	/// プレイヤー弾とボスの当たり判定を行う。
+	/// プレイヤー弾とボスの当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="boss">ボスキャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
-	void CheckPlayerBulletsToBoss(Player* player,Boss1*boss);
+	void CheckPlayerBulletsToBoss(Player* player, Boss1* boss);
 
 	/// <summary>
-	/// ボス弾とプレイヤーの当たり判定を行う。
+	/// ボス弾とプレイヤーの当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="boss">ボスキャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
-	void CheckBossBulletsToPlayer(Player* player, Boss1*boss);
+	void CheckBossBulletsToPlayer(Player* player, Boss1* boss);
 
 	/// <summary>
-	/// プレイヤー本体とボス本体の当たり判定を行う。
+	/// プレイヤー本体とボス本体の当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="boss">ボスキャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
-	void CheckPlayerBossBody(Player* player, Boss1*boss);
+	void CheckPlayerBossBody(Player* player, Boss1* boss);
 
 private:
 };

@@ -14,8 +14,10 @@ namespace MyEngine {
 	{
 	public:
 		/// <summary>
-		/// シーン名に応じたシーンインスタンスを生成して返す。
-		/// </summary>
+        /// シーン名に応じたシーンインスタンスを生成して返す
+        /// <param name="scene_name">生成するシーン名（std::string）</param>
+        /// <returns>生成されたBaseSceneのunique_ptr</returns>
+        /// </summary>
 		std::unique_ptr<BaseScene>CreateScene(const std::string& scene_name)override;
 	};
 }

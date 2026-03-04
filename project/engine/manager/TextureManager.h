@@ -21,42 +21,57 @@ namespace MyEngine {
 	class TextureManager {
 	public:
 		/// <summary>
-		/// シングルトンインスタンスを取得する
-		/// </summary>
+        /// シングルトンインスタンスを取得
+        /// <returns>TextureManagerのインスタンス（ポインタ）</returns>
+        /// </summary>
 		static TextureManager* GetInstance();
 
 		/// <summary>
-		/// 終了処理を行う
+		/// 終了処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
-		/// 初期化を行う
+		/// 初期化
+		/// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+		/// <param name="srv_manager">SrvManagerクラスのポインタ</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void Initialize(DirectXBase* directx_base, SrvManager* srv_manager);
 
 		/// <summary>
 		/// テクスチャファイルを読み込む
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void LoadTexture(const std::string& file_path);
 
 		/// <summary>
-		/// ファイルパスから SRV インデックス（割り当てられた番号）を取得する。
+		/// ファイルパスから SRV インデックスを取得
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>SRVインデックス（uint32_t）</returns>
 		/// </summary>
 		uint32_t GetTextureIndexByFilePath(const std::string& file_path);
 
 		/// <summary>
-		/// 指定ファイルパスに対応するテクスチャのメタデータを取得する
+		/// 指定ファイルパスに対応するテクスチャのメタデータを取得
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>テクスチャメタデータ（const DirectX::TexMetadata&）</returns>
 		/// </summary>
 		const DirectX::TexMetadata& GetMetaData(const std::string& file_path);
 
 		/// <summary>
-		/// 指定ファイルパスに対応する SRV インデックスを取得する
+		/// 指定ファイルパスに対応する SRV インデックスを取得
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>SRVインデックス（uint32_t）</returns>
 		/// </summary>
 		uint32_t GetSrvIndex(const std::string& file_path);
 
 		/// <summary>
-		/// 指定ファイルパスに対応する GPU 側のデスクリプタハンドルを取得する。
+		/// 指定ファイルパスに対応する GPU 側のデスクリプタハンドルを取得
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>GPUデスクリプタハンドル（D3D12_GPU_DESCRIPTOR_HANDLE）</returns>
 		/// </summary>
 		D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU(const std::string& file_path);
 	public:

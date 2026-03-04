@@ -15,42 +15,54 @@
 class Platform {
 public:
 	/// <summary>
-	/// 初期化を行う
+	/// 初期化
+	/// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
+	/// 更新
+	/// <param name="is_start_animation_">開始アニメーション中か</param>
+	/// <param name="is_returning_">リターン中か</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update(bool is_start_animation_, bool is_returning_);
 
 	/// <summary>
-	/// 描画処理を行う
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// デバッグ表示用の更新処理を行う。
+	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
 
 	/// <summary>
-	/// 移動を停止する。
+	/// 移動を停止
+	/// <returns>なし</returns>
 	/// </summary>
 	void Stop() { is_stopped_ = true; }
 
 	/// <summary>
-	/// 移動が停止しているかを取得する。
+	/// 移動が停止しているかを取得
+	/// <returns>停止していればtrue</returns>
 	/// </summary>
 	bool IsStopped() const { return is_stopped_; }
 
 	/// <summary>
-	/// トランスフォーム（平行移動）を取得する。
+	/// トランスフォームを取得
+	/// <returns>現在の座標（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
-	/// トランスフォーム（平行移動）を設定する。
+	/// トランスフォームを設定
+	/// <param name="translate">設定する座標値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 

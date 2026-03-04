@@ -18,17 +18,25 @@ namespace MyEngine {
     class JsonManager {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>JsonManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static JsonManager* GetInstance();
 
         /// <summary>
-        /// JSON ファイルを読み込み、LevelData を生成して返す。
+        /// JSON ファイルを読み込み、LevelData を生成して返す
+        /// <param name="filename">JSONファイルのパス（std::string）</param>
+        /// <returns>生成されたLevelDataのunique_ptr</returns>
         /// </summary>
         std::unique_ptr<LevelData> LoadJsonFile(const std::string& filename);
 
         /// <summary>
-        /// JSONからTransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
+        /// JSONからTransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納
+        /// <param name="transform">JSONのTransformオブジェクト</param>
+        /// <param name="translation">格納先の平行移動（Vector3）</param>
+        /// <param name="rotation">格納先の回転（Vector3）</param>
+        /// <param name="scaling">格納先のスケール（Vector3）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling);
 

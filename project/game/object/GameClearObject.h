@@ -18,27 +18,32 @@ class GameClearObject
 {
 public:
     /// <summary>
-    /// 初期化処理
+    /// 初期化
+    /// <returns>なし</returns>
     /// </summary>
     void Initialize();
 
     /// <summary>
-    /// 更新処理
+    /// 更新
+    /// <returns>なし</returns>
     /// </summary>
     void Update();
 
     /// <summary>
     /// オブジェクトの描画
+    /// <returns>なし</returns>
     /// </summary>
     void Draw();
 
 	/// <summary>
 	/// スプライトの描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void DrawSprite();
 
     /// <summary>
     /// デバッグ
+    /// <returns>なし</returns>
     /// </summary>
     void Debug();
 
