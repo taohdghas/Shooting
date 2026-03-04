@@ -1326,81 +1326,136 @@ namespace MyEngine {
 	public:
 		/// <summary>
 		/// スプライトを初期化する。
+		/// <param name="sprite_base">スプライト共通部のポインタ</param>
+		/// <param name="texture_file_path">テクスチャファイルのパス</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void Initialize(SpriteBase* sprite_base, const std::string& texture_file_path);
 
 		/// <summary>
 		/// 毎フレームの更新処理を行う
+		/// <returns>なし</returns>
 		/// </summary>
 		void Update();
 
 		/// <summary>
 		/// スプライトを描画する。
+		/// <returns>なし</returns>
 		/// </summary>
 		void Draw();
 
-		/// <summary>スプライトの位置を取得する。</summary>
+		/// <summary>スプライトの位置を取得する。
+		/// <returns>スプライトの座標（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetPosition() const { return position_; }
-		/// <summary>スプライトの回転角（ラジアンまたは度は実装に依存）を取得する。</summary>
+		/// <summary>スプライトの回転角を取得
+		/// <returns>回転角（float）</returns>
+		/// </summary>
 		float GetRotation() const { return rotation_; }
-		/// <summary>スプライトの描画色（RGBA）を取得する。</summary>
+		/// <summary>スプライトの描画色を取得
+		/// <returns>色（Vector4）</returns>
+		/// </summary>
 		const Vector4& GetColor() const { return material_data_->color; }
-		/// <summary>スプライトの表示サイズを取得する。</summary>
+		/// <summary>スプライトの表示サイズを取得
+		/// <returns>サイズ（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetSize() const { return size_; }
-		/// <summary>スプライトのアンカーポイントを取得する（左上原点からの比率など）。</summary>
+		/// <summary>スプライトのアンカーポイントを取得
+		/// <returns>アンカーポイント（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetAnchorPoint() const { return anchor_point_; }
-		/// <summary>描画に使用するテクスチャの切り出し左上座標を取得する。</summary>
+		/// <summary>描画に使用するテクスチャの切り出し左上座標を取得
+		/// <returns>左上座標（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetTextureLeftTop() const { return texture_left_top_; }
-		/// <summary>描画に使用するテクスチャの切り出しサイズを取得する。</summary>
+		/// <summary>描画に使用するテクスチャの切り出しサイズを取得
+		/// <returns>切り出しサイズ（Vector2）</returns>
+		/// </summary>
 		const Vector2& GetTextureSize() const { return texture_size_; }
-		/// <summary>水平方向に反転しているかを取得する。</summary>
+		/// <summary>水平方向に反転しているかを取得
+		/// <returns>反転状態（bool）</returns>
+		/// </summary>
 		const bool& GetIsFlipX() const { return is_flip_x_; }
-		/// <summary>垂直方向に反転しているかを取得する。</summary>
+		/// <summary>垂直方向に反転しているかを取得
+		/// <returns>反転状態（bool）</returns>
+		/// </summary>
 		const bool& GetIsFlipY() const { return is_flip_y_; }
 
-		/// <summary>スプライトの位置を設定する。</summary>
+		/// <summary>スプライトの位置を設定。
+		/// <param name="position">スプライトの座標（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetPosition(const Vector2& position) { position_ = position; }
-		/// <summary>スプライトの回転角を設定する。</summary>
+		/// <summary>スプライトの回転角を設定
+		/// <param name="rotation">回転角（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetRotation(float rotation) { rotation_ = rotation; }
-		/// <summary>スプライトの描画色（RGBA）を設定する。</summary>
+		/// <summary>スプライトの描画色（RGBA）を設定
+		/// <param name="color">色（Vector4）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetColor(const Vector4& color) { material_data_->color = color; }
-		/// <summary>スプライトの表示サイズを設定する。</summary>
+		/// <summary>スプライトの表示サイズを設定
+		/// <param name="size">サイズ（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetSize(const Vector2& size) { size_ = size; }
-		/// <summary>スプライトのアンカーポイントを設定する。</summary>
+		/// <summary>スプライトのアンカーポイントを設定
+		/// <param name="anchor_point">アンカーポイント（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetAnchorPoint(const Vector2& anchor_point) { anchor_point_ = anchor_point; }
-		/// <summary>テクスチャの切り出し左上座標を設定する。</summary>
+		/// <summary>テクスチャの切り出し左上座標を設定
+		/// <param name="texture_left_top">左上座標（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetTextureLeftTop(const Vector2& texture_left_top) { texture_left_top_ = texture_left_top; }
-		/// <summary>テクスチャの切り出しサイズを設定する。</summary>
+		/// <summary>テクスチャの切り出しサイズを設定
+		/// <param name="texture_size">切り出しサイズ（Vector2）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetTextureSize(const Vector2& texture_size) { texture_size_ = texture_size; }
-		/// <summary>水平方向の反転設定を行う。</summary>
+		/// <summary>水平方向の反転設定
+		/// <param name="is_flip_x">反転状態（bool）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetIsFlipX(bool is_flip_x) { is_flip_x_ = is_flip_x; }
-		/// <summary>垂直方向の反転設定を行う。</summary>
+		/// <summary>垂直方向の反転設定
+		/// <param name="is_flip_y">反転状態（bool）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetIsFlipY(bool is_flip_y) { is_flip_y_ = is_flip_y; }
 
 	private:
-		SpriteBase* sprite_base_ = nullptr;
-		SrvManager* srv_manager_ = nullptr;
-
 		/// <summary>
-		// 頂点データ作成
-		/// </summary>
+        /// 頂点データ作成
+        /// <returns>なし</returns>
+        /// </summary>
 		void VertexDataCreate();
 		/// <summary>
-		// インデックス作成
+		/// インデックス作成
+		/// <returns>なし</returns>
 		/// </summary>
 		void IndexCreate();
 		/// <summary>
-		// マテリアル作成
+		/// マテリアル作成
+		/// <returns>なし</returns>
 		/// </summary>
 		void MaterialCreate();
 		/// <summary>
-		// 座標変換行列データ作成
+		/// 座標変換行列データ作成
+		/// <returns>なし</returns>
 		/// </summary>
 		void TransformationCreate();
 		/// <summary>
-		// テクスチャサイズをイメージに合わせる
+		/// テクスチャサイズをイメージに合わせる
+		/// <returns>なし</returns>
 		/// </summary>
 		void AdjustTextureSize();
+	private:
+		SpriteBase* sprite_base_ = nullptr;
+		SrvManager* srv_manager_ = nullptr;
 
 		// バッファリソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertex_resource_;
@@ -1446,8 +1501,6 @@ namespace MyEngine {
 		std::string file_path_;
 	};
 }
-
-
 
 ============================================================
 File Path: project/engine/2d/SpriteBase.cpp
@@ -1517,27 +1570,33 @@ namespace MyEngine {
 	class SpriteBase {
 	public:
 		/// <summary>
-		/// シングルトンインスタンスを取得する。
-		/// </summary>
+        /// シングルトンインスタンスを取得
+        /// <returns>SpriteBaseのインスタンス（ポインタ）</returns>
+        /// </summary>
 		static SpriteBase* GetInstance();
 
 		/// <summary>
 		/// 初期化を行う。
+		/// <param name="directx_base">DirectX基盤クラスのポインタ</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void Initialize(DirectXBase* directx_base);
 
 		/// <summary>
-		/// 終了処理を行う。
+		/// 終了処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
-		/// 共通描画設定を行う。
+		/// 共通描画設定
+		/// <returns>なし</returns>
 		/// </summary>
 		void DrawBaseSet();
 
 		/// <summary>
-		/// DirectXBase のポインタを取得する。
+		/// DirectXBase のポインタを取得
+		/// <returns>DirectXBaseのポインタ</returns>
 		/// </summary>
 		DirectXBase* GetDxBase() const { return directx_base_; }
 
@@ -1556,7 +1615,6 @@ namespace MyEngine {
 		std::unique_ptr<PipelineStateObject> pso_;
 	};
 }
-
 
 ============================================================
 File Path: project/engine/3d/Model.cpp
@@ -1786,57 +1844,79 @@ namespace MyEngine {
 	class Model {
 	public:
 		/// <summary>
-		/// モデルを初期化する。
-		/// </summary>
+        /// モデルを初期化
+        /// <param name="model_base">モデル共通部のポインタ</param>
+        /// <param name="directory_path">モデルファイルのディレクトリパス</param>
+        /// <param name="filename">モデルファイル名</param>
+        /// <returns>なし</returns>
+        /// </summary>
 		void Initialize(ModelBase* model_base, const std::string& directory_path, const std::string& filename);
 
 		/// <summary>
-		/// モデルを描画する。
+		/// モデルを描画
+		/// <returns>なし</returns>
 		/// </summary>
 		void Draw();
 
 		/// <summary>
-		/// マテリアル情報のコピーを取得する。
+		/// マテリアル情報のコピーを取得
+		/// <returns>マテリアル情報（Material）</returns>
 		/// </summary>
 		Material GetMaterialCopy() const;
 
 		/// <summary>
-		/// モデルデータを取得する。
+		/// モデルデータを取得
+		/// <returns>モデルデータ（const ModelData&）</returns>
 		/// </summary>
 		const ModelData& GetModelData() const { return model_data_; }
 
 		/// <summary>
-		/// マテリアルの色を設定する。
+		/// マテリアルの色を設定
+		/// <param name="color">色（Vector4）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetColor(const Vector4& color) { material_data_->color = color; }
 
 		/// <summary>
-		/// ライティングの有効/無効を設定する。
+		/// ライティングの有効/無効を設定
+		/// <param name="enable">有効ならtrue、無効ならfalse</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetEnableLighting(bool enable) { material_data_->enableLighting = enable; }
 
 	private:
 		/// <summary>
-		/// モデルから取得したデータを基に頂点バッファ用のデータ構築を行う。
+		/// モデルから取得したデータを基に頂点バッファ用のデータ構築を行う
+		/// <returns>なし</returns>
 		/// </summary>
 		void VertexDataCreate();
 
 		/// <summary>
-		/// マテリアル情報（テクスチャインデックスや色、ライティング設定など）を作成し,
+		/// マテリアル情報を作成
+		/// <returns>なし</returns>
 		/// </summary>
 		void MaterialCreate();
 
 		/// <summary>
-		/// .mtl（マテリアル定義）ファイルを読み取り、MaterialData を構築して返す。
+		/// .mtlファイルを読み取り、MaterialData を構築して返す
+		/// <param name="directory_path">ディレクトリパス</param>
+		/// <param name="filename">ファイル名</param>
+		/// <returns>MaterialData</returns>
 		/// </summary>
 		MaterialData LoadMaterialTemplateFile(const std::string& directory_path, const std::string& filename);
 
 		/// <summary>
-		/// .obj 等のモデルファイルを読み取り、ModelData を構築して返す。
+		/// .obj 等のモデルファイルを読み取り、ModelData を構築して返す
+		/// <param name="directory_path">ディレクトリパス</param>
+		/// <param name="filename">ファイル名</param>
+		/// <returns>ModelData</returns>
 		/// </summary>
 		ModelData LoadModelFile(const std::string& directory_path, const std::string& filename);
+
 		/// <summary>
-		/// Assimp の aiNode 構造体を自前の Node 構造に変換する。
+		/// Assimp の aiNode 構造体を自前の Node 構造に変換
+		/// <param name="node">aiNode構造体のポインタ</param>
+		/// <returns>Node構造体</returns>
 		/// </summary>
 		Node ReadNode(aiNode* node);
 
@@ -1887,12 +1967,15 @@ namespace MyEngine {
 	class ModelBase {
 	public:
 		/// <summary>
-		/// 初期化を行う。
-		/// </summary>
+        /// 初期化
+        /// <param name="directx_base">DirectX基盤クラスのポインタ</param>
+        /// <returns>なし</returns>
+        /// </summary>
 		void Initialize(DirectXBase* directx_base);
 
 		/// <summary>
-		/// DirectXBase のポインタを取得する。
+		/// DirectXBase のポインタを取得
+		/// <returns>DirectXBaseのポインタ</returns>
 		/// </summary>
 		DirectXBase* GetDxBase() const { return directx_base_; }
 
@@ -1900,7 +1983,6 @@ namespace MyEngine {
 		DirectXBase* directx_base_ = nullptr;
 	};
 }
-
 
 ============================================================
 File Path: project/engine/3d/Object3d.cpp
@@ -2147,119 +2229,153 @@ namespace MyEngine {
 	class Object3d {
 	public:
 		/// <summary>
-		/// 初期化を行う。
-		/// </summary>
+        /// 初期化
+        /// <param name="object3d_base">3Dオブジェクト共通部のポインタ</param>
+        /// <returns>なし</returns>
+        /// </summary>
 		void Initialize(Object3dBase* object3d_base);
 
 		/// <summary>
-		/// 毎フレームの更新処理を行う。
+		/// 毎フレームの更新処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Update();
 
 		/// <summary>
-		/// 描画処理を行う。
+		/// 描画処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Draw();
 
 		/// <summary>
-		/// デバッグ用の更新処理を行う。
+		/// デバッグ用の更新処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void DebugUpdate();
 
 		/// <summary>
-		/// 表示するモデルを設定する。
+		/// 表示するモデルを設定
+		/// <param name="file_path">モデルファイルのパス</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetModel(const std::string& file_path);
 
 		/// <summary>
-		/// スケールを設定する。
+		/// スケールを設定
+		/// <param name="scale">スケール値（Vector3）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetScale(const Vector3& scale) { transform_.scale = scale; }
 
 		/// <summary>
-		/// 回転を設定する。
+		/// 回転を設定。
+		/// <param name="rotate">回転値（Vector3）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 
 		/// <summary>
-		/// 平行移動（座標）を設定する。
+		/// 座標を設定。
+		/// <param name="translate">座標値（Vector3）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
 		/// <summary>
-		/// 使用するカメラを設定する。
+		/// 使用するカメラを設定
+		/// <param name="camera">カメラのポインタ</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetCamera(Camera* camera) { camera_ = camera; }
 
 		/// <summary>
-		/// マテリアルの色を設定する。
+		/// マテリアルの色を設定
+		/// <param name="color">色（Vector4）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetColor(const Vector4& color);
 
 		/// <summary>
-		/// ライティングの有効/無効を設定する。
+		/// ライティングの有効/無効を設定
+		/// <param name="enable">有効ならtrue、無効ならfalse</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetLight(bool enable) { enable_lighting_ = enable; }
 
 		/// <summary>
-		/// 平行光（DirectionalLight）の有効/無効を設定する。
+		/// 平行光の有効/無効を設定
+		/// <param name="enable">有効なら1、無効なら0</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetDirectionalLightEnable(int enable) { directional_light_->enable = enable ? 1 : 0; }
 
 		/// <summary>
-		/// 点光源（PointLight）の有効/無効を設定する。
+		/// 点光源の有効/無効を設定
+		/// <param name="enable">有効なら1、無効なら0</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetPointLightEnable(int enable) { point_light_->enable = enable ? 1 : 0; }
 
 		/// <summary>
-		/// スポットライト（SpotLight）の有効/無効を設定する。
+		/// スポットライトの有効/無効を設定
+		/// <param name="enable">有効なら1、無効なら0</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetSpotLightEnable(int enable) { spot_light_->enable = enable ? 1 : 0; }
 
 		/// <summary>
-		/// スケールを取得する。
+		/// スケールを取得
+		/// <returns>スケール値（Vector3）</returns>
 		/// </summary>
 		const Vector3& GetScale() const { return transform_.scale; }
 
 		/// <summary>
-		/// 回転を取得する。
+		/// 回転を取得
+		/// <returns>回転値（Vector3）</returns>
 		/// </summary>
 		const Vector3& GetRotate() const { return transform_.rotate; }
 
 		/// <summary>
-		/// 座標を取得する。
+		/// 座標を取得
+		/// <returns>座標値（Vector3）</returns>
 		/// </summary>
 		const Vector3& GetTranslate() const { return transform_.translate; }
 
 	private:
 
 		/// <summary>
-		/// マテリアル情報を作成・初期化する。
+		/// マテリアル情報を作成・初期化
+		/// <returns>なし</returns>
 		/// </summary>
 		void MaterialCreate();
 
 		/// <summary>
-		/// 座標変換行列データを作成する。
+		/// 座標変換行列データを作成
+		/// <returns>なし</returns>
 		/// </summary>
 		void TransformationCreate();
 
 		/// <summary>
-		/// 平行光源のデータを作成・更新する。
+		/// 平行光源のデータを作成・更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void DirectionalLightCreate();
 
 		/// <summary>
-		/// カメラ関連のデータを作成・更新する。
+		/// カメラ関連のデータを作成・更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void CameraDataCreate();
 
 		/// <summary>
-		/// 点光源（PointLight）のデータを作成・更新する。
+		/// 点光源のデータを作成・更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void PointLightCreate();
 
 		/// <summary>
-		/// スポットライト（SpotLight）のデータを作成・更新する。
+		/// スポットライトのデータを作成・更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void SpotLightCreate();
 
@@ -2297,7 +2413,6 @@ namespace MyEngine {
 		bool enable_lighting_ = false;
 	};
 }
-
 
 ============================================================
 File Path: project/engine/3d/Object3dBase.cpp
@@ -2367,52 +2482,62 @@ namespace MyEngine {
 /// </summary>
 	class Object3dBase {
 	public:
-		/// <summary>
-		/// シングルトンインスタンスを取得する。
-		/// </summary>
-		static Object3dBase* GetInstance();
+        /// 
+        /// シングルトンインスタンスを取得
+        /// <returns>Object3dBaseのインスタンスポインタ）</returns>
+        /// </summary>
+        static Object3dBase* GetInstance();
 
-		/// <summary>
-		/// 初期化を行う。
-		/// </summary>
-		void Initialize(DirectXBase* directx_base);
+        /// <summary>
+        /// 初期化
+        /// <param name="directx_base">DirectX基盤クラスのポインタ</param>
+        /// <returns>なし</returns>
+        /// </summary>
+        void Initialize(DirectXBase* directx_base);
 
-		/// <summary>
-		/// 終了処理を行う。
-		/// </summary>
-		void Finalize();
+        /// <summary>
+        /// 終了処理
+        /// <returns>なし</returns>
+        /// </summary>
+        void Finalize();
 
-		/// <summary>
-		/// 共通描画設定を行う。
-		/// </summary>
-		void DrawBaseSet();
+        /// <summary>
+        /// 共通描画設
+        /// <returns>なし</returns>
+        /// </summary>
+        void DrawBaseSet();
 
-		/// <summary>
-		/// デフォルトのカメラをセットする。
-		/// </summary>
-		void SetDefaultCamera(Camera* camera) { default_camera_ = camera; }
+        /// <summary>
+        /// デフォルトのカメラをセット
+        /// <param name="camera">カメラのポインタ</param>
+        /// <returns>なし</returns>
+        /// </summary>
+        void SetDefaultCamera(Camera* camera) { default_camera_ = camera; }
 
-		/// <summary>
-		/// DirectXBase を取得する。
-		/// </summary>
-		DirectXBase* GetDxBase() const { return directx_base_; }
+        /// <summary>
+        /// DirectXBase を取得
+        /// <returns>DirectXBaseのポインタ</returns>
+        /// </summary>
+        DirectXBase* GetDxBase() const { return directx_base_; }
 
-		/// <summary>
-		/// デフォルトカメラを取得する。
-		/// </summary>
-		Camera* GetDefaultCamera() const { return default_camera_; }
+        /// <summary>
+        /// デフォルトカメラを取得
+        /// <returns>カメラのポインタ</returns>
+        /// </summary>
+        Camera* GetDefaultCamera() const { return default_camera_; }
 
-		/// <summary>
-		/// ルートシグネチャを取得する。
-		/// </summary>
-		ID3D12RootSignature* GetRootSignature() const { return pso_->GetRootSignature(); }
+        /// <summary>
+        /// ルートシグネチャを取得
+        /// <returns>ID3D12RootSignatureのポインタ</returns>
+        /// </summary>
+        ID3D12RootSignature* GetRootSignature() const { return pso_->GetRootSignature(); }
 
-		/// <summary>
-		/// グラフィックスパイプラインステートを取得する。
-		/// </summary>
-		ID3D12PipelineState* GetGraphicsPipelineState() const { return pso_->GetGraphicsPipelineState(); }
-
-	public:
+        /// <summary>
+        /// グラフィックスパイプラインステートを取得
+        /// <returns>ID3D12PipelineStateのポインタ</returns>
+        /// </summary>
+        ID3D12PipelineState* GetGraphicsPipelineState() const { return pso_->GetGraphicsPipelineState(); }
+    public:
 		Object3dBase() = default;
 		~Object3dBase() = default;
 
@@ -2593,32 +2718,41 @@ namespace MyEngine {
 	class Audio {
 	public:
 		/// <summary>
-		/// シングルトンインスタンスを取得する。
-		/// </summary>
+        /// シングルトンインスタンスを取得
+        /// <returns>Audioのインスタンス（ポインタ）</returns>
+        /// </summary>
 		static Audio* GetInstance();
 
 		/// <summary>
-		/// オーディオシステムを終了・解放する。
+		/// オーディオシステムを終了・解放
+		/// <returns>なし</returns>
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
-		/// オーディオシステムを初期化する。
+		/// オーディオシステムを初期化
+		/// <returns>なし</returns>
 		/// </summary>
 		void Initialize();
 
 		/// <summary>
-		/// WAV ファイルを読み込み、SoundData を構築して返す。
+		/// WAV ファイルを読み込み、SoundData を構築して返す
+		/// <param name="filename">WAVファイルのパス</param>
+		/// <returns>SoundData構造体</returns>
 		/// </summary>
 		SoundData SoundLoadWave(const char* filename);
 
 		/// <summary>
-		/// SoundData が保持するバッファ等のリソースを解放する。
+		/// SoundData が保持するバッファ等のリソースを解放
+		/// <param name="sound_data">解放対象のSoundData構造体のポインタ</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SoundUnload(SoundData* sound_data);
 
 		/// <summary>
-		/// 指定したサウンドデータを再生する。
+		/// 指定したサウンドデータを再生
+		/// <param name="sound_data">再生するSoundData構造体</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SoundPlayWave(const SoundData& sound_data);
 
@@ -2734,23 +2868,28 @@ namespace MyEngine {
 
 	public:
 		/// <summary>
-		/// エミッターを初期化する。
-		/// </summary>
+        /// エミッターを初期化
+        /// <param name="name">エミッター名（std::string）</param>
+        /// <returns>なし</returns>
+        /// </summary>
 		void Initialize(const std::string& name);
 
 		/// <summary>
-		/// 毎フレームの更新処理を行う。
+		/// 毎フレームの更新処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Update();
 
 		/// <summary>
-		/// 即時にパーティクルを発生させる。
+		/// 即時にパーティクルを発生
+		/// <returns>なし</returns>
 		/// </summary>
 		void Emit();
 
-	public:
 		/// <summary>
-		/// エミッターの発生位置を設定する。
+		/// エミッターの発生位置を設定
+		/// <param name="pos">発生位置（Vector3）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetPosition(const Vector3& pos) { emitter_.transform.translate = pos; }
 
@@ -3581,54 +3720,70 @@ namespace MyEngine {
     class DirectXBase {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンス
+        /// <returns>DirectXBaseのインスタンス（ポインタ）</returns>
         /// </summary>
         static DirectXBase* GetInstance();
 
         /// <summary>
-        /// 初期化を行う。
+        /// 初期化
+        /// <param name="windows_api">WindowsAPIクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(WindowsApi* windows_api);
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// 描画開始前の共通処理を行う。
+        /// 描画開始前の共通処理
+        /// <returns>なし</returns>
         /// </summary>
         void PreDraw();
 
         /// <summary>
-        /// 描画終了後の共通処理を行う。
+        /// 描画終了後の共通処理
+        /// <returns>なし</returns>
         /// </summary>
         void PostDraw();
 
         /// <summary>
-        /// レンダーテクスチャへ描画する際の前処理を行う。
+        /// レンダーテクスチャへ描画する際の前処理
+        /// <returns>なし</returns>
         /// </summary>
         void PreDrawRenderTexture();
 
         /// <summary>
-        /// レンダーテクスチャの内容をスワップチェインに描画する処理を行う。
+        /// レンダーテクスチャの内容をスワップチェインに描画する処理
+        /// <returns>なし</returns>
         /// </summary>
         void DrawRenderTextureToScreen();
 
         /// <summary>
-        /// レンダーテクスチャのリソースを SRV（ピクセルシェーダで参照可能）へ遷移する。
+        /// レンダーテクスチャのリソースを SRVへ遷移
+        /// <returns>なし</returns>
         /// </summary>
         void TransitionRenderTextureToSRV();
 
         /// <summary>
-        /// テクスチャデータを GPU に転送するユーティリティ。
+        /// テクスチャデータを GPU に転送するユーティリティ
+        /// <param name="texture">転送先のテクスチャリソース</param>
+        /// <param name="mip_images">転送するScratchImageデータ</param>
+        /// <returns>転送後のテクスチャリソース</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(
             Microsoft::WRL::ComPtr<ID3D12Resource> texture,
             const DirectX::ScratchImage& mip_images);
 
         /// <summary>
-        /// デスクリプタヒープを生成する。
+        /// デスクリプタヒープを生成
+        /// <param name="heap_type">ヒープタイプ</param>
+        /// <param name="num_descriptors">デスクリプタ数</param>
+        /// <param name="shader_visible">シェーダーから参照可能か</param>
+        /// <returns>ID3D12DescriptorHeapのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
             D3D12_DESCRIPTOR_HEAP_TYPE heap_type,
@@ -3636,31 +3791,48 @@ namespace MyEngine {
             bool shader_visible);
 
         /// <summary>
-        /// 深度ステンシル用テクスチャリソースを生成する。
+        /// 深度ステンシル用テクスチャリソースを生成
+        /// <param name="device">デバイス</param>
+        /// <param name="width">幅</param>
+        /// <param name="height">高さ</param>
+        /// <returns>ID3D12ResourceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(
             Microsoft::WRL::ComPtr<ID3D12Device> device,
             int32_t width, int32_t height);
 
         /// <summary>
-        /// シェーダーファイルをコンパイルする。
+        /// シェーダーファイルをコンパイル
+        /// <param name="file_path">シェーダーファイルのパス</param>
+        /// <param name="profile">シェーダープロファイル</param>
+        /// <returns>IDxcBlobのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
             const std::wstring& file_path, const wchar_t* profile);
 
         /// <summary>
-        /// 汎用バッファリソースを生成する。
+        /// 汎用バッファリソースを生成
+        /// <param name="size_in_bytes">バッファサイズ（バイト）</param>
+        /// <returns>ID3D12ResourceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t size_in_bytes);
 
         /// <summary>
-        /// テクスチャリソースを生成する。
+        /// テクスチャリソースを生成
+        /// <param name="metadata">テクスチャメタデータ</param>
+        /// <returns>ID3D12ResourceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(
             const DirectX::TexMetadata& metadata);
 
         /// <summary>
-        /// レンダーテクスチャ用のリソースを生成する。
+        /// レンダーテクスチャ用のリソースを生成
+        /// <param name="device">デバイス</param>
+        /// <param name="width">幅</param>
+        /// <param name="height">高さ</param>
+        /// <param name="format">フォーマット</param>
+        /// <param name="clear_color">クリアカラー</param>
+        /// <returns>ID3D12ResourceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(
             Microsoft::WRL::ComPtr<ID3D12Device> device,
@@ -3669,52 +3841,69 @@ namespace MyEngine {
             const Vector4& clear_color);
 
         /// <summary>
-        /// テクスチャファイルを読み込んで ScratchImage として返すユーティリティ。
+        /// テクスチャファイルを読み込んで ScratchImage として返すユーティリティ
+        /// <param name="file_path">テクスチャファイルのパス</param>
+        /// <returns>DirectX::ScratchImage</returns>
         /// </summary>
         static DirectX::ScratchImage LoadTexture(const std::string& file_path);
 
-    public:
         /// <summary>
-        /// デバイスを取得する。
+        /// デバイスを取得
+        /// <returns>ID3D12DeviceのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12Device> GetDevice() { return device_; }
 
         /// <summary>
-        /// コマンドリストを取得する。
+        /// コマンドリストを取得
+        /// <returns>ID3D12GraphicsCommandListのComPtr</returns>
         /// </summary>
         Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return command_list_; }
 
         /// <summary>
-        /// レンダーテクスチャのリソースポインタを取得する。
+        /// レンダーテクスチャのリソースポインタを取得
+        /// <returns>ID3D12Resourceのポインタ</returns>
         /// </summary>
         ID3D12Resource* GetRenderTextureResource() const { return render_texture_resource_.Get(); }
 
         /// <summary>
-        /// スワップチェインのバッファ数を取得する。
+        /// スワップチェインのバッファ数を取得
+        /// <returns>バッファ数（size_t）</returns>
         /// </summary>
         size_t GetSwapChainResourcesNum() const { return swap_chain_desc_.BufferCount; }
 
         /// <summary>
-        /// 指定デスクリプタヒープの CPU デスクリプタハンドルを取得する。
+        /// 指定デスクリプタヒープの CPU デスクリプタハンドルを取得
+        /// <param name="descriptor_heap">デスクリプタヒープ</param>
+        /// <param name="descriptor_size">デスクリプタサイズ</param>
+        /// <param name="index">インデックス</param>
+        /// <returns>D3D12_CPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(
             Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptor_heap,
             uint32_t descriptor_size, uint32_t index);
 
         /// <summary>
-        /// 指定デスクリプタヒープの GPU デスクリプタハンドルを取得する。
+        /// 指定デスクリプタヒープの GPU デスクリプタハンドルを取得
+        /// <param name="descriptor_heap">デスクリプタヒープ</param>
+        /// <param name="descriptor_size">デスクリプタサイズ</param>
+        /// <param name="index">インデックス</param>
+        /// <returns>D3D12_GPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(
             Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptor_heap,
             uint32_t descriptor_size, uint32_t index);
 
         /// <summary>
-        /// DSV 用 CPU デスクリプタハンドルを取得する。
+        /// DSV 用 CPU デスクリプタハンドルを取得
+        /// <param name="index">インデックス</param>
+        /// <returns>D3D12_CPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
 
         /// <summary>
-        /// DSV 用 GPU デスクリプタハンドルを取得する。
+        /// DSV 用 GPU デスクリプタハンドルを取得
+        /// <param name="index">インデックス</param>
+        /// <returns>D3D12_GPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
@@ -3723,31 +3912,82 @@ namespace MyEngine {
         ~DirectXBase() = default;
     private:
 
-        // デバイスの初期化
+        /// <summary>
+        /// デバイスの初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void DeviceInitialize();
-        // コマンド関連の初期化
+
+        /// <summary>
+        /// コマンド関連の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void CommandInitialize();
-        // スワップチェーンの生成
+
+        /// <summary>
+        /// スワップチェーンの生成
+        /// <returns>なし</returns>
+        /// </summary>
         void SwapchainGenerate();
-        // 深度バッファの生成
+
+        /// <summary>
+        /// 深度バッファの生成
+        /// <returns>なし</returns>
+        /// </summary>
         void DepthbufferGenerate();
-        // デスクリプタヒープの生成
+
+        /// <summary>
+        /// デスクリプタヒープの生成
+        /// <returns>なし</returns>
+        /// </summary>
         void DescriptorheapGenerate();
-        // RTV の初期化
+
+        /// <summary>
+        /// レンダーターゲットビュー(RTV)の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void RendertargetviewInitialize();
-        // DSV の初期化
+
+        /// <summary>
+        /// 深度ステンシルビュー(DSV)の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void DepthstencilviewInitialize();
-        // フェンスの初期化
+
+        /// <summary>
+        /// フェンスの初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void FenceInitialize();
-        // ビューポートの初期化
+
+        /// <summary>
+        /// ビューポートの初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void ViewportInitialize();
-        // シザー矩形の初期化
+
+        /// <summary>
+        /// シザー矩形の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void ScissorrectInitialize();
-        // DXCコンパイラの生成
+
+        /// <summary>
+        /// DXCコンパイラの生成
+        /// <returns>なし</returns>
+        /// </summary>
         void DXCompilerInitialize();
-        // FPS固定初期化
+
+        /// <summary>
+        /// FPS固定用の初期化
+        /// <returns>なし</returns>
+        /// </summary>
         void InitializeFixFPS();
-        // FPS固定更新
+
+        /// <summary>
+        /// FPS固定用の更新処理
+        /// <returns>なし</returns>
+        /// </summary>
         void UpdateFixFPS();
 
     private:
@@ -4019,33 +4259,39 @@ namespace MyEngine {
     {
     public:
         /// <summary>
-        /// 初期化処理を行う。
+        /// 初期化処理
+        /// <returns>なし</returns>
         /// </summary>
         virtual void Initialize();
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         virtual void Finalize();
         /// <summary>
-        /// 毎フレームの更新処理を行う。
+        /// 毎フレームの更新処理
+        /// <returns>なし</returns>
         /// </summary>
         virtual void Update();
         /// <summary>
-        /// 毎フレームの描画処理（派生クラスで実装必須）。
+        /// 毎フレームの描画処理
+        /// <returns>なし</returns>
         /// </summary>
         virtual void Draw() = 0;
         /// <summary>
-        /// 終了要求フラグを取得する。
+        /// 終了要求フラグを取得
+        /// <returns>終了要求状態（bool）</returns>
         /// </summary>
         virtual bool is_end_request() { return end_request_; }
         /// <summary>
-        /// デストラクタ（派生クラスでのクリーンアップを許容）。
+        /// デストラクタ
+        /// <returns>なし</returns>
         /// </summary>
         virtual ~Framework() = default;
 
-    public:
         /// <summary>
-        /// アプリケーションを実行する。
+        /// アプリケーションを実行
+        /// <returns>なし</returns>
         /// </summary>
         void Run();
 
@@ -4198,22 +4444,26 @@ namespace MyEngine {
     class MyGame : public Framework {
     public:
         /// <summary>
-        /// ゲームの初期化を行う。
+        /// ゲームの初期化
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize() override;
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize() override;
 
         /// <summary>
-        /// 毎フレームの更新処理を行う。
+        /// 毎フレームの更新処理
+        /// <returns>なし</returns>
         /// </summary>
         void Update() override;
 
         /// <summary>
-        /// 描画処理を行う。
+        /// 描画処理
+        /// <returns>なし</returns>
         /// </summary>
         void Draw() override;
 
@@ -4664,63 +4914,83 @@ namespace MyEngine {
     class PipelineStateObject {
     public:
         /// <summary>
-        /// 初期化する。
+        /// 初期化
+        /// <param name="directx_base">DirectX基盤クラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(DirectXBase* directx_base);
 
         /// <summary>
-        /// Object3D 用のルートシグネチャを作成する。
+        /// Object3D 用のルートシグネチャを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreateRootSignature();
 
         /// <summary>
-        /// Object3D 用のグラフィックスパイプラインステートを作成する。
+        /// Object3D 用のグラフィックスパイプラインステートを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreatePipelineState();
 
         /// <summary>
-        /// Sprite 用のルートシグネチャを作成する。
+        /// Sprite 用のルートシグネチャを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreateSpriteRootSignature();
 
         /// <summary>
-        /// Sprite 用のグラフィックスパイプラインステートを作成する。
+        /// Sprite 用のグラフィックスパイプラインステートを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreateSpritePipelineState();
 
         /// <summary>
-        /// Particle 用のルートシグネチャを作成する。
+        /// Particle 用のルートシグネチャを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreateParticleRootSignature();
 
         /// <summary>
-        /// Particle 用のグラフィックスパイプラインステートを作成する。
+        /// Particle 用のグラフィックスパイプラインステートを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreateParticlePipelineState();
 
         /// <summary>
-        /// PostEffect 用のルートシグネチャを作成する。
+        /// PostEffect 用のルートシグネチャを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreatePostEffectRootSignature();
 
         /// <summary>
-        /// PostEffect 用のグラフィックスパイプラインステートを作成する。
+        /// PostEffect 用のグラフィックスパイプラインステートを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreatePostEffectPipelineState();
 
         /// <summary>
-        /// SkyBox 用のルートシグネチャを作成する。
+        /// SkyBox 用のルートシグネチャを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreateSkyBoxRootSignature();
 
         /// <summary>
-        /// SkyBox 用のグラフィックスパイプラインステートを作成する。
+        /// SkyBox 用のグラフィックスパイプラインステートを作成
+        /// <returns>なし</returns>
         /// </summary>
         void CreateSkyBoxPipelineState();
 
     private:
         /// <summary>
-        /// 共通のルートシグネチャを作成する。
+        /// 共通のルートシグネチャを作成
+        /// <param name="rootParameters">ルートパラメータ配列</param>
+        /// <param name="numRootParams">ルートパラメータ数</param>
+        /// <param name="descriptorRanges">ディスクリプタレンジ配列</param>
+        /// <param name="numDescriptorRanges">ディスクリプタレンジ数</param>
+        /// <param name="staticSamplers">静的サンプラー配列</param>
+        /// <param name="numStaticSamplers">静的サンプラー数</param>
+        /// <param name="outRootSignature">生成されたルートシグネチャ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CreateRootSignatureCommon(
             D3D12_ROOT_PARAMETER* rootParameters, UINT numRootParams,
@@ -4729,7 +4999,20 @@ namespace MyEngine {
             Microsoft::WRL::ComPtr<ID3D12RootSignature>& outRootSignature);
 
         /// <summary>
-        /// 共通のグラフィックスパイプラインステートを作成する。
+        /// 共通のグラフィックスパイプラインステートを作成
+        /// <param name="rootSignature">ルートシグネチャ</param>
+        /// <param name="inputLayoutDesc">入力レイアウト記述子</param>
+        /// <param name="blendDesc">ブレンド記述子</param>
+        /// <param name="rasterizerDesc">ラスタライザ記述子</param>
+        /// <param name="depthStencilDesc">深度ステンシル記述子</param>
+        /// <param name="rtvFormat">RTVフォーマット</param>
+        /// <param name="dsvFormat">DSVフォーマット</param>
+        /// <param name="vsPath">頂点シェーダファイルパス</param>
+        /// <param name="vsProfile">頂点シェーダプロファイル</param>
+        /// <param name="psPath">ピクセルシェーダファイルパス</param>
+        /// <param name="psProfile">ピクセルシェーダプロファイル</param>
+        /// <param name="outPipelineState">生成されたパイプラインステート</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CreateGraphicsPipelineStateCommon(
             ID3D12RootSignature* rootSignature,
@@ -4746,44 +5029,61 @@ namespace MyEngine {
             Microsoft::WRL::ComPtr<ID3D12PipelineState>& outPipelineState);
 
         /// <summary>
-        /// CBV（定数バッファビュー）用のルートパラメータを設定する。
+        /// CBV用のルートパラメータを設定
+        /// <param name="param">設定対象のルートパラメータ</param>
+        /// <param name="shaderRegister">シェーダーレジスタ番号</param>
+        /// <param name="visibility">シェーダー可視性</param>
+        /// <returns>なし</returns>
         /// </summary>
         void SetRootParameterCBV(D3D12_ROOT_PARAMETER& param, UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility);
 
         /// <summary>
-        /// ディスクリプタテーブル用のルートパラメータを設定する。
+        /// ディスクリプタテーブル用のルートパラメータを設定
+        /// <param name="param">設定対象のルートパラメータ</param>
+        /// <param name="range">ディスクリプタレンジ配列</param>
+        /// <param name="numRanges">ディスクリプタレンジ数</param>
+        /// <param name="visibility">シェーダー可視性</param>
+        /// <returns>なし</returns>
         /// </summary>
         void SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER& param, D3D12_DESCRIPTOR_RANGE* range, UINT numRanges, D3D12_SHADER_VISIBILITY visibility);
 
         /// <summary>
-        /// 静的サンプラーの設定を行う。
+        /// 静的サンプラーの設定
+        /// <param name="sampler">設定対象の静的サンプラー</param>
+        /// <param name="filter">フィルタ</param>
+        /// <param name="addressU">アドレスモードU</param>
+        /// <param name="addressV">アドレスモードV</param>
+        /// <param name="addressW">アドレスモードW</param>
+        /// <param name="shaderRegister">シェーダーレジスタ番号</param>
+        /// <param name="visibility">シェーダー可視性</param>
+        /// <returns>なし</returns>
         /// </summary>
         void SetStaticSampler(D3D12_STATIC_SAMPLER_DESC& sampler, D3D12_FILTER filter, D3D12_TEXTURE_ADDRESS_MODE addressU, D3D12_TEXTURE_ADDRESS_MODE addressV, D3D12_TEXTURE_ADDRESS_MODE addressW, UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility);
 
     public:
-        /// <summary>Object3D 用のルートシグネチャを取得する。</summary>
+        /// <summary>Object3D 用のルートシグネチャを取得</summary>
         ID3D12RootSignature* GetRootSignature() const { return root_signature_.Get(); }
-        /// <summary>Object3D 用のグラフィックスパイプラインステートを取得する。</summary>
+        /// <summary>Object3D 用のグラフィックスパイプラインステートを取得</summary>
         ID3D12PipelineState* GetGraphicsPipelineState() const { return graphics_pipeline_state_.Get(); }
 
-        /// <summary>Sprite 用のルートシグネチャを取得する。</summary>
+        /// <summary>Sprite 用のルートシグネチャを取得</summary>
         ID3D12RootSignature* GetSpriteRootSignature() const { return sprite_root_signature_.Get(); }
-        /// <summary>Sprite 用のグラフィックスパイプラインステートを取得する。</summary>
+        /// <summary>Sprite 用のグラフィックスパイプラインステートを取得。</summary>
         ID3D12PipelineState* GetSpriteGraphicsPipelineState() const { return sprite_graphics_pipeline_state_.Get(); }
 
-        /// <summary>Particle 用のルートシグネチャを取得する。</summary>
+        /// <summary>Particle 用のルートシグネチャを取得</summary>
         ID3D12RootSignature* GetParticleRootSignature() const { return particle_root_signature_.Get(); }
-        /// <summary>Particle 用のグラフィックスパイプラインステートを取得する。</summary>
+        /// <summary>Particle 用のグラフィックスパイプラインステートを取得</summary>
         ID3D12PipelineState* GetParticleGraphicsPipelineState() const { return particle_graphics_pipeline_state_.Get(); }
 
-        /// <summary>PostEffect 用のルートシグネチャを取得する。</summary>
+        /// <summary>PostEffect 用のルートシグネチャを取得</summary>
         ID3D12RootSignature* GetPostEffectRootSignature() const { return post_effect_root_signature_.Get(); }
-        /// <summary>PostEffect 用のグラフィックスパイプラインステートを取得する。</summary>
+        /// <summary>PostEffect 用のグラフィックスパイプラインステートを取得</summary>
         ID3D12PipelineState* GetPostEffectGraphicsPipelineState() const { return post_effect_graphics_pipeline_state_.Get(); }
 
-        /// <summary>SkyBox 用のルートシグネチャを取得する。</summary>
+        /// <summary>SkyBox 用のルートシグネチャを取得</summary>
         ID3D12RootSignature* GetSkyBoxRootSignature() const { return sky_box_root_signature_.Get(); }
-        /// <summary>SkyBox 用のグラフィックスパイプラインステートを取得する。</summary>
+        /// <summary>SkyBox 用のグラフィックスパイプラインステートを取得</summary>
         ID3D12PipelineState* GetSkyBoxGraphicsPipelineState() const { return sky_box_graphics_pipeline_state_.Get(); }
 
     private:
@@ -4918,11 +5218,15 @@ namespace MyEngine {
 	/// </summary>
 	namespace string_utility {
 		/// <summary>
-		/// UTF-8 エンコードされた std::string を std::wstring (Windows の UTF-16) に変換する。
-		/// </summary>
+        /// UTF-8 エンコードされた std::string を std::wstringに変換
+        /// <param name="str">変換元のUTF-8文字列</param>
+        /// <returns>変換後のUTF-16文字列（std::wstring）</returns>
+        /// </summary>
 		std::wstring ConvertString(const std::string& str);
 		/// <summary>
-		/// std::wstring (Windows の UTF-16) を UTF-8 エンコードされた std::string に変換する。
+		/// std::wstringを UTF-8 エンコードされた std::string に変換
+		/// <param name="str">変換元のUTF-16文字列</param>
+		/// <returns>変換後のUTF-8文字列（std::string）</returns>
 		/// </summary>
 		std::string ConvertString(const std::wstring& str);
 	}
@@ -5057,39 +5361,47 @@ namespace MyEngine {
     public:
         /// <summary>
         /// ウィンドウプロシージャ（静的コールバック）
+        /// <param name="hwnd">ウィンドウハンドル</param>
+        /// <param name="msg">メッセージID</param>
+        /// <param name="wparam">追加情報1</param>
+        /// <param name="lparam">追加情報2</param>
+        /// <returns>メッセージ処理結果（LRESULT）</returns>
         /// </summary>
         static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-    public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>WindowsApiのインスタンス（ポインタ）</returns>
         /// </summary>
         static WindowsApi* GetInstance();
 
         /// <summary>
-        /// 初期化処理を行う。
+        /// 初期化処理
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize();
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// Windows メッセージをポーリングして処理する。
+        /// Windows メッセージをポーリングして処理
+        /// <returns>終了要求時はfalse、継続時はtrue</returns>
         /// </summary>
         bool ProcessMessage();
 
-        // getter
-
         /// <summary>
-        /// ウィンドウハンドルを取得する。
+        /// ウィンドウハンドルを取得
+        /// <returns>ウィンドウハンドル（HWND）</returns>
         /// </summary>
         HWND GetHwnd() const { return hwnd_; }
 
         /// <summary>
-        /// インスタンスハンドルを取得する。
+        /// インスタンスハンドルを取得
+        /// <returns>インスタンスハンドル（HINSTANCE）</returns>
         /// </summary>
         HINSTANCE GetHinstance() const { return wc_.hInstance; }
 
@@ -5168,39 +5480,71 @@ namespace MyEngine {
 	class Camera {
 	public:
 		/// <summary>
-		/// デフォルトコンストラクタ。
-		/// </summary>
+        /// デフォルトコンストラクタ
+        /// <returns>なし</returns>
+        /// </summary>
 		Camera();
 
 		/// <summary>
-		/// 毎フレーム更新する。
+		/// 毎フレーム更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void Update();
 
-		/// <summary>回転を設定する。</summary>
+		/// <summary>回転を設定
+		/// <param name="rotate">回転値（Vector3）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-		/// <summary>平行移動（座標）を設定する。</summary>
+		/// <summary>平行移動を設定
+		/// <param name="translate">座標値（Vector3）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
-		/// <summary>垂直方向（y軸）視野角を設定する。</summary>
+		/// <summary>垂直方向視野角を設定
+		/// <param name="fov_y">視野角（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetFovY(float fov_y) { fov_y_ = fov_y; }
-		/// <summary>アスペクト比を設定する（幅 / 高さ）。</summary>
+		/// <summary>アスペクト比を設定する
+		/// <param name="aspect_ratio">アスペクト比（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetAspectRatio(float aspect_ratio) { aspect_ratio_ = aspect_ratio; }
-		/// <summary>ニアクリップ距離を設定する。</summary>
+		/// <summary>ニアクリップ距離を設定
+		/// <param name="near_clip">ニアクリップ距離（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetNearClip(float near_clip) { near_clip_ = near_clip; }
-		/// <summary>ファークリップ距離を設定する。</summary>
+		/// <summary>ファークリップ距離を設定
+		/// <param name="far_clip">ファークリップ距離（float）</param>
+		/// <returns>なし</returns>
+		/// </summary>
 		void SetFarClip(float far_clip) { far_clip_ = far_clip; }
 
-		/// <summary>ワールド行列を取得する。</summary>
+		/// <summary>ワールド行列を取得
+		/// <returns>ワールド行列（const Matrix4x4&）</returns>
+		/// </summary>
 		const Matrix4x4& GetWorldMatrix() const { return world_matrix_; }
-		/// <summary>ビュー行列を取得する。</summary>
+		/// <summary>ビュー行列を取得
+		/// <returns>ビュー行列（const Matrix4x4&）</returns>
+		/// </summary>
 		const Matrix4x4& GetViewMatrix() const { return view_matrix_; }
-		/// <summary>プロジェクション行列を取得する。</summary>
+		/// <summary>プロジェクション行列を取得
+		/// <returns>プロジェクション行列（const Matrix4x4&）</returns>
+		/// </summary>
 		const Matrix4x4& GetProjectionMatrix() const { return projection_matrix_; }
-		/// <summary>ビュー×プロジェクション行列を取得する。</summary>
+		/// <summary>ビュー×プロジェクション行列を取得
+		/// <returns>ビュー×プロジェクション行列（const Matrix4x4&）</returns>
+		/// </summary>
 		const Matrix4x4& GetViewProjectionMatrix() const { return view_projection_matrix_; }
-		/// <summary>回転を取得する。</summary>
+		/// <summary>回転を取得
+		/// <returns>回転値（const Vector3&）</returns>
+		/// </summary>
 		const Vector3& GetRotate() const { return transform_.rotate; }
-		/// <summary>座標を取得する。</summary>
+		/// <summary>座標を取得
+		/// <returns>座標値（const Vector3&）</returns>
+		/// </summary>
 		const Vector3& GetTranslate() const { return transform_.translate; }
 
 	private:
@@ -5264,8 +5608,9 @@ namespace MyEngine {
 	{
 	public:
 		/// <summary>
-		/// デストラクタ。
-		/// </summary>
+        /// デストラクタ
+        /// <returns>なし</returns>
+        /// </summary>
 		~D3DResourceLeakChecker();
 	};
 }
@@ -5308,8 +5653,10 @@ namespace MyEngine {
 	namespace Logger
 	{
 		/// <summary>
-		/// デバッグ出力にメッセージを送る。
-		/// </summary>
+        /// デバッグ出力にメッセージを送る
+        /// <param name="message">出力するメッセージ文字列</param>
+        /// <returns>なし</returns>
+        /// </summary>
 		void Log(const std::string& message);
 	}
 }
@@ -5445,52 +5792,65 @@ namespace MyEngine {
         template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>Inputのインスタンス（ポインタ）</returns>
         /// </summary>
         static Input* GetInstance();
 
         /// <summary>
-        /// 初期化を行う。
+        /// 初期化
+        /// <param name="windows_api">WindowsApiクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(WindowsApi* windows_api);
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// 毎フレームの更新処理を行う。
+        /// 毎フレームの更新処理
+        /// <returns>なし</returns>
         /// </summary>
         void Update();
 
         /// <summary>
-        /// 1フレーム分の入力をクリアする（入力を無視する）。
+        /// 1フレーム分の入力をクリア。
+        /// <returns>なし</returns>
         /// </summary>
         void ClearInput();
 
         /// <summary>
-        /// 指定キーが押されているかをチェックする。
+        /// 指定キーが押されているかをチェック
+        /// <param name="key_code">キーコード（BYTE）</param>
+        /// <returns>押されていればtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsKeyPressed(BYTE key_code);
 
         /// <summary>
-        /// 指定キーがトリガー（前フレームは未押下、今回押下）かをチェックする。
+        /// 指定キーがトリガーかをチェック
+        /// <param name="key_code">キーコード（BYTE）</param>
+        /// <returns>トリガーならtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsKeyTriggered(BYTE key_code);
 
         /// <summary>
         /// マウス左ボタンが押されているか
+        /// <returns>押されていればtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsMouseLeftPressed();
 
         /// <summary>
         /// マウス左ボタンがトリガーか
+        /// <returns>トリガーならtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsMouseLeftTriggered();
 
         /// <summary>
         /// マウスのクライアント座標を取得
+        /// <returns>マウス座標（POINT構造体）</returns>
         /// </summary>
         POINT GetMousePosition();
 
@@ -5609,37 +5969,48 @@ namespace MyEngine {
     class CameraManager {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>CameraManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static CameraManager* GetInstance();
 
         /// <summary>
-        /// 初期化を行う。
+        /// 初期化
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize();
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// カメラを追加する。
+        /// カメラを追加
+        /// <param name="name">カメラ名（std::string）</param>
+        /// <param name="camera">追加するCameraのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void AddCamera(const std::string& name, Camera* camera);
 
         /// <summary>
-        /// 現在のアクティブカメラを取得する。
+        /// 現在のアクティブカメラを取得
+        /// <returns>アクティブなCameraのポインタ</returns>
         /// </summary>
         Camera* GetActiveCamera();
 
         /// <summary>
-        /// 名前からカメラを取得する。
+        /// 名前からカメラを取得
+        /// <param name="name">カメラ名（std::string）</param>
+        /// <returns>Cameraのポインタ</returns>
         /// </summary>
         Camera* GetCamera(const std::string& name);
 
         /// <summary>
-        /// 名前でアクティブカメラを設定する。
+        /// 名前でアクティブカメラを設定
+        /// <param name="name">カメラ名（std::string）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void SetActiveCamera(const std::string& name);
 
@@ -5784,31 +6155,40 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンス
+        /// <returns>ImGuiManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static ImGuiManager* GetInstance();
 
         /// <summary>
-        /// ImGui 関連の終了処理を行う
+        /// ImGui 関連の終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// ImGui を初期化する。
+        /// ImGui を初期化
+        /// <param name="windows_api">WindowsAPIクラスのポインタ</param>
+        /// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+        /// <param name="srv_manager">SrvManagerクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(WindowsApi* windows_api, DirectXBase* directx_base, SrvManager* srv_manager);
 
         /// <summary>
-        /// ImGui の受け付けを開始する
+        /// ImGui の受け付けを開始
+        /// <returns>なし</returns>
         /// </summary>
         void Begin();
 
         /// <summary>
-        /// ImGui の受け付けを終了する
+        /// ImGui の受け付けを終了
+        /// <returns>なし</returns>
         /// </summary>
         void End();
 
         /// <summary>
         /// 画面への描画
+        /// <returns>なし</returns>
         /// </summary>
         void Draw();
 
@@ -6007,17 +6387,25 @@ namespace MyEngine {
     class JsonManager {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>JsonManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static JsonManager* GetInstance();
 
         /// <summary>
-        /// JSON ファイルを読み込み、LevelData を生成して返す。
+        /// JSON ファイルを読み込み、LevelData を生成して返す
+        /// <param name="filename">JSONファイルのパス（std::string）</param>
+        /// <returns>生成されたLevelDataのunique_ptr</returns>
         /// </summary>
         std::unique_ptr<LevelData> LoadJsonFile(const std::string& filename);
 
         /// <summary>
-        /// JSONからTransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納する。
+        /// JSONからTransformオブジェクトから座標・回転・スケールを読み取り、エンジン用に変換して格納
+        /// <param name="transform">JSONのTransformオブジェクト</param>
+        /// <param name="translation">格納先の平行移動（Vector3）</param>
+        /// <param name="rotation">格納先の回転（Vector3）</param>
+        /// <param name="scaling">格納先のスケール（Vector3）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void ReadTransform(const nlohmann::json& transform, Vector3& translation, Vector3& rotation, Vector3& scaling);
 
@@ -6111,29 +6499,38 @@ namespace MyEngine {
     class ModelManager {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>ModelManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static ModelManager* GetInstance();
 
         /// <summary>
-        /// 初期化を行う。
+        /// 初期化を行う
+        /// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(DirectXBase* directx_base);
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理を行う
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// モデルファイルを読み込む。
+        /// モデルファイルを読み込む
+        /// <param name="file_path">モデルファイルのパス（std::string）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void LoadModel(const std::string& file_path);
 
         /// <summary>
-        /// 登録済みのモデルを検索して返す。
+        /// 登録済みのモデルを検索して返す
+        /// <param name="file_path">モデルファイルのパス（std::string）</param>
+        /// <returns>Modelのポインタ。未登録の場合はnullptr</returns>
         /// </summary>
         Model* FindModel(const std::string& file_path);
+      
     public:
         // コンストラクタ
         ModelManager() {}
@@ -6657,82 +7054,122 @@ namespace MyEngine {
 
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>ParticleManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static ParticleManager* GetInstance();
 
         /// <summary>
-        /// 初期化する。
+        /// 初期化
+        /// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+        /// <param name="srv_manager">SrvManagerクラスのポインタ</param>
+        /// <param name="camera">Cameraクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(DirectXBase* directx_base, SrvManager* srv_manager, Camera* camera);
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// シーン終了時に呼ぶクリア処理。
+        /// シーン終了時に呼ぶクリア処理
+        /// <returns>なし</returns>
         /// </summary>
         void Clear();
 
         /// <summary>
-        /// 毎フレーム更新処理を行う。
+        /// 毎フレーム更新処理
+        /// <returns>なし</returns>
         /// </summary>
         void Update();
 
         /// <summary>
-        /// 描画処理を行う
+        /// 描画処理
+        /// <returns>なし</returns>
         /// </summary>
         void Draw();
 
         /// <summary>
-        /// パーティクルグループを生成する。
+        /// パーティクルグループを生成
+        /// <param name="name">グループ名（std::string）</param>
+        /// <param name="texture_file_path">テクスチャファイルパス（std::string）</param>
+        /// <param name="type">パーティクル種類（ParticleType）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CreateParticleGroup(const std::string name, const std::string texture_file_path, ParticleType type);
 
         /// <summary>
-        /// 新しいパーティクルを生成して返す。
+        /// 新しいパーティクルを生成して返す
+        /// <param name="random_engine">乱数エンジン</param>
+        /// <param name="translate">生成位置（Vector3）</param>
+        /// <param name="type">パーティクル種類（ParticleType）</param>
+        /// <returns>生成されたParticle構造体</returns>
         /// </summary>
         Particle MakeNewParticle(std::mt19937& random_engine, const Vector3& translate, ParticleType type);
 
         /// <summary>
-        /// 指定グループの位置にパーティクルを発生させる。
+        /// 指定グループの位置にパーティクルを発生
+        /// <param name="name">グループ名（std::string）</param>
+        /// <param name="position">発生位置（Vector3）</param>
+        /// <param name="count">発生数（uint32_t）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Emit(const std::string& name, const Vector3& position, uint32_t count);
 
         /// <summary>
-        /// AABB 内に点が存在するか判定する。
+        /// AABB 内に点が存在するか判定
+        /// <param name="aabb">AABB構造体</param>
+        /// <param name="point">判定する点（Vector3）</param>
+        /// <returns>存在すればtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsCollision(const AABB& aabb, const Vector3& point);
 
         /// <summary>
-        /// 指定グループの ParticleType を取得する。
+        /// 指定グループの ParticleType を取得
+        /// <param name="name">グループ名（std::string）</param>
+        /// <returns>パーティクル種類（ParticleType）</returns>
         /// </summary>
         ParticleType GetParticleType(const std::string& name);
+
     private:
         /// <summary>
-        /// 汎用（四角）パーティクルの頂点データを作成し model_data に格納する。
+        /// 四角パーティクルの頂点データを作成し model_data に格納
+        /// <param name="model_data">頂点データを格納するModelData構造体</param>
+        /// <returns>なし</returns>
         /// </summary>
         void VertexDataCreate(ModelData& model_data);
 
         /// <summary>
-        /// リング型パーティクルの頂点データを作成する。
+        /// リング型パーティクルの頂点データを作成
+        /// <param name="model_data">頂点データを格納するModelData構造体</param>
+        /// <returns>なし</returns>
         /// </summary>
         void RingVertexDataCreate(ModelData& model_data);
 
         /// <summary>
-        /// シリンダー型パーティクルの頂点データを作成する。
+        /// シリンダー型パーティクルの頂点データを作成
+        /// <param name="model_data">頂点データを格納するModelData構造体</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CylinderVertexDataCreate(ModelData& model_data);
 
         /// <summary>
-        /// マテリアル用の GPU バッファを生成して初期値を書き込む。
+        /// マテリアル用の GPU バッファを生成して初期値を書き込む
+        /// <returns>なし</returns>
         /// </summary>
         void MaterialCreate();
 
         /// <summary>
-        /// 頂点バッファリソースを生成し、データをマッピング・コピーする。
+        /// 頂点バッファリソースを生成し、データをマッピング・コピー
+        /// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+        /// <param name="vertices">頂点データ配列</param>
+        /// <param name="vertex_resource">生成された頂点リソース</param>
+        /// <param name="vertex_buffer_view">頂点バッファビュー</param>
+        /// <param name="vertex_data">頂点データ書き込み用ポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CreateAndMapVertexBuffer(
             DirectXBase* directx_base,
@@ -6869,28 +7306,35 @@ namespace MyEngine {
     {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>SceneManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static SceneManager* GetInstance();
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
         /// <summary>
-        /// 毎フレームの更新処理を行う。
+        /// 毎フレームの更新処理
+        /// <returns>なし</returns>
         /// </summary>
         void Update();
         /// <summary>
-        /// 描画処理を行う。
+        /// 描画処理
+        /// <returns>なし</returns>
         /// </summary>
         void Draw();
-    public:
         /// <summary>
-        /// 次のシーンを予約する。
+        /// 次のシーンを予約
+        /// <param name="scene_name">遷移先シーン名（std::string）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void ChangeScene(const std::string& scene_name);
         /// <summary>
-        /// シーンファクトリーをセットする。
+        /// シーンファクトリーをセット
+        /// <param name="scene_factory">AbstractSceneFactoryのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void SetSceneFactory(AbstractSceneFactory* scene_factory) { scene_factory_ = scene_factory; }
     private:
@@ -7048,72 +7492,100 @@ namespace MyEngine {
     class SrvManager {
     public:
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>SrvManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static SrvManager* GetInstance();
 
         /// <summary>
-        /// 初期化を行う。
+        /// 初期化
+        /// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(DirectXBase* directx_base);
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// 2D テクスチャ用の SRV を作成する。
+        /// 2D テクスチャ用の SRV を作成
+        /// <param name="srv_index">SRVインデックス</param>
+        /// <param name="p_resource">テクスチャリソースのポインタ</param>
+        /// <param name="metadata">テクスチャメタデータ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CreateSrvForTexture2D(uint32_t srv_index, ID3D12Resource* p_resource, const DirectX::TexMetadata& metadata);
 
         /// <summary>
-        /// 構造化バッファ用（Structured Buffer） SRV を作成する。
+        /// 構造化バッファ用SRVを作成
+        /// <param name="srv_index">SRVインデックス</param>
+        /// <param name="p_resource">バッファリソースのポインタ</param>
+        /// <param name="num_elements">要素数</param>
+        /// <param name="structure_byte_stride">1要素あたりのバイト数</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CreateSrvForStructuredBuffer(uint32_t srv_index, ID3D12Resource* p_resource, UINT num_elements, UINT structure_byte_stride);
 
         /// <summary>
-        /// レンダーテクスチャ用の SRV を作成する
+        /// レンダーテクスチャ用のSRVを作成
+        /// <param name="srv_index">SRVインデックス</param>
+        /// <param name="p_resource">レンダーテクスチャリソースのポインタ</param>
+        /// <param name="format">フォーマット（DXGI_FORMAT）</param>
+        /// <returns>なし</returns>
         /// </summary>
         void CreateSrvForRenderTexture(uint32_t srv_index, ID3D12Resource* p_resource, DXGI_FORMAT format);
 
         /// <summary>
-        /// 描画前に SRV 用のデスクリプタヒープをコマンドリストへセットする。
+        /// 描画前に SRV 用のデスクリプタヒープをコマンドリストへセット
+        /// <returns>なし</returns>
         /// </summary>
         void PreDraw();
 
         /// <summary>
-        /// ルートパラメータに対して指定 SRV インデックスの GPU デスクリプタハンドルをセットする。
+        /// ルートパラメータに対して指定 SRV インデックスの GPU デスクリプタハンドルをセット
+        /// <param name="root_parameter_index">ルートパラメータインデックス</param>
+        /// <param name="srv_index">SRVインデックス</param>
+        /// <returns>なし</returns>
         /// </summary>
         void SetGraphicsRootDescriptorTable(UINT root_parameter_index, uint32_t srv_index);
 
         /// <summary>
-        /// 新しい SRV を割り当て可能かチェックする。
+        /// 新しい SRV を割り当て可能かチェック
+        /// <returns>割り当て可能ならtrue、そうでなければfalse</returns>
         /// </summary>
         bool SecuredCheck();
 
         /// <summary>
-        /// SRV インデックスを割り当てる。
+        /// SRV インデックスを割り当てる
+        /// <returns>割り当てたSRVインデックス（uint32_t）</returns>
         /// </summary>
         uint32_t Allocate();
 
         /// <summary>
-        /// 指定インデックスに対応する CPU デスクリプタハンドルを計算して返す。
+        /// 指定インデックスに対応する CPU デスクリプタハンドルを計算して返す
+        /// <param name="index">SRVインデックス</param>
+        /// <returns>D3D12_CPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_CPU_DESCRIPTOR_HANDLE GetCpuDescriptorHandle(uint32_t index);
 
         /// <summary>
-        /// 指定インデックスに対応する GPU デスクリプタハンドルを計算して返す。
+        /// 指定インデックスに対応する GPU デスクリプタハンドルを計算して返す
+        /// <param name="index">SRVインデックス</param>
+        /// <returns>D3D12_GPU_DESCRIPTOR_HANDLE</returns>
         /// </summary>
         D3D12_GPU_DESCRIPTOR_HANDLE GetGpuDescriptorHandle(uint32_t index);
 
         /// <summary>
         /// 内部が保持するデスクリプタヒープの生ポインタを返す
+        /// <returns>ID3D12DescriptorHeapのポインタ</returns>
         /// </summary>
         ID3D12DescriptorHeap* GetDescriptorHeap() { return descriptor_heap_.Get(); }
 
     public:
-        // 最大SRV数(最大テクスチャ数)
+        // 最大SRV数
         static const uint32_t kMaxCount;
 
     private:
@@ -7272,42 +7744,57 @@ namespace MyEngine {
 	class TextureManager {
 	public:
 		/// <summary>
-		/// シングルトンインスタンスを取得する
-		/// </summary>
+        /// シングルトンインスタンスを取得
+        /// <returns>TextureManagerのインスタンス（ポインタ）</returns>
+        /// </summary>
 		static TextureManager* GetInstance();
 
 		/// <summary>
-		/// 終了処理を行う
+		/// 終了処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
-		/// 初期化を行う
+		/// 初期化
+		/// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+		/// <param name="srv_manager">SrvManagerクラスのポインタ</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void Initialize(DirectXBase* directx_base, SrvManager* srv_manager);
 
 		/// <summary>
 		/// テクスチャファイルを読み込む
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void LoadTexture(const std::string& file_path);
 
 		/// <summary>
-		/// ファイルパスから SRV インデックス（割り当てられた番号）を取得する。
+		/// ファイルパスから SRV インデックスを取得
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>SRVインデックス（uint32_t）</returns>
 		/// </summary>
 		uint32_t GetTextureIndexByFilePath(const std::string& file_path);
 
 		/// <summary>
-		/// 指定ファイルパスに対応するテクスチャのメタデータを取得する
+		/// 指定ファイルパスに対応するテクスチャのメタデータを取得
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>テクスチャメタデータ（const DirectX::TexMetadata&）</returns>
 		/// </summary>
 		const DirectX::TexMetadata& GetMetaData(const std::string& file_path);
 
 		/// <summary>
-		/// 指定ファイルパスに対応する SRV インデックスを取得する
+		/// 指定ファイルパスに対応する SRV インデックスを取得
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>SRVインデックス（uint32_t）</returns>
 		/// </summary>
 		uint32_t GetSrvIndex(const std::string& file_path);
 
 		/// <summary>
-		/// 指定ファイルパスに対応する GPU 側のデスクリプタハンドルを取得する。
+		/// 指定ファイルパスに対応する GPU 側のデスクリプタハンドルを取得
+		/// <param name="file_path">テクスチャファイルのパス（std::string）</param>
+		/// <returns>GPUデスクリプタハンドル（D3D12_GPU_DESCRIPTOR_HANDLE）</returns>
 		/// </summary>
 		D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU(const std::string& file_path);
 	public:
@@ -8470,8 +8957,10 @@ namespace MyEngine {
 	{
 	public:
 		/// <summary>
-		/// シーン名に応じたシーンインスタンスを生成して返す。
-		/// </summary>
+        /// シーン名に応じたシーンインスタンスを生成して返す
+        /// <param name="scene_name">生成するシーン名（std::string）</param>
+        /// <returns>生成されたBaseSceneのunique_ptr</returns>
+        /// </summary>
 		std::unique_ptr<BaseScene>CreateScene(const std::string& scene_name)override;
 	};
 }
@@ -8873,144 +9362,188 @@ class Boss1
   public:
 	/// <summary>
 	/// 初期化
+	/// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
+
 	/// <summary>
 	/// 更新処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
+
 	/// <summary>
 	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
 	
 	/// <summary>
 	/// 移動
+	/// <returns>なし</returns>
 	/// </summary>
 	void Move();
 
 	/// <summary>
-	/// 二段高さショットを発射する
+	/// 二段高さショットを発射
+	/// <returns>なし</returns>
 	/// </summary>
 	void FireDoubleHeightShot();
 
 	/// <summary>
-	/// 次の移動目標を決定する
+	/// 次の移動目標を決定
+	/// <returns>なし</returns>
 	/// </summary>
 	void DecideNextTarget();
 
 	/// <summary>
-    /// 扇状拡散ショットを発射する
+    /// 扇状拡散ショットを発射
+	/// <returns>なし</returns>
     /// </summary>
 	void FireFanShot();
 
 	/// <summary>
 	/// 衝突時のコールバック
+	/// <returns>なし</returns>
 	/// </summary>
 	void OnCollision();
+
 	/// <summary>
-	/// HP を減少させる
+	/// HP を減少
+	/// <param name="damage">減少させるダメージ量</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void TakeDamage(uint32_t damage);
 
 	/// <summary>
-	/// 状態を変更する
+	/// 状態を変更
+	/// <param name="newState">新しい状態のユニークポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void ChangeState(std::unique_ptr<BossState> newState);
 
 	/// <summary>
-	/// デバッグ UI を表示する（ImGui を使用）
+	/// デバッグ UIを表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
 
 	/// <summary>
-	/// OBB（Oriented Bounding Box）を取得する
+	/// OBBを取得する
+	/// <returns>OBB構造体</returns>
 	/// </summary>
 	OBB GetOBB() const; 
 
 	/// <summary>
-	/// 弾発射間隔を決定する
+	/// 弾発射間隔を決定
+	/// <returns>発射間隔（フレーム数）</returns>
 	///	</summary>
 	int DecideFireInterval();
 
 	/// <summary>
-	/// min から max の範囲で乱数の浮動小数点数を生成する
+	/// min から max の範囲で乱数の浮動小数点数を生成
+	/// <param name="min">最小値</param>
+	/// <param name="max">最大値</param>
+	/// <returns>生成された乱数値</returns>
 	/// </summary>
 	float RandomFloat(float min, float max);
 
 	/// <summary>
 	/// タイマーの共通関数
+	/// <param name="timer">タイマー変数（参照渡し）</param>
+	/// <param name="threshold">閾値</param>
+	/// <returns>タイマーが閾値を超えた場合true、それ以外はfalse</returns>
 	/// </summary>
 	bool UpdateDelayTimer(int& timer, int threshold);
 
 	/// <summary>
-	/// 死亡フラグが立っているか判定する。
+	/// 死亡フラグが立っているか判定
+	/// <returns>死亡していればtrue</returns>
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
 
 	/// <summary>
-	/// 死亡時のパーティクル発生フラグが立っているか判定する。
+	/// 死亡時のパーティクル発生フラグが立っているか判定
+	/// <returns>発生していればtrue</returns>
 	/// </summary>
 	bool IsDeathParticle() const { return is_death_particle_; }
 public:
 	/// <summary>
-	/// 現在の位置（Transform.translate）を取得する。
+	/// 現在の位置（Transform.translate）を取得
+	/// <returns>現在の座標（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetPosition() const { return transform_.translate; }
 
 	/// <summary>
-	/// 弾の攻撃力を取得する。
+	/// 弾の攻撃力を取得
+	/// <returns>攻撃力</returns>
 	/// </summary>
 	int GetAttack() const { return attack_; }
 
 	/// <summary>
-	/// 現在のHPを取得する。
+	/// 現在のHPを取得
+	/// <returns>現在のHP</returns>
 	/// </summary>
 	int GetHP() const { return hp_; }
 
 	/// <summary>
-	/// ボス強化体力値（Enraged HP）を取得する。
+	/// ボス強化体力値を取得
+	/// <returns>強化体力値</returns>
 	/// </summary>
 	int GetEnragedHP() const { return kEnragedHP; }
 
 	/// <summary>
-	/// コリジョンや描画に用いる半径を取得する。
+	/// コリジョンや描画に用いる半径を取得
+	/// <returns>半径</returns>
 	/// </summary>
 	float GetRadius() const { return radius_; }
 
 	/// <summary>
-	/// 所有する弾リストを取得する（読み取り専用）。
+	/// 所有する弾リストを取得
+	/// <returns>弾リスト（const参照）</returns>
 	/// </summary>
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() const { return bullets_; }
 
 	/// <summary>
-	/// スケールを設定する。
+	/// スケールを設定
+	/// <param name="scale">設定するスケール値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
 
 	/// <summary>
-	/// 回転を設定する。
+	/// 回転を設定
+	/// <param name="rotate">設定する回転値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 
 	/// <summary>
-	/// 座標を設定する。
+	/// 座標を設定
+	/// <param name="position">設定する座標値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 
 	/// <summary>
-	/// 対象プレイヤーのポインタを設定する。
-	/// - 攻撃判定や追従に利用される。
+	/// 対象プレイヤーのポインタを設定
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/// <summary>
-	/// デスパーティクル発生フラグを設定する。
+	/// デスパーティクル発生フラグを設定
+	/// <param name="flag">設定するフラグ値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
 	/// <summary>
-	/// 通常時のスケールを設定する。
+	/// 通常時のスケールを設定
+	/// <param name="scale">設定するスケール値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetDefaultScale(const Vector3& scale) {default_scale_ = scale;}
 private:
@@ -9184,29 +9717,34 @@ File Path: project/game/boss/BossStateEnraged.h
 class BossStateEnraged : public BossState {
 public:
     /// <summary>
-	/// 状態に入るときの処理
+    /// 状態に入るときの処理
+    /// <param name="boss">対象となるボス本体</param>
+    /// <returns>なし</returns>
     /// </summary>
     void Enter(Boss1& boss) override;
+
     /// <summary>
-	/// 状態の更新
+    /// 状態の更新
+    /// <param name="boss">対象となるボス本体</param>
+    /// <returns>なし</returns>
     /// </summary>
     void Update(Boss1& boss) override;
 private:
-	// 発射タイマー
+    // 発射タイマー
     int fire_timer_ = 0;
-	// 発射間隔
+    // 発射間隔
     int fire_interval_current_ = 0;
-	// 扇状ショット遅延タイマー
+    // 扇状ショット遅延タイマー
     int fan_shot_delay_timer_ = 0;
-	// 二段ショット遅延タイマー
+    // 二段ショット遅延タイマー
     int second_shot_delay_timer_ = 0;
-	// 二段ショット発射保留フラグ
+    // 二段ショット発射保留フラグ
     bool is_second_shot_pending_ = false;
-	// 扇状ショット発射保留フラグ
+    // 扇状ショット発射保留フラグ
     bool isFanShotPending_ = false;
-	// 扇状ショット遅延時間定数
+    // 扇状ショット遅延時間定数
     static const int kFanShotDelay = 30;
-	// 二段ショット遅延時間定数
+    // 二段ショット遅延時間定数
     static const int kSecondShotDelay = 15;
 };
 
@@ -9267,23 +9805,28 @@ class BossStateNormal : public BossState
 {
 public:
     /// <summary>
-	/// 状態に入るときの処理
+    /// 状態に入るときの処理
+    /// <param name="boss">対象となるボス本体</param>
+    /// <returns>なし</returns>
     /// </summary>
     void Enter(Boss1& boss) override;
+
     /// <summary>
-	/// 状態の更新
+    /// 状態の更新
+    /// <param name="boss">対象となるボス本体</param>
+    /// <returns>なし</returns>
     /// </summary>
     void Update(Boss1& boss) override;
 private:
-	// 発射タイマー
+    // 発射タイマー
     int fire_timer_ = 0;
-	// 発射間隔
+    // 発射間隔
     int fire_interval_current_ = 0;
-	// 二段ショット遅延タイマー
+    // 二段ショット遅延タイマー
     int second_shot_delay_timer_ = 0;
-	// 二段ショット発射保留フラグ
+    // 二段ショット発射保留フラグ
     bool is_second_shot_pending_ = false;
-	// 二段ショット遅延時間定数
+    // 二段ショット遅延時間定数
     static const int kSecondShotDelay = 15;
 };
 
@@ -9610,114 +10153,148 @@ class Player;
 class Enemy {
 public:
 	/// <summary>
-	/// 初期化する。
+	/// 初期化
+	/// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
+	/// 更新処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// 描画を行う。
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// レーザー攻撃（弾発射）を行う。
+	/// レーザー攻撃
+	/// <returns>なし</returns>
 	/// </summary>
 	void Laser();
 
 	/// <summary>
-	/// 衝突時のコールバック。
+	/// 衝突時のコールバック
+	/// <returns>なし</returns>
 	/// </summary>
 	void OnCollision();
 
 	/// <summary>
-	/// HP を減少させる。
+	/// HPを減少
+	/// <param name="damage">減少させるダメージ量</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void TakeDamage(int damage);
 
 	/// <summary>
-	/// デバッグ UI を表示する（ImGui を使用）
+	/// デバッグ UIを表示
+	/// <param name="id">デバッグUI識別用ID</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug(int id);
 
 	/// <summary>
-	/// レール上の位置を評価する。
+	/// レール上の位置を評価
+	/// <param name="progress">レール上の進行度（0.0～1.0）</param>
+	/// <returns>評価された座標（Vector3）</returns>
 	/// </summary>
 	Vector3 EvaluateRailPosition(float progress);
 
 	/// <summary>
-	/// OBB（Oriented Bounding Box）を取得する。
+	/// OBBを取得
+	/// <returns>OBB構造体</returns>
 	/// </summary>
 	OBB GetOBB() const;
 
 	/// <summary>
-	/// 死亡フラグが立っているか判定する。
+	/// 死亡フラグが立っているか判定
+	/// <returns>死亡していればtrue</returns>
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
 
 	/// <summary>
-	/// 死亡時のパーティクル発生フラグが立っているか判定する。
+	/// 死亡時のパーティクル発生フラグが立っているか判定
+	/// <returns>発生していればtrue</returns>
 	/// </summary>
 	bool IsDeathParticle() const { return is_death_particle_; }
 
 public:
 	/// <summary>
-	/// 現在の位置（Transform.translate）を取得する。
+	/// 現在の位置を取得
+	/// <returns>現在の座標（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
-    /// 弾の攻撃力を取得する。
+    /// 弾の攻撃力を取得
+	/// <returns>攻撃力</returns>
     /// </summary>
 	int GetAttack() const { return attack_; }
 
 	/// <summary>
-	/// コリジョンや描画に用いる半径を取得する。
+	/// コリジョンや描画に用いる半径を取得
+	/// <returns>半径</returns>
 	/// </summary>
 	float GetRadius() const { return radius_; }
 
 	/// <summary>
-	/// 所有する弾リストを取得する（読み取り専用）。
+	/// 所有する弾リストを取得
+	/// <returns>弾リスト（const参照）</returns>
 	/// </summary>
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() const { return bullets_; }
 
 	/// <summary>
-	/// スケールを設定する。
+	/// スケールを設定
+	/// <param name="scale">設定するスケール値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
 
 	/// <summary>
-	/// 回転を設定する。
+	/// 回転を設定
+	/// <param name="rotate">設定する回転値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 
 	/// <summary>
-	/// 座標を設定する。
+	/// 座標を設定
+	/// <param name="position">設定する座標値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 
 	/// <summary>
-    /// 初期HPを設定する
+    /// 初期HPを設定
+	/// <param name="hp">設定するHP値</param>
+	/// <returns>なし</returns>
     /// </summary>
 	void SetHP(int hp) { hp_ = hp; }
 
 	/// <summary>
-	/// 対象プレイヤーのポインタを設定する。
+	/// 対象プレイヤーのポインタを設定
 	/// - 攻撃判定や追従に利用される。
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/// <summary>
-	/// デスパーティクル発生フラグを設定する。
+	/// デスパーティクル発生フラグを設定
+	/// <param name="flag">設定するフラグ値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
 	/// <summary>
-	/// 敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定する。
+	/// 敵の移動用レールの制御点と閉じているかどうかを設定する。
+	/// <param name="controlPoints">制御点リスト</param>
+	/// <param name="closed">レールが閉じているかどうか</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetRail(const std::vector<Vector3>& controlPoints, bool closed);
 private:
@@ -9879,32 +10456,39 @@ class EnemyBullet
 {
 public:
     /// <summary>
-    /// 初期化する。
+    /// 初期化
+    /// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+    /// <returns>なし</returns>
     /// </summary>
     void Initialize(MyEngine::Object3dBase* object3d_base);
 
     /// <summary>
-    /// 毎フレームの更新処理を行う
+    /// 更新
+    /// <returns>なし</returns>
     /// </summary>
     void Update();
 
     /// <summary>
-    /// 描画処理を行う
+    /// 描画
+    /// <returns>なし</returns>
     /// </summary>
     void Draw();
 
     /// <summary>
     /// 衝突時のコールバック
+    /// <returns>なし</returns>
     /// </summary>
     void OnCollision();
 
     /// <summary>
-    /// OBB（Oriented Bounding Box）を取得する
+    /// OBBを取得
+    /// <returns>OBB構造体</returns>
     /// </summary>
     OBB GetOBB() const;
 
     /// <summary>
-    /// デスフラグが立っているかを取得する。
+    /// デスフラグが立っているかを取得
+    /// <returns>デスフラグが立っていればtrue</returns>
     /// </summary>
     bool IsDead() const { return is_dead_; }
 
@@ -9912,32 +10496,44 @@ public:
     /// Getter ///
 
     /// <summary>
-    /// 現在の座標（Transform.translate）を取得する。
+    /// 現在の座標を取得
+    /// <returns>現在の座標（Vector3参照）</returns>
     /// </summary>
     const Vector3& GetTranslate() const { return transform_.translate; }
 
     /// <summary>
-    /// 衝突判定等に使用する半径を取得する。
+    /// 衝突判定等に使用する半径を取得
+    /// <returns>半径</returns>
     /// </summary>
     float GetRadius() const { return radius_; }
 
     /// <summary>
-    /// 弾の攻撃力を取得する。
+    /// 弾の攻撃力を取得
+    /// <returns>攻撃力</returns>
     /// </summary>
     int GetAttack() const { return attack_; }
 
     /// Setter ///
 
     /// <summary>
-    /// 座標を設定する（変名: GetTranslate）。
+    /// 座標を設定。
+    /// <param name="position">設定する座標値</param>
+    /// <returns>なし</returns>
     /// </summary>
     void SetTranslate(const Vector3& position) { transform_.translate = position; }
 
     /// <summary>
-    /// 速度を設定する。
+    /// 速度を設定
+    /// <param name="velocity">設定する速度値</param>
+    /// <returns>なし</returns>
     /// </summary>
     void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 
+    /// <summary>
+    /// 色を設定
+    /// <param name="color">設定する色（Vector4）</param>
+    /// <returns>なし</returns>
+    /// </summary>
     void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 private:
@@ -10077,32 +10673,47 @@ public:
 	};
 
 	/// <summary>
-	/// フェード機能を初期化する
+	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize();
+
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
+	/// 更新処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
+
 	/// <summary>
-	/// フェードスプライトを描画する。
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
+
 	/// <summary>
-	/// フェードを開始する。
+	/// フェードを開始
+	/// <param name="state">開始するフェードの状態</param>
+	/// <param name="duration">フェードの持続時間（秒）</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void FadeStart(State state, float duration);
+
 	/// <summary>
-	/// フェード状態を停止し <c>State::None</c> にする。
+	/// フェード状態を停止しにする。
+	/// <returns>なし</returns>
 	/// </summary>
 	void End();
+
 	/// <summary>
-	/// フェードが終了したか判定する。
+	/// フェードが終了したか判定
+	/// <returns>フェードが終了していればtrue</returns>
 	/// </summary>
 	bool IsFinished();
+
 public:
 	/// <summary>
-	/// 現在のフェード状態を取得する。
+	/// 現在のフェード状態を取得
+	/// <returns>現在のフェード状態</returns>
 	/// </summary>
 	State GetState() const { return state_; }
 
@@ -10261,44 +10872,68 @@ class EnemyBullet;
 class CollisionManager {
 public:
 	/// <summary>
-	/// プレイヤーと敵（および各弾）の衝突判定を行う。
+	/// プレイヤーと敵の衝突判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="enemy">敵キャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CheckPlayerEnemyCollisions(Player* player, Enemy* enemy);
 
 	/// <summary>
-	/// プレイヤー弾と敵の当たり判定を行う。
+	/// プレイヤー弾と敵の当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="enemy">敵キャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CheckPlayerBulletsToEnemy(Player* player, Enemy* enemy);
 
 	/// <summary>
-	/// 敵弾とプレイヤーの当たり判定を行う。
+	/// 敵弾とプレイヤーの当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="enemy">敵キャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CheckEnemyBulletsToPlayer(Player* player, Enemy* enemy);
 
 	/// <summary>
-	/// プレイヤー本体と敵本体の当たり判定を行う。
+	/// プレイヤー本体と敵本体の当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="enemy">敵キャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CheckPlayerEnemyBody(Player* player, Enemy* enemy);
 
 	/// <summary>
-    /// プレイヤーとボスと各弾の衝突判定を行う。
+    /// プレイヤーとボスと各弾の衝突判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="boss">ボスキャラクターのポインタ</param>
+	/// <returns>なし</returns>
     /// </summary>
-	void CheckPlayerBossCollisions(Player* player, Boss1*boss);
+	void CheckPlayerBossCollisions(Player* player, Boss1* boss);
 
 	/// <summary>
-	/// プレイヤー弾とボスの当たり判定を行う。
+	/// プレイヤー弾とボスの当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="boss">ボスキャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
-	void CheckPlayerBulletsToBoss(Player* player,Boss1*boss);
+	void CheckPlayerBulletsToBoss(Player* player, Boss1* boss);
 
 	/// <summary>
-	/// ボス弾とプレイヤーの当たり判定を行う。
+	/// ボス弾とプレイヤーの当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="boss">ボスキャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
-	void CheckBossBulletsToPlayer(Player* player, Boss1*boss);
+	void CheckBossBulletsToPlayer(Player* player, Boss1* boss);
 
 	/// <summary>
-	/// プレイヤー本体とボス本体の当たり判定を行う。
+	/// プレイヤー本体とボス本体の当たり判定を行う
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <param name="boss">ボスキャラクターのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
-	void CheckPlayerBossBody(Player* player, Boss1*boss);
+	void CheckPlayerBossBody(Player* player, Boss1* boss);
 
 private:
 };
@@ -10467,27 +11102,32 @@ class GameClearObject
 {
 public:
     /// <summary>
-    /// 初期化処理
+    /// 初期化
+    /// <returns>なし</returns>
     /// </summary>
     void Initialize();
 
     /// <summary>
-    /// 更新処理
+    /// 更新
+    /// <returns>なし</returns>
     /// </summary>
     void Update();
 
     /// <summary>
     /// オブジェクトの描画
+    /// <returns>なし</returns>
     /// </summary>
     void Draw();
 
 	/// <summary>
 	/// スプライトの描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void DrawSprite();
 
     /// <summary>
     /// デバッグ
+    /// <returns>なし</returns>
     /// </summary>
     void Debug();
 
@@ -10785,51 +11425,62 @@ public:
 
     /// <summary>
     /// 初期化
+    /// <returns>なし</returns>
     /// </summary>
     void Initialize();
 
     /// <summary>
     /// 更新
+    /// <returns>なし</returns>
     /// </summary>
     void Update();
 
     /// <summary>
     /// 描画
+    /// <returns>なし</returns>
     /// </summary>
     void Draw();
 
 	/// <summary>
 	/// スプライト更新
+	/// <returns>なし</returns>
 	/// </summary>
     void UpdateSprite();
 
 	/// <summary>
 	/// スプライト描画
+	/// <returns>なし</returns>
 	/// </summary>
     void DrawSprite();
 
     /// <summary>
     /// デバッグ表示
+    /// <returns>なし</returns>
     /// </summary>
     void Debug();
 
     /// <summary>
 	/// メニュー結果リセット
+    /// <returns>なし</returns>
     /// </summary>
     void ResetMenuResult() { menu_result_ = MenuResult::None; }
 
 	/// <summary>
 	/// メニューインデックス取得
+	/// <returns>現在マウスがホバーしているメニューインデックス</returns>
 	/// </summary>
     int GetMouseHoverIndex();
 
 	/// <summary>
 	/// スプライト上にマウスがあるか判定
+	/// <param name="sprite">判定対象のスプライトポインタ</param>
+	/// <returns>スプライト上にマウスがあればtrue</returns>
 	/// </summary>
     bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
 	/// <summary>
 	/// メニュー結果取得
+	/// <returns>現在のメニュー結果</returns>
 	/// </summary>
     MenuResult GetMenuResult() const { return menu_result_; }
 
@@ -11246,61 +11897,74 @@ public:
 
 	/// <summary>
 	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize();
 
 	/// <summary>
 	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
 
 	/// <summary>
 	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
 
 	/// <summary>
 	/// スプライト描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void DrawSprite();
 
 	/// <summary>
 	/// プレイヤーオブジェクトの演出処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void PlayerObjDirection();
 
 	/// <summary>
 	/// メニュー項目の拡縮処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void MenuSizeUpdate();
 
 	/// <summary>
 	/// 操作説明表示の更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdateHowto();
 
 	/// <summary>
 	/// メニュー選択結果リセット
+	/// <returns>なし</returns>
 	/// </summary>
 	void ResetMenuResult() { menu_result_ = MenuResult::None; }
 
 	/// <summary>
 	/// デバッグ用UIを表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
 	
 	/// <summary>
 	/// マウスが乗っているメニュー項目のインデックスを取得
-	///	</summary>
+	/// <returns>マウスが乗っているメニューインデックス</returns>
+	/// </summary>
 	int GetMouseHoverIndex();
 
 	/// <summary>
 	/// スプライト上にマウスが乗っているか
+	/// <param name="sprite">判定対象のスプライトポインタ</param>
+	/// <returns>スプライト上にマウスがあればtrue</returns>
 	/// </summary>
 	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
 	/// <summary>
 	/// メニュー選択結果を取得
+	/// <returns>現在のメニュー選択結果</returns>
 	/// </summary>
 	MenuResult GetMenuResult() const { return menu_result_; }
 
@@ -11456,42 +12120,54 @@ File Path: project/game/platform/Platform.h
 class Platform {
 public:
 	/// <summary>
-	/// 初期化を行う
+	/// 初期化
+	/// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
+	/// 更新
+	/// <param name="is_start_animation_">開始アニメーション中か</param>
+	/// <param name="is_returning_">リターン中か</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update(bool is_start_animation_, bool is_returning_);
 
 	/// <summary>
-	/// 描画処理を行う
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// デバッグ表示用の更新処理を行う。
+	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
 
 	/// <summary>
-	/// 移動を停止する。
+	/// 移動を停止
+	/// <returns>なし</returns>
 	/// </summary>
 	void Stop() { is_stopped_ = true; }
 
 	/// <summary>
-	/// 移動が停止しているかを取得する。
+	/// 移動が停止しているかを取得
+	/// <returns>停止していればtrue</returns>
 	/// </summary>
 	bool IsStopped() const { return is_stopped_; }
 
 	/// <summary>
-	/// トランスフォーム（平行移動）を取得する。
+	/// トランスフォームを取得
+	/// <returns>現在の座標（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
-	/// トランスフォーム（平行移動）を設定する。
+	/// トランスフォームを設定
+	/// <param name="translate">設定する座標値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
@@ -11507,7 +12183,6 @@ private:
 	bool is_stopped_ = false;
 
 };
-
 
 ============================================================
 File Path: project/game/player/Player.cpp
@@ -11944,118 +12619,184 @@ class Player
 public:
 	/// <summary>
 	/// コンストラクタ
+	/// <returns>なし</returns>
 	/// </summary>
 	Player();
+
 	/// <summary>
 	/// デストラクタ
+	/// <returns>なし</returns>
 	/// </summary>
 	~Player();
+
 	/// <summary>
 	/// 初期化
+	/// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
+
 	/// <summary>
 	/// 更新
+	/// <param name="is_start_animation_">開始アニメーション中か</param>
+	/// <param name="is_returning_">リターン中か</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update(bool is_start_animation_, bool is_returning_);
+
 	/// <summary>
 	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
+
 	/// <summary>
 	/// レティクル描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void ReticleDraw();
+
 	/// <summary>
 	/// 移動
+	/// <returns>なし</returns>
 	/// </summary>
 	void Move();
+
 	/// <summary>
 	/// ジャンプ
+	/// <returns>なし</returns>
 	/// </summary>
 	void Jump();
+
 	/// <summary>
 	/// 攻撃
+	/// <returns>なし</returns>
 	/// </summary>
 	void Attack();
+
 	/// <summary>
 	/// 回避
+	/// <returns>なし</returns>
 	/// </summary>
 	void Dodge();
+
 	/// <summary>
 	/// レティクル更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void ReticleUpdate();
+
 	/// <summary>
 	/// 衝突時処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void OnCollision();
+
 	/// <summary>
 	/// ダメージ処理
+	/// <param name="damage">受けるダメージ量</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void TakeDamage(int damage);
+
 	/// <summary>
 	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
+
 	/// <summary>
     /// 回避クールタイム進行率 
+	/// <returns>回避クールタイム進行率（0.0～1.0）</returns>
     /// </summary>
 	float GetDodgeCooldownRatio();
+
 	/// <summary>
 	/// OBB取得
+	/// <returns>OBB構造体</returns>
 	/// </summary>
 	OBB GetOBB() const;
+
 	/// <summary>
 	/// 死亡判定
+	/// <returns>死亡していればtrue</returns>
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
+
 	/// <summary>
 	/// スケール取得
+	/// <returns>スケール（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetScale() const { return transform_.scale; }
+
 	/// <summary>
 	/// 回転取得
+	/// <returns>回転（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetRotate() const { return transform_.rotate; }
+
 	/// <summary>
 	/// 位置取得
+	/// <returns>座標（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
+
 	/// <summary>
 	/// 速度取得
+	/// <returns>速度（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetVelocity() const { return velocity_; }
+
 	/// <summary>
 	/// HP取得
+	/// <returns>現在のHP</returns>
 	/// </summary>
 	int GetHP() const { return hp_; }
+
 	/// <summary>
 	/// 半径取得
+	/// <returns>半径</returns>
 	/// </summary>
 	float GetRadius() const { return radius_; }
+
 	/// <summary>
 	/// 弾リスト取得
+	/// <returns>弾リスト（const参照）</returns>
 	/// </summary>
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
+
 	/// <summary>
 	/// スケール設定
+	/// <param name="scale">設定するスケール値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+
 	/// <summary>
 	/// 回転設定
+	/// <param name="rotate">設定する回転値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
+
 	/// <summary>
 	/// 座標設定
+	/// <param name="position">設定する座標値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
+
 	/// <summary>
 	/// プラットフォーム設定
+	/// <param name="platform">プラットフォームのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetPlatform(Platform* platform) { platform_ = platform; }
+
 	/// <summary>
 	/// プラットフォーム追従設定
+	/// <param name="flag">追従フラグ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetFollowPlatform(bool flag) { is_follow_platform_ = flag; }
 
@@ -12258,52 +12999,73 @@ class PlayerBullet
 {
 public:
 	/// <summary>
-	/// 初期化する
+	/// 初期化
+	/// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
-	/// 毎フレーム更新する。
+	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// 描画を行う。
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
+
 	/// <summary>
-	/// 衝突時コールバック。
+	/// 衝突時コールバック
+	/// <returns>なし</returns>
 	/// </summary>
 	void OnCollision();
+
 	/// <summary>
-	/// OBB（Oriented Bounding Box）を取得する。
+	/// OBBを取得
+	/// <returns>OBB構造体</returns>
 	/// </summary>
 	OBB GetOBB() const;
+
 	/// <summary>
-	/// デスフラグが立っているかを取得する。
+	/// デスフラグが立っているかを取得
+	/// <returns>デスフラグが立っていればtrue</returns>
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
 public:
 	///Getter///
 	/// <summary>
-	/// 現在の位置（Transform.translate）を取得する。
+	/// 現在の位置を取得
+	/// <returns>現在の座標（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetPosition() const { return transform_.translate; }
+
 	/// <summary>
-	/// 衝突判定等に用いる半径を取得する。
+	/// 衝突判定等に用いる半径を取得
+	/// <returns>半径</returns>
 	/// </summary>
 	float GetRadius() const { return radius_; }
+
 	/// <summary>
-	/// 弾の攻撃力を取得する。
+	/// 弾の攻撃力を取得
+	/// <returns>攻撃力</returns>
 	/// </summary>
 	int GetAttack() const { return attack_; }
+
 	///Setter///
 	/// <summary>
-	/// 弾の位置を設定する。
+	/// 弾の位置を設定
+	/// <param name="position">設定する座標値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetPosition(const Vector3& position) { transform_.translate = position; }
+
 	/// <summary>
-	/// 弾の速度を設定する。
+	/// 弾の速度を設定
+	/// <param name="velocity">設定する速度値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
 private:
@@ -12324,7 +13086,6 @@ private:
 	float radius_ = 0.1f;
 	uint32_t attack_ = 5;
 };
-
 
 ============================================================
 File Path: project/game/railcamera/RailCamera.cpp
@@ -12384,42 +13145,61 @@ class RailCamera
 {
 public:
     /// <summary>
-    /// デフォルトコンストラクタ。
+    /// デフォルトコンストラクタ
+    /// <returns>なし</returns>
     /// </summary>
     RailCamera();
 
     /// <summary>
-    /// 初期化処理を行う
+    /// 初期化
+    /// <returns>なし</returns>
     /// </summary>
     void Initialize();
+
     /// <summary>
-    /// 毎フレームの更新処理を行う
+    /// 更新処理
+    /// <returns>なし</returns>
     /// </summary>
     void Update();
 
     /// <summary>
-    /// 追従対象のプレイヤーを設定する。
+    /// 追従対象のプレイヤーを設定
+    /// <param name="player">追従対象のプレイヤーポインタ</param>
+    /// <returns>なし</returns>
     /// </summary>
-	void SetPlayer(Player* player) { player_ = player; };
-    /// <summary>
-    /// プレイヤーに対するオフセットを設定する。
-    /// </summary>
-	void SetPlayerOffset(const Vector3& offset) { player_offset_ = offset; };
-    /// <summary>
-    /// 追従対象のプラットフォームを設定する。
-    /// </summary>
-	void SetPlatform(Platform* platform) { platform_ = platform; };
-    /// <summary>
-    /// プラットフォームに対するオフセットを設定する。
-    /// </summary>
-	void SetPlatformOffset(const Vector3& offset) { platform_offset_ = offset; };
-    /// <summary>
-    /// カメラ追従速度を設定する。
-    /// </summary>
-	void SetSpeed(float speed) { speed_ = speed; };
+    void SetPlayer(Player* player) { player_ = player; };
 
     /// <summary>
-    /// 内部で管理している Camera のポインタを取得する。
+    /// プレイヤーに対するオフセットを設定
+    /// <param name="offset">プレイヤーに対するオフセット値</param>
+    /// <returns>なし</returns>
+    /// </summary>
+    void SetPlayerOffset(const Vector3& offset) { player_offset_ = offset; };
+
+    /// <summary>
+    /// 追従対象のプラットフォームを設定
+    /// <param name="platform">追従対象のプラットフォームポインタ</param>
+    /// <returns>なし</returns>
+    /// </summary>
+    void SetPlatform(Platform* platform) { platform_ = platform; };
+
+    /// <summary>
+    /// プラットフォームに対するオフセットを設定
+    /// <param name="offset">プラットフォームに対するオフセット値</param>
+    /// <returns>なし</returns>
+    /// </summary>
+    void SetPlatformOffset(const Vector3& offset) { platform_offset_ = offset; };
+
+    /// <summary>
+    /// カメラ追従速度を設定
+    /// <param name="speed">カメラ追従速度</param>
+    /// <returns>なし</returns>
+    /// </summary>
+    void SetSpeed(float speed) { speed_ = speed; };
+
+    /// <summary>
+    /// 内部で管理している Camera のポインタを取得
+    /// <returns>Cameraクラスのポインタ</returns>
     /// </summary>
     MyEngine::Camera* GetCamera() { return &camera_; };
 
@@ -12432,7 +13212,6 @@ private:
     Vector3 platform_offset_ = { 0, 0, 0 };
     bool followEnabled_;
 };
-
 
 ============================================================
 File Path: project/game/scene/GameClearScene.cpp
@@ -12552,32 +13331,39 @@ class GameClearScene : public  MyEngine::BaseScene
 {
 public:
 	/// <summary>
-	/// 初期化処理を行う。
+	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize() override;
 
 	/// <summary>
-	/// 終了処理を行う
+	/// 終了
+	/// <returns>なし</returns>
 	/// </summary>
 	void Finalize() override;
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
+	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update() override;
 
-	/// <summary>
-	/// 描画処理を行う。
+	/// <summary>	
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw() override;
 
 	/// <summary>
-	/// デバッグ表示用の処理を行う。
+	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug() override;
+
 public:
 	/// <summary>
-    /// シーン遷移処理を行う。
+    /// シーン遷移処理
+	/// <returns>なし</returns>
     /// </summary>
 	void SceneChange();
 private:
@@ -12590,8 +13376,6 @@ private:
 	//フェード
 	std::unique_ptr<Fade>fade_;
 };
-
-
 
 ============================================================
 File Path: project/game/scene/GameOverScene.cpp
@@ -12734,33 +13518,33 @@ class GameOverScene : public  MyEngine::BaseScene
 {
 public:
 	/// <summary>
-	/// ゲームオーバーシーンの初期化処理を行う。
+	/// 初期化
 	/// </summary>
 	void Initialize() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンの終了処理を行う
+	/// 終了処理
 	/// </summary>
 	void Finalize() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンの毎フレーム更新処理を行う。
+	/// 更新処理
 	/// </summary>
 	void Update() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンの描画処理を行う。
+	/// 描画処理
 	/// </summary>
 	void Draw() override;
 
 	/// <summary>
-	/// ゲームオーバーシーンのデバッグ情報を表示する
+	/// デバッグ表示
 	/// </summary>
 	void Debug() override;
 
 public:
 	/// <summary>
-	/// シーン遷移処理を行う。
+	/// シーン遷移処理
 	/// </summary>
 	void SceneChange();
 
@@ -12778,7 +13562,6 @@ private:
 	// ゲームシーンへの移行フラグ
 	bool is_to_game_ = false;
 };
-
 
 ============================================================
 File Path: project/game/scene/GameScene.cpp
@@ -13320,44 +14103,64 @@ public:
 
 	/// <summary>
 	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize() override;
+
 	/// <summary>
 	/// 終了
+	/// <returns>なし</returns>
 	/// </summary>
 	void Finalize() override;
+
 	/// <summary>
 	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update() override;
+
 	/// <summary>
 	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw() override;
+
 	/// <summary>
-	/// デバッグ表示処
+	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug() override;
+
 	/// <summary>
 	/// 追従カメラ
+	/// <returns>なし</returns>
 	///	</summary>	
 	void FollowCamera();
+
 	/// <summary>
 	/// スタート演出 
+	/// <returns>なし</returns>
 	/// </summary>
 	void StartAnimation();
+
 	/// <summary>
 	/// ゲームクリアシーンへ遷移
+	/// <returns>なし</returns>
 	/// </summary>
 	void ToGameClear();
+
 	/// <summary>
 	/// ゲームオーバーシーンへ遷移
+	/// <returns>なし</returns>
 	/// </summary>
 	void ToGameOver();
+
 	/// <summary>
 	/// ボス出現条件を判定
+	/// <returns>ボス出現条件を満たしていればtrue</returns>
 	/// </summary>
 	bool IsBossSpawnCondition();
+
 private:
 	//ゲームフェーズ
 	GamePhase game_phase_ = GamePhase::Stage;
@@ -13508,8 +14311,6 @@ public:
 private:
 
 };
-
-
 
 ============================================================
 File Path: project/game/scene/TitleScene.cpp
@@ -13690,29 +14491,39 @@ class TitleScene : public MyEngine::BaseScene
 {
 public:
 	/// <summary>
-	/// シーン初期化を行う。
+	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize() override;
+
 	/// <summary>
-	/// シーン終了時の後始末を行う。
+	/// 終了処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void Finalize() override;
+
 	/// <summary>
-	/// 毎フレーム更新を行う。
+	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update() override;
+
 	/// <summary>
-	/// 描画処理を行う。
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw() override;
+
 	/// <summary>
-	/// デバッグ表示を行う（ImGui）
+	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug() override;
 
 private:
 	/// <summary>
-	/// シーン遷移処理を行う。
+	/// シーン遷移処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void SceneChange();
 
@@ -13734,7 +14545,6 @@ private:
 	// レベルデータ
 	std::unique_ptr<LevelData> level_data_;
 };
-
 
 ============================================================
 File Path: project/game/skybox/Skybox.cpp
@@ -13916,36 +14726,51 @@ class Skybox
 {
 public:
 	/// <summary>
-	/// 初期化を行う。
+	/// 初期化
+	/// <param name="texture_file_path">スカイボックスに適用するテクスチャファイルのパス</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(const std::string& texture_file_path);
+
 	/// <summary>
-	/// 毎フレーム更新処理を行う。
+	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
+
 	/// <summary>
-	/// 描画処理を行う。
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
+
 	/// <summary>
-	/// インデックスデータを作成し、インデックスバッファを生成する
+	/// インデックスデータを作成しインデックスバッファを生成する
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateIndex();
+
 	/// <summary>
-	/// マテリアルデータ用の GPU バッファを作成して初期化する。
+	/// マテリアルデータ用のGPUバッファを作成して初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateMaterial();
+
 	/// <summary>
-	/// 座標変換（WVP/World）用バッファを生成し初期化する。
+	/// 座標変換用バッファを生成し初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateTransformation();
+
 	/// <summary>
-	/// 頂点データを生成して頂点バッファを作成する。
+	/// 頂点データを生成して頂点バッファを作成
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateVertex();
-public:
+
 	/// <summary>
-	/// 内部で保持している Transform を取得する（参照を返す）。
+	/// 内部で保持している Transform を取得
+	/// <returns>Transform構造体の参照</returns>
 	/// </summary>
 	Transform& GetTransform() { return transform_; }
 
@@ -13970,7 +14795,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> material_resource_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformation_matrix_resource_;
 };
-
 
 ============================================================
 File Path: project/game/ui/Ui.cpp
@@ -14356,74 +15180,109 @@ public:
 	};
 public:
 	/// <summary>
-	/// UIの初期化
+	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize();
+
 	/// <summary>
-	/// UIの更新
+	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
+
 	/// <summary>
-	/// UIの描画
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
+
 	/// <summary>
-	/// UIのデバック
+	/// デバック表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
+
 	/// <summary>
 	/// HPバー更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdateHPBar();
+
 	/// <summary>
 	/// ポーズ画面処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdatePauseGuide();
+
 	/// <summary>
 	/// ポーズボタンホバー処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdatePauseButtonHover();
+
 	/// <summary>
 	/// ポーズメニュークリック処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdatePauseClick();
+
 	/// <summary>
     /// 回避クールタイムバー更新
+	/// <returns>なし</returns>
     /// </summary>
 	void UpdateDodgeGauge();
+
 	/// <summary>
 	/// スプライト作成
+	/// <param name="type">スプライトの種類</param>
+	/// <param name="path">テクスチャパス</param>
+	/// <param name="pos">スプライトの座標</param>
+	/// <param name="size">スプライトのサイズ</param>
+	/// <param name="anchor">アンカーポイント（省略時は{0,0}）</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateSprite(SpriteType type, const char* path, const Vector2& pos,
 		const Vector2& size, const Vector2& anchor = { 0,0 });
+
 	/// <summary>
 	/// スプライト上にマウスがあるか
+	/// <param name="sprite">判定対象のスプライトポインタ</param>
+	/// <returns>スプライト上にマウスがあればtrue</returns>
 	/// </summary>
 	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
 public:
 	/// <summary>
 	/// メニュー選択結果リセット
+	/// <returns>なし</returns>
 	/// </summary>
 	void ResetPauseResult() { pause_result_ = PauseResult::None; }
 
 	/// <summary>
     /// メニュー選択結果を取得
+	/// <returns>現在のポーズメニュー選択結果</returns>
     /// </summary>
 	PauseResult GetPauseResult() const { return pause_result_; }
 
 	/// <summary>
 	/// スプライト取得
+	/// <param name="type">取得するスプライトの種類</param>
+	/// <returns>スプライトのポインタ</returns>
 	/// </summary>
 	MyEngine::Sprite* Get(SpriteType type);
 
 	/// <summary>
 	/// プレイヤーをセット
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/// <summary>
 	/// 操作説明画面表示設定
+	/// <param name="flag">表示フラグ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetShowPause(bool flag) { is_show_pause_ = flag; }
 private:
