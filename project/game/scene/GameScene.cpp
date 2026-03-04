@@ -9,7 +9,7 @@
 // ゲームシーンの初期化処理
 void GameScene::Initialize() {
 
-	// サウンド初期化
+	//サウンド初期化
 	MyEngine::Audio::GetInstance()->Initialize();
 
 	// パーティクルグループの生成
