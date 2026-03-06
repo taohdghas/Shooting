@@ -30,7 +30,7 @@ public:
 	/// 更新処理
 	/// <returns>なし</returns>
 	/// </summary>
-	void Update();
+	void Update(bool is_control_enabled_);
 
 	/// <summary>
 	/// 描画
@@ -62,7 +62,7 @@ public:
 	/// <param name="id">デバッグUI識別用ID</param>
 	/// <returns>なし</returns>
 	/// </summary>
-	void Debug(int id);
+	void Debug(int index);
 
 	/// <summary>
 	/// レール上の位置を評価
@@ -158,7 +158,7 @@ public:
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
 	/// <summary>
-	/// 敵の移動用レールの制御点と閉じているかどうかを設定する。
+	/// 敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定
 	/// <param name="controlPoints">制御点リスト</param>
 	/// <param name="closed">レールが閉じているかどうか</param>
 	/// <returns>なし</returns>
@@ -169,20 +169,22 @@ private:
 	MyEngine::Object3dBase* object3d_base_;
 	// 敵本体の3Dオブジェクト
 	std::unique_ptr<MyEngine::Object3d> object_;
-	// 敵のワールド変換情報（位置・回転・スケール）
+	// 敵のワールド変換情報
 	Transform transform_;
 	// 攻撃対象となるプレイヤーのポインタ
 	Player* player_;
 	// 敵が発射した弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
-	// 移動用レール（スプライン）の制御点リスト
+	// 移動用レールの制御点リスト
 	std::vector<Vector3> rail_points_;
-	// レール移動時の相対ベクトル（補間用など）
+	// レール移動時の相対ベクトル
 	std::vector<Vector3> relative_vectors_;
 	// 移動速度ベクトル
 	Vector3 velocity_ = { 0.0f, 0.0f };
+	// 離脱速度
+	Vector3 exit_velocity_ = { 0.0f,6.0f,0.0f };
 	// 通常時のスケールを保存
-	Vector3 default_scale_ = { 0.5f, 0.5f, 0.5f };
+	Vector3 default_scale_ = { 0.8f, 0.8f, 0.8f };
 	// レール移動用基準位置
 	Vector3 rail_base_position_;  
 	// レール移動用開始点
@@ -193,10 +195,12 @@ private:
 	Vector3 rail_accumulated_; 
 	//寸法
 	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
-	// 現在の色（ダメージ時の色変化など）
+	// 現在の色
 	Vector4 color_ = {1.0f,1.0f,1.0f,1.0f};
 	// 死亡フラグ
 	bool is_dead_ = false;
+	// 離脱中フラグ
+	bool is_exiting_ = false;
 	// 死亡時パーティクル発生フラグ
 	bool is_death_particle_ = false;
 	// レールが閉じているかどうか
@@ -211,7 +215,7 @@ private:
 	int fire_timer_ = 0;
 	// コリジョンや描画に使う半径
 	float radius_ = 1.0f;
-	// 弾発射のインターバル（フレーム数）
+	// 弾発射のインターバル
 	static const int kFireInterval = 40;
 	// プレイヤーへの発射有効距離
 	const float kFireDistance = 45.0f;
@@ -224,7 +228,9 @@ private:
 	// ダメージスケール演出の時間
 	const float kDamageScaleDuration = 0.08f;
 	// プレイヤー後方に到達したと見なすZオフセット
-	const float kVanishOffsetZ = -1.0f;
+	const float kVanishOffsetZ = 5.0f;
+	// 画面外判定用Y
+	const float kExitLimitY = 20.0f;
 	// ダメージ色の残り時間
 	float damage_color_timer_ = 0.0f;
 	// レール上の進行度（0.0～1.0）

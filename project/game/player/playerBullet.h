@@ -3,7 +3,10 @@
 #include "Object3dBase.h"
 #include "Struct.h"
 #include <memory>
+#include <vector>
 
+//前方宣言
+class Enemy;
 //プレイヤーの弾のクラス
 /// <summary>
 /// プレイヤーが発射する弾の状態管理
@@ -102,5 +105,6 @@ private:
 	bool is_dead_ = false;
 	//半径
 	float radius_ = 0.1f;
+	//攻撃力
 	uint32_t attack_ = 5;
 };

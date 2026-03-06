@@ -3,15 +3,18 @@
 
 // 状態に入るときの処理
 void BossStateEnraged::Enter(Boss1& boss) {
+    //各変数初期化
     fire_timer_ = 0;
     second_shot_delay_timer_ = 0;
+    fan_shot_delay_timer_ = 0;
+
     is_second_shot_pending_ = false;
-	// 発射間隔決定
+    isFanShotPending_ = false;
+    
     fire_interval_current_ = boss.DecideFireInterval();
 
-    isFanShotPending_ = false;
-
-    fan_shot_delay_timer_ = 0;
+    //強化状態：移動速度アップ
+    boss.SetMaxSpeed(8.0f);  
 }
 // 状態の更新
 void BossStateEnraged::Update(Boss1& boss) {

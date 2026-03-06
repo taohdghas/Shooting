@@ -14,7 +14,7 @@ namespace MyEngine {
     ///3Dオブジェクト描画時の共通設定処理
     ///シングルトンによるインスタンス管理
     ///初期化・終了処理の提供
-/// </summary>
+    /// </summary>
 	class Object3dBase {
 	public:
         /// 

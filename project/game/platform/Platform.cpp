@@ -14,7 +14,7 @@ void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
 	object_->Initialize(object3d_base_);
 	object_->SetModel("platform/platform.obj");
 	object_->SetLight(false);
-	transform_.scale = { 7.5f,2.0f,3.0f };
+	transform_.scale = { 7.5f,2.0f,3.0f };//1.5,1,1
 	transform_.translate = { 0.0f,-1.9f,0.0f };
 
 	//煙パーティクルエミッター初期化
@@ -22,13 +22,13 @@ void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
 }
 
 // 毎フレームの更新処理
-void Platform::Update(bool is_start_animation_, bool is_returning_) {
+void Platform::Update(bool is_start_animation_, bool is_returning_, bool is_control_enabled_) {
 	//停止中は動かない
 	if (is_stopped_) {
 		return;
 	}
 	//スタート演出中は動かない
-	if (is_start_animation_ || is_returning_) {
+	if (is_start_animation_ || is_returning_ || !is_control_enabled_) {
 		object_->SetScale(transform_.scale);
 		object_->SetRotate(transform_.rotate);
 		object_->SetTranslate(transform_.translate);

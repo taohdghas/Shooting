@@ -15,29 +15,65 @@ void Enemy::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->Initialize(object3d_base_);
 	object_->SetModel("enemy/enemy.obj");
 	object_->SetLight(false);
-	transform_.scale = { 0.5f, 0.5f, 0.5f };
+	transform_.scale = { 0.8f, 0.8f, 0.8f };
 	transform_.translate = { 0.0f, 3.0f, 20.0f };
 }
 
 // 毎フレームの更新処理
-void Enemy::Update() {
+void Enemy::Update(bool is_control_enabled_) {
 	//デスならスキップ
 	if (is_dead_) {
 		return;
 	}
+
+	//スタート演出中は動かない
+	if (!is_control_enabled_) {
+		object_->SetScale(transform_.scale);
+		object_->SetRotate(transform_.rotate);
+		object_->SetTranslate(transform_.translate);
+		object_->Update();
+		return;
+	}
 	
-	//プレイヤーより一定距離後方に来たら消滅
-	if (player_) {
-		//敵の座標がプレイヤーのZ座標＋オフセット以下なら
+	// 弾の更新とデスフラグ判定
+	for (auto it = bullets_.begin(); it != bullets_.end();) {
+		(*it)->Update();
+		if ((*it)->IsDead()) {
+			it = bullets_.erase(it);
+		} else {
+			++it;
+		}
+	}
+
+	// 離脱開始判定
+	if (!is_exiting_ && player_) {
 		if (transform_.translate.z <=
 			player_->GetTranslate().z + kVanishOffsetZ) {
 
-			//消滅
-			is_dead_ = true;
-			//消滅なのでデスパーティクルは未発生
-			is_death_particle_ = false;
-			return;
+			// 離脱開始
+			is_exiting_ = true;
+
+			// レール移動を強制停止
+			rail_points_.clear();
 		}
+	}
+
+	//離脱中処理
+	if (is_exiting_) {
+
+		// 上方向へ移動
+		transform_.translate += exit_velocity_ * kDeltaTime;
+
+		// 画面外に出たら消滅
+		if (transform_.translate.y >= kExitLimitY) {
+			is_dead_ = true;
+			is_death_particle_ = false;
+		}
+
+		// 離脱中は攻撃・レール・弾更新しない
+		object_->SetTranslate(transform_.translate);
+		object_->Update();
+		return;
 	}
 
 	// スプライン移動がある場合のみ処理
@@ -53,7 +89,6 @@ void Enemy::Update() {
 			rail_accumulated_ += rail_lap_offset_;
 		}
 
-
 		Vector3 rail_pos_ = EvaluateRailPosition(rail_progress_);
 		Vector3 offset_ = rail_pos_ - rail_start_point_;
 		// 最終的な座標を設定
@@ -61,18 +96,7 @@ void Enemy::Update() {
 			rail_base_position_ + rail_accumulated_ + offset_;
 	}
 
-	
-	// 弾の更新とデスフラグ判定（デッドならリストから削除）
-	for (auto it = bullets_.begin(); it != bullets_.end();) {
-		(*it)->Update();
-		if ((*it)->IsDead()) {
-			it = bullets_.erase(it);
-		} else {
-			++it;
-		}
-	}
-
-	// 攻撃処理（レーザー発射判定）
+	// 攻撃処理
 	Laser();
 
 	// ダメージスケール処理
@@ -150,13 +174,12 @@ void Enemy::Laser() {
 	fire_timer_ = 0;
 
 	//距離依存でZ座標を先読み
-
 	const float bulletSpeed = 0.5f;
 
-	// 弾が到達するまでの時間（概算）
+	// 弾が到達するまでの時間
 	float timeToHit = distance / bulletSpeed;
 
-	// Z方向の先読み量（係数で調整）
+	// Z方向の先読み量
 	const float zLeadFactor = 0.08f; 
 	float zLead = timeToHit * zLeadFactor;
 
@@ -178,7 +201,7 @@ void Enemy::Laser() {
 	bullets_.emplace_back(std::move(bullet));
 }
 
-// 衝突時の処理（死亡フラグ・パーティクル発生）
+// 衝突時の処理
 void Enemy::OnCollision() {
 	is_dead_ = true;
 	is_death_particle_ = true;
@@ -193,27 +216,28 @@ void Enemy::TakeDamage(int damage) {
 	damage_color_timer_ = kDamageColorDuration;
 	if (hp_ <= 0) {
 		hp_ = 0;
-		OnCollision(); // HP0で死亡処理
+		OnCollision();
 	}
 }
 
 // デバッグ用ImGui表示
-void Enemy::Debug(int id) {
+void Enemy::Debug(int index) {
 #ifdef USE_IMGUI
-	std::string tree_label = "Enemy##" + std::to_string(id);
-	if (ImGui::TreeNode(tree_label.c_str())) {
-		std::string hp_label = "EnemyHp##" + std::to_string(id);
-		std::string scale_label = "EnemyScale##" + std::to_string(id);
-		std::string rotate_label = "EnemyRotate##" + std::to_string(id);
-		std::string translate_label = "EnemyTranslate##" + std::to_string(id);
 
-		ImGui::DragInt(hp_label.c_str(), &hp_, 1);
-		ImGui::DragFloat3(scale_label.c_str(), &transform_.scale.x, 0.1f);
-		ImGui::DragFloat3(rotate_label.c_str(), &transform_.rotate.x, 0.1f);
-		ImGui::DragFloat3(translate_label.c_str(), &transform_.translate.x, 0.1f);
+	std::string label = "Enemy[" + std::to_string(index) + "]";
+	if (ImGui::TreeNode(label.c_str())) {
+
+		Vector3 pos = transform_.translate;
+		ImGui::DragFloat3("Translate", &pos.x, 0.01f);
+		transform_.translate = pos;
+
+		ImGui::Text("HP : %d", hp_);
+		ImGui::Checkbox("IsDead", &is_dead_);
+		ImGui::Checkbox("IsExiting", &is_exiting_);
 
 		ImGui::TreePop();
 	}
+
 #endif
 }
 

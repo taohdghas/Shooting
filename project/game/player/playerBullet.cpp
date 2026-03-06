@@ -1,6 +1,7 @@
 #include "PlayerBullet.h"
 #include "MyMath.h"
 #include "ModelManager.h"
+#include "Enemy.h"
 
 // 弾の初期化処理
 void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
@@ -12,7 +13,7 @@ void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_ = std::make_unique< MyEngine::Object3d>();
 	object_->Initialize(object3d_base_);
 	object_->SetModel("player/playerbullet.obj");
-	object_->SetScale({ 1.5f, 1.5f, 1.5f });
+	object_->SetScale({ 1.8f, 1.8f, 1.8f });
 
 	// 寿命タイマーの初期化
 	death_timer_ = kLifeTime;
@@ -20,23 +21,19 @@ void PlayerBullet::Initialize(MyEngine::Object3dBase* object3d_base) {
 
 // 毎フレームの更新処理
 void PlayerBullet::Update() {
-	if (is_dead_) {
-		return;
-	}
+    if (is_dead_) return;
 
-	// 速度ベクトル分だけ座標を移動
-	transform_.translate = Math::Add(transform_.translate, velocity_);
+    // 移動
+    transform_.translate += velocity_;
 
-	// 寿命タイマー減算・0以下で消滅フラグ
-	if (--death_timer_ <= 0) {
-		is_dead_ = true;
-	}
+    // 寿命
+    if (--death_timer_ <= 0) {
+        is_dead_ = true;
+    }
 
-	// オブジェクトの座標を更新
-	object_->SetTranslate(transform_.translate);
-	object_->Update();
+    object_->SetTranslate(transform_.translate);
+    object_->Update();
 }
-
 // 弾の描画処理
 void PlayerBullet::Draw() {
 	if (is_dead_) {
@@ -45,12 +42,12 @@ void PlayerBullet::Draw() {
 	object_->Draw();
 }
 
-// 衝突時の処理（消滅フラグを立てる）
+// 衝突時の処理
 void PlayerBullet::OnCollision() {
 	is_dead_ = true;
 }
 
-// OBB（当たり判定用の回転付きボックス）取得
+// OBB取得
 OBB PlayerBullet::GetOBB() const {
 	OBB obb;
 	obb.center = transform_.translate;

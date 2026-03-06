@@ -100,6 +100,13 @@ void GameScene::Initialize() {
 	ui_->Initialize();
 	ui_->SetPlayer(player_.get());
 
+	// ゲーム開始スプライトの初期化
+	game_start_sprite_ = std::make_unique<MyEngine::Sprite>();
+	game_start_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/game_start.png");
+	game_start_pos_ = { -360.0f, 360.0f };
+	game_start_sprite_->SetPosition(game_start_pos_);
+	game_start_sprite_->SetAnchorPoint({ 0.5f,0.5f });
+
 	// 最初の1フレーム入力を無視
 	MyEngine::Input::GetInstance()->ClearInput();
 }
@@ -129,6 +136,9 @@ void GameScene::Update() {
 	// UIの更新
 	ui_->Update();
 
+	//ゲームスタートスプライトの更新
+	game_start_sprite_->Update();
+
 	// デバッグ表示
 	Debug();
 
@@ -152,6 +162,68 @@ void GameScene::Update() {
 
 	// スタート演出
 	StartAnimation();
+
+	// ゲーム開始演出の状態に応じた処理
+	switch (game_start_state_) {
+
+	case GameStartState::SlideIn:// スライドイン
+		// スライドインの経過時間を更新
+		game_start_animation_time_ += kDeltaTime;
+
+		{
+			// スライドインの進行度を計算（0.0fから1.0fの範囲）
+			float t = min(game_start_animation_time_ / kSlideDuration, 1.0f);
+
+			float eased = (float)Math::easeOutQuad(t);
+
+			game_start_pos_.x = slide_start_x_ + (slide_end_x_ - slide_start_x_) * eased;
+
+			game_start_sprite_->SetPosition(game_start_pos_);
+			// スライドインが完了したら次の状態へ
+			if (t >= 1.0f) {
+				game_start_state_ = GameStartState::Stop;
+				game_start_timer_ = 0.0f;
+			}
+		}
+
+		break;
+
+	case GameStartState::Stop:// 停止
+		// 停止時間を更新
+		game_start_timer_ += kDeltaTime;
+		// 停止時間が経過したらスライドアウトへ
+		if (game_start_timer_ >= kStopTime) {
+
+			game_start_animation_time_ = 0.0f;
+
+			slide_start_x_ = screen_center_x;
+			slide_end_x_ = 1600.0f;
+			game_start_state_ = GameStartState::SlideOut;
+		}
+
+		return;
+
+	case GameStartState::SlideOut:// スライドアウト
+		// スライドアウトの経過時間を更新
+		game_start_animation_time_ += kDeltaTime;
+
+		{
+			float t = min(game_start_animation_time_ / kSlideDuration, 1.0f);
+
+			float eased = (float)Math::easeInOutQuad(t);
+
+			game_start_pos_.x = slide_start_x_ + (slide_end_x_ - slide_start_x_) * eased;
+
+			game_start_sprite_->SetPosition(game_start_pos_);
+			// スライドアウトが完了したら演出終了
+			if (t >= 1.0f) {
+				game_start_state_ = GameStartState::None;
+				is_gameplay_active_ = true;
+			}
+		}
+
+		return;
+	}
 
 	// 追従カメラ
 	FollowCamera();
@@ -195,7 +267,7 @@ void GameScene::Update() {
 	// 敵の更新
 	if (!is_start_animation_ && !is_returning_) {
 		for (auto& enemy : enemies_) {
-			enemy->Update();
+			enemy->Update(is_gameplay_active_);
 		}
 	}
 	// ボスの更新
@@ -206,7 +278,7 @@ void GameScene::Update() {
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
-	platform_->Update(is_start_animation_, is_returning_);
+	platform_->Update(is_start_animation_, is_returning_,is_gameplay_active_);
 
 	// パーティクルの更新
 	MyEngine::ParticleManager::GetInstance()->Update();
@@ -242,7 +314,6 @@ void GameScene::Update() {
 
 	// フェードの更新
 	fade_->Update();
-
 }
 
 // 描画処理
@@ -257,6 +328,7 @@ void GameScene::Draw() {
 			enemy->Draw();
 		}
 	}
+	//ボスフェーズに突入
 	if (game_phase_ == GamePhase::BossBattle) {
 		// ボスの描画
 		boss_->Draw();
@@ -276,33 +348,36 @@ void GameScene::Draw() {
 	fade_->Draw();
 	// UI描画
 	ui_->Draw();
+
+	// GAME STARTスプライト描画
+	if (game_start_state_ != GameStartState::None) {
+		game_start_sprite_->Draw();
+	}
 }
 
-// デバッグ表示（ImGuiによるパラメータ調整・状態表示）
+// デバッグ表示
 void GameScene::Debug() {
 #ifdef USE_IMGUI
+	// 共通セットアップウィンドウ
 	ImGui::Begin("SetUp");
-	// カメラのパラメータ調整
+
+	// カメラ
 	if (ImGui::TreeNode("Camera")) {
 		Vector3 cameraPos = camera_->GetTranslate();
 		Vector3 cameraRot = camera_->GetRotate();
 		ImGui::DragFloat3("CameraTranslate", &cameraPos.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRot.x, 0.01f);
-		camera_->SetTranslate({ cameraPos.x,cameraPos.y,cameraPos.z });
-		camera_->SetRotate({ cameraRot.x,cameraRot.y,cameraRot.z });
+		camera_->SetTranslate(cameraPos);
+		camera_->SetRotate(cameraRot);
 		ImGui::TreePop();
 	}
-	// プレイヤーのデバッグ表示
+	// プレイヤー
 	player_->Debug();
-	// 敵のデバッグ表示
-	for (int i = 0; i < enemies_.size(); ++i) {
-		enemies_[i]->Debug(i);
-	}
-	// ボスのデバッグ表示
+	// ボス
 	boss_->Debug();
-	// プラットフォームのデバッグ表示
+	// プラットフォーム
 	platform_->Debug();
-	// Skyboxのデバッグ表示
+	// SkyBox
 	Transform& trans = skybox_->GetTransform();
 	if (ImGui::TreeNode("SkyBox")) {
 		ImGui::DragFloat3("Scale", &trans.scale.x, 0.01f, 0.01f, 5000.0f);
@@ -310,13 +385,21 @@ void GameScene::Debug() {
 		ImGui::DragFloat3("Translate", &trans.translate.x, 0.1f, -1000.0f, 1000.0f);
 		ImGui::TreePop();
 	}
-	//UIのデバック表示
+	// UI
 	ui_->Debug();
+	ImGui::End();
+
+	//敵
+	ImGui::Begin("Enemy");
+
+	for (int i = 0; i < enemies_.size(); ++i) {
+		enemies_[i]->Debug(i);
+	}
 
 	ImGui::End();
+
 #endif
 }
-
 //追従カメラ
 void GameScene::FollowCamera() {
 	MyEngine::Camera* cam = MyEngine::CameraManager::GetInstance()->GetActiveCamera();
@@ -364,7 +447,7 @@ void GameScene::StartAnimation() {
 		//初期カメラ位置
 		Vector3 camPos;
 		camPos.x = camera_start_pos_.x * std::cos(angle) - camera_start_pos_.z * std::sin(angle);
-		camPos.y = camera_start_pos_.y; // 高さはそのまま
+		camPos.y = camera_start_pos_.y;
 		camPos.z = camera_start_pos_.x * std::sin(angle) + camera_start_pos_.z * std::cos(angle);
 
 		MyEngine::Camera* cam = MyEngine::CameraManager::GetInstance()->GetActiveCamera();
@@ -402,6 +485,13 @@ void GameScene::StartAnimation() {
 		if (t >= 1.0f) {
 			is_returning_ = false;
 			camera_rotate_timer_ = 0.0f;
+
+			game_start_state_ = GameStartState::SlideIn;
+			game_start_timer_ = 0.0f;
+			game_start_animation_time_ = 0.0f;
+
+			slide_start_x_ = -360.0f;
+			slide_end_x_ = screen_center_x;
 		}
 	}
 }

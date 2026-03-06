@@ -5,12 +5,12 @@
 #include "CameraManager.h"
 #include "ModelManager.h"
 #include "Platform.h"
+#include "Enemy.h"
 #include <algorithm>
 
 Player::Player() {}
 
 Player::~Player() {}
-
 
 //初期化処理
 void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
@@ -90,7 +90,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 			transform_.rotate.x += jump_rotate_speed_ * kDeltaTime;
 		}
 
-		// 攻撃入力判定
+		//通常攻撃
 		if (MyEngine::Input::GetInstance()->IsMouseLeftPressed()) {
 			Attack();
 		}
@@ -139,25 +139,25 @@ void Player::ReticleDraw() {
 
 // プレイヤーの移動処理
 void Player::Move() {
-    // X方向のみ速度を初期化
-    velocity_.x = 0.0f;
+	// X方向のみ速度を初期化
+	velocity_.x = 0.0f;
 
-    // キー入力によるX方向の速度設定
-    if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
-        velocity_.x = -move_speed_x_;
-    }
-    if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
-        velocity_.x = move_speed_x_;
-    }
+	// キー入力によるX方向の速度設定
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_A)) {
+		velocity_.x = -move_speed_x_;
+	}
+	if (MyEngine::Input::GetInstance()->IsKeyPressed(DIK_D)) {
+		velocity_.x = move_speed_x_;
+	}
 
-    // 位置更新（
-    transform_.translate.x += velocity_.x;
+	// 位置更新（
+	transform_.translate.x += velocity_.x;
 
-    // 移動範囲制限
-    transform_.translate.x = std::clamp(transform_.translate.x, kGroundMinX, kGroundMaxX);
-    if (transform_.translate.y < kGroundMinY) {
-        transform_.translate.y = kGroundMinY;
-    }
+	// 移動範囲制限
+	transform_.translate.x = std::clamp(transform_.translate.x, kGroundMinX, kGroundMaxX);
+	if (transform_.translate.y < kGroundMinY) {
+		transform_.translate.y = kGroundMinY;
+	}
 }
 
 // ジャンプ処理
@@ -233,7 +233,7 @@ void Player::Attack() {
 	// 弾の進行方向ベクトル
 	Vector3 ray_dir = Math::Normalize(Vector3(far_world.x, far_world.y, far_world.z) - ray_origin);
 
-	Vector3 velocity = ray_dir * k_bullet_speed;
+	Vector3 velocity = ray_dir * kBulletSpeed;
 
 	// 弾生成・初期化・リスト追加
 	auto new_bullet = std::make_unique<PlayerBullet>();
@@ -307,7 +307,6 @@ void Player::ReticleUpdate() {
 	reticle_->SetPosition(reticle_screen_pos_);
 	reticle_->Update();
 }
-
 // 衝突時コールバック
 void Player::OnCollision() {
 	is_dead_ = true;
@@ -377,7 +376,6 @@ float Player::GetDodgeCooldownRatio() {
 	float ratio = 1.0f - (dodge_cooldown_ / dodge_interval_);
 	return std::clamp(ratio, 0.0f, 1.0f);
 }
-
 // OBB取得
 OBB Player::GetOBB() const {
 	OBB obb;

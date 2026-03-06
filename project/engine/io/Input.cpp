@@ -61,35 +61,48 @@ namespace MyEngine {
 		keyboard_device_->Acquire();
 		keyboard_device_->GetDeviceState(sizeof(key_state_), key_state_);
 
-		// マウス左ボタン状態取得
+		//マウス左ボタン状態取得
 		mouse_left_prev_ = mouse_left_curr_;
 		mouse_left_curr_ = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+
+		//マウス右ボタン状態取得
+		mouse_right_prev_ = mouse_right_curr_;
+		mouse_right_curr_ = (GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0;
 	}
 
-	/// 1フレーム分の入力をクリアする
+	// 1フレーム分の入力をクリアする
 	void Input::ClearInput() {
 		// キー状態配列をゼロクリア
 		memset(key_state_, 0, sizeof(key_state_));
 		memset(prev_key_state_, 0, sizeof(prev_key_state_));
 	}
-	/// 指定キーが押されているかをチェックする
+	// 指定キーが押されているかをチェックする
 	bool Input::IsKeyPressed(BYTE key_code) {
 		// 指定キーが押されていれば true
 		return key_state_[key_code] != 0;
 	}
-	/// 指定キーがトリガーかをチェックする
+	// 指定キーがトリガーかをチェックする
 	bool Input::IsKeyTriggered(BYTE key_code) {
 		// 指定キーが押された瞬間（前回は押されていなかった）なら true
 		return prev_key_state_[key_code] == 0 && key_state_[key_code] != 0;
 	}
-	/// マウス左ボタンが押されているか
+	// マウス左ボタンが押されているか
 	bool Input::IsMouseLeftPressed() {
 		return mouse_left_curr_;
 	}
-	/// マウス左ボタンがトリガーか
+	// マウス左ボタンがトリガーか
 	bool Input::IsMouseLeftTriggered() {
 		return !mouse_left_prev_ && mouse_left_curr_;
 	}
+	//マウス右ボタンが押されているか
+	bool Input::IsMouseRightPressed() {
+		return mouse_right_curr_;
+	}
+	//マウス右ボタンがトリガーか
+	bool Input::IsMouseRightTriggered() {
+		return !mouse_right_prev_ && mouse_right_curr_;
+	}
+
 	/// マウスのクライアント座標を取得
 	POINT Input::GetMousePosition() {
 		POINT cursorPos{};
