@@ -22,47 +22,59 @@ namespace MyEngine {
         template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
         /// <summary>
-        /// シングルトンインスタンスを取得する。
+        /// シングルトンインスタンスを取得
+        /// <returns>Inputのインスタンス（ポインタ）</returns>
         /// </summary>
         static Input* GetInstance();
 
         /// <summary>
-        /// 初期化を行う。
+        /// 初期化
+        /// <param name="windows_api">WindowsApiクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(WindowsApi* windows_api);
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// 毎フレームの更新処理を行う。
+        /// 毎フレームの更新処理
+        /// <returns>なし</returns>
         /// </summary>
         void Update();
 
         /// <summary>
-        /// 1フレーム分の入力をクリアする（入力を無視する）。
+        /// 1フレーム分の入力をクリア。
+        /// <returns>なし</returns>
         /// </summary>
         void ClearInput();
 
         /// <summary>
-        /// 指定キーが押されているかをチェックする。
+        /// 指定キーが押されているかをチェック
+        /// <param name="key_code">キーコード（BYTE）</param>
+        /// <returns>押されていればtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsKeyPressed(BYTE key_code);
 
         /// <summary>
-        /// 指定キーがトリガー（前フレームは未押下、今回押下）かをチェックする。
+        /// 指定キーがトリガーかをチェック
+        /// <param name="key_code">キーコード（BYTE）</param>
+        /// <returns>トリガーならtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsKeyTriggered(BYTE key_code);
 
         /// <summary>
         /// マウス左ボタンが押されているか
+        /// <returns>押されていればtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsMouseLeftPressed();
 
         /// <summary>
         /// マウス左ボタンがトリガーか
+        /// <returns>トリガーならtrue、そうでなければfalse</returns>
         /// </summary>
         bool IsMouseLeftTriggered();
 
@@ -78,6 +90,7 @@ namespace MyEngine {
 
         /// <summary>
         /// マウスのクライアント座標を取得
+        /// <returns>マウス座標（POINT構造体）</returns>
         /// </summary>
         POINT GetMousePosition();
 

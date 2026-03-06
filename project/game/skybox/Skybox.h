@@ -15,36 +15,51 @@ class Skybox
 {
 public:
 	/// <summary>
-	/// 初期化を行う。
+	/// 初期化
+	/// <param name="texture_file_path">スカイボックスに適用するテクスチャファイルのパス</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(const std::string& texture_file_path);
+
 	/// <summary>
-	/// 毎フレーム更新処理を行う。
+	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
+
 	/// <summary>
-	/// 描画処理を行う。
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
+
 	/// <summary>
-	/// インデックスデータを作成し、インデックスバッファを生成する
+	/// インデックスデータを作成しインデックスバッファを生成する
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateIndex();
+
 	/// <summary>
-	/// マテリアルデータ用の GPU バッファを作成して初期化する。
+	/// マテリアルデータ用のGPUバッファを作成して初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateMaterial();
+
 	/// <summary>
-	/// 座標変換（WVP/World）用バッファを生成し初期化する。
+	/// 座標変換用バッファを生成し初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateTransformation();
+
 	/// <summary>
-	/// 頂点データを生成して頂点バッファを作成する。
+	/// 頂点データを生成して頂点バッファを作成
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateVertex();
-public:
+
 	/// <summary>
-	/// 内部で保持している Transform を取得する（参照を返す）。
+	/// 内部で保持している Transform を取得
+	/// <returns>Transform構造体の参照</returns>
 	/// </summary>
 	Transform& GetTransform() { return transform_; }
 

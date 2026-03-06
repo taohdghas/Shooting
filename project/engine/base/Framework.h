@@ -28,33 +28,39 @@ namespace MyEngine {
     {
     public:
         /// <summary>
-        /// 初期化処理を行う。
+        /// 初期化処理
+        /// <returns>なし</returns>
         /// </summary>
         virtual void Initialize();
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         virtual void Finalize();
         /// <summary>
-        /// 毎フレームの更新処理を行う。
+        /// 毎フレームの更新処理
+        /// <returns>なし</returns>
         /// </summary>
         virtual void Update();
         /// <summary>
-        /// 毎フレームの描画処理（派生クラスで実装必須）。
+        /// 毎フレームの描画処理
+        /// <returns>なし</returns>
         /// </summary>
         virtual void Draw() = 0;
         /// <summary>
-        /// 終了要求フラグを取得する。
+        /// 終了要求フラグを取得
+        /// <returns>終了要求状態（bool）</returns>
         /// </summary>
         virtual bool is_end_request() { return end_request_; }
         /// <summary>
-        /// デストラクタ（派生クラスでのクリーンアップを許容）。
+        /// デストラクタ
+        /// <returns>なし</returns>
         /// </summary>
         virtual ~Framework() = default;
 
-    public:
         /// <summary>
-        /// アプリケーションを実行する。
+        /// アプリケーションを実行
+        /// <returns>なし</returns>
         /// </summary>
         void Run();
 

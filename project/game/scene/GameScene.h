@@ -44,44 +44,64 @@ public:
 
 	/// <summary>
 	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize() override;
+
 	/// <summary>
 	/// 終了
+	/// <returns>なし</returns>
 	/// </summary>
 	void Finalize() override;
+
 	/// <summary>
 	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update() override;
+
 	/// <summary>
 	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw() override;
+
 	/// <summary>
-	/// デバッグ表示処
+	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug() override;
+
 	/// <summary>
 	/// 追従カメラ
+	/// <returns>なし</returns>
 	///	</summary>	
 	void FollowCamera();
+
 	/// <summary>
 	/// スタート演出 
+	/// <returns>なし</returns>
 	/// </summary>
 	void StartAnimation();
+
 	/// <summary>
 	/// ゲームクリアシーンへ遷移
+	/// <returns>なし</returns>
 	/// </summary>
 	void ToGameClear();
+
 	/// <summary>
 	/// ゲームオーバーシーンへ遷移
+	/// <returns>なし</returns>
 	/// </summary>
 	void ToGameOver();
+
 	/// <summary>
 	/// ボス出現条件を判定
+	/// <returns>ボス出現条件を満たしていればtrue</returns>
 	/// </summary>
 	bool IsBossSpawnCondition();
+
 private:
 	GameStartState game_start_state_ = GameStartState::None;
 	//ゲームフェーズ

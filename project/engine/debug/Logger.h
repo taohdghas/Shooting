@@ -14,8 +14,10 @@ namespace MyEngine {
 	namespace Logger
 	{
 		/// <summary>
-		/// デバッグ出力にメッセージを送る。
-		/// </summary>
+        /// デバッグ出力にメッセージを送る
+        /// <param name="message">出力するメッセージ文字列</param>
+        /// <returns>なし</returns>
+        /// </summary>
 		void Log(const std::string& message);
 	}
 }

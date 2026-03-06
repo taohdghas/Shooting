@@ -24,31 +24,40 @@ namespace MyEngine {
     public:
         /// <summary>
         /// シングルトンインスタンス
+        /// <returns>ImGuiManagerのインスタンス（ポインタ）</returns>
         /// </summary>
         static ImGuiManager* GetInstance();
 
         /// <summary>
-        /// ImGui 関連の終了処理を行う
+        /// ImGui 関連の終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize();
 
         /// <summary>
-        /// ImGui を初期化する。
+        /// ImGui を初期化
+        /// <param name="windows_api">WindowsAPIクラスのポインタ</param>
+        /// <param name="directx_base">DirectXBaseクラスのポインタ</param>
+        /// <param name="srv_manager">SrvManagerクラスのポインタ</param>
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize(WindowsApi* windows_api, DirectXBase* directx_base, SrvManager* srv_manager);
 
         /// <summary>
-        /// ImGui の受け付けを開始する
+        /// ImGui の受け付けを開始
+        /// <returns>なし</returns>
         /// </summary>
         void Begin();
 
         /// <summary>
-        /// ImGui の受け付けを終了する
+        /// ImGui の受け付けを終了
+        /// <returns>なし</returns>
         /// </summary>
         void End();
 
         /// <summary>
         /// 画面への描画
+        /// <returns>なし</returns>
         /// </summary>
         void Draw();
 

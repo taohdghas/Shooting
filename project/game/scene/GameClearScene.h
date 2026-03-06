@@ -16,32 +16,39 @@ class GameClearScene : public  MyEngine::BaseScene
 {
 public:
 	/// <summary>
-	/// 初期化処理を行う。
+	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize() override;
 
 	/// <summary>
-	/// 終了処理を行う
+	/// 終了
+	/// <returns>なし</returns>
 	/// </summary>
 	void Finalize() override;
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
+	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update() override;
 
-	/// <summary>
-	/// 描画処理を行う。
+	/// <summary>	
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw() override;
 
 	/// <summary>
-	/// デバッグ表示用の処理を行う。
+	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug() override;
+
 public:
 	/// <summary>
-    /// シーン遷移処理を行う。
+    /// シーン遷移処理
+	/// <returns>なし</returns>
     /// </summary>
 	void SceneChange();
 private:
@@ -54,4 +61,3 @@ private:
 	//フェード
 	std::unique_ptr<Fade>fade_;
 };
-

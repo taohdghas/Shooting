@@ -46,74 +46,109 @@ public:
 	};
 public:
 	/// <summary>
-	/// UIの初期化
+	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize();
+
 	/// <summary>
-	/// UIの更新
+	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
+
 	/// <summary>
-	/// UIの描画
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
+
 	/// <summary>
-	/// UIのデバック
+	/// デバック表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
+
 	/// <summary>
 	/// HPバー更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdateHPBar();
+
 	/// <summary>
 	/// ポーズ画面処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdatePauseGuide();
+
 	/// <summary>
 	/// ポーズボタンホバー処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdatePauseButtonHover();
+
 	/// <summary>
 	/// ポーズメニュークリック処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdatePauseClick();
+
 	/// <summary>
     /// 回避クールタイムバー更新
+	/// <returns>なし</returns>
     /// </summary>
 	void UpdateDodgeGauge();
+
 	/// <summary>
 	/// スプライト作成
+	/// <param name="type">スプライトの種類</param>
+	/// <param name="path">テクスチャパス</param>
+	/// <param name="pos">スプライトの座標</param>
+	/// <param name="size">スプライトのサイズ</param>
+	/// <param name="anchor">アンカーポイント（省略時は{0,0}）</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void CreateSprite(SpriteType type, const char* path, const Vector2& pos,
 		const Vector2& size, const Vector2& anchor = { 0,0 });
+
 	/// <summary>
 	/// スプライト上にマウスがあるか
+	/// <param name="sprite">判定対象のスプライトポインタ</param>
+	/// <returns>スプライト上にマウスがあればtrue</returns>
 	/// </summary>
 	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
 public:
 	/// <summary>
 	/// メニュー選択結果リセット
+	/// <returns>なし</returns>
 	/// </summary>
 	void ResetPauseResult() { pause_result_ = PauseResult::None; }
 
 	/// <summary>
     /// メニュー選択結果を取得
+	/// <returns>現在のポーズメニュー選択結果</returns>
     /// </summary>
 	PauseResult GetPauseResult() const { return pause_result_; }
 
 	/// <summary>
 	/// スプライト取得
+	/// <param name="type">取得するスプライトの種類</param>
+	/// <returns>スプライトのポインタ</returns>
 	/// </summary>
 	MyEngine::Sprite* Get(SpriteType type);
 
 	/// <summary>
 	/// プレイヤーをセット
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/// <summary>
 	/// 操作説明画面表示設定
+	/// <param name="flag">表示フラグ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetShowPause(bool flag) { is_show_pause_ = flag; }
 private:

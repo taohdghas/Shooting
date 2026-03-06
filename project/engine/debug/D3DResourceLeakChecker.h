@@ -12,8 +12,9 @@ namespace MyEngine {
 	{
 	public:
 		/// <summary>
-		/// デストラクタ。
-		/// </summary>
+        /// デストラクタ
+        /// <returns>なし</returns>
+        /// </summary>
 		~D3DResourceLeakChecker();
 	};
 }

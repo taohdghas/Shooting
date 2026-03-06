@@ -21,32 +21,47 @@ public:
 	};
 
 	/// <summary>
-	/// フェード機能を初期化する
+	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize();
+
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
+	/// 更新処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
+
 	/// <summary>
-	/// フェードスプライトを描画する。
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
+
 	/// <summary>
-	/// フェードを開始する。
+	/// フェードを開始
+	/// <param name="state">開始するフェードの状態</param>
+	/// <param name="duration">フェードの持続時間（秒）</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void FadeStart(State state, float duration);
+
 	/// <summary>
-	/// フェード状態を停止し <c>State::None</c> にする。
+	/// フェード状態を停止しにする。
+	/// <returns>なし</returns>
 	/// </summary>
 	void End();
+
 	/// <summary>
-	/// フェードが終了したか判定する。
+	/// フェードが終了したか判定
+	/// <returns>フェードが終了していればtrue</returns>
 	/// </summary>
 	bool IsFinished();
+
 public:
 	/// <summary>
-	/// 現在のフェード状態を取得する。
+	/// 現在のフェード状態を取得
+	/// <returns>現在のフェード状態</returns>
 	/// </summary>
 	State GetState() const { return state_; }
 

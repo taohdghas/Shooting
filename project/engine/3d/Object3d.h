@@ -24,119 +24,153 @@ namespace MyEngine {
 	class Object3d {
 	public:
 		/// <summary>
-		/// 初期化を行う。
-		/// </summary>
+        /// 初期化
+        /// <param name="object3d_base">3Dオブジェクト共通部のポインタ</param>
+        /// <returns>なし</returns>
+        /// </summary>
 		void Initialize(Object3dBase* object3d_base);
 
 		/// <summary>
-		/// 毎フレームの更新処理を行う。
+		/// 毎フレームの更新処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Update();
 
 		/// <summary>
-		/// 描画処理を行う。
+		/// 描画処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Draw();
 
 		/// <summary>
-		/// デバッグ用の更新処理を行う。
+		/// デバッグ用の更新処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void DebugUpdate();
 
 		/// <summary>
-		/// 表示するモデルを設定する。
+		/// 表示するモデルを設定
+		/// <param name="file_path">モデルファイルのパス</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetModel(const std::string& file_path);
 
 		/// <summary>
-		/// スケールを設定する。
+		/// スケールを設定
+		/// <param name="scale">スケール値（Vector3）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetScale(const Vector3& scale) { transform_.scale = scale; }
 
 		/// <summary>
-		/// 回転を設定する。
+		/// 回転を設定。
+		/// <param name="rotate">回転値（Vector3）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 
 		/// <summary>
-		/// 平行移動（座標）を設定する。
+		/// 座標を設定。
+		/// <param name="translate">座標値（Vector3）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
 		/// <summary>
-		/// 使用するカメラを設定する。
+		/// 使用するカメラを設定
+		/// <param name="camera">カメラのポインタ</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetCamera(Camera* camera) { camera_ = camera; }
 
 		/// <summary>
-		/// マテリアルの色を設定する。
+		/// マテリアルの色を設定
+		/// <param name="color">色（Vector4）</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetColor(const Vector4& color);
 
 		/// <summary>
-		/// ライティングの有効/無効を設定する。
+		/// ライティングの有効/無効を設定
+		/// <param name="enable">有効ならtrue、無効ならfalse</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetLight(bool enable) { enable_lighting_ = enable; }
 
 		/// <summary>
-		/// 平行光（DirectionalLight）の有効/無効を設定する。
+		/// 平行光の有効/無効を設定
+		/// <param name="enable">有効なら1、無効なら0</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetDirectionalLightEnable(int enable) { directional_light_->enable = enable ? 1 : 0; }
 
 		/// <summary>
-		/// 点光源（PointLight）の有効/無効を設定する。
+		/// 点光源の有効/無効を設定
+		/// <param name="enable">有効なら1、無効なら0</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetPointLightEnable(int enable) { point_light_->enable = enable ? 1 : 0; }
 
 		/// <summary>
-		/// スポットライト（SpotLight）の有効/無効を設定する。
+		/// スポットライトの有効/無効を設定
+		/// <param name="enable">有効なら1、無効なら0</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SetSpotLightEnable(int enable) { spot_light_->enable = enable ? 1 : 0; }
 
 		/// <summary>
-		/// スケールを取得する。
+		/// スケールを取得
+		/// <returns>スケール値（Vector3）</returns>
 		/// </summary>
 		const Vector3& GetScale() const { return transform_.scale; }
 
 		/// <summary>
-		/// 回転を取得する。
+		/// 回転を取得
+		/// <returns>回転値（Vector3）</returns>
 		/// </summary>
 		const Vector3& GetRotate() const { return transform_.rotate; }
 
 		/// <summary>
-		/// 座標を取得する。
+		/// 座標を取得
+		/// <returns>座標値（Vector3）</returns>
 		/// </summary>
 		const Vector3& GetTranslate() const { return transform_.translate; }
 
 	private:
 
 		/// <summary>
-		/// マテリアル情報を作成・初期化する。
+		/// マテリアル情報を作成・初期化
+		/// <returns>なし</returns>
 		/// </summary>
 		void MaterialCreate();
 
 		/// <summary>
-		/// 座標変換行列データを作成する。
+		/// 座標変換行列データを作成
+		/// <returns>なし</returns>
 		/// </summary>
 		void TransformationCreate();
 
 		/// <summary>
-		/// 平行光源のデータを作成・更新する。
+		/// 平行光源のデータを作成・更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void DirectionalLightCreate();
 
 		/// <summary>
-		/// カメラ関連のデータを作成・更新する。
+		/// カメラ関連のデータを作成・更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void CameraDataCreate();
 
 		/// <summary>
-		/// 点光源（PointLight）のデータを作成・更新する。
+		/// 点光源のデータを作成・更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void PointLightCreate();
 
 		/// <summary>
-		/// スポットライト（SpotLight）のデータを作成・更新する。
+		/// スポットライトのデータを作成・更新
+		/// <returns>なし</returns>
 		/// </summary>
 		void SpotLightCreate();
 

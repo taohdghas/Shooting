@@ -46,32 +46,41 @@ namespace MyEngine {
 	class Audio {
 	public:
 		/// <summary>
-		/// シングルトンインスタンスを取得する。
-		/// </summary>
+        /// シングルトンインスタンスを取得
+        /// <returns>Audioのインスタンス（ポインタ）</returns>
+        /// </summary>
 		static Audio* GetInstance();
 
 		/// <summary>
-		/// オーディオシステムを終了・解放する。
+		/// オーディオシステムを終了・解放
+		/// <returns>なし</returns>
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
-		/// オーディオシステムを初期化する。
+		/// オーディオシステムを初期化
+		/// <returns>なし</returns>
 		/// </summary>
 		void Initialize();
 
 		/// <summary>
-		/// WAV ファイルを読み込み、SoundData を構築して返す。
+		/// WAV ファイルを読み込み、SoundData を構築して返す
+		/// <param name="filename">WAVファイルのパス</param>
+		/// <returns>SoundData構造体</returns>
 		/// </summary>
 		SoundData SoundLoadWave(const char* filename);
 
 		/// <summary>
-		/// SoundData が保持するバッファ等のリソースを解放する。
+		/// SoundData が保持するバッファ等のリソースを解放
+		/// <param name="sound_data">解放対象のSoundData構造体のポインタ</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SoundUnload(SoundData* sound_data);
 
 		/// <summary>
-		/// 指定したサウンドデータを再生する。
+		/// 指定したサウンドデータを再生
+		/// <param name="sound_data">再生するSoundData構造体</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void SoundPlayWave(const SoundData& sound_data);
 

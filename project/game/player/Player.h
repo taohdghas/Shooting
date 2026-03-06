@@ -31,118 +31,184 @@ class Player
 public:
 	/// <summary>
 	/// コンストラクタ
+	/// <returns>なし</returns>
 	/// </summary>
 	Player();
+
 	/// <summary>
 	/// デストラクタ
+	/// <returns>なし</returns>
 	/// </summary>
 	~Player();
+
 	/// <summary>
 	/// 初期化
+	/// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
+
 	/// <summary>
 	/// 更新
+	/// <param name="is_start_animation_">開始アニメーション中か</param>
+	/// <param name="is_returning_">リターン中か</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update(bool is_start_animation_, bool is_returning_);
+
 	/// <summary>
 	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
+
 	/// <summary>
 	/// レティクル描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void ReticleDraw();
+
 	/// <summary>
 	/// 移動
+	/// <returns>なし</returns>
 	/// </summary>
 	void Move();
+
 	/// <summary>
 	/// ジャンプ
+	/// <returns>なし</returns>
 	/// </summary>
 	void Jump();
+
 	/// <summary>
 	/// 攻撃
+	/// <returns>なし</returns>
 	/// </summary>
 	void Attack();
+
 	/// <summary>
 	/// 回避
+	/// <returns>なし</returns>
 	/// </summary>
 	void Dodge();
+
 	/// <summary>
 	/// レティクル更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void ReticleUpdate();
+
 	/// <summary>
 	/// 衝突時処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void OnCollision();
+
 	/// <summary>
 	/// ダメージ処理
+	/// <param name="damage">受けるダメージ量</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void TakeDamage(int damage);
+
 	/// <summary>
 	/// デバッグ表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
+
 	/// <summary>
     /// 回避クールタイム進行率 
+	/// <returns>回避クールタイム進行率（0.0～1.0）</returns>
     /// </summary>
 	float GetDodgeCooldownRatio();
+
 	/// <summary>
 	/// OBB取得
+	/// <returns>OBB構造体</returns>
 	/// </summary>
 	OBB GetOBB() const;
+
 	/// <summary>
 	/// 死亡判定
+	/// <returns>死亡していればtrue</returns>
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
+
 	/// <summary>
 	/// スケール取得
+	/// <returns>スケール（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetScale() const { return transform_.scale; }
+
 	/// <summary>
 	/// 回転取得
+	/// <returns>回転（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetRotate() const { return transform_.rotate; }
+
 	/// <summary>
 	/// 位置取得
+	/// <returns>座標（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
+
 	/// <summary>
 	/// 速度取得
+	/// <returns>速度（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetVelocity() const { return velocity_; }
+
 	/// <summary>
 	/// HP取得
+	/// <returns>現在のHP</returns>
 	/// </summary>
 	int GetHP() const { return hp_; }
+
 	/// <summary>
 	/// 半径取得
+	/// <returns>半径</returns>
 	/// </summary>
 	float GetRadius() const { return radius_; }
+
 	/// <summary>
 	/// 弾リスト取得
+	/// <returns>弾リスト（const参照）</returns>
 	/// </summary>
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() const { return bullets_; }
+
 	/// <summary>
 	/// スケール設定
+	/// <param name="scale">設定するスケール値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
+
 	/// <summary>
 	/// 回転設定
+	/// <param name="rotate">設定する回転値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
+
 	/// <summary>
 	/// 座標設定
+	/// <param name="position">設定する座標値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
+
 	/// <summary>
 	/// プラットフォーム設定
+	/// <param name="platform">プラットフォームのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetPlatform(Platform* platform) { platform_ = platform; }
+
 	/// <summary>
 	/// プラットフォーム追従設定
+	/// <param name="flag">追従フラグ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetFollowPlatform(bool flag) { is_follow_platform_ = flag; }
 private:

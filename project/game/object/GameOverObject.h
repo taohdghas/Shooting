@@ -26,51 +26,62 @@ public:
 
     /// <summary>
     /// 初期化
+    /// <returns>なし</returns>
     /// </summary>
     void Initialize();
 
     /// <summary>
     /// 更新
+    /// <returns>なし</returns>
     /// </summary>
     void Update();
 
     /// <summary>
     /// 描画
+    /// <returns>なし</returns>
     /// </summary>
     void Draw();
 
 	/// <summary>
 	/// スプライト更新
+	/// <returns>なし</returns>
 	/// </summary>
     void UpdateSprite();
 
 	/// <summary>
 	/// スプライト描画
+	/// <returns>なし</returns>
 	/// </summary>
     void DrawSprite();
 
     /// <summary>
     /// デバッグ表示
+    /// <returns>なし</returns>
     /// </summary>
     void Debug();
 
     /// <summary>
 	/// メニュー結果リセット
+    /// <returns>なし</returns>
     /// </summary>
     void ResetMenuResult() { menu_result_ = MenuResult::None; }
 
 	/// <summary>
 	/// メニューインデックス取得
+	/// <returns>現在マウスがホバーしているメニューインデックス</returns>
 	/// </summary>
     int GetMouseHoverIndex();
 
 	/// <summary>
 	/// スプライト上にマウスがあるか判定
+	/// <param name="sprite">判定対象のスプライトポインタ</param>
+	/// <returns>スプライト上にマウスがあればtrue</returns>
 	/// </summary>
     bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
 	/// <summary>
 	/// メニュー結果取得
+	/// <returns>現在のメニュー結果</returns>
 	/// </summary>
     MenuResult GetMenuResult() const { return menu_result_; }
 

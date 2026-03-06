@@ -17,27 +17,33 @@ namespace MyEngine {
 	class SpriteBase {
 	public:
 		/// <summary>
-		/// シングルトンインスタンスを取得する。
-		/// </summary>
+        /// シングルトンインスタンスを取得
+        /// <returns>SpriteBaseのインスタンス（ポインタ）</returns>
+        /// </summary>
 		static SpriteBase* GetInstance();
 
 		/// <summary>
 		/// 初期化を行う。
+		/// <param name="directx_base">DirectX基盤クラスのポインタ</param>
+		/// <returns>なし</returns>
 		/// </summary>
 		void Initialize(DirectXBase* directx_base);
 
 		/// <summary>
-		/// 終了処理を行う。
+		/// 終了処理
+		/// <returns>なし</returns>
 		/// </summary>
 		void Finalize();
 
 		/// <summary>
-		/// 共通描画設定を行う。
+		/// 共通描画設定
+		/// <returns>なし</returns>
 		/// </summary>
 		void DrawBaseSet();
 
 		/// <summary>
-		/// DirectXBase のポインタを取得する。
+		/// DirectXBase のポインタを取得
+		/// <returns>DirectXBaseのポインタ</returns>
 		/// </summary>
 		DirectXBase* GetDxBase() const { return directx_base_; }
 

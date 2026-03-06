@@ -20,114 +20,148 @@ class Player;
 class Enemy {
 public:
 	/// <summary>
-	/// 初期化する。
+	/// 初期化
+	/// <param name="object3d_base">3Dオブジェクト共通設定へのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize(MyEngine::Object3dBase* object3d_base);
 
 	/// <summary>
-	/// 毎フレームの更新処理を行う。
+	/// 更新処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update(bool is_control_enabled_);
 
 	/// <summary>
-	/// 描画を行う。
+	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// レーザー攻撃（弾発射）を行う。
+	/// レーザー攻撃
+	/// <returns>なし</returns>
 	/// </summary>
 	void Laser();
 
 	/// <summary>
-	/// 衝突時のコールバック。
+	/// 衝突時のコールバック
+	/// <returns>なし</returns>
 	/// </summary>
 	void OnCollision();
 
 	/// <summary>
-	/// HP を減少させる。
+	/// HPを減少
+	/// <param name="damage">減少させるダメージ量</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void TakeDamage(int damage);
 
 	/// <summary>
-	/// デバッグ UI を表示する（ImGui を使用）
+	/// デバッグ UIを表示
+	/// <param name="id">デバッグUI識別用ID</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug(int index);
 
 	/// <summary>
-	/// レール上の位置を評価する。
+	/// レール上の位置を評価
+	/// <param name="progress">レール上の進行度（0.0～1.0）</param>
+	/// <returns>評価された座標（Vector3）</returns>
 	/// </summary>
 	Vector3 EvaluateRailPosition(float progress);
 
 	/// <summary>
-	/// OBB（Oriented Bounding Box）を取得する。
+	/// OBBを取得
+	/// <returns>OBB構造体</returns>
 	/// </summary>
 	OBB GetOBB() const;
 
 	/// <summary>
-	/// 死亡フラグが立っているか判定する。
+	/// 死亡フラグが立っているか判定
+	/// <returns>死亡していればtrue</returns>
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
 
 	/// <summary>
-	/// 死亡時のパーティクル発生フラグが立っているか判定する。
+	/// 死亡時のパーティクル発生フラグが立っているか判定
+	/// <returns>発生していればtrue</returns>
 	/// </summary>
 	bool IsDeathParticle() const { return is_death_particle_; }
 
 public:
 	/// <summary>
-	/// 現在の位置（Transform.translate）を取得する。
+	/// 現在の位置を取得
+	/// <returns>現在の座標（Vector3参照）</returns>
 	/// </summary>
 	const Vector3& GetTranslate() const { return transform_.translate; }
 
 	/// <summary>
-    /// 弾の攻撃力を取得する。
+    /// 弾の攻撃力を取得
+	/// <returns>攻撃力</returns>
     /// </summary>
 	int GetAttack() const { return attack_; }
 
 	/// <summary>
-	/// コリジョンや描画に用いる半径を取得する。
+	/// コリジョンや描画に用いる半径を取得
+	/// <returns>半径</returns>
 	/// </summary>
 	float GetRadius() const { return radius_; }
 
 	/// <summary>
-	/// 所有する弾リストを取得する（読み取り専用）。
+	/// 所有する弾リストを取得
+	/// <returns>弾リスト（const参照）</returns>
 	/// </summary>
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() const { return bullets_; }
 
 	/// <summary>
-	/// スケールを設定する。
+	/// スケールを設定
+	/// <param name="scale">設定するスケール値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
 
 	/// <summary>
-	/// 回転を設定する。
+	/// 回転を設定
+	/// <param name="rotate">設定する回転値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 
 	/// <summary>
-	/// 座標を設定する。
+	/// 座標を設定
+	/// <param name="position">設定する座標値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetTranslate(const Vector3& position) { transform_.translate = position; }
 
 	/// <summary>
-    /// 初期HPを設定する
+    /// 初期HPを設定
+	/// <param name="hp">設定するHP値</param>
+	/// <returns>なし</returns>
     /// </summary>
 	void SetHP(int hp) { hp_ = hp; }
 
 	/// <summary>
-	/// 対象プレイヤーのポインタを設定する。
+	/// 対象プレイヤーのポインタを設定
 	/// - 攻撃判定や追従に利用される。
+	/// <param name="player">プレイヤーのポインタ</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/// <summary>
-	/// デスパーティクル発生フラグを設定する。
+	/// デスパーティクル発生フラグを設定
+	/// <param name="flag">設定するフラグ値</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetIsDeathParticle(bool flag) { is_death_particle_ = flag; }
 
 	/// <summary>
 	/// 敵の移動用レール（スプライン）の制御点と閉じているかどうかを設定
+	/// <param name="controlPoints">制御点リスト</param>
+	/// <param name="closed">レールが閉じているかどうか</param>
+	/// <returns>なし</returns>
 	/// </summary>
 	void SetRail(const std::vector<Vector3>& controlPoints, bool closed);
 private:

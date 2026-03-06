@@ -9,7 +9,7 @@
 // ゲームシーンの初期化処理
 void GameScene::Initialize() {
 
-	// サウンド初期化
+	//サウンド初期化
 	MyEngine::Audio::GetInstance()->Initialize();
 
 	// パーティクルグループの生成
@@ -28,7 +28,7 @@ void GameScene::Initialize() {
 	camera_start_pos_ = camera_->GetTranslate();
 	camera_start_rot_ = camera_->GetRotate();
 
-	// Skyboxの初期化
+	//Skyboxの初期化
 	skybox_ = std::make_unique<Skybox>();
 	skybox_->Initialize("resources/skybox/vz_classic_land_cubemap_ue.dds");
 

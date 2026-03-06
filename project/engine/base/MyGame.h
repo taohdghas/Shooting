@@ -37,22 +37,26 @@ namespace MyEngine {
     class MyGame : public Framework {
     public:
         /// <summary>
-        /// ゲームの初期化を行う。
+        /// ゲームの初期化
+        /// <returns>なし</returns>
         /// </summary>
         void Initialize() override;
 
         /// <summary>
-        /// 終了処理を行う。
+        /// 終了処理
+        /// <returns>なし</returns>
         /// </summary>
         void Finalize() override;
 
         /// <summary>
-        /// 毎フレームの更新処理を行う。
+        /// 毎フレームの更新処理
+        /// <returns>なし</returns>
         /// </summary>
         void Update() override;
 
         /// <summary>
-        /// 描画処理を行う。
+        /// 描画処理
+        /// <returns>なし</returns>
         /// </summary>
         void Draw() override;
 

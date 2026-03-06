@@ -26,61 +26,74 @@ public:
 
 	/// <summary>
 	/// 初期化
+	/// <returns>なし</returns>
 	/// </summary>
 	void Initialize();
 
 	/// <summary>
 	/// 更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void Update();
 
 	/// <summary>
 	/// 描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void Draw();
 
 	/// <summary>
 	/// スプライト描画
+	/// <returns>なし</returns>
 	/// </summary>
 	void DrawSprite();
 
 	/// <summary>
 	/// プレイヤーオブジェクトの演出処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void PlayerObjDirection();
 
 	/// <summary>
 	/// メニュー項目の拡縮処理
+	/// <returns>なし</returns>
 	/// </summary>
 	void MenuSizeUpdate();
 
 	/// <summary>
 	/// 操作説明表示の更新
+	/// <returns>なし</returns>
 	/// </summary>
 	void UpdateHowto();
 
 	/// <summary>
 	/// メニュー選択結果リセット
+	/// <returns>なし</returns>
 	/// </summary>
 	void ResetMenuResult() { menu_result_ = MenuResult::None; }
 
 	/// <summary>
 	/// デバッグ用UIを表示
+	/// <returns>なし</returns>
 	/// </summary>
 	void Debug();
 	
 	/// <summary>
 	/// マウスが乗っているメニュー項目のインデックスを取得
-	///	</summary>
+	/// <returns>マウスが乗っているメニューインデックス</returns>
+	/// </summary>
 	int GetMouseHoverIndex();
 
 	/// <summary>
 	/// スプライト上にマウスが乗っているか
+	/// <param name="sprite">判定対象のスプライトポインタ</param>
+	/// <returns>スプライト上にマウスがあればtrue</returns>
 	/// </summary>
 	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
 
 	/// <summary>
 	/// メニュー選択結果を取得
+	/// <returns>現在のメニュー選択結果</returns>
 	/// </summary>
 	MenuResult GetMenuResult() const { return menu_result_; }
 
