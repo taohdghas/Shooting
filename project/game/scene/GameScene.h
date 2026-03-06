@@ -112,6 +112,8 @@ private:
 	std::unique_ptr<LevelData> level_data_;
 	//ゲームスタート文字スプライト
 	std::unique_ptr<MyEngine::Sprite>game_start_sprite_;
+	//ゲームスタート文字の位置
+	Vector2 game_start_pos_;
 	//ボス出現位置
 	Vector3 boss_spawn_position_;
 	//撃破演出回転軸
@@ -138,6 +140,12 @@ private:
 	const float rotationSpeed = 1.0f;
 	//収束に書ける時間 
 	const float oneRotation = 2.0f * 3.14159f;
+	//スタート演出スライド速度
+	const float kSlideSpeed = 20.0f;
+	//スタート演出停止時間
+	const float kStopTime = 1.5f;
+	//スタート演出スライド時間
+	const float kSlideDuration = 0.6f;
 	//撃破演出経過時間タイマー
 	float death_timer_ = 0.0f;
 	//撃破演出回転速度
@@ -148,6 +156,18 @@ private:
 	float z_offset_ = 0.0f;
 	//カメラ回転タイマー
 	float camera_rotate_timer_ = 0.0f;
+	// GAME START表示タイマー
+	float game_start_timer_ = 0.0f;
+	//画面中央のX座標
+	float screen_center_x = 640.0f;
+	//画面中央のY座標
+	float screen_center_y = 360.0f;
+	//ゲームスタートアニメーション時間
+	float game_start_animation_time_ = 0.0f;
+	//スタート演出スライド開始X座標
+	float slide_start_x_ = 0.0f;
+	//スタート演出スライド終了X座標
+	float slide_end_x_ = 0.0f;
 	//ゲームクリアシーン遷移フラグ
 	bool is_to_game_clear_ = false;
 	//ゲームオーバーシーン遷移フラグ
@@ -164,16 +184,6 @@ private:
 	bool is_following_initialized_ = false;
 	//ゲーム一時停止フラグ
 	bool is_game_pause_ = false;
-
+	//ゲームプレイ中フラグ
 	bool is_gameplay_active_ = false;
-	// GAME START表示タイマー
-	float game_start_timer_ = 0.0f;
-
-	Vector2 game_start_pos_;
-
-	const float kSlideSpeed = 20.0f;
-	const float kStopTime = 1.5f;
-
-	float screen_center_x = 640.0f;
-	float screen_center_y = 360.0f;
 };

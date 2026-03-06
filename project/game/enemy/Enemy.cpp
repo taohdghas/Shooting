@@ -15,7 +15,7 @@ void Enemy::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->Initialize(object3d_base_);
 	object_->SetModel("enemy/enemy.obj");
 	object_->SetLight(false);
-	transform_.scale = { 0.5f, 0.5f, 0.5f };
+	transform_.scale = { 0.8f, 0.8f, 0.8f };
 	transform_.translate = { 0.0f, 3.0f, 20.0f };
 }
 
@@ -28,6 +28,7 @@ void Enemy::Update(bool is_control_enabled_) {
 
 	//スタート演出中は動かない
 	if (!is_control_enabled_) {
+		object_->SetScale(transform_.scale);
 		object_->SetRotate(transform_.rotate);
 		object_->SetTranslate(transform_.translate);
 		object_->Update();
