@@ -29,6 +29,13 @@
 class GameScene : public  MyEngine::BaseScene
 {
 public:
+	enum class GameStartState
+	{
+		None,
+		SlideIn,
+		Stop,
+		SlideOut
+	};
 	//ゲームフェーズ
 	enum class GamePhase {
 		Stage,     // 通常進行
@@ -76,6 +83,7 @@ public:
 	/// </summary>
 	bool IsBossSpawnCondition();
 private:
+	GameStartState game_start_state_ = GameStartState::None;
 	//ゲームフェーズ
 	GamePhase game_phase_ = GamePhase::Stage;
 	//プレイヤー
@@ -102,7 +110,8 @@ private:
 	std::unique_ptr<Ui>ui_;
 	//レベルデータ
 	std::unique_ptr<LevelData> level_data_;
-
+	//ゲームスタート文字スプライト
+	std::unique_ptr<MyEngine::Sprite>game_start_sprite_;
 	//ボス出現位置
 	Vector3 boss_spawn_position_;
 	//撃破演出回転軸
@@ -115,8 +124,8 @@ private:
 	Vector3 camera_start_rot_;
 	//乱数生成器
 	std::mt19937 random_engine_{ std::random_device{}() };
+	//乱数分布
 	std::uniform_real_distribution<float> random_dist_{ -1.0f, 1.0f };
-
 	//Δtを定義（定数）
 	const float kDeltaTime = 1.0f / 60.0f;
 	//ボストリガーZ座標
@@ -155,4 +164,16 @@ private:
 	bool is_following_initialized_ = false;
 	//ゲーム一時停止フラグ
 	bool is_game_pause_ = false;
+
+	bool is_gameplay_active_ = false;
+	// GAME START表示タイマー
+	float game_start_timer_ = 0.0f;
+
+	Vector2 game_start_pos_;
+
+	const float kSlideSpeed = 20.0f;
+	const float kStopTime = 1.5f;
+
+	float screen_center_x = 640.0f;
+	float screen_center_y = 360.0f;
 };

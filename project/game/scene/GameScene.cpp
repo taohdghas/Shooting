@@ -100,6 +100,13 @@ void GameScene::Initialize() {
 	ui_->Initialize();
 	ui_->SetPlayer(player_.get());
 
+	game_start_sprite_ = std::make_unique<MyEngine::Sprite>();
+	game_start_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/game_start.png");
+	game_start_pos_ = { -360.0f, 360.0f };
+	game_start_sprite_->SetPosition(game_start_pos_);
+	game_start_sprite_->SetAnchorPoint({ 0.5f,0.5f });
+
+
 	// 最初の1フレーム入力を無視
 	MyEngine::Input::GetInstance()->ClearInput();
 }
@@ -129,6 +136,8 @@ void GameScene::Update() {
 	// UIの更新
 	ui_->Update();
 
+	game_start_sprite_->Update();
+
 	// デバッグ表示
 	Debug();
 
@@ -152,6 +161,49 @@ void GameScene::Update() {
 
 	// スタート演出
 	StartAnimation();
+
+
+	switch (game_start_state_) {
+
+	case GameStartState::SlideIn:
+
+		game_start_pos_.x += kSlideSpeed;
+
+		if (game_start_pos_.x >= screen_center_x) {
+			game_start_pos_.x = screen_center_x;
+			game_start_state_ = GameStartState::Stop;
+			game_start_timer_ = 0.0f;
+		}
+
+		game_start_sprite_->SetPosition(game_start_pos_);
+
+		break;
+
+
+	case GameStartState::Stop:
+
+		game_start_timer_ += kDeltaTime;
+
+		if (game_start_timer_ >= kStopTime) {
+			game_start_state_ = GameStartState::SlideOut;
+		}
+
+		return;
+
+
+	case GameStartState::SlideOut:
+
+		game_start_pos_.x += kSlideSpeed;
+
+		if (game_start_pos_.x > 1600.0f) {
+			game_start_state_ = GameStartState::None;
+			is_gameplay_active_ = true;
+		}
+
+		game_start_sprite_->SetPosition(game_start_pos_);
+
+		return;
+	}
 
 	// 追従カメラ
 	FollowCamera();
@@ -195,7 +247,7 @@ void GameScene::Update() {
 	// 敵の更新
 	if (!is_start_animation_ && !is_returning_) {
 		for (auto& enemy : enemies_) {
-			enemy->Update();
+			enemy->Update(is_gameplay_active_);
 		}
 	}
 	// ボスの更新
@@ -206,7 +258,7 @@ void GameScene::Update() {
 	// Skyboxの更新
 	skybox_->Update();
 	// プラットフォームの更新
-	platform_->Update(is_start_animation_, is_returning_);
+	platform_->Update(is_start_animation_, is_returning_,is_gameplay_active_);
 
 	// パーティクルの更新
 	MyEngine::ParticleManager::GetInstance()->Update();
@@ -257,6 +309,7 @@ void GameScene::Draw() {
 			enemy->Draw();
 		}
 	}
+	//ボスフェーズに突入
 	if (game_phase_ == GamePhase::BossBattle) {
 		// ボスの描画
 		boss_->Draw();
@@ -276,6 +329,10 @@ void GameScene::Draw() {
 	fade_->Draw();
 	// UI描画
 	ui_->Draw();
+
+	if (game_start_state_ != GameStartState::None) {
+		game_start_sprite_->Draw();
+	}
 }
 
 // デバッグ表示
@@ -370,7 +427,7 @@ void GameScene::StartAnimation() {
 		//初期カメラ位置
 		Vector3 camPos;
 		camPos.x = camera_start_pos_.x * std::cos(angle) - camera_start_pos_.z * std::sin(angle);
-		camPos.y = camera_start_pos_.y; // 高さはそのまま
+		camPos.y = camera_start_pos_.y;
 		camPos.z = camera_start_pos_.x * std::sin(angle) + camera_start_pos_.z * std::cos(angle);
 
 		MyEngine::Camera* cam = MyEngine::CameraManager::GetInstance()->GetActiveCamera();
@@ -408,6 +465,9 @@ void GameScene::StartAnimation() {
 		if (t >= 1.0f) {
 			is_returning_ = false;
 			camera_rotate_timer_ = 0.0f;
+
+			game_start_state_ = GameStartState::SlideIn;
+			game_start_timer_ = 0.0f;
 		}
 	}
 }

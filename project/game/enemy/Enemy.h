@@ -27,7 +27,7 @@ public:
 	/// <summary>
 	/// 毎フレームの更新処理を行う。
 	/// </summary>
-	void Update();
+	void Update(bool is_control_enabled_);
 
 	/// <summary>
 	/// 描画を行う。

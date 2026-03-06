@@ -22,13 +22,13 @@ void Platform::Initialize(MyEngine::Object3dBase* object3dbase) {
 }
 
 // 毎フレームの更新処理
-void Platform::Update(bool is_start_animation_, bool is_returning_) {
+void Platform::Update(bool is_start_animation_, bool is_returning_, bool is_control_enabled_) {
 	//停止中は動かない
 	if (is_stopped_) {
 		return;
 	}
 	//スタート演出中は動かない
-	if (is_start_animation_ || is_returning_) {
+	if (is_start_animation_ || is_returning_ || !is_control_enabled_) {
 		object_->SetScale(transform_.scale);
 		object_->SetRotate(transform_.rotate);
 		object_->SetTranslate(transform_.translate);

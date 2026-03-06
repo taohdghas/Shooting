@@ -20,9 +20,17 @@ void Enemy::Initialize(MyEngine::Object3dBase* object3d_base) {
 }
 
 // 毎フレームの更新処理
-void Enemy::Update() {
+void Enemy::Update(bool is_control_enabled_) {
 	//デスならスキップ
 	if (is_dead_) {
+		return;
+	}
+
+	//スタート演出中は動かない
+	if (!is_control_enabled_) {
+		object_->SetRotate(transform_.rotate);
+		object_->SetTranslate(transform_.translate);
+		object_->Update();
 		return;
 	}
 	
@@ -79,7 +87,6 @@ void Enemy::Update() {
 			rail_progress_ -= 1.0f;
 			rail_accumulated_ += rail_lap_offset_;
 		}
-
 
 		Vector3 rail_pos_ = EvaluateRailPosition(rail_progress_);
 		Vector3 offset_ = rail_pos_ - rail_start_point_;
