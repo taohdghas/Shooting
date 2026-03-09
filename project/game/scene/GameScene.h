@@ -29,13 +29,6 @@
 class GameScene : public  MyEngine::BaseScene
 {
 public:
-	enum class GameStartState
-	{
-		None,
-		SlideIn,
-		Stop,
-		SlideOut
-	};
 	//ゲームフェーズ
 	enum class GamePhase {
 		Stage,     // 通常進行
@@ -103,7 +96,6 @@ public:
 	bool IsBossSpawnCondition();
 
 private:
-	GameStartState game_start_state_ = GameStartState::None;
 	//ゲームフェーズ
 	GamePhase game_phase_ = GamePhase::Stage;
 	//プレイヤー
@@ -130,10 +122,6 @@ private:
 	std::unique_ptr<Ui>ui_;
 	//レベルデータ
 	std::unique_ptr<LevelData> level_data_;
-	//ゲームスタート文字スプライト
-	std::unique_ptr<MyEngine::Sprite>game_start_sprite_;
-	//ゲームスタート文字の位置
-	Vector2 game_start_pos_;
 	//ボス出現位置
 	Vector3 boss_spawn_position_;
 	//撃破演出回転軸
