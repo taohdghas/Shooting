@@ -17,6 +17,13 @@
 class Ui
 {
 public:
+	//ゲームスタート演出の状態
+	enum class GameStartState {
+		None,
+		SlideIn,
+		Stop,
+		SlideOut
+	};
 	//ポーズメニューの結果
 	enum class PauseResult {
 		None,//何もしない
@@ -25,6 +32,7 @@ public:
 	};
 	//スプライトの種類
 	enum class SpriteType {
+		GameStart,//ゲームスタート文字
 		HpBar,//HPバー
 		HpBarFlash,//HPバーフラッシュ
 		HpBarCaution,//HPバー注意
@@ -70,6 +78,12 @@ public:
 	void Debug();
 
 	/// <summary>
+	/// ゲームスタート演出の更新処理
+	/// <returns>なし</returns>
+	/// </summary>
+	void UpdateGameStart();
+
+	/// <summary>
 	/// HPバー更新
 	/// <returns>なし</returns>
 	/// </summary>
@@ -94,9 +108,9 @@ public:
 	void UpdatePauseClick();
 
 	/// <summary>
-    /// 回避クールタイムバー更新
+	/// 回避クールタイムバー更新
 	/// <returns>なし</returns>
-    /// </summary>
+	/// </summary>
 	void UpdateDodgeGauge();
 
 	/// <summary>
@@ -112,11 +126,23 @@ public:
 		const Vector2& size, const Vector2& anchor = { 0,0 });
 
 	/// <summary>
+	/// ゲームスタートアニメーションを開始する
+	/// <returns>なし</returns>
+	/// </summary>
+	void StartGameStartAnimation();
+
+	/// <summary>
 	/// スプライト上にマウスがあるか
 	/// <param name="sprite">判定対象のスプライトポインタ</param>
 	/// <returns>スプライト上にマウスがあればtrue</returns>
 	/// </summary>
 	bool IsMouseOnSprite(MyEngine::Sprite* sprite);
+
+	/// <summary>
+    /// ゲームスタート演出が終了したか判定
+    /// <returns>終了していればtrue</returns>
+    /// </summary>
+	bool IsGameStartFinished() const {return has_started_game_start_ && game_start_state_ == GameStartState::None;}
 
 public:
 	/// <summary>
@@ -126,9 +152,9 @@ public:
 	void ResetPauseResult() { pause_result_ = PauseResult::None; }
 
 	/// <summary>
-    /// メニュー選択結果を取得
+	/// メニュー選択結果を取得
 	/// <returns>現在のポーズメニュー選択結果</returns>
-    /// </summary>
+	/// </summary>
 	PauseResult GetPauseResult() const { return pause_result_; }
 
 	/// <summary>
@@ -152,21 +178,30 @@ public:
 	/// </summary>
 	void SetShowPause(bool flag) { is_show_pause_ = flag; }
 private:
+	//ゲームスタート演出の状態
+	GameStartState game_start_state_ = GameStartState::None;
 	//ポーズメニュー選択結果
 	PauseResult pause_result_ = PauseResult::None;
-	// 現在使用中のHPバー
+	//現在使用中のHPバー
 	SpriteType current_hp_bar_ = SpriteType::HpBar;
+	//現在使用中のHPバーフラッシュ
 	SpriteType current_hp_flash_ = SpriteType::HpBarFlash;
-	// スプライト格納用マップ
+	//スプライト格納用マップ
 	std::unordered_map<SpriteType, std::unique_ptr<MyEngine::Sprite>> sprites_;
-	// プレイヤーへのポインタ
+	//プレイヤーへのポインタ
 	Player* player_ = nullptr;
 	//リトライ文字の基準サイズ
 	Vector2 retry_base_size_ = { 180.0f,100.0f };
-	//タイトルㇸ戻る文字の基準サイズ
+	//タイトルへ戻る文字の基準サイズ
 	Vector2 back_title_base_size_ = { 180.0f,100.0f };
 	//操作説明画面の基準サイズ
 	Vector2 operation_base_size_ = { 500.0f,500.0f };
+	//ゲームスタート文字の表示座標
+	Vector2 game_start_pos_ = { -360.0f,360.0f };
+	//ゲームスタート演出の停止時間
+	const float kStopTime = 1.5f;
+	//ゲームスタート演出のスライド時間
+	const float kSlideDuration = 0.6f;
 	//ポーズ画面のスプライトスケール
 	float pause_scale_ = 0.0f;
 	//ホバー用タイマー
@@ -179,10 +214,22 @@ private:
 	float prev_hp_ratio_ = 1.0f;
 	//表示用HP比率
 	float display_hp_ratio_ = 1.0f;
+	//ゲームスタート演出用タイマー
+	float game_start_timer_ = 0.0f;
+	//ゲームスタートアニメーション経過時間
+	float game_start_animation_time_ = 0.0f;
+	//ゲームスタート演出の開始X座標
+	float slide_start_x_ = -360.0f;
+	//ゲームスタート演出の終了X座標
+	float slide_end_x_ = 640.0f;
+	//画面中央のX座標
+	float screen_center_x = 640.0f;
 	//回避ゲージフラッシュ表示フラグ
 	bool is_dodge_flash_visible_ = true;
 	//ポーズ画面が出ているか
 	bool is_show_pause_ = false;
 	//HPバーフラッシュ表示フラグ
 	bool is_hp_flash_visible_ = false;
+	//ゲームスタート演出が開始されたか
+	bool has_started_game_start_ = false;
 };

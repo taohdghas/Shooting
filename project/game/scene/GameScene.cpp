@@ -100,13 +100,6 @@ void GameScene::Initialize() {
 	ui_->Initialize();
 	ui_->SetPlayer(player_.get());
 
-	// ゲーム開始スプライトの初期化
-	game_start_sprite_ = std::make_unique<MyEngine::Sprite>();
-	game_start_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/ui/game_start.png");
-	game_start_pos_ = { -360.0f, 360.0f };
-	game_start_sprite_->SetPosition(game_start_pos_);
-	game_start_sprite_->SetAnchorPoint({ 0.5f,0.5f });
-
 	// 最初の1フレーム入力を無視
 	MyEngine::Input::GetInstance()->ClearInput();
 }
@@ -136,9 +129,6 @@ void GameScene::Update() {
 	// UIの更新
 	ui_->Update();
 
-	//ゲームスタートスプライトの更新
-	game_start_sprite_->Update();
-
 	// デバッグ表示
 	Debug();
 
@@ -163,66 +153,10 @@ void GameScene::Update() {
 	// スタート演出
 	StartAnimation();
 
-	// ゲーム開始演出の状態に応じた処理
-	switch (game_start_state_) {
-
-	case GameStartState::SlideIn:// スライドイン
-		// スライドインの経過時間を更新
-		game_start_animation_time_ += kDeltaTime;
-
-		{
-			// スライドインの進行度を計算（0.0fから1.0fの範囲）
-			float t = min(game_start_animation_time_ / kSlideDuration, 1.0f);
-
-			float eased = (float)Math::easeOutQuad(t);
-
-			game_start_pos_.x = slide_start_x_ + (slide_end_x_ - slide_start_x_) * eased;
-
-			game_start_sprite_->SetPosition(game_start_pos_);
-			// スライドインが完了したら次の状態へ
-			if (t >= 1.0f) {
-				game_start_state_ = GameStartState::Stop;
-				game_start_timer_ = 0.0f;
-			}
-		}
-
-		break;
-
-	case GameStartState::Stop:// 停止
-		// 停止時間を更新
-		game_start_timer_ += kDeltaTime;
-		// 停止時間が経過したらスライドアウトへ
-		if (game_start_timer_ >= kStopTime) {
-
-			game_start_animation_time_ = 0.0f;
-
-			slide_start_x_ = screen_center_x;
-			slide_end_x_ = 1600.0f;
-			game_start_state_ = GameStartState::SlideOut;
-		}
-
-		return;
-
-	case GameStartState::SlideOut:// スライドアウト
-		// スライドアウトの経過時間を更新
-		game_start_animation_time_ += kDeltaTime;
-
-		{
-			float t = min(game_start_animation_time_ / kSlideDuration, 1.0f);
-
-			float eased = (float)Math::easeInOutQuad(t);
-
-			game_start_pos_.x = slide_start_x_ + (slide_end_x_ - slide_start_x_) * eased;
-
-			game_start_sprite_->SetPosition(game_start_pos_);
-			// スライドアウトが完了したら演出終了
-			if (t >= 1.0f) {
-				game_start_state_ = GameStartState::None;
-				is_gameplay_active_ = true;
-			}
-		}
-
-		return;
+	//ゲームスタート文字演出終了検知
+	if (!is_gameplay_active_ && ui_->IsGameStartFinished())
+	{
+		is_gameplay_active_ = true;
 	}
 
 	// 追従カメラ
@@ -348,11 +282,6 @@ void GameScene::Draw() {
 	fade_->Draw();
 	// UI描画
 	ui_->Draw();
-
-	// GAME STARTスプライト描画
-	if (game_start_state_ != GameStartState::None) {
-		game_start_sprite_->Draw();
-	}
 }
 
 // デバッグ表示
@@ -484,14 +413,8 @@ void GameScene::StartAnimation() {
 		//収束終了
 		if (t >= 1.0f) {
 			is_returning_ = false;
-			camera_rotate_timer_ = 0.0f;
-
-			game_start_state_ = GameStartState::SlideIn;
-			game_start_timer_ = 0.0f;
-			game_start_animation_time_ = 0.0f;
-
-			slide_start_x_ = -360.0f;
-			slide_end_x_ = screen_center_x;
+			// UIにゲームスタート演出終了を通知
+			ui_->StartGameStartAnimation();
 		}
 	}
 }
