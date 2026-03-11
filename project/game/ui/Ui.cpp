@@ -206,6 +206,9 @@ void Ui::UpdateGameStart()
 //HPバー更新
 void Ui::UpdateHPBar()
 {
+	//ポーズ画面が開いているならスキップ
+	if (is_show_pause_)return;
+
 	if (!player_) return;
 
 	//実際のHP比率
@@ -335,6 +338,9 @@ void Ui::UpdatePauseClick()
 //回避クールタイムバー更新
 void Ui::UpdateDodgeGauge()
 {
+	//ポーズ画面が開いているならスキップ
+	if (is_show_pause_)return;
+
 	if (!player_) return;
 
 	float ratio = player_->GetDodgeCooldownRatio();
