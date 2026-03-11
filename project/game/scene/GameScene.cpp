@@ -197,7 +197,7 @@ void GameScene::Update() {
 	}
 
 	// プレイヤーの更新
-	player_->Update(is_start_animation_, is_returning_);
+	player_->Update(is_gameplay_active_);
 	// 敵の更新
 	if (!is_start_animation_ && !is_returning_) {
 		for (auto& enemy : enemies_) {

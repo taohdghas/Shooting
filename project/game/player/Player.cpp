@@ -32,7 +32,7 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
 //更新処理
-void Player::Update(bool is_start_animation_, bool is_returning_) {
+void Player::Update(bool is_control_enabled) {
 
 	//攻撃クールタイム
 	if (attack_cooldown_ > 0) {
@@ -56,7 +56,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 		});
 
 	// スタート演出中は追従しない
-	if (!is_start_animation_ && !is_returning_ && platform_) {
+	if (is_control_enabled && platform_) {
 		// プラットフォーム追従処理
 		if (is_follow_platform_) {
 			//追従初回フレームで前フレーム位置を初期化
@@ -80,7 +80,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 	}
 
 	//スタート演出中は不可
-	if (!is_start_animation_ && !is_returning_) {
+	if (is_control_enabled) {
 		// 移動処理
 		Move();
 		// ジャンプ処理
