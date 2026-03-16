@@ -384,17 +384,17 @@ void Ui::CreateSprite(SpriteType type,
 //ゲームスタートアニメーション開始
 void Ui::StartGameStartAnimation()
 {
-	//すでに開始している場合はスキップ
+	
 	has_started_game_start_ = true;
-
+	//アニメーション状態初期化
 	game_start_state_ = GameStartState::SlideIn;
-
+	//タイマー初期化
 	game_start_timer_ = 0.0f;
 	game_start_animation_time_ = 0.0f;
-
+	//スライドの開始・終了位置設定
 	slide_start_x_ = -360.0f;
 	slide_end_x_ = screen_center_x;
-
+	//ゲームスタート文字の初期位置設定
 	game_start_pos_ = { slide_start_x_,360.0f };
 
 	Get(SpriteType::GameStart)->SetPosition(game_start_pos_);

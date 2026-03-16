@@ -120,7 +120,7 @@ void GameScene::Update() {
 	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 
 	// 一時停止フラグ切り替え
-	if (!is_start_animation_ && !is_returning_ && MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_Q)) {
+	if (!is_start_animation_ && !is_returning_ && is_gameplay_active_&& MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_Q)) {
 		is_game_pause_ = !is_game_pause_;
 	}
 	// UIに一時停止フラグをセット
@@ -413,7 +413,7 @@ void GameScene::StartAnimation() {
 		//収束終了
 		if (t >= 1.0f) {
 			is_returning_ = false;
-			// UIにゲームスタート演出終了を通知
+			//ゲームスタート演出開始
 			ui_->StartGameStartAnimation();
 		}
 	}

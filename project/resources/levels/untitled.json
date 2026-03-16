@@ -227,7 +227,7 @@
             "transform": {
                 "translation": [
                     0.0,
-                    228.59817504882812,
+                    282.92938232421875,
                     -1.3968987464904785
                 ],
                 "rotation": [
@@ -1270,6 +1270,94 @@
             },
             "file_name": "enemy",
             "hp": 10
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn.014",
+            "transform": {
+                "translation": [
+                    4.949999809265137,
+                    238.9047393798828,
+                    6.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "enemy"
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn.015",
+            "transform": {
+                "translation": [
+                    4.958005905151367,
+                    239.2388458251953,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "enemy"
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn.016",
+            "transform": {
+                "translation": [
+                    -4.949999809265137,
+                    239.13577270507812,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "enemy"
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn.017",
+            "transform": {
+                "translation": [
+                    -4.949999809265137,
+                    238.9047393798828,
+                    6.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "enemy"
         }
     ],
     "rails": [
