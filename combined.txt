@@ -471,7 +471,7 @@ File Path: project/CG2 directX.vcxproj
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll</Command>
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -498,7 +498,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll</Command>
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -12277,7 +12277,7 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 }
 //更新処理
-void Player::Update(bool is_start_animation_, bool is_returning_) {
+void Player::Update(bool is_control_enabled) {
 
 	//攻撃クールタイム
 	if (attack_cooldown_ > 0) {
@@ -12301,7 +12301,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 		});
 
 	// スタート演出中は追従しない
-	if (!is_start_animation_ && !is_returning_ && platform_) {
+	if (is_control_enabled && platform_) {
 		// プラットフォーム追従処理
 		if (is_follow_platform_) {
 			//追従初回フレームで前フレーム位置を初期化
@@ -12325,7 +12325,7 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 	}
 
 	//スタート演出中は不可
-	if (!is_start_animation_ && !is_returning_) {
+	if (is_control_enabled) {
 		// 移動処理
 		Move();
 		// ジャンプ処理
@@ -12334,7 +12334,6 @@ void Player::Update(bool is_start_animation_, bool is_returning_) {
 		if (jump_count_ == 2) {
 			transform_.rotate.x += jump_rotate_speed_ * kDeltaTime;
 		}
-
 		//通常攻撃
 		if (MyEngine::Input::GetInstance()->IsMouseLeftPressed()) {
 			Attack();
@@ -12697,7 +12696,7 @@ public:
 	/// <param name="is_returning_">リターン中か</param>
 	/// <returns>なし</returns>
 	/// </summary>
-	void Update(bool is_start_animation_, bool is_returning_);
+	void Update(bool is_control_enabled);
 
 	/// <summary>
 	/// 描画
@@ -13743,7 +13742,7 @@ void GameScene::Update() {
 	MyEngine::CameraManager::GetInstance()->GetActiveCamera()->Update();
 
 	// 一時停止フラグ切り替え
-	if (!is_start_animation_ && !is_returning_ && MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_Q)) {
+	if (!is_start_animation_ && !is_returning_ && is_gameplay_active_&& MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_Q)) {
 		is_game_pause_ = !is_game_pause_;
 	}
 	// UIに一時停止フラグをセット
@@ -13820,7 +13819,7 @@ void GameScene::Update() {
 	}
 
 	// プレイヤーの更新
-	player_->Update(is_start_animation_, is_returning_);
+	player_->Update(is_gameplay_active_);
 	// 敵の更新
 	if (!is_start_animation_ && !is_returning_) {
 		for (auto& enemy : enemies_) {
@@ -13896,7 +13895,6 @@ void GameScene::Draw() {
 	platform_->Draw();
 	// パーティクルの描画
 	MyEngine::ParticleManager::GetInstance()->Draw();
-
 	// 共通描画設定
 	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
 	// レティクル描画
@@ -14036,7 +14034,7 @@ void GameScene::StartAnimation() {
 		//収束終了
 		if (t >= 1.0f) {
 			is_returning_ = false;
-			// UIにゲームスタート演出終了を通知
+			//ゲームスタート演出開始
 			ui_->StartGameStartAnimation();
 		}
 	}
@@ -15093,6 +15091,9 @@ void Ui::UpdateGameStart()
 //HPバー更新
 void Ui::UpdateHPBar()
 {
+	//ポーズ画面が開いているならスキップ
+	if (is_show_pause_)return;
+
 	if (!player_) return;
 
 	//実際のHP比率
@@ -15222,6 +15223,9 @@ void Ui::UpdatePauseClick()
 //回避クールタイムバー更新
 void Ui::UpdateDodgeGauge()
 {
+	//ポーズ画面が開いているならスキップ
+	if (is_show_pause_)return;
+
 	if (!player_) return;
 
 	float ratio = player_->GetDodgeCooldownRatio();
@@ -15265,17 +15269,17 @@ void Ui::CreateSprite(SpriteType type,
 //ゲームスタートアニメーション開始
 void Ui::StartGameStartAnimation()
 {
-	//すでに開始している場合はスキップ
+	
 	has_started_game_start_ = true;
-
+	//アニメーション状態初期化
 	game_start_state_ = GameStartState::SlideIn;
-
+	//タイマー初期化
 	game_start_timer_ = 0.0f;
 	game_start_animation_time_ = 0.0f;
-
+	//スライドの開始・終了位置設定
 	slide_start_x_ = -360.0f;
 	slide_end_x_ = screen_center_x;
-
+	//ゲームスタート文字の初期位置設定
 	game_start_pos_ = { slide_start_x_,360.0f };
 
 	Get(SpriteType::GameStart)->SetPosition(game_start_pos_);
