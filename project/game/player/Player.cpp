@@ -89,7 +89,6 @@ void Player::Update(bool is_control_enabled) {
 		if (jump_count_ == 2) {
 			transform_.rotate.x += jump_rotate_speed_ * kDeltaTime;
 		}
-
 		//通常攻撃
 		if (MyEngine::Input::GetInstance()->IsMouseLeftPressed()) {
 			Attack();

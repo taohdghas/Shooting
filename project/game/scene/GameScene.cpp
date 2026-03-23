@@ -273,7 +273,6 @@ void GameScene::Draw() {
 	platform_->Draw();
 	// パーティクルの描画
 	MyEngine::ParticleManager::GetInstance()->Draw();
-
 	// 共通描画設定
 	MyEngine::SpriteBase::GetInstance()->DrawBaseSet();
 	// レティクル描画
