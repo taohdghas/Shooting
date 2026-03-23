@@ -54,7 +54,7 @@ public:
 	/// <param name="is_returning_">リターン中か</param>
 	/// <returns>なし</returns>
 	/// </summary>
-	void Update(bool is_start_animation_, bool is_returning_);
+	void Update(bool is_control_enabled);
 
 	/// <summary>
 	/// 描画
