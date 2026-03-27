@@ -441,54 +441,15 @@ void GameScene::ToGameOver() {
 		fade_->End();
 	}
 
-	// 撃破演出開始
-	if (!is_death_motion_started_) {
-		is_death_motion_started_ = true;
-		death_timer_ = 0.0f;
-		death_rotation_speed_ = 5.0f;
+	//プレイヤー撃破演出
+	player_->StartDeathAnimation();
 
-		// 回転軸をランダムに
-		death_rotation_axis_.x = random_dist_(random_engine_);
-		death_rotation_axis_.y = random_dist_(random_engine_);
-		death_rotation_axis_.z = random_dist_(random_engine_);
-		Math::Normalize(death_rotation_axis_);
+	//プレイヤー撃破演出の更新
+	player_->UpdateDeathAnimation();
 
-		// 飛び上がる初速度をランダムに生成
-		float minY = 0.2f;
-		float maxY = 0.3f;
-		float velocityY =
-			minY + (maxY - minY) * ((random_dist_(random_engine_) + 1.0f) / 2.0f);
-
-		// X/Z 方向のランダム成分
-		float velocityXZ = 0.05f;
-		death_velocity_ = {
-			random_dist_(random_engine_) * velocityXZ,
-			velocityY,
-			random_dist_(random_engine_) * velocityXZ
-		};
-	}
-
-	// 撃破演出中
-	if (is_death_motion_started_) {
-		death_timer_ += kDeltaTime;
-
-		// 回転
-		Vector3 rot = player_->GetRotate();
-		rot.x += death_rotation_axis_.x * death_rotation_speed_;
-		rot.y += death_rotation_axis_.y * death_rotation_speed_;
-		rot.z += death_rotation_axis_.z * death_rotation_speed_;
-		player_->SetRotate(rot);
-
-		// 落下
-		death_velocity_.y -= gravity_;
-		Vector3 pos = player_->GetTranslate();
-		pos.x += death_velocity_.x;
-		pos.y += death_velocity_.y;
-		pos.z += death_velocity_.z;
-		player_->SetTranslate(pos);
-
-		// 地面より下ならフェードアウト開始
-		if (pos.y < -3.0f && fade_->GetState() == Fade::State::None) {
+	// 終了判定
+	if (player_->IsDeathAnimationFinished()) {
+		if (fade_->GetState() == Fade::State::None) {
 			fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 		}
 	}
