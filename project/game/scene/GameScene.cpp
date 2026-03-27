@@ -49,6 +49,7 @@ void GameScene::Initialize() {
 		player_->Initialize(MyEngine::Object3dBase::GetInstance());
 		Transform transform;
 		transform.translate = playerData.translation;
+		transform.translate.y = -1.4f;
 		player_->SetTranslate(transform.translate);
 		player_->SetPlatform(platform_.get());
 	}

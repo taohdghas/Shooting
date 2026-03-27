@@ -24,7 +24,7 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->SetModel("player/player.obj");
 	object_->SetLight(false);
 	transform_.scale = { 0.25f,0.25f,0.25f };
-	transform_.translate = { 0.0f,-1.5f,0.0f };
+	transform_.translate = { 0.0f,-1.4f,0.0f };
 	// レティクルの初期化
 	reticle_ = std::make_unique< MyEngine::Sprite>();
 	reticle_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/re.png");

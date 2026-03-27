@@ -258,7 +258,7 @@ private:
 	//前フレームのプラットフォーム位置
 	Vector3 prev_platform_pos_ = { 0, 0, 0 };
 	//モデルの寸法
-	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
+	Vector3 dimensions_ = { 2.4f,1.52f,2.06f };
 	//死亡時の速度
 	Vector3 death_velocity_;
 	//死亡時の回転軸
@@ -310,7 +310,7 @@ private:
 	//ジャンプ力
 	const float jump_power_ = 0.15f;
 	//地面のY座標
-	const float ground_y_ = -1.5f;
+	const float ground_y_ = -1.4f;
 	//二段ジャンプ回転速度
 	const float jump_rotate_speed_ = 720.0f;
 	//色変化時間
