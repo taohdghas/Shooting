@@ -124,18 +124,10 @@ private:
 	std::unique_ptr<LevelData> level_data_;
 	//ボス出現位置
 	Vector3 boss_spawn_position_;
-	//撃破演出回転軸
-	Vector3 death_rotation_axis_ = { 1.0f, 0.0f, 0.0f };
-	//撃破演出速度
-	Vector3 death_velocity_;
 	//回転開始時のカメラ位置
 	Vector3 camera_start_pos_;
 	//回転開始時のカメラ回転 
 	Vector3 camera_start_rot_;
-	//乱数生成器
-	std::mt19937 random_engine_{ std::random_device{}() };
-	//乱数分布
-	std::uniform_real_distribution<float> random_dist_{ -1.0f, 1.0f };
 	//Δtを定義（定数）
 	const float kDeltaTime = 1.0f / 60.0f;
 	//ボストリガーZ座標
@@ -154,12 +146,6 @@ private:
 	const float kStopTime = 1.5f;
 	//スタート演出スライド時間
 	const float kSlideDuration = 0.6f;
-	//撃破演出経過時間タイマー
-	float death_timer_ = 0.0f;
-	//撃破演出回転速度
-	float death_rotation_speed_ = 5.0f;
-	//重力加速度
-	float gravity_ = 0.015f;
 	//Zオフセット
 	float z_offset_ = 0.0f;
 	//カメラ回転タイマー
@@ -180,8 +166,6 @@ private:
 	bool is_to_game_clear_ = false;
 	//ゲームオーバーシーン遷移フラグ
 	bool is_to_game_over_ = false;
-	//撃破演出が始まったか
-	bool is_death_motion_started_ = false;
 	//ボスが出現したか
 	bool is_boss_spawned_ = false;
 	//スタート演出フラグ

@@ -106,7 +106,7 @@ namespace MyEngine {
 
     // ファイルパスからGPU側SRVハンドルを取得
     D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& file_path) {
-        assert(srv_manager_->SecuredCheck()); // 安全確認
+        assert(srv_manager_->SecuredCheck()); 
         TextureData& texture_data = texture_datas_[file_path];
         return texture_data.srv_handle_gpu_;
     }

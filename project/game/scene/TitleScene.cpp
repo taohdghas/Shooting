@@ -11,7 +11,6 @@ void TitleScene::Initialize() {
 
 	// モデルの読み込み
 	MyEngine::ModelManager::GetInstance()->LoadModel("titleobject/title.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("pushspace.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
 
 	// カメラの初期化・登録

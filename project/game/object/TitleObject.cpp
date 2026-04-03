@@ -19,7 +19,7 @@ void TitleObject::Initialize() {
     player_obj_->Initialize(MyEngine::Object3dBase::GetInstance());
     player_obj_->SetModel("player/player.obj");
     player_obj_transform_.scale = { 0.5f, 0.5f, 0.5f };
-    player_obj_transform_.rotate = { 0.0f, -0.5f, 0.0f };
+    player_obj_transform_.rotate = { 0.0f, 2.5f, 0.0f };
     player_obj_transform_.translate = { -1.3f, -0.5f, -4.8f };
 	// スタートスプライト生成・初期化
     menu_start_ = std::make_unique<MyEngine::Sprite>();
@@ -39,7 +39,7 @@ void TitleObject::Initialize() {
 	menu_exit_->SetAnchorPoint({ 0.5f, 0.5f });
     menu_exit_->SetPosition({ 752, 607 });
 	menu_exit_->SetSize({ 150,80 });
-
+	
     // 操作説明
     howto_sprite_ = std::make_unique<MyEngine::Sprite>();
     howto_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/operation.png");
@@ -113,11 +113,12 @@ void TitleObject::DrawSprite() {
         howto_sprite_->Draw();
     }
 }
-// プレイヤーオブジェクトの演出（回転・ジャンプ処理）
+// プレイヤーオブジェクトの演出
 void TitleObject::PlayerObjDirection() {
     // プレイヤーオブジェクトの回転
     player_obj_transform_.rotate.y += kRotateSpeed * kDeltaTime;
 
+    /*
     // ジャンプタイマー更新
     jump_timer_ += 1.0f;
 
@@ -154,6 +155,7 @@ void TitleObject::PlayerObjDirection() {
             player_obj_transform_.rotate.x = 0.0f;
         }
     }
+    */
 
     // Transform情報をObject3dへ反映
     player_obj_->SetScale(player_obj_transform_.scale);

@@ -11,6 +11,7 @@
 #include <list>
 #include <memory>
 #include <vector>
+#include <random>
 
 class Enemy;
 //プラットフォーム
@@ -98,6 +99,20 @@ public:
 	/// </summary>
 	void ReticleUpdate();
 
+    /// <summary>
+    /// 死亡アニメーションの開始処理
+    /// プレイヤーが死亡した際にアニメーション用の初期化を行う
+    /// <returns>なし</returns>
+    /// </summary>
+    void StartDeathAnimation();
+
+    /// <summary>
+    /// 死亡アニメーションの更新処理
+    /// 死亡アニメーション中のプレイヤーの動きや演出を毎フレーム更新する
+    /// <returns>なし</returns>
+    /// </summary>
+    void UpdateDeathAnimation();
+
 	/// <summary>
 	/// 衝突時処理
 	/// <returns>なし</returns>
@@ -134,6 +149,8 @@ public:
 	/// <returns>死亡していればtrue</returns>
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
+
+	bool IsDeathAnimationFinished() { return transform_.translate.y < -3.0f; }
 
 	/// <summary>
 	/// スケール取得
@@ -224,6 +241,10 @@ private:
 	std::unique_ptr< MyEngine::Sprite> reticle_;
 	//敵のリスト
 	std::vector<Enemy*> enemies_;
+	//乱数生成器
+	std::mt19937 random_engine_{ std::random_device{}() };
+	//乱数分布
+	std::uniform_real_distribution<float> random_dist_{ -1.0f, 1.0f };
 	//プラットフォーム
 	Platform* platform_ = nullptr;
 	//レティクル画面上の位置
@@ -237,7 +258,11 @@ private:
 	//前フレームのプラットフォーム位置
 	Vector3 prev_platform_pos_ = { 0, 0, 0 };
 	//モデルの寸法
-	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
+	Vector3 dimensions_ = { 2.4f,1.52f,2.06f };
+	//死亡時の速度
+	Vector3 death_velocity_;
+	//死亡時の回転軸
+	Vector3 death_rotation_axis_;
 	//色
 	Vector4 color_;
 	//デスフラグ
@@ -252,6 +277,8 @@ private:
 	bool is_following_platform_initialized_ = false;
 	//プラットフォーム追従フラグ
 	bool is_follow_platform_ = true;
+	//死亡アニメーション開始フラグ
+	bool is_death_animation_started_ = false;
 	//プレイヤーの半径
 	float radius_ = 1.0f;
 	//ジャンプ速度
@@ -283,7 +310,7 @@ private:
 	//ジャンプ力
 	const float jump_power_ = 0.15f;
 	//地面のY座標
-	const float ground_y_ = -1.5f;
+	const float ground_y_ = -1.4f;
 	//二段ジャンプ回転速度
 	const float jump_rotate_speed_ = 720.0f;
 	//色変化時間
@@ -314,4 +341,10 @@ private:
 	float damage_color_timer_ = 0.0f;
 	//無敵タイマー
 	float invincible_timer_ = 0.0f;
+	//死亡アニメーションタイマー
+	float death_timer_ = 0.0f;
+	//死亡アニメーションの回転速度
+	float death_rotation_speed_ = 5.0f;
+	//死亡アニメーションの重力
+	float death_animation_gravity_ = 0.015f;
 };

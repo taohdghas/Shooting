@@ -24,7 +24,7 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->SetModel("player/player.obj");
 	object_->SetLight(false);
 	transform_.scale = { 0.25f,0.25f,0.25f };
-	transform_.translate = { 0.0f,-1.5f,0.0f };
+	transform_.translate = { 0.0f,-1.4f,0.0f };
 	// レティクルの初期化
 	reticle_ = std::make_unique< MyEngine::Sprite>();
 	reticle_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/re.png");
@@ -95,7 +95,7 @@ void Player::Update(bool is_control_enabled) {
 		}
 		// 回避処理
 		Dodge();
-		// レティクルの座標・状態更新
+		// レティクルの更新
 		ReticleUpdate();
 	}
 
@@ -107,7 +107,7 @@ void Player::Update(bool is_control_enabled) {
 		object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	}
 
-	// Transform情報をObject3dへ反映
+	//オブジェクトに反映
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
@@ -138,6 +138,8 @@ void Player::ReticleDraw() {
 
 // プレイヤーの移動処理
 void Player::Move() {
+
+	if (is_death_animation_started_) return;
 	// X方向のみ速度を初期化
 	velocity_.x = 0.0f;
 
@@ -161,7 +163,9 @@ void Player::Move() {
 
 // ジャンプ処理
 void Player::Jump() {
-	// ジャンプ入力判定（最大回数未満ならジャンプ可能）
+
+	if (is_death_animation_started_) return;
+	// ジャンプ入力判定
 	if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_W) && jump_count_ < kMaxJumpCount) {
 		jump_velocity_ = jump_power_;
 		jump_count_++;
@@ -306,6 +310,53 @@ void Player::ReticleUpdate() {
 	reticle_->SetPosition(reticle_screen_pos_);
 	reticle_->Update();
 }
+// 死亡アニメーション開始
+void Player::StartDeathAnimation() {
+	if (is_death_animation_started_) return;
+
+	is_death_animation_started_ = true;
+	death_timer_ = 0.0f;
+
+	// 回転軸ランダム
+	death_rotation_axis_ = {
+		random_dist_(random_engine_),
+		random_dist_(random_engine_),
+		random_dist_(random_engine_)
+	};
+	Math::Normalize(death_rotation_axis_);
+
+	// 初速
+	float minY = 0.2f;
+	float maxY = 0.3f;
+	float velocityY =
+		minY + (maxY - minY) * ((random_dist_(random_engine_) + 1.0f) / 2.0f);
+
+	float velocityXZ = 0.05f;
+
+	death_velocity_ = {
+		random_dist_(random_engine_) * velocityXZ,
+		velocityY,
+		random_dist_(random_engine_) * velocityXZ
+	};
+}
+// 死亡アニメーション更新
+void Player::UpdateDeathAnimation() {
+	if (!is_death_animation_started_) return;
+
+	death_timer_ += kDeltaTime;
+
+	// 回転
+	transform_.rotate.x += death_rotation_axis_.x * death_rotation_speed_;
+	transform_.rotate.y += death_rotation_axis_.y * death_rotation_speed_;
+	transform_.rotate.z += death_rotation_axis_.z * death_rotation_speed_;
+
+	// 落下
+	death_velocity_.y -= death_animation_gravity_;
+	transform_.translate.x += death_velocity_.x;
+	transform_.translate.y += death_velocity_.y;
+	transform_.translate.z += death_velocity_.z;
+}
+
 // 衝突時コールバック
 void Player::OnCollision() {
 	is_dead_ = true;

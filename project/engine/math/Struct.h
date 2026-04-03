@@ -184,7 +184,6 @@ struct BossSpawnData {
 	Vector3 scaling;
 };
 
-
 // レベルデータ
 struct LevelData {
 	// オブジェクト1個分のデータ
