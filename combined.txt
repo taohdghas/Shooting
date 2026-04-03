@@ -7739,7 +7739,7 @@ namespace MyEngine {
 
     // ファイルパスからGPU側SRVハンドルを取得
     D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& file_path) {
-        assert(srv_manager_->SecuredCheck()); // 安全確認
+        assert(srv_manager_->SecuredCheck()); 
         TextureData& texture_data = texture_datas_[file_path];
         return texture_data.srv_handle_gpu_;
     }
@@ -8774,7 +8774,6 @@ struct BossSpawnData {
 	// スケーリング
 	Vector3 scaling;
 };
-
 
 // レベルデータ
 struct LevelData {
@@ -11622,7 +11621,7 @@ void TitleObject::Initialize() {
     player_obj_->Initialize(MyEngine::Object3dBase::GetInstance());
     player_obj_->SetModel("player/player.obj");
     player_obj_transform_.scale = { 0.5f, 0.5f, 0.5f };
-    player_obj_transform_.rotate = { 0.0f, -0.5f, 0.0f };
+    player_obj_transform_.rotate = { 0.0f, 2.5f, 0.0f };
     player_obj_transform_.translate = { -1.3f, -0.5f, -4.8f };
 	// スタートスプライト生成・初期化
     menu_start_ = std::make_unique<MyEngine::Sprite>();
@@ -11642,7 +11641,7 @@ void TitleObject::Initialize() {
 	menu_exit_->SetAnchorPoint({ 0.5f, 0.5f });
     menu_exit_->SetPosition({ 752, 607 });
 	menu_exit_->SetSize({ 150,80 });
-
+	
     // 操作説明
     howto_sprite_ = std::make_unique<MyEngine::Sprite>();
     howto_sprite_->Initialize(MyEngine::SpriteBase::GetInstance(),"resources/ui/operation.png");
@@ -11716,11 +11715,12 @@ void TitleObject::DrawSprite() {
         howto_sprite_->Draw();
     }
 }
-// プレイヤーオブジェクトの演出（回転・ジャンプ処理）
+// プレイヤーオブジェクトの演出
 void TitleObject::PlayerObjDirection() {
     // プレイヤーオブジェクトの回転
     player_obj_transform_.rotate.y += kRotateSpeed * kDeltaTime;
 
+    /*
     // ジャンプタイマー更新
     jump_timer_ += 1.0f;
 
@@ -11757,6 +11757,7 @@ void TitleObject::PlayerObjDirection() {
             player_obj_transform_.rotate.x = 0.0f;
         }
     }
+    */
 
     // Transform情報をObject3dへ反映
     player_obj_->SetScale(player_obj_transform_.scale);
@@ -12269,7 +12270,7 @@ void Player::Initialize(MyEngine::Object3dBase* object3d_base) {
 	object_->SetModel("player/player.obj");
 	object_->SetLight(false);
 	transform_.scale = { 0.25f,0.25f,0.25f };
-	transform_.translate = { 0.0f,-1.5f,0.0f };
+	transform_.translate = { 0.0f,-1.4f,0.0f };
 	// レティクルの初期化
 	reticle_ = std::make_unique< MyEngine::Sprite>();
 	reticle_->Initialize(MyEngine::SpriteBase::GetInstance(), "resources/re.png");
@@ -12340,7 +12341,7 @@ void Player::Update(bool is_control_enabled) {
 		}
 		// 回避処理
 		Dodge();
-		// レティクルの座標・状態更新
+		// レティクルの更新
 		ReticleUpdate();
 	}
 
@@ -12352,7 +12353,7 @@ void Player::Update(bool is_control_enabled) {
 		object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	}
 
-	// Transform情報をObject3dへ反映
+	//オブジェクトに反映
 	object_->SetScale(transform_.scale);
 	object_->SetRotate(transform_.rotate);
 	object_->SetTranslate(transform_.translate);
@@ -12383,6 +12384,8 @@ void Player::ReticleDraw() {
 
 // プレイヤーの移動処理
 void Player::Move() {
+
+	if (is_death_animation_started_) return;
 	// X方向のみ速度を初期化
 	velocity_.x = 0.0f;
 
@@ -12406,7 +12409,9 @@ void Player::Move() {
 
 // ジャンプ処理
 void Player::Jump() {
-	// ジャンプ入力判定（最大回数未満ならジャンプ可能）
+
+	if (is_death_animation_started_) return;
+	// ジャンプ入力判定
 	if (MyEngine::Input::GetInstance()->IsKeyTriggered(DIK_W) && jump_count_ < kMaxJumpCount) {
 		jump_velocity_ = jump_power_;
 		jump_count_++;
@@ -12551,6 +12556,53 @@ void Player::ReticleUpdate() {
 	reticle_->SetPosition(reticle_screen_pos_);
 	reticle_->Update();
 }
+// 死亡アニメーション開始
+void Player::StartDeathAnimation() {
+	if (is_death_animation_started_) return;
+
+	is_death_animation_started_ = true;
+	death_timer_ = 0.0f;
+
+	// 回転軸ランダム
+	death_rotation_axis_ = {
+		random_dist_(random_engine_),
+		random_dist_(random_engine_),
+		random_dist_(random_engine_)
+	};
+	Math::Normalize(death_rotation_axis_);
+
+	// 初速
+	float minY = 0.2f;
+	float maxY = 0.3f;
+	float velocityY =
+		minY + (maxY - minY) * ((random_dist_(random_engine_) + 1.0f) / 2.0f);
+
+	float velocityXZ = 0.05f;
+
+	death_velocity_ = {
+		random_dist_(random_engine_) * velocityXZ,
+		velocityY,
+		random_dist_(random_engine_) * velocityXZ
+	};
+}
+// 死亡アニメーション更新
+void Player::UpdateDeathAnimation() {
+	if (!is_death_animation_started_) return;
+
+	death_timer_ += kDeltaTime;
+
+	// 回転
+	transform_.rotate.x += death_rotation_axis_.x * death_rotation_speed_;
+	transform_.rotate.y += death_rotation_axis_.y * death_rotation_speed_;
+	transform_.rotate.z += death_rotation_axis_.z * death_rotation_speed_;
+
+	// 落下
+	death_velocity_.y -= death_animation_gravity_;
+	transform_.translate.x += death_velocity_.x;
+	transform_.translate.y += death_velocity_.y;
+	transform_.translate.z += death_velocity_.z;
+}
+
 // 衝突時コールバック
 void Player::OnCollision() {
 	is_dead_ = true;
@@ -12653,6 +12705,7 @@ File Path: project/game/player/Player.h
 #include <list>
 #include <memory>
 #include <vector>
+#include <random>
 
 class Enemy;
 //プラットフォーム
@@ -12740,6 +12793,20 @@ public:
 	/// </summary>
 	void ReticleUpdate();
 
+    /// <summary>
+    /// 死亡アニメーションの開始処理
+    /// プレイヤーが死亡した際にアニメーション用の初期化を行う
+    /// <returns>なし</returns>
+    /// </summary>
+    void StartDeathAnimation();
+
+    /// <summary>
+    /// 死亡アニメーションの更新処理
+    /// 死亡アニメーション中のプレイヤーの動きや演出を毎フレーム更新する
+    /// <returns>なし</returns>
+    /// </summary>
+    void UpdateDeathAnimation();
+
 	/// <summary>
 	/// 衝突時処理
 	/// <returns>なし</returns>
@@ -12776,6 +12843,8 @@ public:
 	/// <returns>死亡していればtrue</returns>
 	/// </summary>
 	bool IsDead() const { return is_dead_; }
+
+	bool IsDeathAnimationFinished() { return transform_.translate.y < -3.0f; }
 
 	/// <summary>
 	/// スケール取得
@@ -12866,6 +12935,10 @@ private:
 	std::unique_ptr< MyEngine::Sprite> reticle_;
 	//敵のリスト
 	std::vector<Enemy*> enemies_;
+	//乱数生成器
+	std::mt19937 random_engine_{ std::random_device{}() };
+	//乱数分布
+	std::uniform_real_distribution<float> random_dist_{ -1.0f, 1.0f };
 	//プラットフォーム
 	Platform* platform_ = nullptr;
 	//レティクル画面上の位置
@@ -12879,7 +12952,11 @@ private:
 	//前フレームのプラットフォーム位置
 	Vector3 prev_platform_pos_ = { 0, 0, 0 };
 	//モデルの寸法
-	Vector3 dimensions_ = { 2.0f,2.0f,2.0f };
+	Vector3 dimensions_ = { 2.4f,1.52f,2.06f };
+	//死亡時の速度
+	Vector3 death_velocity_;
+	//死亡時の回転軸
+	Vector3 death_rotation_axis_;
 	//色
 	Vector4 color_;
 	//デスフラグ
@@ -12894,6 +12971,8 @@ private:
 	bool is_following_platform_initialized_ = false;
 	//プラットフォーム追従フラグ
 	bool is_follow_platform_ = true;
+	//死亡アニメーション開始フラグ
+	bool is_death_animation_started_ = false;
 	//プレイヤーの半径
 	float radius_ = 1.0f;
 	//ジャンプ速度
@@ -12925,7 +13004,7 @@ private:
 	//ジャンプ力
 	const float jump_power_ = 0.15f;
 	//地面のY座標
-	const float ground_y_ = -1.5f;
+	const float ground_y_ = -1.4f;
 	//二段ジャンプ回転速度
 	const float jump_rotate_speed_ = 720.0f;
 	//色変化時間
@@ -12956,6 +13035,12 @@ private:
 	float damage_color_timer_ = 0.0f;
 	//無敵タイマー
 	float invincible_timer_ = 0.0f;
+	//死亡アニメーションタイマー
+	float death_timer_ = 0.0f;
+	//死亡アニメーションの回転速度
+	float death_rotation_speed_ = 5.0f;
+	//死亡アニメーションの重力
+	float death_animation_gravity_ = 0.015f;
 };
 
 ============================================================
@@ -13671,6 +13756,7 @@ void GameScene::Initialize() {
 		player_->Initialize(MyEngine::Object3dBase::GetInstance());
 		Transform transform;
 		transform.translate = playerData.translation;
+		transform.translate.y = -1.4f;
 		player_->SetTranslate(transform.translate);
 		player_->SetPlatform(platform_.get());
 	}
@@ -14063,54 +14149,15 @@ void GameScene::ToGameOver() {
 		fade_->End();
 	}
 
-	// 撃破演出開始
-	if (!is_death_motion_started_) {
-		is_death_motion_started_ = true;
-		death_timer_ = 0.0f;
-		death_rotation_speed_ = 5.0f;
+	//プレイヤー撃破演出
+	player_->StartDeathAnimation();
 
-		// 回転軸をランダムに
-		death_rotation_axis_.x = random_dist_(random_engine_);
-		death_rotation_axis_.y = random_dist_(random_engine_);
-		death_rotation_axis_.z = random_dist_(random_engine_);
-		Math::Normalize(death_rotation_axis_);
+	//プレイヤー撃破演出の更新
+	player_->UpdateDeathAnimation();
 
-		// 飛び上がる初速度をランダムに生成
-		float minY = 0.2f;
-		float maxY = 0.3f;
-		float velocityY =
-			minY + (maxY - minY) * ((random_dist_(random_engine_) + 1.0f) / 2.0f);
-
-		// X/Z 方向のランダム成分
-		float velocityXZ = 0.05f;
-		death_velocity_ = {
-			random_dist_(random_engine_) * velocityXZ,
-			velocityY,
-			random_dist_(random_engine_) * velocityXZ
-		};
-	}
-
-	// 撃破演出中
-	if (is_death_motion_started_) {
-		death_timer_ += kDeltaTime;
-
-		// 回転
-		Vector3 rot = player_->GetRotate();
-		rot.x += death_rotation_axis_.x * death_rotation_speed_;
-		rot.y += death_rotation_axis_.y * death_rotation_speed_;
-		rot.z += death_rotation_axis_.z * death_rotation_speed_;
-		player_->SetRotate(rot);
-
-		// 落下
-		death_velocity_.y -= gravity_;
-		Vector3 pos = player_->GetTranslate();
-		pos.x += death_velocity_.x;
-		pos.y += death_velocity_.y;
-		pos.z += death_velocity_.z;
-		player_->SetTranslate(pos);
-
-		// 地面より下ならフェードアウト開始
-		if (pos.y < -3.0f && fade_->GetState() == Fade::State::None) {
+	// 終了判定
+	if (player_->IsDeathAnimationFinished()) {
+		if (fade_->GetState() == Fade::State::None) {
 			fade_->FadeStart(Fade::State::FadeOut, 0.5f);
 		}
 	}
@@ -14256,18 +14303,10 @@ private:
 	std::unique_ptr<LevelData> level_data_;
 	//ボス出現位置
 	Vector3 boss_spawn_position_;
-	//撃破演出回転軸
-	Vector3 death_rotation_axis_ = { 1.0f, 0.0f, 0.0f };
-	//撃破演出速度
-	Vector3 death_velocity_;
 	//回転開始時のカメラ位置
 	Vector3 camera_start_pos_;
 	//回転開始時のカメラ回転 
 	Vector3 camera_start_rot_;
-	//乱数生成器
-	std::mt19937 random_engine_{ std::random_device{}() };
-	//乱数分布
-	std::uniform_real_distribution<float> random_dist_{ -1.0f, 1.0f };
 	//Δtを定義（定数）
 	const float kDeltaTime = 1.0f / 60.0f;
 	//ボストリガーZ座標
@@ -14286,12 +14325,6 @@ private:
 	const float kStopTime = 1.5f;
 	//スタート演出スライド時間
 	const float kSlideDuration = 0.6f;
-	//撃破演出経過時間タイマー
-	float death_timer_ = 0.0f;
-	//撃破演出回転速度
-	float death_rotation_speed_ = 5.0f;
-	//重力加速度
-	float gravity_ = 0.015f;
 	//Zオフセット
 	float z_offset_ = 0.0f;
 	//カメラ回転タイマー
@@ -14312,8 +14345,6 @@ private:
 	bool is_to_game_clear_ = false;
 	//ゲームオーバーシーン遷移フラグ
 	bool is_to_game_over_ = false;
-	//撃破演出が始まったか
-	bool is_death_motion_started_ = false;
 	//ボスが出現したか
 	bool is_boss_spawned_ = false;
 	//スタート演出フラグ
@@ -14413,7 +14444,6 @@ void TitleScene::Initialize() {
 
 	// モデルの読み込み
 	MyEngine::ModelManager::GetInstance()->LoadModel("titleobject/title.obj");
-	MyEngine::ModelManager::GetInstance()->LoadModel("pushspace.obj");
 	MyEngine::ModelManager::GetInstance()->LoadModel("player/player.obj");
 
 	// カメラの初期化・登録
