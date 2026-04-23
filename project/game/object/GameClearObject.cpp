@@ -56,7 +56,7 @@ void GameClearObject::Update()
                 letters_[i].transform.rotate.y = angle;
 
                 // ジャンプ
-                letters_[i].transform.translate.y = kBaseY + sinf(t * 3.14159f) * kJumpHeight;
+                letters_[i].transform.translate.y = kBaseY + sinf(t * kPi) * kJumpHeight;
 
                 // 拡大
                 float scaleFactor = 0.6f + sinf(t * 3.14159f) * 0.3f;

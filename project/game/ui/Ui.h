@@ -202,6 +202,10 @@ private:
 	const float kStopTime = 1.5f;
 	//ゲームスタート演出のスライド時間
 	const float kSlideDuration = 0.6f;
+	//点滅時間
+	const float kDodgeFlashDuration = 0.2f;
+	// Δtを定義
+	const float kDeltaTime = 1.0f / 60.0f;
 	//ポーズ画面のスプライトスケール
 	float pause_scale_ = 0.0f;
 	//ホバー用タイマー
