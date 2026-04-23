@@ -354,9 +354,9 @@ void Ui::UpdateDodgeGauge()
 	//点滅制御
 	if (ratio < 1.0f) {
 		//クールタイム中交互にスプライト表示
-		dodge_flash_timer_ += 1.0f / 60.0f;
+		dodge_flash_timer_ += kDeltaTime;
 		//一定時間ごとに表示非表示切り替え
-		if (dodge_flash_timer_ > 0.2f) {
+		if (dodge_flash_timer_ > kDodgeFlashDuration) {
 			dodge_flash_timer_ = 0.0f;
 			is_dodge_flash_visible_ = !is_dodge_flash_visible_;
 		}

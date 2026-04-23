@@ -175,6 +175,8 @@ namespace MyEngine {
 		Vector2 texture_left_top_ = { 0.0f, 0.0f };
 		// テクスチャ切り出しサイズ
 		Vector2 texture_size_ = { 100.0f, 100.0f };
+		// Spriteの頂点数
+		const uint32_t kSpriteIndexCount = 6;
 		// Spriteのローカル座標系の最小値・最大値
 		const float kSpriteLocalMin = 0.0f;
 		const float kSpriteLocalMax = 1.0f;
@@ -184,7 +186,6 @@ namespace MyEngine {
 		const float kSpriteLocalW = 1.0f;
 		// Spriteの法線
 		const float kSpriteNormalZ = -1.0f;
-
 		// スプライト個々の回転角
 		float rotation_ = 0.0f;
 		//ニアクリップ座標

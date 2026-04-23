@@ -118,45 +118,6 @@ void TitleObject::PlayerObjDirection() {
     // プレイヤーオブジェクトの回転
     player_obj_transform_.rotate.y += kRotateSpeed * kDeltaTime;
 
-    /*
-    // ジャンプタイマー更新
-    jump_timer_ += 1.0f;
-
-    // ジャンプ開始判定
-    if (!is_jumping_ && jump_timer_ >= jump_interval_) {
-        jump_velocity_ = jump_power_;
-        is_jumping_ = true;
-        jump_count_ = 1;
-        jump_timer_ = 0.0f;
-    }
-
-    // ジャンプ中の処理
-    if (is_jumping_) {
-        player_obj_transform_.translate.y += jump_velocity_;
-        jump_velocity_ += gravity_;
-
-        // 2段目ジャンプ判定
-        if (jump_count_ == 1 && jump_velocity_ < 0.0f) {
-            jump_velocity_ = jump_power_ * 1.2f;
-            jump_count_ = 2;
-        }
-
-        // 2段目ジャンプ時の回転
-        if (jump_count_ == 2) {
-            player_obj_transform_.rotate.x += jump_rotate_speed_ * kDeltaTime;
-        }
-
-        // 着地判定
-        if (player_obj_transform_.translate.y <= ground_y_) {
-            player_obj_transform_.translate.y = ground_y_;
-            jump_velocity_ = 0.0f;
-            is_jumping_ = false;
-            jump_count_ = 0;
-            player_obj_transform_.rotate.x = 0.0f;
-        }
-    }
-    */
-
     // Transform情報をObject3dへ反映
     player_obj_->SetScale(player_obj_transform_.scale);
     player_obj_->SetRotate(player_obj_transform_.rotate);

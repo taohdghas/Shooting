@@ -77,6 +77,8 @@ private:
     const float kDelayBetween = 0.1f;
     // Δt
     const float kDeltaTime = 1.0f / 60.0f;
+	// π
+    const float kPi = 3.1415926535f;
     // α値
     float alpha_ = 1.0f;
     // α値タイマー

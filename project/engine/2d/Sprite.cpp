@@ -110,7 +110,7 @@ namespace MyEngine {
 		// テクスチャのSRVをセット（スロット2）
 		sprite_base_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(file_path_));
 		// 描画命令を発行（インデックス6個、1インスタンス）
-		sprite_base_->GetDxBase()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+		sprite_base_->GetDxBase()->GetCommandList()->DrawIndexedInstanced(kSpriteIndexCount, 1, 0, 0, 0);
 	}
 
 	//頂点データ作成
