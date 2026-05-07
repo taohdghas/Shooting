@@ -4854,6 +4854,7 @@ namespace MyEngine {
 		hr = directx_base_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&outRootSignature));
 		assert(SUCCEEDED(hr));
 	}
+	// 共通のグラフィックスパイプラインステート作成
 	void PipelineStateObject::CreateGraphicsPipelineStateCommon(
 		ID3D12RootSignature* rootSignature,
 		const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc,
