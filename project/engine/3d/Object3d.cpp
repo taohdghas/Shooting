@@ -91,7 +91,7 @@ namespace MyEngine {
 		}
 	}
 
-	// デバッグ更新（ImGuiによるライト調整）
+	// デバッグ更新
 	void Object3d::DebugUpdate() {
 #ifdef USE_IMGUI
 		if (ImGui::TreeNode("Light")) {
