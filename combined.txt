@@ -2695,24 +2695,36 @@ File Path: project/engine/Audio/Audio.h
 namespace MyEngine {
 
 	// チャンクヘッダー
+	/// <summary>
+	/// WAVファイルの各チャンクのIDとサイズを保持する構造体
+	/// </summary>
 	struct ChunkHeader {
 		char id[4];        // チャンク毎のID
 		int32_t size;      // チャンクサイズ
 	};
 
 	// RIFFヘッダチャンク
+	/// <summary>
+	/// WAVファイルのRIFFヘッダチャンク情報を保持する構造体
+	/// </summary>
 	struct RiffHeader {
 		ChunkHeader chunk; // "RIFF"
 		char type[4];      // "WAVE"
 	};
 
 	// FMTチャンク
+	/// <summary>
+	/// WAVファイルのフォーマット（fmt）チャンク情報を保持する構造体
+	/// </summary>
 	struct FormatChunk {
 		ChunkHeader chunk; // "fmt "
 		WAVEFORMATEX fmt;  // 波型フォーマット
 	};
 
 	// 音声データ
+	/// <summary>
+	/// 波形フォーマットと音声データバッファを保持する構造体
+	/// </summary>
 	struct SoundData {
 		WAVEFORMATEX wfex;     // 波型フォーマット
 		std::vector<BYTE> buffer;    // 音声データバッファ
@@ -2861,6 +2873,9 @@ namespace MyEngine {
 	{
 	public:
 		// エミッターの情報を保持
+		/// <summary>
+		/// エミッターの変換情報・発生数・発生頻度・時刻を保持する構造体
+		/// </summary>
 		struct Emitter {
 			Transform transform;
 			uint32_t count_;          // 発生数
@@ -2869,6 +2884,9 @@ namespace MyEngine {
 		};
 
 		// エミッター初期化データ
+		/// <summary>
+		/// エミッターの初期発生数・発生頻度・スケール・回転・位置をまとめた構造体
+		/// </summary>
 		struct ParticleEmitterInitData {
 			int count;
 			float frequency;
@@ -7046,6 +7064,9 @@ namespace MyEngine {
     public:
 
         // パーティクル
+        /// <summary>
+        /// パーティクルの変換情報・速度・色・寿命を保持する構造体
+        /// </summary>
         struct Particle {
             Transform transform;
             Vector3 velocity;
@@ -7055,6 +7076,9 @@ namespace MyEngine {
         };
 
         // パーティクルの情報を GPU に送る
+        /// <summary>
+        /// パーティクルのワールド変換行列や色をGPUに送るための構造体
+        /// </summary>
         struct ParticleForGPU {
             Matrix4x4 wvp;
             Matrix4x4 world;
@@ -7062,12 +7086,18 @@ namespace MyEngine {
         };
 
         // フィールド
+        /// <summary>
+        /// パーティクルに影響を与える加速度と範囲を持つ構造体
+        /// </summary>
         struct AccelerationField {
             Vector3 acceleration;   // 加速度
             AABB area;              // 範囲
         };
 
         // パーティクルグループ
+        /// <summary>
+        /// パーティクルのマテリアルやリソース・リスト・種類などをまとめた構造体
+        /// </summary>
         struct ParticleGroup {
             MaterialData material_data;                           // マテリアルデータ
             std::list<Particle> particles;                        // パーティクルリスト
@@ -7082,6 +7112,9 @@ namespace MyEngine {
         };
 
         // パーティクル初期値データ
+        /// <summary>
+        /// パーティクルの初期スケール・回転・速度・色・寿命をまとめた構造体
+        /// </summary>
         struct ParticleInitData {
             Vector3 scale;
             Vector3 rotate;
@@ -8609,6 +8642,9 @@ File Path: project/engine/math/Struct.h
 #include <vector>
 
 // 頂点データ
+/// <summary>
+/// 頂点の位置、テクスチャ座標、法線情報を持つ構造体
+/// </summary>
 struct VertexData {
 	Vector4 position;
 	Vector2 texcoord;
@@ -8616,6 +8652,9 @@ struct VertexData {
 };
 
 // トランスフォーム
+/// <summary>
+/// スケール、回転、平行移動をまとめたトランスフォーム情報の構造体
+/// </summary>
 struct Transform {
 	Vector3 scale;
 	Vector3 rotate;
@@ -8623,6 +8662,9 @@ struct Transform {
 };
 
 // マテリアルデータ
+/// <summary>
+/// マテリアルの色、ライティング有効フラグ、UV変換行列、光沢度を持つ構造体
+/// </summary>
 struct Material {
 	Vector4 color;
 	int32_t enableLighting;
@@ -8632,6 +8674,9 @@ struct Material {
 };
 
 // 座標変換行列データ
+/// <summary>
+/// WVP行列、ワールド行列、ワールド逆転置行列をまとめた構造体
+/// </summary>
 struct TransformationMatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
@@ -8639,6 +8684,9 @@ struct TransformationMatrix {
 };
 
 // マテリアルデータ
+/// <summary>
+/// マテリアルのテクスチャファイルパスとインデックスを持つ構造体
+/// </summary>
 struct MaterialData
 {
 	std::string textureFilePath;
@@ -8646,6 +8694,9 @@ struct MaterialData
 };
 
 // Node
+/// <summary>
+/// 階層構造を持つノード。ローカル行列、名前、子ノードを持つ構造体
+/// </summary>
 struct Node {
 	Matrix4x4 localMatrix;
 	std::string name;
@@ -8653,6 +8704,9 @@ struct Node {
 };
 
 // モデルデータ
+/// <summary>
+/// モデルの頂点配列、マテリアル、ルートノードを持つ構造体
+/// </summary>
 struct ModelData
 {
 	std::vector<VertexData>vertices;
@@ -8661,6 +8715,9 @@ struct ModelData
 };
 
 // ライト
+/// <summary>
+/// 平行光源の色、向き、輝度、有効フラグを持つ構造体
+/// </summary>
 struct DirectionalLight {
 	// ライトの色
 	Vector4 color;
@@ -8673,11 +8730,17 @@ struct DirectionalLight {
 };
 
 // カメラ
+/// <summary>
+/// GPU用のカメラのワールド座標を持つ構造体
+/// </summary>
 struct CameraForGPU {
 	Vector3 worldPosition;
 };
 
 // ポイントライト
+/// <summary>
+/// 点光源の色、位置、輝度、最大距離、減衰率、有効フラグを持つ構造体
+/// </summary>
 struct PointLight {
 	// ライトの色
 	Vector4 color;
@@ -8695,6 +8758,9 @@ struct PointLight {
 };
 
 // スポットライト
+/// <summary>
+/// スポットライトの色、位置、向き、輝度、距離、減衰率、角度、有効フラグを持つ構造体
+/// </summary>
 struct SpotLight {
 	// ライトの色
 	Vector4 color;
@@ -8717,6 +8783,9 @@ struct SpotLight {
 };
 
 // AABB
+/// <summary>
+/// 軸平行境界ボックス（AABB）の最小点と最大点を持つ構造体
+/// </summary>
 struct AABB {
 	// 最小点
 	Vector3 min;
@@ -8725,6 +8794,9 @@ struct AABB {
 };
 
 // OBB
+/// <summary>
+/// 有向境界ボックス（OBB）の中心点、軸、サイズを持つ構造体
+/// </summary>
 struct OBB {
 	// 中心点
 	Vector3 center;
@@ -8735,6 +8807,9 @@ struct OBB {
 };
 
 // 自キャラの生成データ
+/// <summary>
+/// プレイヤー生成時の平行移動、回転、スケーリング情報を持つ構造体
+/// </summary>
 struct PlayerSpawnData {
 	// 平行移動
 	Vector3 translation;
@@ -8745,6 +8820,9 @@ struct PlayerSpawnData {
 };
 
 // 敵用スプラインデータ
+/// <summary>
+/// 敵の移動用スプラインの制御点や名前、閉じているかどうかを持つ構造体
+/// </summary>
 struct EnemyRailData {
 	// RailCurveObj の名前
 	std::string name;
@@ -8757,6 +8835,9 @@ struct EnemyRailData {
 };
 
 // 敵キャラの生成データ
+/// <summary>
+/// 敵キャラの名前、ファイル名、体力、位置、回転、スケーリング、所有レールを持つ構造体
+/// </summary>
 struct EnemySpawnData {
 	std::string name;
 	// ファイル名
@@ -8774,6 +8855,9 @@ struct EnemySpawnData {
 };
 
 // ボスキャラの生成データ
+/// <summary>
+/// ボスキャラの名前、ファイル名、位置、回転、スケーリングを持つ構造体
+/// </summary>
 struct BossSpawnData {
 	std::string name;
 	// ファイル名
@@ -8787,6 +8871,9 @@ struct BossSpawnData {
 };
 
 // レベルデータ
+/// <summary>
+/// レベル内のオブジェクト、プレイヤー、敵、ボスの生成情報をまとめた構造体
+/// </summary>
 struct LevelData {
 	// オブジェクト1個分のデータ
 	struct ObjectData {
@@ -11203,6 +11290,9 @@ public:
 
 private:
     //文字構造体
+     /// <summary>
+    /// ゲーム文字の3クリアDオブジェクト・変換情報・出現遅延を保持する構造体
+    /// </summary>
     struct Letter {
         std::unique_ptr< MyEngine::Object3d> object;
         Transform transform;
@@ -11560,6 +11650,9 @@ private:
 	// メニュー結果
     MenuResult menu_result_ = MenuResult::None;
     // 文字構造体
+    /// <summary>
+    /// ゲームオーバー文字の3Dオブジェクト・変換情報・出現遅延を保持する構造体
+    /// </summary>
     struct Letter {
         std::unique_ptr< MyEngine::Object3d> obj;
         Transform transform;
