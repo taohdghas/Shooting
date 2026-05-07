@@ -12,24 +12,36 @@
 namespace MyEngine {
 
 	// チャンクヘッダー
+	/// <summary>
+	/// WAVファイルの各チャンクのIDとサイズを保持する構造体
+	/// </summary>
 	struct ChunkHeader {
 		char id[4];        // チャンク毎のID
 		int32_t size;      // チャンクサイズ
 	};
 
 	// RIFFヘッダチャンク
+	/// <summary>
+	/// WAVファイルのRIFFヘッダチャンク情報を保持する構造体
+	/// </summary>
 	struct RiffHeader {
 		ChunkHeader chunk; // "RIFF"
 		char type[4];      // "WAVE"
 	};
 
 	// FMTチャンク
+	/// <summary>
+	/// WAVファイルのフォーマット（fmt）チャンク情報を保持する構造体
+	/// </summary>
 	struct FormatChunk {
 		ChunkHeader chunk; // "fmt "
 		WAVEFORMATEX fmt;  // 波型フォーマット
 	};
 
 	// 音声データ
+	/// <summary>
+	/// 波形フォーマットと音声データバッファを保持する構造体
+	/// </summary>
 	struct SoundData {
 		WAVEFORMATEX wfex;     // 波型フォーマット
 		std::vector<BYTE> buffer;    // 音声データバッファ

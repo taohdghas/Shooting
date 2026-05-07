@@ -35,6 +35,9 @@ namespace MyEngine {
     public:
 
         // パーティクル
+        /// <summary>
+        /// パーティクルの変換情報・速度・色・寿命を保持する構造体
+        /// </summary>
         struct Particle {
             Transform transform;
             Vector3 velocity;
@@ -44,6 +47,9 @@ namespace MyEngine {
         };
 
         // パーティクルの情報を GPU に送る
+        /// <summary>
+        /// パーティクルのワールド変換行列や色をGPUに送るための構造体
+        /// </summary>
         struct ParticleForGPU {
             Matrix4x4 wvp;
             Matrix4x4 world;
@@ -51,12 +57,18 @@ namespace MyEngine {
         };
 
         // フィールド
+        /// <summary>
+        /// パーティクルに影響を与える加速度と範囲を持つ構造体
+        /// </summary>
         struct AccelerationField {
             Vector3 acceleration;   // 加速度
             AABB area;              // 範囲
         };
 
         // パーティクルグループ
+        /// <summary>
+        /// パーティクルのマテリアルやリソース・リスト・種類などをまとめた構造体
+        /// </summary>
         struct ParticleGroup {
             MaterialData material_data;                           // マテリアルデータ
             std::list<Particle> particles;                        // パーティクルリスト
@@ -71,6 +83,9 @@ namespace MyEngine {
         };
 
         // パーティクル初期値データ
+        /// <summary>
+        /// パーティクルの初期スケール・回転・速度・色・寿命をまとめた構造体
+        /// </summary>
         struct ParticleInitData {
             Vector3 scale;
             Vector3 rotate;

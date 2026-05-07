@@ -16,6 +16,9 @@ namespace MyEngine {
 	{
 	public:
 		// エミッターの情報を保持
+		/// <summary>
+		/// エミッターの変換情報・発生数・発生頻度・時刻を保持する構造体
+		/// </summary>
 		struct Emitter {
 			Transform transform;
 			uint32_t count_;          // 発生数
@@ -24,6 +27,9 @@ namespace MyEngine {
 		};
 
 		// エミッター初期化データ
+		/// <summary>
+		/// エミッターの初期発生数・発生頻度・スケール・回転・位置をまとめた構造体
+		/// </summary>
 		struct ParticleEmitterInitData {
 			int count;
 			float frequency;
