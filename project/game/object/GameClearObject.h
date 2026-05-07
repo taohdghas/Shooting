@@ -49,6 +49,9 @@ public:
 
 private:
     //文字構造体
+     /// <summary>
+    /// ゲーム文字の3クリアDオブジェクト・変換情報・出現遅延を保持する構造体
+    /// </summary>
     struct Letter {
         std::unique_ptr< MyEngine::Object3d> object;
         Transform transform;

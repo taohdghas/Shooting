@@ -89,6 +89,9 @@ private:
 	// メニュー結果
     MenuResult menu_result_ = MenuResult::None;
     // 文字構造体
+    /// <summary>
+    /// ゲームオーバー文字の3Dオブジェクト・変換情報・出現遅延を保持する構造体
+    /// </summary>
     struct Letter {
         std::unique_ptr< MyEngine::Object3d> obj;
         Transform transform;
