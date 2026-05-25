@@ -13865,7 +13865,7 @@ void GameScene::Initialize() {
 		//出現位置を保存
 		boss_spawn_position_ = boss_->GetPosition();
 	}
-
+	
 	// フェードの初期化・開始
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -14886,7 +14886,6 @@ void Skybox::CreateVertex() {
 	vertex_resource_->Map(0, nullptr, reinterpret_cast<void**>(&vertex_data_));
 	std::memcpy(vertex_data_, vertices_.data(), sizeof(VertexData) * vertices_.size());
 }
-
 
 ============================================================
 File Path: project/game/skybox/Skybox.h
