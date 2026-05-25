@@ -90,7 +90,7 @@ void GameScene::Initialize() {
 		//出現位置を保存
 		boss_spawn_position_ = boss_->GetPosition();
 	}
-
+	
 	// フェードの初期化・開始
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
